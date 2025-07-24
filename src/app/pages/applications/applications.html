@@ -1,0 +1,114 @@
+<div class="page-container">
+  <div class="applications-list">
+    <mat-card class="application-card">
+      <mat-card-header>
+        <mat-card-title>Senior Software Engineer</mat-card-title>
+        <mat-card-subtitle>TechCorp Inc.</mat-card-subtitle>
+        <div class="status-chip">
+          <mat-chip-set>
+            <mat-chip class="status-pending">Under Review</mat-chip>
+          </mat-chip-set>
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="applied-date">Applied: March 15, 2025</p>
+        <div class="progress-section">
+          <div class="progress-label">Application Progress</div>
+          <mat-progress-bar mode="determinate" value="50"></mat-progress-bar>
+          <div class="progress-steps">
+            <mat-chip-set>
+              <mat-chip class="step-completed">
+                <mat-icon matChipIcon>check</mat-icon>
+                Applied
+              </mat-chip>
+              <mat-chip class="step-active">
+                <mat-icon matChipIcon>hourglass_empty</mat-icon>
+                Screening
+              </mat-chip>
+              <mat-chip disabled>Interview</mat-chip>
+              <mat-chip disabled>Decision</mat-chip>
+            </mat-chip-set>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    
+    <mat-card class="application-card">
+      <mat-card-header>
+        <mat-card-title>Product Manager</mat-card-title>
+        <mat-card-subtitle>InnovateAI</mat-card-subtitle>
+        <div class="status-chip">
+          <mat-chip-set>
+            <mat-chip class="status-interview">Interview Scheduled</mat-chip>
+          </mat-chip-set>
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="applied-date">Applied: March 12, 2025</p>
+        <p class="interview-date">
+          <mat-icon>event</mat-icon>
+          Interview: March 22, 2025 at 2:00 PM
+        </p>
+        <div class="progress-section">
+          <div class="progress-label">Application Progress</div>
+          <mat-progress-bar mode="determinate" value="75"></mat-progress-bar>
+          <div class="progress-steps">
+            <mat-chip-set>
+              <mat-chip class="step-completed">
+                <mat-icon matChipIcon>check</mat-icon>
+                Applied
+              </mat-chip>
+              <mat-chip class="step-completed">
+                <mat-icon matChipIcon>check</mat-icon>
+                Screening
+              </mat-chip>
+              <mat-chip class="step-active">
+                <mat-icon matChipIcon>record_voice_over</mat-icon>
+                Interview
+              </mat-chip>
+              <mat-chip disabled>Decision</mat-chip>
+            </mat-chip-set>
+          </div>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary">Prepare for Interview</button>
+      </mat-card-actions>
+    </mat-card>
+    
+    <mat-card class="application-card">
+      <mat-card-header>
+        <mat-card-title>Frontend Developer</mat-card-title>
+        <mat-card-subtitle>WebSolutions</mat-card-subtitle>
+        <div class="status-chip">
+          <mat-chip-set>
+            <mat-chip class="status-rejected">Not Selected</mat-chip>
+          </mat-chip-set>
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="applied-date">Applied: March 8, 2025</p>
+        <div class="progress-section">
+          <div class="progress-label">Application Progress</div>
+          <mat-progress-bar mode="determinate" value="100" color="warn"></mat-progress-bar>
+          <div class="progress-steps">
+            <mat-chip-set>
+              <mat-chip class="step-completed">
+                <mat-icon matChipIcon>check</mat-icon>
+                Applied
+              </mat-chip>
+              <mat-chip class="step-completed">
+                <mat-icon matChipIcon>check</mat-icon>
+                Screening
+              </mat-chip>
+              <mat-chip class="step-rejected">
+                <mat-icon matChipIcon>close</mat-icon>
+                Decision
+              </mat-chip>
+            </mat-chip-set>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

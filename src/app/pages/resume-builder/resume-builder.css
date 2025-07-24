@@ -1,0 +1,138 @@
+.page-container { 
+  padding: 20px; 
+}
+
+.resume-builder-content {
+  display: grid;
+  grid-template-columns: 250px 1fr 300px;
+  gap: 20px;
+  height: calc(100vh - 200px);
+}
+
+.builder-sidebar {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.section-list { 
+  margin-bottom: 20px; 
+}
+
+.section-item {
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.section-item:hover { 
+  background: #f8f9fa; 
+}
+
+.section-item.active { 
+  background: #007bff; 
+  color: white; 
+}
+
+.ai-suggestions h4 { 
+  margin-bottom: 10px; 
+}
+
+.suggestion {
+  background: #f8f9fa;
+  padding: 10px;
+  border-radius: 4px;
+  margin: 10px 0;
+  font-size: 0.9em;
+}
+
+.apply-suggestion {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+.builder-main {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin: 15px 0;
+}
+
+.form-input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.resume-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  background: white;
+}
+
+.action-btn.primary { 
+  background: #007bff; 
+  color: white; 
+  border-color: #007bff; 
+}
+
+.builder-preview {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.resume-preview {
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 4px;
+  background: #fafafa;
+}
+
+.preview-header h4 { 
+  margin: 0; 
+}
+
+.preview-section { 
+  margin: 15px 0; 
+}
+
+.ats-score {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 15px;
+}
+
+.score-value {
+  font-weight: bold;
+  color: #28a745;
+}

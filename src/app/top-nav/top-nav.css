@@ -1,0 +1,48 @@
+.spacer {
+  flex: 1 1 auto;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.nav-buttons button {
+  color: #22252f !important;
+  border: 1px solid #e0e0e0;
+  margin-left: 8px;
+  transition: all 0.2s ease;
+}
+
+.nav-buttons button:hover {
+  background-color: #f5f5f5 !important;
+  border-color: #22252f;
+}
+
+.logout-btn {
+  background-color: #dc3545 !important;
+  color: white !important;
+  border: 1px solid #dc3545 !important;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+  background-color: #c82333 !important;
+  border-color: #c82333 !important;
+}
+
+/* Fix top nav position and ensure it doesn't scroll */
+mat-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: #ffffff !important;
+  color: #22252f !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}

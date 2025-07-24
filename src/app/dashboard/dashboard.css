@@ -1,0 +1,56 @@
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  padding-top: 64px; /* Account for fixed top nav when present */
+}
+
+.main-content {
+  flex: 1;
+  margin-left: 250px; /* Width of side nav */
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 64px); /* Account for top nav height */
+}
+
+.page-content {
+  flex: 1;
+  background: #f8f9fa;
+  overflow-y: auto;
+  height: calc(100vh - 64px); /* Fixed height to enable scrolling */
+}
+
+.loading-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  color: #666;
+  background: white;
+  margin: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 200px; /* Adjust for smaller side nav */
+  }
+}
+
+@media (max-width: 576px) {
+  .main-content {
+    margin-left: 0; /* Stack on mobile */
+  }
+  
+  .dashboard-layout {
+    flex-direction: column;
+  }
+  
+  .page-content {
+    height: calc(100vh - 64px); /* Maintain scroll container height on mobile */
+  }
+}

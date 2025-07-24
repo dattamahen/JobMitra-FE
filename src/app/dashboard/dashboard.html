@@ -1,0 +1,73 @@
+<div class="dashboard-layout">
+  <app-side-nav (pageSelected)="onPageSelected($event)"></app-side-nav>
+  
+  <div class="main-content">
+    <div class="page-content">
+      @switch (currentPage) {
+        @case ('dashboard') {
+          @defer (on immediate) {
+            <app-dashboard-page />
+          } @placeholder {
+            <div class="loading-placeholder">Loading Dashboard...</div>
+          }
+        }
+        @case ('job-search') {
+          @defer (on immediate) {
+            <app-job-search-page />
+          } @placeholder {
+            <div class="loading-placeholder">Loading Job Search...</div>
+          }
+        }
+        @case ('applications') {
+          @defer (on immediate) {
+            <app-applications-page />
+          } @placeholder {
+            <div class="loading-placeholder">Loading Applications...</div>
+          }
+        }
+        @case ('mock-interviews') {
+          @defer (on immediate) {
+            <app-mock-interviews-page />
+          } @placeholder {
+            <div class="loading-placeholder">Loading Mock Interviews...</div>
+          }
+        }
+        @case ('resume-builder') {
+          @defer (on immediate) {
+            <app-resume-builder-page />
+          } @placeholder {
+            <div class="loading-placeholder">Loading Resume Builder...</div>
+          }
+        }
+        @case ('skill-assessment') {
+          @defer (on immediate) {
+            <app-skill-assessment-page />
+          } @placeholder {
+            <div class="loading-placeholder">Loading Skill Assessment...</div>
+          }
+        }
+        @case ('profile') {
+          @defer (on immediate) {
+            <app-profile />
+          } @placeholder {
+            <div class="loading-placeholder">Loading Profile...</div>
+          }
+        }
+        @case ('settings') {
+          @defer (on immediate) {
+            <app-settings />
+          } @placeholder {
+            <div class="loading-placeholder">Loading Settings...</div>
+          }
+        }
+        @default {
+          @defer (on immediate) {
+            <app-dashboard-page />
+          } @placeholder {
+            <div class="loading-placeholder">Loading Dashboard...</div>
+          }
+        }
+      }
+    </div>
+  </div>
+</div>

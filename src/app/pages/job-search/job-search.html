@@ -1,0 +1,161 @@
+<div class="page-container">
+  <mat-card class="search-filters">
+    <mat-card-content>
+      <div class="filter-row">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search jobs</mat-label>
+          <input matInput placeholder="Enter job title, skills, or company">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+        
+        <mat-form-field appearance="outline">
+          <mat-label>Location</mat-label>
+          <mat-select>
+            <mat-option value="all">All Locations</mat-option>
+            <mat-option value="remote">Remote</mat-option>
+            <mat-option value="ny">New York</mat-option>
+            <mat-option value="sf">San Francisco</mat-option>
+          </mat-select>
+        </mat-form-field>
+        
+        <mat-form-field appearance="outline">
+          <mat-label>Category</mat-label>
+          <mat-select>
+            <mat-option value="all">All Categories</mat-option>
+            <mat-option value="dev">Software Development</mat-option>
+            <mat-option value="data">Data Science</mat-option>
+            <mat-option value="pm">Product Management</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  
+  <div class="job-listings">
+    <mat-card class="job-card">
+      <mat-card-header>
+        <mat-card-title>Senior Software Engineer</mat-card-title>
+        <mat-card-subtitle class="company">TechCorp Inc.</mat-card-subtitle>
+        <div class="header-badges">
+          <div class="action-badges">
+            <mat-chip class="action-chip" (click)="takeMatchAnalysis('senior-software-engineer')" matTooltip="Analyze profile match">
+              Match Analysis
+            </mat-chip>
+            <mat-chip class="action-chip" (click)="modifyCV('senior-software-engineer')" matTooltip="Tailor resume for this role">
+              Tailor Resume
+            </mat-chip>
+            <mat-chip class="action-chip" (click)="takeMockInterview('senior-software-engineer')" matTooltip="Practice interview for this role">
+              Mock Interview
+            </mat-chip>
+          </div>
+          <div class="match-badge">
+            <mat-chip class="match-chip">92% Match</mat-chip>
+          </div>
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="job-details">
+          <mat-chip-set>
+            <mat-chip>
+              <mat-icon matChipIcon>location_on</mat-icon>
+              San Francisco, CA (Remote)
+            </mat-chip>
+            <mat-chip>
+              <mat-icon matChipIcon>attach_money</mat-icon>
+              $120k - $180k
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+        <p class="description">Join our team to build scalable AI-powered applications...</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary">Apply Now</button>
+        <button mat-button>Save</button>
+      </mat-card-actions>
+    </mat-card>
+    
+    <mat-card class="job-card">
+      <mat-card-header>
+        <mat-card-title>Product Manager</mat-card-title>
+        <mat-card-subtitle class="company">InnovateAI</mat-card-subtitle>
+        <div class="header-badges">
+          <div class="action-badges">
+            <mat-chip class="action-chip" (click)="takeMatchAnalysis('product-manager')" matTooltip="Analyze profile match">
+              Match Analysis
+            </mat-chip>
+            <mat-chip class="action-chip" (click)="modifyCV('product-manager')" matTooltip="Tailor resume for this role">
+              Tailor Resume
+            </mat-chip>
+            <mat-chip class="action-chip" (click)="takeMockInterview('product-manager')" matTooltip="Practice interview for this role">
+              Mock Interview
+            </mat-chip>
+          </div>
+          <div class="match-badge">
+            <mat-chip class="match-chip">78% Match</mat-chip>
+          </div>
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="job-details">
+          <mat-chip-set>
+            <mat-chip>
+              <mat-icon matChipIcon>location_on</mat-icon>
+              New York, NY
+            </mat-chip>
+            <mat-chip>
+              <mat-icon matChipIcon>attach_money</mat-icon>
+              $100k - $150k
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+        <p class="description">Lead product strategy for our AI recruitment platform...</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary">Apply Now</button>
+        <button mat-button>Save</button>
+      </mat-card-actions>
+    </mat-card>
+    
+    <mat-card class="job-card">
+      <mat-card-header>
+        <mat-card-title>Data Scientist</mat-card-title>
+        <mat-card-subtitle class="company">DataFlow Solutions</mat-card-subtitle>
+        <div class="header-badges">
+          <div class="action-badges">
+            <mat-chip class="action-chip" (click)="takeMatchAnalysis('data-scientist')" matTooltip="Analyze profile match">
+              Match Analysis
+            </mat-chip>
+            <mat-chip class="action-chip" (click)="modifyCV('data-scientist')" matTooltip="Tailor resume for this role">
+              Tailor Resume
+            </mat-chip>
+            <mat-chip class="action-chip" (click)="takeMockInterview('data-scientist')" matTooltip="Practice interview for this role">
+              Mock Interview
+            </mat-chip>
+          </div>
+          <div class="match-badge">
+            <mat-chip class="match-chip">85% Match</mat-chip>
+          </div>
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="job-details">
+          <mat-chip-set>
+            <mat-chip>
+              <mat-icon matChipIcon>location_on</mat-icon>
+              Remote
+            </mat-chip>
+            <mat-chip>
+              <mat-icon matChipIcon>attach_money</mat-icon>
+              $130k - $170k
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+        <p class="description">Develop machine learning models for talent matching...</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary">Apply Now</button>
+        <button mat-button>Save</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

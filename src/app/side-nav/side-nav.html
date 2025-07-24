@@ -1,0 +1,12 @@
+<nav class="side-nav-container">
+  <mat-nav-list>
+    <mat-list-item 
+      *ngFor="let item of navItems; trackBy: trackByItemId" 
+      [class.active]="activeItem === item.id"
+      (click)="selectItem(item.id)"
+      class="nav-item">
+      <span matListItemIcon class="nav-icon">{{ item.icon }}</span>
+      <span matListItemTitle>{{ item.label }}</span>
+    </mat-list-item>
+  </mat-nav-list>
+</nav>

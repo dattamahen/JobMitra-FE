@@ -1,0 +1,78 @@
+.page-container { 
+  padding: 20px; 
+}
+
+.application-card {
+  margin-bottom: 16px;
+}
+
+.application-card mat-card-header {
+  position: relative;
+}
+
+.status-chip {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+.status-pending {
+  background-color: #fff3cd !important;
+  color: #856404 !important;
+}
+
+.status-interview {
+  background-color: #d4edda !important;
+  color: #155724 !important;
+}
+
+.status-rejected {
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+}
+
+.applied-date, .interview-date {
+  color: #666;
+  font-size: 14px;
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.progress-section {
+  margin-top: 16px;
+}
+
+.progress-label {
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.progress-steps {
+  margin-top: 16px;
+}
+
+.step-completed {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.step-active {
+  background-color: #2196f3 !important;
+  color: white !important;
+}
+
+.step-rejected {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+mat-chip[disabled] {
+  opacity: 0.5;
+}
+
+mat-progress-bar {
+  margin: 8px 0;
+}

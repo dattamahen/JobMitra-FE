@@ -1,0 +1,11 @@
+@if (!isLoginPage()) {
+  <mat-toolbar>
+    <span>JobMitra</span>
+    <span class="spacer"></span>
+    <div class="nav-buttons">
+      @if (isDashboardPage()) {
+        <button mat-button class="logout-btn" (click)="logout()">Logout</button>
+      }
+    </div>
+  </mat-toolbar>
+}

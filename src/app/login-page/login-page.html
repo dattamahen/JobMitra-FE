@@ -1,0 +1,131 @@
+<div class="login-container">
+  <!-- Left side - Application Information (66%) -->
+  <div class="app-info-section">
+    <div class="background-pattern"></div>
+        
+    <div class="app-info-content">
+      <div class="logo-section">
+        <h1 class="app-title">JobMitra</h1>
+        <p class="app-subtitle">Intelligent Recruitment Platform</p>
+        <p class="app-description">Revolutionize your hiring process with AI-driven recruitment solutions that connect talent with opportunity seamlessly.</p>
+      </div>
+      
+      <div class="features-section">
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="feature-icon-wrapper">
+              <div class="feature-icon job-postings">�</div>
+            </div>
+            <h3>Smart Job Postings</h3>
+            <p>Create and manage job listings with AI-powered optimization for maximum reach and qualified candidates.</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon-wrapper">
+              <div class="feature-icon ats-compatible">📄</div>
+            </div>
+            <h3>ATS CV Compatible</h3>
+            <p>AI-enhanced resume parsing and matching ensures compatibility with all major ATS systems.</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon-wrapper">
+              <div class="feature-icon candidate-matching">🎯</div>
+            </div>
+            <h3>Smart Candidate Matching</h3>
+            <p>Find the perfect candidates for HR teams with advanced AI algorithms and skills assessment.</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon-wrapper">
+              <div class="feature-icon mock-interviews">🎤</div>
+            </div>
+            <h3>AI Mock Interviews</h3>
+            <p>Comprehensive interview preparation with AI-powered feedback and performance analytics.</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon-wrapper">
+              <div class="feature-icon profile-enhancement">✨</div>
+            </div>
+            <h3>Profile Enhancement</h3>
+            <p>Shine your professional profile with AI-driven recommendations and optimization tools.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="enterprise-stats">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-number">1M+</div>
+            <div class="stat-label">Job Seekers</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">50K+</div>
+            <div class="stat-label">Companies Hiring</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">95%</div>
+            <div class="stat-label">Match Success Rate</div>
+          </div>
+        </div>
+        
+        <div class="certifications">
+          <div class="cert-badge">GDPR Compliant</div>
+          <div class="cert-badge">ISO 27001</div>
+          <div class="cert-badge">SOC 2 Type II</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right side - Login Form (34%) -->
+  <div class="login-form-section">
+    <mat-card class="login-card">
+      <mat-card-header>
+        <mat-card-title>Welcome Back</mat-card-title>
+        <mat-card-subtitle>Sign in to your account</mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <!-- Gmail Login Option -->
+        <button mat-raised-button color="primary" class="gmail-login-btn" (click)="loginWithGmail()">
+          <mat-icon>mail</mat-icon>
+          Continue with Gmail
+        </button>
+        
+        <mat-divider class="divider">
+          <span>or</span>
+        </mat-divider>
+        
+        <!-- Traditional Login Form -->
+        <form (ngSubmit)="onLogin()" class="login-form">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Username</mat-label>
+            <input matInput [(ngModel)]="username" name="username" required placeholder="Enter your username">
+            <mat-icon matSuffix>person</mat-icon>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput type="password" [(ngModel)]="password" name="password" required placeholder="Enter your password">
+            <mat-icon matSuffix>lock</mat-icon>
+          </mat-form-field>
+          
+          <div class="form-options">
+            <mat-checkbox>Remember me</mat-checkbox>
+            <a href="#" class="forgot-password">Forgot password?</a>
+          </div>
+          
+          <button mat-raised-button color="primary" type="submit" class="login-btn full-width">
+            Sign In
+          </button>
+        </form>
+      </mat-card-content>
+      
+      <mat-card-actions class="signup-section">
+        <p>Don't have an account? <a href="#" class="signup-link">Sign up</a></p>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>
