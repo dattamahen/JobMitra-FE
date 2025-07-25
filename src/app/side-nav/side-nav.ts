@@ -8,8 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 interface NavItem {
   id: string;
   label: string;
-  icon: string;
-  matIcon?: string;
+  matIcon: string;
 }
 
 @Component({
@@ -30,14 +29,14 @@ export class SideNav implements OnInit {
   activeItem: string = '';
 
   navItems: NavItem[] = [
-    { id: 'dashboard', label: 'Dashboard', icon: '🏠', matIcon: 'dashboard' },
-    { id: 'profile', label: 'Profile', icon: '👤', matIcon: 'person' },
-    { id: 'job-search', label: 'Job Search', icon: '🔍', matIcon: 'search' },
-    { id: 'applications', label: 'My Applications', icon: '📋', matIcon: 'assignment' },
-    { id: 'resume-builder', label: 'Resume Builder', icon: '📄', matIcon: 'description' },
-    { id: 'skill-assessment', label: 'Skill Assessment', icon: '🎯', matIcon: 'assessment' },
-    { id: 'mock-interviews', label: 'Mock Interviews', icon: '🎤', matIcon: 'record_voice_over' },
-    { id: 'settings', label: 'Settings', icon: '⚙️', matIcon: 'settings' }
+    { id: 'dashboard', label: 'Dashboard', matIcon: 'dashboard' },
+    { id: 'profile', label: 'Profile', matIcon: 'person' },
+    { id: 'job-search', label: 'Job Search', matIcon: 'search' },
+    { id: 'applications', label: 'My Applications', matIcon: 'assignment' },
+    { id: 'resume-builder', label: 'Resume Builder', matIcon: 'description' },
+    { id: 'skill-assessment', label: 'Skill Assessment', matIcon: 'assessment' },
+    { id: 'mock-interviews', label: 'Mock Interviews', matIcon: 'record_voice_over' },
+    { id: 'settings', label: 'Settings', matIcon: 'settings' }
   ];
 
   ngOnInit() {
