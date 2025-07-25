@@ -135,6 +135,56 @@ export const PROFILE_FORM_FIELDS: { [section: string]: FormFieldConfig[] } = {
       type: 'textarea',
       required: false,
       icon: 'description'
+    },
+    {
+      name: 'certifications',
+      label: 'Certifications',
+      placeholder: 'e.g., AWS Certified Developer, Google Cloud Professional',
+      type: 'text',
+      required: false,
+      icon: 'verified',
+      hint: 'Separate multiple certifications with commas'
+    },
+    {
+      name: 'areaOfExpertise',
+      label: 'Area of Expertise',
+      placeholder: 'e.g., Frontend Development, Data Science, DevOps',
+      type: 'text',
+      required: false,
+      icon: 'psychology',
+      hint: 'Separate multiple areas with commas'
+    },
+    {
+      name: 'githubLink',
+      label: 'GitHub Profile',
+      placeholder: 'https://github.com/yourusername',
+      type: 'text',
+      required: false,
+      icon: 'code'
+    },
+    {
+      name: 'portfolioLink',
+      label: 'Portfolio/App Link',
+      placeholder: 'https://yourportfolio.com or app store link',
+      type: 'text',
+      required: false,
+      icon: 'web'
+    },
+    {
+      name: 'youtubeChannel',
+      label: 'YouTube Channel',
+      placeholder: 'https://youtube.com/@yourchannel',
+      type: 'text',
+      required: false,
+      icon: 'video_library'
+    },
+    {
+      name: 'contributions',
+      label: 'Key Contributions',
+      placeholder: 'Describe your notable contributions, projects, or achievements',
+      type: 'textarea',
+      required: false,
+      icon: 'star'
     }
   ],
   

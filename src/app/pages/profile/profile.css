@@ -320,37 +320,15 @@
   color: #1976d2;
 }
 
-/* Expandable Cards */
-.expandable-card {
-  margin-bottom: 16px !important;
-  transition: all 0.3s ease;
-  overflow: hidden;
+/* Form Cards */
+.form-card {
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: box-shadow 0.3s ease;
 }
 
-.expandable-card:not(.expanded) {
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-}
-
-.expandable-card.expanded {
+.form-card:hover {
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-.clickable-header {
-  cursor: pointer;
-  user-select: none;
-  transition: background-color 0.2s ease;
-}
-
-.clickable-header:hover {
-  background-color: #f8f9fa;
-}
-
-.clickable-header mat-card-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  margin: 0;
 }
 
 .section-icon {
@@ -358,34 +336,14 @@
   color: #1976d2;
 }
 
-.expand-icon {
-  transition: transform 0.3s ease;
-  color: #666;
-}
-
-.expand-icon.rotated {
-  transform: rotate(180deg);
-}
-
-/* Card Content Animation */
-.expandable-card mat-card-content {
-  animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Card Content */
+.form-card mat-card-content {
+  padding: 16px 24px 24px 24px;
 }
 
 .profile-layout {
   display: grid;
-  grid-template-columns: 120px 1fr 400px;
+  grid-template-columns: 1fr 400px;
   gap: 40px;
   align-items: start;
   min-height: 100vh;
@@ -422,9 +380,7 @@
   font-size: 16px;
 }
 
-.form-card {
-  margin-bottom: 24px;
-}
+
 
 /* Form validation styles */
 .mat-mdc-form-field.mat-form-field-invalid .mat-mdc-text-field-wrapper {
@@ -514,9 +470,9 @@
 }
 
 .profile-avatar {
-  font-size: 64px;
-  width: 64px;
-  height: 64px;
+  font-size: 96px;
+  width: 96px;
+  height: 96px;
   color: #1976d2;
 }
 
@@ -596,6 +552,67 @@
 
 .preferences p {
   margin: 4px 0;
+}
+
+.certification-list,
+.expertise-list {
+  margin-top: 8px;
+}
+
+.certification-item,
+.expertise-item {
+  display: inline;
+  color: #666;
+  font-weight: 500;
+}
+
+.links-section {
+  margin-top: 8px;
+}
+
+.links-section p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.links-section mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #1976d2;
+}
+
+.links-section a {
+  color: #1976d2;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.links-section a:hover {
+  color: #0d47a1;
+  text-decoration: underline;
+}
+
+.placeholder-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.placeholder-link mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #ccc;
+}
+
+.placeholder-link .placeholder {
+  color: #999;
+  font-style: italic;
 }
 
 .profile-completion {
