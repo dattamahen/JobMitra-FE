@@ -14,18 +14,22 @@
         <mat-form-field appearance="outline">
           <mat-label>Location</mat-label>
           <mat-select [(value)]="selectedLocation" (selectionChange)="onLocationChange($event.value)">
-            <mat-option *ngFor="let location of filterOptions.locations" [value]="location.toLowerCase().replace(' ', '-')">
-              {{location}}
-            </mat-option>
+            @for (location of filterOptions.locations; track location) {
+              <mat-option [value]="location.toLowerCase().replace(' ', '-')">
+                {{location}}
+              </mat-option>
+            }
           </mat-select>
         </mat-form-field>
         
         <mat-form-field appearance="outline">
           <mat-label>Category</mat-label>
           <mat-select [(value)]="selectedCategory" (selectionChange)="onCategoryChange($event.value)">
-            <mat-option *ngFor="let category of filterOptions.categories" [value]="category.toLowerCase().replace(' ', '-')">
-              {{category}}
-            </mat-option>
+            @for (category of filterOptions.categories; track category) {
+              <mat-option [value]="category.toLowerCase().replace(' ', '-')">
+                {{category}}
+              </mat-option>
+            }
           </mat-select>
         </mat-form-field>
       </div>
@@ -33,174 +37,254 @@
   </mat-card>
   
   <div class="job-listings">
-    <mat-card class="job-card" *ngFor="let job of jobListings">
-      <mat-card-header>
-        <mat-card-title>{{job.title}}</mat-card-title>
-        <mat-card-subtitle class="company">{{job.company.name}}</mat-card-subtitle>
-        <div class="header-badges">
-          <div class="action-badges">
-            <mat-chip class="action-chip" (click)="takeMatchAnalysis(job.id)" matTooltip="Analyze profile match">
-              Match Analysis
-            </mat-chip>
-            <mat-chip class="action-chip" (click)="modifyCV(job.id)" matTooltip="Tailor resume for this role">
-              Tailor Resume
-            </mat-chip>
-            <mat-chip class="action-chip" (click)="takeMockInterview(job.id)" matTooltip="Practice interview for this role">
-              Mock Interview
-            </mat-chip>
+    @for (job of jobListings; track job.id) {
+      <mat-card class="job-card">
+        <mat-card-header>
+          <mat-card-title>{{job.title}}</mat-card-title>
+          <mat-card-subtitle class="company">{{job.company.name}}</mat-card-subtitle>
+          <div class="header-badges">
+            <div class="action-badges">
+              <mat-chip class="action-chip" (click)="takeMatchAnalysis(job.id)" matTooltip="Analyze profile match">
+                Match Analysis
+              </mat-chip>
+              <mat-chip class="action-chip" (click)="modifyCV(job.id)" matTooltip="Tailor resume for this role">
+                Tailor Resume
+              </mat-chip>
+              <mat-chip class="action-chip" (click)="takeMockInterview(job.id)" matTooltip="Practice interview for this role">
+                Mock Interview
+              </mat-chip>
+            </div>
+            <div class="match-badge">
+              <mat-chip class="match-chip">{{job.matchPercentage}}% Match</mat-chip>
+            </div>
           </div>
-          <div class="match-badge">
-            <mat-chip class="match-chip">{{job.matchPercentage}}% Match</mat-chip>
-          </div>
-        </div>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="job-details">
-          <mat-chip-set>
-            <mat-chip>
-              <mat-icon matChipIcon>location_on</mat-icon>
-              {{formatLocation(job)}}
-            </mat-chip>
-            <mat-chip>
-              <mat-icon matChipIcon>attach_money</mat-icon>
-              {{formatSalary(job)}}
-            </mat-chip>
-            <mat-chip *ngIf="job.experienceLevel">
-              <mat-icon matChipIcon>work_history</mat-icon>
-              {{job.experienceLevel | titlecase}} Level
-            </mat-chip>
-            <mat-chip *ngIf="isDeadlineApproaching(job)" class="deadline-chip">
-              <mat-icon matChipIcon>schedule</mat-icon>
-              Deadline Soon
-            </mat-chip>
-          </mat-chip-set>
-          
-          <div class="job-meta">
-            <span class="posted-date">Posted {{getFormattedPostedDate(job)}}</span>
-            <span class="department">{{job.department}}</span>
-          </div>
-        </div>
-        
-        <!-- Short Description -->
-        <p class="description">{{job.shortDescription}}</p>
-        
-        <!-- Know More Button -->
-        <button mat-button class="know-more-btn" (click)="toggleJobExpansion(job.id)">
-          <mat-icon>{{isJobExpanded(job.id) ? 'expand_less' : 'expand_more'}}</mat-icon>
-          {{isJobExpanded(job.id) ? 'Show Less' : 'Know More...'}}
-        </button>
-        
-        <!-- Expanded Content -->
-        <div class="expanded-content" *ngIf="isJobExpanded(job.id)">
-          <!-- Full Job Description -->
-          <div class="job-section">
-            <h4><mat-icon>description</mat-icon> Full Job Description</h4>
-            <p>{{job.fullDescription}}</p>
-          </div>
-          
-          <!-- Requirements -->
-          <div class="job-section">
-            <h4><mat-icon>checklist</mat-icon> Requirements</h4>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="job-details">
+            <mat-chip-set>
+              <mat-chip>
+                <mat-icon matChipIcon>location_on</mat-icon>
+                {{formatLocation(job)}}
+              </mat-chip>
+              <mat-chip>
+                <mat-icon matChipIcon>attach_money</mat-icon>
+                {{formatSalary(job)}}
+              </mat-chip>
+              @if (job.experienceLevel) {
+                <mat-chip>
+                  <mat-icon matChipIcon>work_history</mat-icon>
+                  {{job.experienceLevel | titlecase}} Level
+                </mat-chip>
+              }
+              @if (isDeadlineApproaching(job)) {
+                <mat-chip class="deadline-chip">
+                  <mat-icon matChipIcon>schedule</mat-icon>
+                  Deadline Soon
+                </mat-chip>
+              }
+            </mat-chip-set>
             
-            <!-- Required Requirements -->
-            <div class="requirements-category" *ngIf="getRequirementsByType(job, 'required').length > 0">
-              <h5>Required:</h5>
-              <ul class="requirements-list required">
-                <li *ngFor="let requirement of getRequirementsByType(job, 'required')">{{requirement}}</li>
-              </ul>
-            </div>
-            
-            <!-- Preferred Requirements -->
-            <div class="requirements-category" *ngIf="getRequirementsByType(job, 'preferred').length > 0">
-              <h5>Preferred:</h5>
-              <ul class="requirements-list preferred">
-                <li *ngFor="let requirement of getRequirementsByType(job, 'preferred')">{{requirement}}</li>
-              </ul>
-            </div>
-            
-            <!-- Nice-to-have Requirements -->
-            <div class="requirements-category" *ngIf="getRequirementsByType(job, 'nice-to-have').length > 0">
-              <h5>Nice to have:</h5>
-              <ul class="requirements-list nice-to-have">
-                <li *ngFor="let requirement of getRequirementsByType(job, 'nice-to-have')">{{requirement}}</li>
-              </ul>
+            <div class="job-meta">
+              <span class="posted-date">Posted {{getFormattedPostedDate(job)}}</span>
+              <span class="department">{{job.department}}</span>
             </div>
           </div>
           
-          <!-- Skills -->
-          <div class="job-section" *ngIf="job.skills.length > 0">
-            <h4><mat-icon>code</mat-icon> Key Skills</h4>
-            <div class="skills-container">
-              <mat-chip-set>
-                <mat-chip *ngFor="let skill of job.skills" class="skill-chip">{{skill}}</mat-chip>
-              </mat-chip-set>
-            </div>
-          </div>
+          <!-- Short Description -->
+          <p class="description">{{job.shortDescription}}</p>
           
-          <!-- Benefits -->
-          <div class="job-section" *ngIf="job.benefits && job.benefits.length > 0">
-            <h4><mat-icon>star</mat-icon> Benefits</h4>
-            <div class="benefits-list">
-              <div *ngFor="let benefit of job.benefits" class="benefit-item">
-                <h6>{{benefit.title}}</h6>
-                <p>{{benefit.description}}</p>
+          <!-- Know More Button -->
+          <button mat-button class="know-more-btn" (click)="toggleJobExpansion(job.id)">
+            <mat-icon>{{isJobExpanded(job.id) ? 'expand_less' : 'expand_more'}}</mat-icon>
+            {{isJobExpanded(job.id) ? 'Show Less' : 'Know More...'}}
+          </button>
+          
+          <!-- Expanded Content -->
+          @if (isJobExpanded(job.id)) {
+            <div class="expanded-content">
+              <!-- Full Job Description -->
+              <div class="job-section">
+                <h4><mat-icon>description</mat-icon> Full Job Description</h4>
+                <p>{{job.fullDescription}}</p>
               </div>
-            </div>
-          </div>
-          
-          <!-- Company Info -->
-          <div class="job-section">
-            <h4><mat-icon>business</mat-icon> About {{job.company.name}}</h4>
-            <div class="company-info">
-              <p *ngIf="job.company.description">{{job.company.description}}</p>
-              <div class="company-details">
-                <span class="company-detail">
-                  <strong>Industry:</strong> {{job.company.industry}}
-                </span>
-                <span class="company-detail">
-                  <strong>Company Size:</strong> {{job.company.size}} employees
-                </span>
-                <span class="company-detail" *ngIf="job.company.website">
-                  <strong>Website:</strong> 
-                  <a [href]="job.company.website" target="_blank">{{job.company.website}}</a>
-                </span>
-              </div>
-            </div>
-          </div>
-          
-          <!-- HR Contact Details -->
-          <div class="job-section hr-contact">
-            <h4><mat-icon>contact_phone</mat-icon> HR Contact</h4>
-            <div class="contact-info">
-              <p><strong>{{job.hrContact.name}}</strong></p>
-              <p *ngIf="job.hrContact.title" class="contact-title">{{job.hrContact.title}}</p>
-              <p *ngIf="job.hrContact.department" class="contact-department">{{job.hrContact.department}}</p>
               
-              <div class="contact-methods">
-                <p class="contact-detail">
-                  <mat-icon>email</mat-icon>
-                  <a href="mailto:{{job.hrContact.email}}">{{job.hrContact.email}}</a>
-                </p>
-                <p class="contact-detail">
-                  <mat-icon>phone</mat-icon>
-                  <a href="tel:{{job.hrContact.phone}}">{{job.hrContact.phone}}</a>
-                </p>
+              <!-- Requirements -->
+              <div class="job-section">
+                <h4><mat-icon>checklist</mat-icon> Requirements</h4>
+                
+                <!-- Required Requirements -->
+                @if (getRequirementsByType(job, 'required').length > 0) {
+                  <div class="requirements-category">
+                    <h5>Required:</h5>
+                    <ul class="requirements-list required">
+                      @for (requirement of getRequirementsByType(job, 'required'); track $index) {
+                        <li>{{requirement}}</li>
+                      }
+                    </ul>
+                  </div>
+                }
+                
+                <!-- Preferred Requirements -->
+                @if (getRequirementsByType(job, 'preferred').length > 0) {
+                  <div class="requirements-category">
+                    <h5>Preferred:</h5>
+                    <ul class="requirements-list preferred">
+                      @for (requirement of getRequirementsByType(job, 'preferred'); track $index) {
+                        <li>{{requirement}}</li>
+                      }
+                    </ul>
+                  </div>
+                }
+                
+                <!-- Nice-to-have Requirements -->
+                @if (getRequirementsByType(job, 'nice-to-have').length > 0) {
+                  <div class="requirements-category">
+                    <h5>Nice to have:</h5>
+                    <ul class="requirements-list nice-to-have">
+                      @for (requirement of getRequirementsByType(job, 'nice-to-have'); track $index) {
+                        <li>{{requirement}}</li>
+                      }
+                    </ul>
+                  </div>
+                }
               </div>
+              
+              <!-- Skills -->
+              @if (job.skills.length > 0) {
+                <div class="job-section">
+                  <h4><mat-icon>code</mat-icon> Key Skills</h4>
+                  <div class="skills-container">
+                    <mat-chip-set>
+                      @for (skill of job.skills; track skill) {
+                        <mat-chip class="skill-chip">{{skill}}</mat-chip>
+                      }
+                    </mat-chip-set>
+                  </div>
+                </div>
+              }
+              
+              <!-- Benefits -->
+              @if (job.benefits && job.benefits.length > 0) {
+                <div class="job-section">
+                  <h4><mat-icon>star</mat-icon> Benefits & Perks</h4>
+                  <div class="benefits-container">
+                    @for (benefit of job.benefits; track benefit.id) {
+                      <div class="benefit-item">
+                        <h6>{{benefit.title}}</h6>
+                        <p>{{benefit.description}}</p>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+              
+              <!-- Company Info -->
+              <div class="job-section">
+                <h4><mat-icon>business</mat-icon> About {{job.company.name}}</h4>
+                <div class="company-info">
+                  @if (job.company.description) {
+                    <p>{{job.company.description}}</p>
+                  }
+                  <div class="company-details">
+                    <span class="company-detail">
+                      <strong>Industry:</strong> {{job.company.industry}}
+                    </span>
+                    <span class="company-detail">
+                      <strong>Company Size:</strong> {{job.company.size}} employees
+                    </span>
+                    @if (job.company.website) {
+                      <span class="company-detail">
+                        <strong>Website:</strong> 
+                        <a [href]="job.company.website" target="_blank">{{job.company.website}}</a>
+                      </span>
+                    }
+                  </div>
+                </div>
+              </div>
+              
+              <!-- HR Contact Details -->
+              <div class="job-section hr-contact">
+                <h4><mat-icon>contact_phone</mat-icon> HR Contact</h4>
+                <div class="contact-info">
+                  <p><strong>{{job.hrContact.name}}</strong></p>
+                  @if (job.hrContact.title) {
+                    <p class="contact-title">{{job.hrContact.title}}</p>
+                  }
+                  @if (job.hrContact.department) {
+                    <p class="contact-department">{{job.hrContact.department}}</p>
+                  }
+                  
+                  <div class="contact-methods">
+                    <p class="contact-detail">
+                      <mat-icon>email</mat-icon>
+                      <a href="mailto:{{job.hrContact.email}}">{{job.hrContact.email}}</a>
+                    </p>
+                    <p class="contact-detail">
+                      <mat-icon>phone</mat-icon>
+                      <a href="tel:{{job.hrContact.phone}}">{{job.hrContact.phone}}</a>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Learning Resources Section -->
+              @if (job.learningResources && job.learningResources.length > 0) {
+                <div class="job-section learning-resources">
+                  <h4><mat-icon>school</mat-icon> Skill Up for This Role</h4>
+                  <p class="section-description">Enhance your skills with these curated learning resources:</p>
+                  
+                  <div class="learning-resources-grid">
+                    @for (resource of job.learningResources; track resource.id) {
+                      <div class="learning-resource-card">
+                        <div class="resource-thumbnail" (click)="openLearningResource(resource)">
+                          <img [src]="getYouTubeThumbnail(resource.youtubeUrl)" 
+                               [alt]="resource.title"
+                               class="thumbnail-image">
+                          <div class="play-overlay">
+                            <div class="play-button">▶</div>
+                          </div>
+                          <div class="duration-badge">{{ resource.duration }}</div>
+                        </div>
+                        
+                        <div class="resource-details">
+                          <h5 class="resource-title">{{ resource.title }}</h5>
+                          <p class="resource-description">{{ resource.description }}</p>
+                          
+                          <div class="resource-meta">
+                            <span class="channel-name">{{ resource.channel }}</span>
+                            <span class="skill-badge">{{ resource.skill }}</span>
+                            <span class="level-badge level-{{ resource.level }}">{{ resource.level }}</span>
+                          </div>
+                          
+                          <button mat-stroked-button 
+                                  class="watch-video-btn"
+                                  (click)="openLearningResource(resource)">
+                            <mat-icon>play_arrow</mat-icon>
+                            Watch Video
+                          </button>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
             </div>
-          </div>
-        </div>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-raised-button color="primary" (click)="applyForJob(job.id)">Apply Now</button>
-        <button mat-button (click)="saveJob(job.id)">
-          <mat-icon>bookmark_border</mat-icon>
-          Save
-        </button>
-        <span class="deadline-info" *ngIf="job.applicationDeadline">
-          <mat-icon>schedule</mat-icon>
-          Apply by {{job.applicationDeadline | date:'MMM d, y'}}
-        </span>
-      </mat-card-actions>
-    </mat-card>
+          }
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" (click)="applyForJob(job.id)">Apply Now</button>
+          <button mat-button (click)="saveJob(job.id)">
+            <mat-icon>bookmark_border</mat-icon>
+            Save
+          </button>
+          @if (job.applicationDeadline) {
+            <span class="deadline-info">
+              <mat-icon>schedule</mat-icon>
+              Apply by {{job.applicationDeadline | date:'MMM d, y'}}
+            </span>
+          }
+        </mat-card-actions>
+      </mat-card>
+    }
   </div>
 </div>
