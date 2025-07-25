@@ -1,40 +1,44 @@
 <div class="page-container">
   <div class="assessment-content">
+    <!-- Mock Interview Usage Status -->
+    <div class="usage-status-card">
+      <div class="usage-info">
+        <h3>🤖 AI Mock Interview Status</h3>
+        <div class="usage-details">
+          <span class="usage-count">{{ getUsageStatus() }}</span>
+          <span class="next-available" *ngIf="!canTakeMockInterview()">
+            Next available: {{ getNextInterviewAvailableTime() }}
+          </span>
+          <span class="available-now" *ngIf="canTakeMockInterview()">
+            ✅ Available now!
+          </span>
+        </div>
+      </div>
+      <div class="usage-limits">
+        <small>{{ subscriptionLimits.mockInterviewsPerWeek }} interviews per week • {{ mockInterviewConfig.sessionDurationMinutes }} min sessions • {{ getCurrentPlanName() }}</small>
+      </div>
+    </div>
+
     <div class="skill-categories">
       <div class="category-card">
         <h3>💻 Technical Skills</h3>
         <div class="skills-list">
-          <div class="skill-item">
-            <span class="skill-name">JavaScript</span>
+          <div class="skill-item" *ngFor="let skill of getTechnicalSkills()">
+            <span class="skill-name">{{ skill.name }}</span>
             <div class="skill-level">
               <div class="progress-bar">
-                <div class="progress" style="width: 85%"></div>
+                <div class="progress" [style.width.%]="skill.currentLevel" [style.background]="getProgressColor(skill.currentLevel)"></div>
               </div>
-              <span class="level-text">Advanced</span>
+              <span class="level-text">{{ skill.levelText }}</span>
             </div>
-            <button class="test-btn">Take Test</button>
-          </div>
-          
-          <div class="skill-item">
-            <span class="skill-name">React</span>
-            <div class="skill-level">
-              <div class="progress-bar">
-                <div class="progress" style="width: 75%"></div>
-              </div>
-              <span class="level-text">Intermediate</span>
-            </div>
-            <button class="test-btn">Take Test</button>
-          </div>
-          
-          <div class="skill-item">
-            <span class="skill-name">Python</span>
-            <div class="skill-level">
-              <div class="progress-bar">
-                <div class="progress" style="width: 60%"></div>
-              </div>
-              <span class="level-text">Intermediate</span>
-            </div>
-            <button class="test-btn">Take Test</button>
+            <button class="test-btn" (click)="takeTest(skill)">Take Test</button>
+            <button class="learn-btn" (click)="startLearning(skill)">Learn</button>
+            <button class="interview-btn" 
+                    (click)="startMockInterview(skill)"
+                    [disabled]="!canTakeMockInterview()"
+                    [title]="canTakeMockInterview() ? 'Take Free AI Mock Interview' : 'Mock interview not available: ' + getNextInterviewAvailableTime()">
+              🤖 AI Interview
+            </button>
           </div>
         </div>
       </div>
@@ -42,37 +46,22 @@
       <div class="category-card">
         <h3>🎯 Soft Skills</h3>
         <div class="skills-list">
-          <div class="skill-item">
-            <span class="skill-name">Communication</span>
+          <div class="skill-item" *ngFor="let skill of getSoftSkills()">
+            <span class="skill-name">{{ skill.name }}</span>
             <div class="skill-level">
               <div class="progress-bar">
-                <div class="progress" style="width: 90%"></div>
+                <div class="progress" [style.width.%]="skill.currentLevel" [style.background]="getProgressColor(skill.currentLevel)"></div>
               </div>
-              <span class="level-text">Expert</span>
+              <span class="level-text">{{ skill.levelText }}</span>
             </div>
-            <button class="test-btn">Take Test</button>
-          </div>
-          
-          <div class="skill-item">
-            <span class="skill-name">Leadership</span>
-            <div class="skill-level">
-              <div class="progress-bar">
-                <div class="progress" style="width: 70%"></div>
-              </div>
-              <span class="level-text">Intermediate</span>
-            </div>
-            <button class="test-btn">Take Test</button>
-          </div>
-          
-          <div class="skill-item">
-            <span class="skill-name">Problem Solving</span>
-            <div class="skill-level">
-              <div class="progress-bar">
-                <div class="progress" style="width: 80%"></div>
-              </div>
-              <span class="level-text">Advanced</span>
-            </div>
-            <button class="test-btn">Take Test</button>
+            <button class="test-btn" (click)="takeTest(skill)">Take Test</button>
+            <button class="learn-btn" (click)="startLearning(skill)">Learn</button>
+            <button class="interview-btn" 
+                    (click)="startMockInterview(skill)"
+                    [disabled]="!canTakeMockInterview()"
+                    [title]="canTakeMockInterview() ? 'Take Free AI Mock Interview' : 'Mock interview not available: ' + getNextInterviewAvailableTime()">
+              🤖 AI Interview
+            </button>
           </div>
         </div>
       </div>
@@ -81,27 +70,17 @@
     <div class="assessment-history">
       <h2>Recent Assessments</h2>
       <div class="history-list">
-        <div class="history-item">
+        <div class="history-item" *ngFor="let item of assessmentHistory">
           <div class="assessment-info">
-            <h4>JavaScript Advanced Test</h4>
-            <p>Completed: March 19, 2025</p>
+            <h4>{{ item.skillName }}</h4>
+            <p>Completed: {{ formatDate(item.completedDate) }}</p>
           </div>
           <div class="assessment-result">
-            <span class="score">85%</span>
-            <span class="badge advanced">Advanced</span>
-            <button class="certificate-btn">Get Certificate</button>
-          </div>
-        </div>
-        
-        <div class="history-item">
-          <div class="assessment-info">
-            <h4>Communication Skills</h4>
-            <p>Completed: March 17, 2025</p>
-          </div>
-          <div class="assessment-result">
-            <span class="score">92%</span>
-            <span class="badge expert">Expert</span>
-            <button class="certificate-btn">Get Certificate</button>
+            <span class="score">{{ item.score }}%</span>
+            <span [class]="getBadgeClass(item.level)">{{ item.level }}</span>
+            <button class="certificate-btn" (click)="getCertificate(item)" [disabled]="!item.hasCertificate">
+              {{ item.hasCertificate ? 'Get Certificate' : 'No Certificate' }}
+            </button>
           </div>
         </div>
       </div>
@@ -111,16 +90,264 @@
       <h2>🤖 AI Recommended Skills</h2>
       <p>Based on your profile and target roles, we recommend improving these skills:</p>
       <div class="recommendation-list">
-        <div class="recommendation-item">
-          <span class="skill-name">Node.js</span>
-          <span class="relevance">High relevance for your target roles</span>
-          <button class="learn-btn">Start Learning</button>
+        <div class="recommendation-item" *ngFor="let skill of getRecommendedSkills()">
+          <div class="recommendation-info">
+            <span class="skill-name">{{ skill.name }}</span>
+            <span class="relevance">{{ skill.relevanceReason }}</span>
+          </div>
+          <button class="learn-btn" (click)="startLearning(skill)">Start Learning</button>
         </div>
-        <div class="recommendation-item">
-          <span class="skill-name">TypeScript</span>
-          <span class="relevance">Popular in 85% of job postings you viewed</span>
-          <button class="learn-btn">Start Learning</button>
+      </div>
+    </div>
+
+    <!-- Learning Resources Modal -->
+    <div class="modal-overlay" *ngIf="showLearningModal" (click)="hideLearningModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>📚 Learning Resources for {{ selectedSkill }}</h2>
+          <button class="close-btn" (click)="hideLearningModal()">×</button>
         </div>
+        
+        <div class="modal-body">
+          <!-- Learning Resources List -->
+          <div class="learning-resources-list" *ngIf="selectedSkillResources.length > 0 && !showContributeForm">
+            <div class="resource-item" *ngFor="let resource of selectedSkillResources">
+              <div class="resource-thumbnail" (click)="openVideo(resource.youtubeUrl)">
+                <img [src]="getYouTubeThumbnail(resource.youtubeUrl)" 
+                     [alt]="resource.title"
+                     loading="lazy">
+                <div class="play-overlay">
+                  <div class="play-button">▶</div>
+                </div>
+                <div class="duration-badge">{{ resource.duration }}</div>
+              </div>
+              
+              <div class="resource-info">
+                <h3 class="resource-title">{{ resource.title }}</h3>
+                <p class="resource-description">{{ resource.description }}</p>
+                
+                <div class="resource-meta">
+                  <div class="channel-info">
+                    <span class="channel-name">{{ resource.channel }}</span>
+                    <div class="rating" *ngIf="resource.rating">
+                      <span class="star" *ngFor="let star of getStars(resource.rating)">★</span>
+                      <span class="rating-text">{{ resource.rating }}</span>
+                    </div>
+                  </div>
+                  
+                  <div class="resource-tags">
+                    <span [class]="getLevelBadgeClass(resource.level)">{{ resource.level }}</span>
+                    <span class="skill-tag">{{ resource.skill }}</span>
+                  </div>
+                </div>
+                
+                <button class="watch-btn" (click)="openVideo(resource.youtubeUrl)">
+                  Watch on YouTube
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- No Resources Found -->
+          <div class="no-resources" *ngIf="selectedSkillResources.length === 0 && !showContributeForm">
+            <div class="no-resources-content">
+              <div class="no-resources-icon">📚</div>
+              <h3>No Learning Resources Found</h3>
+              <p>We don't have learning resources for <strong>{{ selectedSkill }}</strong> yet.</p>
+              <p>Help the community by sharing your knowledge!</p>
+              <button class="contribute-btn" (click)="showContributeKnowledge()">
+                Share Your Knowledge
+              </button>
+            </div>
+          </div>
+
+          <!-- Contribute Knowledge Form -->
+          <div class="contribute-form" *ngIf="showContributeForm">
+            <div class="form-header">
+              <h3>🎯 Share Your Knowledge for {{ selectedSkill }}</h3>
+              <p>Help others learn by sharing valuable learning resources!</p>
+            </div>
+            
+            <form (submit)="submitContribution($event)">
+              <div class="form-group">
+                <label for="title">Resource Title*</label>
+                <input type="text" id="title" name="title" required 
+                       placeholder="e.g., Complete {{ selectedSkill }} Tutorial for Beginners">
+              </div>
+              
+              <div class="form-group">
+                <label for="description">Description*</label>
+                <textarea id="description" name="description" required rows="3"
+                          placeholder="Brief description of what this resource covers..."></textarea>
+              </div>
+              
+              <div class="form-group">
+                <label for="youtubeUrl">YouTube URL*</label>
+                <input type="url" id="youtubeUrl" name="youtubeUrl" required 
+                       placeholder="https://www.youtube.com/watch?v=...">
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="level">Difficulty Level*</label>
+                  <select id="level" name="level" required>
+                    <option value="">Select Level</option>
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                  </select>
+                </div>
+                
+                <div class="form-group">
+                  <label for="submitterName">Your Name*</label>
+                  <input type="text" id="submitterName" name="submitterName" required 
+                         placeholder="Your name">
+                </div>
+              </div>
+              
+              <div class="form-actions">
+                <button type="button" class="cancel-btn" (click)="hideContributeForm()">
+                  Cancel
+                </button>
+                <button type="submit" class="submit-btn">
+                  Submit Contribution
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Add Resources Button (when resources exist) -->
+          <div class="modal-footer" *ngIf="selectedSkillResources.length > 0 && !showContributeForm">
+            <button class="add-resource-btn" (click)="showContributeKnowledge()">
+              ➕ Add More Resources
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mock Interview Modal -->
+    <div class="modal-overlay" *ngIf="showMockInterviewModal" (click)="closeMockInterviewModal()">
+      <div class="modal-content interview-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>🤖 AI Mock Interview - {{ selectedSkill }}</h2>
+          <button class="close-btn" (click)="closeMockInterviewModal()">×</button>
+        </div>
+        
+        <div class="modal-body">
+          <!-- Interview Setup -->
+          <div class="interview-setup" *ngIf="!mockInterviewInProgress">
+            <div class="interview-info">
+              <div class="interview-details">
+                <h3>Interview Details</h3>
+                <ul>
+                  <li><strong>Skill:</strong> {{ selectedSkill }}</li>
+                  <li><strong>Duration:</strong> {{ mockInterviewConfig.sessionDurationMinutes }} minutes</li>
+                  <li><strong>Questions:</strong> {{ mockInterviewConfig.questionsPerSession }}</li>
+                  <li><strong>Type:</strong> Technical & Behavioral</li>
+                </ul>
+              </div>
+              
+              <div class="interview-tips">
+                <h3>💡 Tips for Success</h3>
+                <ul>
+                  <li>Find a quiet environment</li>
+                  <li>Speak clearly and think out loud</li>
+                  <li>Take your time to formulate answers</li>
+                  <li>Use specific examples from your experience</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="sample-questions">
+              <h3>Sample Questions Preview</h3>
+              <div class="questions-preview">
+                <div class="question-item" *ngFor="let question of currentInterviewQuestions.slice(0, 3)">
+                  <span class="question-text">{{ question }}</span>
+                </div>
+                <div class="more-questions" *ngIf="currentInterviewQuestions.length > 3">
+                  <span>+ {{ currentInterviewQuestions.length - 3 }} more questions</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="interview-actions">
+              <button class="cancel-btn" (click)="closeMockInterviewModal()">
+                Cancel
+              </button>
+              <button class="start-interview-btn" (click)="beginInterview()">
+                🚀 Start Interview
+              </button>
+            </div>
+          </div>
+          
+          <!-- Interview In Progress -->
+          <div class="interview-in-progress" *ngIf="mockInterviewInProgress">
+            <div class="progress-indicator">
+              <div class="loading-spinner"></div>
+              <h3>Interview in Progress...</h3>
+              <p>Our AI is conducting your {{ selectedSkill }} interview.</p>
+              <div class="interview-status">
+                <span class="status-text">Analyzing your responses and providing feedback</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Subscription Modal -->
+<div class="modal-overlay" *ngIf="showSubscriptionModal" (click)="closeSubscriptionModal()">
+  <div class="subscription-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Upgrade Your Plan</h2>
+      <button class="close-btn" (click)="closeSubscriptionModal()">&times;</button>
+    </div>
+    
+    <div class="modal-content">
+      <p class="upgrade-message">
+        You've reached your weekly limit of free mock interviews. 
+        Upgrade to continue improving your skills!
+      </p>
+      
+      <div class="subscription-plans">
+        <div class="plan-card" 
+             *ngFor="let plan of subscriptionPlans" 
+             [class.current-plan]="userSubscription?.planId === plan.id"
+             [class.recommended]="plan.isPopular">
+          
+          <div class="plan-header">
+            <h3>{{ plan.name }}</h3>
+            <div class="plan-price">
+              <span class="price">{{ formatPrice(plan.price) }}</span>
+              <span class="period">/{{ plan.period }}</span>
+            </div>
+            <div class="plan-badge" *ngIf="plan.isPopular">Most Popular</div>
+          </div>
+          
+          <div class="plan-features">
+            <div class="feature" *ngFor="let feature of getPlanFeatures(plan.id)">
+              <i class="check-icon">✓</i>
+              <span>{{ feature }}</span>
+            </div>
+          </div>
+          
+          <button class="select-plan-btn" 
+                  [disabled]="userSubscription?.planId === plan.id"
+                  (click)="selectSubscriptionPlan(plan.id)">
+            <span *ngIf="userSubscription?.planId === plan.id">Current Plan</span>
+            <span *ngIf="userSubscription?.planId !== plan.id && plan.price === 0">Continue with Free</span>
+            <span *ngIf="userSubscription?.planId !== plan.id && plan.price > 0">Upgrade to {{ plan.name }}</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="subscription-note">
+        <p><small>• All plans include access to learning resources and job search tools</small></p>
+        <p><small>• Cancel anytime with no commitment</small></p>
+        <p><small>• Secure payment processing with 30-day money-back guarantee</small></p>
       </div>
     </div>
   </div>

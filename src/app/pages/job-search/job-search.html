@@ -4,27 +4,28 @@
       <div class="filter-row">
         <mat-form-field appearance="outline" class="search-field">
           <mat-label>Search jobs</mat-label>
-          <input matInput placeholder="Enter job title, skills, or company">
+          <input matInput 
+                 placeholder="Enter job title, skills, or company"
+                 [(ngModel)]="searchQuery"
+                 (input)="onSearchChange(searchQuery)">
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
         
         <mat-form-field appearance="outline">
           <mat-label>Location</mat-label>
-          <mat-select>
-            <mat-option value="all">All Locations</mat-option>
-            <mat-option value="remote">Remote</mat-option>
-            <mat-option value="ny">New York</mat-option>
-            <mat-option value="sf">San Francisco</mat-option>
+          <mat-select [(value)]="selectedLocation" (selectionChange)="onLocationChange($event.value)">
+            <mat-option *ngFor="let location of filterOptions.locations" [value]="location.toLowerCase().replace(' ', '-')">
+              {{location}}
+            </mat-option>
           </mat-select>
         </mat-form-field>
         
         <mat-form-field appearance="outline">
           <mat-label>Category</mat-label>
-          <mat-select>
-            <mat-option value="all">All Categories</mat-option>
-            <mat-option value="dev">Software Development</mat-option>
-            <mat-option value="data">Data Science</mat-option>
-            <mat-option value="pm">Product Management</mat-option>
+          <mat-select [(value)]="selectedCategory" (selectionChange)="onCategoryChange($event.value)">
+            <mat-option *ngFor="let category of filterOptions.categories" [value]="category.toLowerCase().replace(' ', '-')">
+              {{category}}
+            </mat-option>
           </mat-select>
         </mat-form-field>
       </div>
@@ -32,24 +33,24 @@
   </mat-card>
   
   <div class="job-listings">
-    <mat-card class="job-card">
+    <mat-card class="job-card" *ngFor="let job of jobListings">
       <mat-card-header>
-        <mat-card-title>Senior Software Engineer</mat-card-title>
-        <mat-card-subtitle class="company">TechCorp Inc.</mat-card-subtitle>
+        <mat-card-title>{{job.title}}</mat-card-title>
+        <mat-card-subtitle class="company">{{job.company.name}}</mat-card-subtitle>
         <div class="header-badges">
           <div class="action-badges">
-            <mat-chip class="action-chip" (click)="takeMatchAnalysis('senior-software-engineer')" matTooltip="Analyze profile match">
+            <mat-chip class="action-chip" (click)="takeMatchAnalysis(job.id)" matTooltip="Analyze profile match">
               Match Analysis
             </mat-chip>
-            <mat-chip class="action-chip" (click)="modifyCV('senior-software-engineer')" matTooltip="Tailor resume for this role">
+            <mat-chip class="action-chip" (click)="modifyCV(job.id)" matTooltip="Tailor resume for this role">
               Tailor Resume
             </mat-chip>
-            <mat-chip class="action-chip" (click)="takeMockInterview('senior-software-engineer')" matTooltip="Practice interview for this role">
+            <mat-chip class="action-chip" (click)="takeMockInterview(job.id)" matTooltip="Practice interview for this role">
               Mock Interview
             </mat-chip>
           </div>
           <div class="match-badge">
-            <mat-chip class="match-chip">92% Match</mat-chip>
+            <mat-chip class="match-chip">{{job.matchPercentage}}% Match</mat-chip>
           </div>
         </div>
       </mat-card-header>
@@ -58,103 +59,147 @@
           <mat-chip-set>
             <mat-chip>
               <mat-icon matChipIcon>location_on</mat-icon>
-              San Francisco, CA (Remote)
+              {{formatLocation(job)}}
             </mat-chip>
             <mat-chip>
               <mat-icon matChipIcon>attach_money</mat-icon>
-              $120k - $180k
+              {{formatSalary(job)}}
+            </mat-chip>
+            <mat-chip *ngIf="job.experienceLevel">
+              <mat-icon matChipIcon>work_history</mat-icon>
+              {{job.experienceLevel | titlecase}} Level
+            </mat-chip>
+            <mat-chip *ngIf="isDeadlineApproaching(job)" class="deadline-chip">
+              <mat-icon matChipIcon>schedule</mat-icon>
+              Deadline Soon
             </mat-chip>
           </mat-chip-set>
+          
+          <div class="job-meta">
+            <span class="posted-date">Posted {{getFormattedPostedDate(job)}}</span>
+            <span class="department">{{job.department}}</span>
+          </div>
         </div>
-        <p class="description">Join our team to build scalable AI-powered applications...</p>
+        
+        <!-- Short Description -->
+        <p class="description">{{job.shortDescription}}</p>
+        
+        <!-- Know More Button -->
+        <button mat-button class="know-more-btn" (click)="toggleJobExpansion(job.id)">
+          <mat-icon>{{isJobExpanded(job.id) ? 'expand_less' : 'expand_more'}}</mat-icon>
+          {{isJobExpanded(job.id) ? 'Show Less' : 'Know More...'}}
+        </button>
+        
+        <!-- Expanded Content -->
+        <div class="expanded-content" *ngIf="isJobExpanded(job.id)">
+          <!-- Full Job Description -->
+          <div class="job-section">
+            <h4><mat-icon>description</mat-icon> Full Job Description</h4>
+            <p>{{job.fullDescription}}</p>
+          </div>
+          
+          <!-- Requirements -->
+          <div class="job-section">
+            <h4><mat-icon>checklist</mat-icon> Requirements</h4>
+            
+            <!-- Required Requirements -->
+            <div class="requirements-category" *ngIf="getRequirementsByType(job, 'required').length > 0">
+              <h5>Required:</h5>
+              <ul class="requirements-list required">
+                <li *ngFor="let requirement of getRequirementsByType(job, 'required')">{{requirement}}</li>
+              </ul>
+            </div>
+            
+            <!-- Preferred Requirements -->
+            <div class="requirements-category" *ngIf="getRequirementsByType(job, 'preferred').length > 0">
+              <h5>Preferred:</h5>
+              <ul class="requirements-list preferred">
+                <li *ngFor="let requirement of getRequirementsByType(job, 'preferred')">{{requirement}}</li>
+              </ul>
+            </div>
+            
+            <!-- Nice-to-have Requirements -->
+            <div class="requirements-category" *ngIf="getRequirementsByType(job, 'nice-to-have').length > 0">
+              <h5>Nice to have:</h5>
+              <ul class="requirements-list nice-to-have">
+                <li *ngFor="let requirement of getRequirementsByType(job, 'nice-to-have')">{{requirement}}</li>
+              </ul>
+            </div>
+          </div>
+          
+          <!-- Skills -->
+          <div class="job-section" *ngIf="job.skills.length > 0">
+            <h4><mat-icon>code</mat-icon> Key Skills</h4>
+            <div class="skills-container">
+              <mat-chip-set>
+                <mat-chip *ngFor="let skill of job.skills" class="skill-chip">{{skill}}</mat-chip>
+              </mat-chip-set>
+            </div>
+          </div>
+          
+          <!-- Benefits -->
+          <div class="job-section" *ngIf="job.benefits && job.benefits.length > 0">
+            <h4><mat-icon>star</mat-icon> Benefits</h4>
+            <div class="benefits-list">
+              <div *ngFor="let benefit of job.benefits" class="benefit-item">
+                <h6>{{benefit.title}}</h6>
+                <p>{{benefit.description}}</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Company Info -->
+          <div class="job-section">
+            <h4><mat-icon>business</mat-icon> About {{job.company.name}}</h4>
+            <div class="company-info">
+              <p *ngIf="job.company.description">{{job.company.description}}</p>
+              <div class="company-details">
+                <span class="company-detail">
+                  <strong>Industry:</strong> {{job.company.industry}}
+                </span>
+                <span class="company-detail">
+                  <strong>Company Size:</strong> {{job.company.size}} employees
+                </span>
+                <span class="company-detail" *ngIf="job.company.website">
+                  <strong>Website:</strong> 
+                  <a [href]="job.company.website" target="_blank">{{job.company.website}}</a>
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- HR Contact Details -->
+          <div class="job-section hr-contact">
+            <h4><mat-icon>contact_phone</mat-icon> HR Contact</h4>
+            <div class="contact-info">
+              <p><strong>{{job.hrContact.name}}</strong></p>
+              <p *ngIf="job.hrContact.title" class="contact-title">{{job.hrContact.title}}</p>
+              <p *ngIf="job.hrContact.department" class="contact-department">{{job.hrContact.department}}</p>
+              
+              <div class="contact-methods">
+                <p class="contact-detail">
+                  <mat-icon>email</mat-icon>
+                  <a href="mailto:{{job.hrContact.email}}">{{job.hrContact.email}}</a>
+                </p>
+                <p class="contact-detail">
+                  <mat-icon>phone</mat-icon>
+                  <a href="tel:{{job.hrContact.phone}}">{{job.hrContact.phone}}</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </mat-card-content>
       <mat-card-actions>
-        <button mat-raised-button color="primary">Apply Now</button>
-        <button mat-button>Save</button>
-      </mat-card-actions>
-    </mat-card>
-    
-    <mat-card class="job-card">
-      <mat-card-header>
-        <mat-card-title>Product Manager</mat-card-title>
-        <mat-card-subtitle class="company">InnovateAI</mat-card-subtitle>
-        <div class="header-badges">
-          <div class="action-badges">
-            <mat-chip class="action-chip" (click)="takeMatchAnalysis('product-manager')" matTooltip="Analyze profile match">
-              Match Analysis
-            </mat-chip>
-            <mat-chip class="action-chip" (click)="modifyCV('product-manager')" matTooltip="Tailor resume for this role">
-              Tailor Resume
-            </mat-chip>
-            <mat-chip class="action-chip" (click)="takeMockInterview('product-manager')" matTooltip="Practice interview for this role">
-              Mock Interview
-            </mat-chip>
-          </div>
-          <div class="match-badge">
-            <mat-chip class="match-chip">78% Match</mat-chip>
-          </div>
-        </div>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="job-details">
-          <mat-chip-set>
-            <mat-chip>
-              <mat-icon matChipIcon>location_on</mat-icon>
-              New York, NY
-            </mat-chip>
-            <mat-chip>
-              <mat-icon matChipIcon>attach_money</mat-icon>
-              $100k - $150k
-            </mat-chip>
-          </mat-chip-set>
-        </div>
-        <p class="description">Lead product strategy for our AI recruitment platform...</p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-raised-button color="primary">Apply Now</button>
-        <button mat-button>Save</button>
-      </mat-card-actions>
-    </mat-card>
-    
-    <mat-card class="job-card">
-      <mat-card-header>
-        <mat-card-title>Data Scientist</mat-card-title>
-        <mat-card-subtitle class="company">DataFlow Solutions</mat-card-subtitle>
-        <div class="header-badges">
-          <div class="action-badges">
-            <mat-chip class="action-chip" (click)="takeMatchAnalysis('data-scientist')" matTooltip="Analyze profile match">
-              Match Analysis
-            </mat-chip>
-            <mat-chip class="action-chip" (click)="modifyCV('data-scientist')" matTooltip="Tailor resume for this role">
-              Tailor Resume
-            </mat-chip>
-            <mat-chip class="action-chip" (click)="takeMockInterview('data-scientist')" matTooltip="Practice interview for this role">
-              Mock Interview
-            </mat-chip>
-          </div>
-          <div class="match-badge">
-            <mat-chip class="match-chip">85% Match</mat-chip>
-          </div>
-        </div>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="job-details">
-          <mat-chip-set>
-            <mat-chip>
-              <mat-icon matChipIcon>location_on</mat-icon>
-              Remote
-            </mat-chip>
-            <mat-chip>
-              <mat-icon matChipIcon>attach_money</mat-icon>
-              $130k - $170k
-            </mat-chip>
-          </mat-chip-set>
-        </div>
-        <p class="description">Develop machine learning models for talent matching...</p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-raised-button color="primary">Apply Now</button>
-        <button mat-button>Save</button>
+        <button mat-raised-button color="primary" (click)="applyForJob(job.id)">Apply Now</button>
+        <button mat-button (click)="saveJob(job.id)">
+          <mat-icon>bookmark_border</mat-icon>
+          Save
+        </button>
+        <span class="deadline-info" *ngIf="job.applicationDeadline">
+          <mat-icon>schedule</mat-icon>
+          Apply by {{job.applicationDeadline | date:'MMM d, y'}}
+        </span>
       </mat-card-actions>
     </mat-card>
   </div>
