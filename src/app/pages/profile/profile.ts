@@ -56,6 +56,12 @@ export class ProfilePage {
       salaryRange: [''],
       skills: ['', [Validators.required, Validators.minLength(3)]],
       summary: ['', [Validators.maxLength(500)]],
+      certifications: [''],
+      areaOfExpertise: [''],
+      githubLink: ['', [Validators.pattern(/^https?:\/\/(www\.)?github\.com\/[a-zA-Z0-9_-]+\/?$/)]],
+      portfolioLink: ['', [Validators.pattern(/^https?:\/\/.+/)]],
+      youtubeChannel: ['', [Validators.pattern(/^https?:\/\/(www\.)?youtube\.com\/@[a-zA-Z0-9_-]+\/?$/)]],
+      contributions: ['', [Validators.maxLength(1000)]],
       workType: [[]],
       employmentType: [[]]
     });
@@ -89,6 +95,16 @@ export class ProfilePage {
   getSkillsArray(): string[] {
     const skills = this.profileForm.get('skills')?.value;
     return skills ? skills.split(',').map((skill: string) => skill.trim()).filter((skill: string) => skill) : [];
+  }
+
+  getCertificationsArray(): string[] {
+    const certifications = this.profileForm.get('certifications')?.value;
+    return certifications ? certifications.split(',').map((cert: string) => cert.trim()).filter((cert: string) => cert) : [];
+  }
+
+  getExpertiseArray(): string[] {
+    const expertise = this.profileForm.get('areaOfExpertise')?.value;
+    return expertise ? expertise.split(',').map((area: string) => area.trim()).filter((area: string) => area) : [];
   }
 
   getWorkTypeDisplay(): string {

@@ -1,40 +1,17 @@
 <div class="page-container">
 
   <div class="profile-layout">
-    <!-- Left Side - Vertical Timeline -->
-    <div class="timeline-sidebar">
-      <div class="vertical-timeline">
-        <div class="vertical-timeline-line"></div>
-        <div class="vertical-timeline-progress" [style.height.%]="getCompletionPercentage()"></div>
-        <div class="vertical-timeline-steps">
-          <div class="vertical-timeline-step" 
-               *ngFor="let step of getCompletionSteps(); let i = index"
-               [class.completed]="step.completed"
-               [class.active]="expandedPanels[step.id]"
-               (click)="togglePanel(step.id)">
-            <div class="vertical-step-icon">
-              <mat-icon>{{step.completed ? 'check_circle' : step.icon}}</mat-icon>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Center - Profile Form s-->
+    <!-- Profile Form -->
     <div class="profile-form-section">
       <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
         <!-- Basic Information Card -->
-        <mat-card class="form-card expandable-card" [class.expanded]="expandedPanels['basic']">
-          <mat-card-header (click)="togglePanel('basic')" class="clickable-header">
+        <mat-card class="form-card">
+          <mat-card-header>
             <mat-card-title>
-              <mat-icon class="section-icon">person</mat-icon>
               Basic Information
-              <mat-icon class="expand-icon" [class.rotated]="expandedPanels['basic']">
-                {{expandedPanels['basic'] ? 'expand_less' : 'expand_more'}}
-              </mat-icon>
             </mat-card-title>
           </mat-card-header>
-          <mat-card-content *ngIf="expandedPanels['basic']">
+          <mat-card-content>
             <div class="form-group">
               <div *ngFor="let field of formFields['basic'].slice(0, 2)" class="field-container">
                 <mat-form-field appearance="outline">
@@ -66,17 +43,13 @@
         </mat-card>
 
         <!-- Professional Information Card -->
-        <mat-card class="form-card expandable-card" [class.expanded]="expandedPanels['professional']">
-          <mat-card-header (click)="togglePanel('professional')" class="clickable-header">
+        <mat-card class="form-card">
+          <mat-card-header>
             <mat-card-title>
-              <mat-icon class="section-icon">work</mat-icon>
               Professional Information
-              <mat-icon class="expand-icon" [class.rotated]="expandedPanels['professional']">
-                {{expandedPanels['professional'] ? 'expand_less' : 'expand_more'}}
-              </mat-icon>
             </mat-card-title>
           </mat-card-header>
-          <mat-card-content *ngIf="expandedPanels['professional']">
+          <mat-card-content>
             <div class="form-group">
               <div *ngFor="let field of formFields['professional'].slice(0, 2)" class="field-container">
                 <mat-form-field appearance="outline">
@@ -146,7 +119,6 @@
                           rows="4"></textarea>
                 
                 <mat-hint *ngIf="field.hint">{{field.hint}}</mat-hint>
-                <mat-icon matSuffix>{{field.icon}}</mat-icon>
                 <mat-error>{{getFieldErrorMessage(field.name)}}</mat-error>
               </mat-form-field>
             </div>
@@ -154,17 +126,13 @@
         </mat-card>
 
         <!-- Job Preferences Card -->
-        <mat-card class="form-card expandable-card" [class.expanded]="expandedPanels['preferences']">
-          <mat-card-header (click)="togglePanel('preferences')" class="clickable-header">
+        <mat-card class="form-card">
+          <mat-card-header>
             <mat-card-title>
-              <mat-icon class="section-icon">settings</mat-icon>
               Job Preferences
-              <mat-icon class="expand-icon" [class.rotated]="expandedPanels['preferences']">
-                {{expandedPanels['preferences'] ? 'expand_less' : 'expand_more'}}
-              </mat-icon>
             </mat-card-title>
           </mat-card-header>
-          <mat-card-content *ngIf="expandedPanels['preferences']">
+          <mat-card-content>
             <div class="form-group">
               <div *ngFor="let field of formFields['preferences']" class="field-container">
                 <mat-form-field appearance="outline">
@@ -203,16 +171,11 @@
     <!-- Right Side - Profile Summary -->
     <div class="profile-summary-section">
       <mat-card class="summary-card">
-        <mat-card-header>
-          <mat-card-title>Profile Summary</mat-card-title>
-          <mat-card-subtitle>Preview how your profile appears to employers</mat-card-subtitle>
-        </mat-card-header>
         <mat-card-content>
           <div class="profile-preview">
             <div class="preview-header">
               <div class="avatar-section">
                 <mat-icon class="profile-avatar">account_circle</mat-icon>
-                <button mat-stroked-button size="small">Upload Photo</button>
               </div>
               <div class="basic-info">
                 <h3>{{f['fullName'].value || 'Your Name'}}</h3>
@@ -245,6 +208,26 @@
             </div>
 
             <div class="preview-section">
+              <h4><mat-icon>verified</mat-icon> Certifications</h4>
+              <div class="certification-list" *ngIf="f['certifications'].value">
+                <span *ngFor="let cert of getCertificationsArray(); let last = last" class="certification-item">
+                  {{cert}}<span *ngIf="!last">, </span>
+                </span>
+              </div>
+              <p *ngIf="!f['certifications'].value" class="placeholder">Add your certifications</p>
+            </div>
+
+            <div class="preview-section">
+              <h4><mat-icon>psychology</mat-icon> Area of Expertise</h4>
+              <div class="expertise-list" *ngIf="f['areaOfExpertise'].value">
+                <span *ngFor="let area of getExpertiseArray(); let last = last" class="expertise-item">
+                  {{area}}<span *ngIf="!last">, </span>
+                </span>
+              </div>
+              <p *ngIf="!f['areaOfExpertise'].value" class="placeholder">Add your areas of expertise</p>
+            </div>
+
+            <div class="preview-section">
               <h4><mat-icon>attach_money</mat-icon> Salary Expectation</h4>
               <p>{{f['salaryRange'].value || 'Not specified'}}</p>
             </div>
@@ -257,9 +240,48 @@
               </div>
             </div>
 
-            <div class="preview-section" *ngIf="f['summary'].value">
+            <div class="preview-section">
+              <h4><mat-icon>link</mat-icon> Links & Portfolio</h4>
+              <div class="links-section">
+                <p *ngIf="f['githubLink'].value">
+                  <mat-icon>code</mat-icon>
+                  <a [href]="f['githubLink'].value" target="_blank">GitHub Profile</a>
+                </p>
+                <p *ngIf="!f['githubLink'].value" class="placeholder-link">
+                  <mat-icon>code</mat-icon>
+                  <span class="placeholder">Add GitHub profile</span>
+                </p>
+                
+                <p *ngIf="f['portfolioLink'].value">
+                  <mat-icon>web</mat-icon>
+                  <a [href]="f['portfolioLink'].value" target="_blank">Portfolio/Apps</a>
+                </p>
+                <p *ngIf="!f['portfolioLink'].value" class="placeholder-link">
+                  <mat-icon>web</mat-icon>
+                  <span class="placeholder">Add portfolio/app link</span>
+                </p>
+                
+                <p *ngIf="f['youtubeChannel'].value">
+                  <mat-icon>video_library</mat-icon>
+                  <a [href]="f['youtubeChannel'].value" target="_blank">YouTube Channel</a>
+                </p>
+                <p *ngIf="!f['youtubeChannel'].value" class="placeholder-link">
+                  <mat-icon>video_library</mat-icon>
+                  <span class="placeholder">Add YouTube channel</span>
+                </p>
+              </div>
+            </div>
+
+            <div class="preview-section">
+              <h4><mat-icon>star</mat-icon> Key Contributions</h4>
+              <p *ngIf="f['contributions'].value">{{f['contributions'].value}}</p>
+              <p *ngIf="!f['contributions'].value" class="placeholder">Describe your key contributions and achievements</p>
+            </div>
+
+            <div class="preview-section">
               <h4><mat-icon>description</mat-icon> Summary</h4>
-              <p>{{f['summary'].value}}</p>
+              <p *ngIf="f['summary'].value">{{f['summary'].value}}</p>
+              <p *ngIf="!f['summary'].value" class="placeholder">Add your professional summary</p>
             </div>
           </div>
         </mat-card-content>
