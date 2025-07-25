@@ -17,14 +17,28 @@
   transition: all 0.3s ease !important;
   border-radius: 0 !important;
   margin: 0 !important;
+  position: relative !important;
+  border-left: 4px solid transparent !important;
 }
 
 .nav-item:hover {
   background-color: #f5f5f5 !important;
+  color: #1976d2 !important;
+  border-left: 4px solid #1976d2 !important;
 }
 
 .nav-item.active {
   background-color: #e3f2fd !important;
+  color: #1976d2 !important;
+  border-left: 4px solid #1976d2 !important;
+  font-weight: 600 !important;
+}
+
+.nav-item.active .nav-icon {
+  color: #1976d2 !important;
+}
+
+.nav-item:hover .nav-icon {
   color: #1976d2 !important;
 }
 
@@ -36,6 +50,8 @@
   width: 24px !important;
   height: 24px !important;
   margin-right: 16px !important;
+  transition: color 0.3s ease !important;
+  color: #666 !important;
 }
 
 mat-nav-list {
@@ -55,13 +71,13 @@ mat-list-item {
 .nav-menu li:hover {
   background-color: #f8f9fa;
   transform: translateX(2px);
-  border-left: 4px solid #007bff;
+  border-left: 4px solid #1976d2;
 }
 
 .nav-menu li.active {
   background-color: #e3f2fd;
-  border-left: 4px solid #007bff;
-  color: #007bff;
+  border-left: 4px solid #1976d2;
+  color: #1976d2;
 }
 
 .nav-menu li.active:hover {
@@ -83,6 +99,14 @@ mat-list-item {
 
 .nav-menu li.active .nav-label {
   font-weight: 600;
+}
+
+.nav-menu li.active .nav-icon {
+  color: #1976d2;
+}
+
+.nav-menu li:hover .nav-icon {
+  color: #1976d2;
 }
 
 /* Responsive design */
