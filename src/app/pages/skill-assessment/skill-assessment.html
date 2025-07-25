@@ -6,12 +6,16 @@
         <h3>🤖 AI Mock Interview Status</h3>
         <div class="usage-details">
           <span class="usage-count">{{ getUsageStatus() }}</span>
-          <span class="next-available" *ngIf="!canTakeMockInterview()">
-            Next available: {{ getNextInterviewAvailableTime() }}
-          </span>
-          <span class="available-now" *ngIf="canTakeMockInterview()">
-            ✅ Available now!
-          </span>
+          @if (!canTakeMockInterview()) {
+            <span class="next-available">
+              Next available: {{ getNextInterviewAvailableTime() }}
+            </span>
+          }
+          @if (canTakeMockInterview()) {
+            <span class="available-now">
+              ✅ Available now!
+            </span>
+          }
         </div>
       </div>
       <div class="usage-limits">
@@ -23,46 +27,50 @@
       <div class="category-card">
         <h3>💻 Technical Skills</h3>
         <div class="skills-list">
-          <div class="skill-item" *ngFor="let skill of getTechnicalSkills()">
-            <span class="skill-name">{{ skill.name }}</span>
-            <div class="skill-level">
-              <div class="progress-bar">
-                <div class="progress" [style.width.%]="skill.currentLevel" [style.background]="getProgressColor(skill.currentLevel)"></div>
+          @for (skill of getTechnicalSkills(); track skill.id) {
+            <div class="skill-item">
+              <span class="skill-name">{{ skill.name }}</span>
+              <div class="skill-level">
+                <div class="progress-bar">
+                  <div class="progress" [style.width.%]="skill.currentLevel" [style.background]="getProgressColor(skill.currentLevel)"></div>
+                </div>
+                <span class="level-text">{{ skill.levelText }}</span>
               </div>
-              <span class="level-text">{{ skill.levelText }}</span>
+              <button class="test-btn" (click)="takeTest(skill)">Take Test</button>
+              <button class="learn-btn" (click)="startLearning(skill)">Learn</button>
+              <button class="interview-btn" 
+                      (click)="startMockInterview(skill)"
+                      [disabled]="!canTakeMockInterview()"
+                      [title]="canTakeMockInterview() ? 'Take Free AI Mock Interview' : 'Mock interview not available: ' + getNextInterviewAvailableTime()">
+                🤖 AI Interview
+              </button>
             </div>
-            <button class="test-btn" (click)="takeTest(skill)">Take Test</button>
-            <button class="learn-btn" (click)="startLearning(skill)">Learn</button>
-            <button class="interview-btn" 
-                    (click)="startMockInterview(skill)"
-                    [disabled]="!canTakeMockInterview()"
-                    [title]="canTakeMockInterview() ? 'Take Free AI Mock Interview' : 'Mock interview not available: ' + getNextInterviewAvailableTime()">
-              🤖 AI Interview
-            </button>
-          </div>
+          }
         </div>
       </div>
       
       <div class="category-card">
         <h3>🎯 Soft Skills</h3>
         <div class="skills-list">
-          <div class="skill-item" *ngFor="let skill of getSoftSkills()">
-            <span class="skill-name">{{ skill.name }}</span>
-            <div class="skill-level">
-              <div class="progress-bar">
-                <div class="progress" [style.width.%]="skill.currentLevel" [style.background]="getProgressColor(skill.currentLevel)"></div>
+          @for (skill of getSoftSkills(); track skill.id) {
+            <div class="skill-item">
+              <span class="skill-name">{{ skill.name }}</span>
+              <div class="skill-level">
+                <div class="progress-bar">
+                  <div class="progress" [style.width.%]="skill.currentLevel" [style.background]="getProgressColor(skill.currentLevel)"></div>
+                </div>
+                <span class="level-text">{{ skill.levelText }}</span>
               </div>
-              <span class="level-text">{{ skill.levelText }}</span>
+              <button class="test-btn" (click)="takeTest(skill)">Take Test</button>
+              <button class="learn-btn" (click)="startLearning(skill)">Learn</button>
+              <button class="interview-btn" 
+                      (click)="startMockInterview(skill)"
+                      [disabled]="!canTakeMockInterview()"
+                      [title]="canTakeMockInterview() ? 'Take Free AI Mock Interview' : 'Mock interview not available: ' + getNextInterviewAvailableTime()">
+                🤖 AI Interview
+              </button>
             </div>
-            <button class="test-btn" (click)="takeTest(skill)">Take Test</button>
-            <button class="learn-btn" (click)="startLearning(skill)">Learn</button>
-            <button class="interview-btn" 
-                    (click)="startMockInterview(skill)"
-                    [disabled]="!canTakeMockInterview()"
-                    [title]="canTakeMockInterview() ? 'Take Free AI Mock Interview' : 'Mock interview not available: ' + getNextInterviewAvailableTime()">
-              🤖 AI Interview
-            </button>
-          </div>
+          }
         </div>
       </div>
     </div>
@@ -70,19 +78,21 @@
     <div class="assessment-history">
       <h2>Recent Assessments</h2>
       <div class="history-list">
-        <div class="history-item" *ngFor="let item of assessmentHistory">
-          <div class="assessment-info">
-            <h4>{{ item.skillName }}</h4>
-            <p>Completed: {{ formatDate(item.completedDate) }}</p>
+        @for (item of assessmentHistory; track item.id) {
+          <div class="history-item">
+            <div class="assessment-info">
+              <h4>{{ item.skillName }}</h4>
+              <p>Completed: {{ formatDate(item.completedDate) }}</p>
+            </div>
+            <div class="assessment-result">
+              <span class="score">{{ item.score }}%</span>
+              <span [class]="getBadgeClass(item.level)">{{ item.level }}</span>
+              <button class="certificate-btn" (click)="getCertificate(item)" [disabled]="!item.hasCertificate">
+                {{ item.hasCertificate ? 'Get Certificate' : 'No Certificate' }}
+              </button>
+            </div>
           </div>
-          <div class="assessment-result">
-            <span class="score">{{ item.score }}%</span>
-            <span [class]="getBadgeClass(item.level)">{{ item.level }}</span>
-            <button class="certificate-btn" (click)="getCertificate(item)" [disabled]="!item.hasCertificate">
-              {{ item.hasCertificate ? 'Get Certificate' : 'No Certificate' }}
-            </button>
-          </div>
-        </div>
+        }
       </div>
     </div>
     
@@ -90,13 +100,15 @@
       <h2>🤖 AI Recommended Skills</h2>
       <p>Based on your profile and target roles, we recommend improving these skills:</p>
       <div class="recommendation-list">
-        <div class="recommendation-item" *ngFor="let skill of getRecommendedSkills()">
-          <div class="recommendation-info">
-            <span class="skill-name">{{ skill.name }}</span>
-            <span class="relevance">{{ skill.relevanceReason }}</span>
+        @for (skill of getRecommendedSkills(); track skill.id) {
+          <div class="recommendation-item">
+            <div class="recommendation-info">
+              <span class="skill-name">{{ skill.name }}</span>
+              <span class="relevance">{{ skill.relevanceReason }}</span>
+            </div>
+            <button class="learn-btn" (click)="startLearning(skill)">Start Learning</button>
           </div>
-          <button class="learn-btn" (click)="startLearning(skill)">Start Learning</button>
-        </div>
+        }
       </div>
     </div>
 

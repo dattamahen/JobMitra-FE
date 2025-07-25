@@ -44,10 +44,6 @@ export class SideNav implements OnInit {
     this.activeItem = 'dashboard';
   }
 
-  trackByItemId(index: number, item: NavItem): string {
-    return item.id;
-  }
-
   selectItem(itemId: string) {
     this.activeItem = itemId;
     this.pageSelected.emit(itemId);
