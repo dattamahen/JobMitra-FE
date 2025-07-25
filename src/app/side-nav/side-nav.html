@@ -5,7 +5,7 @@
       [class.active]="activeItem === item.id"
       (click)="selectItem(item.id)"
       class="nav-item">
-      <span matListItemIcon class="nav-icon">{{ item.icon }}</span>
+      <mat-icon matListItemIcon class="nav-icon">{{ item.matIcon }}</mat-icon>
       <span matListItemTitle>{{ item.label }}</span>
     </mat-list-item>
   </mat-nav-list>
