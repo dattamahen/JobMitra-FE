@@ -76,10 +76,30 @@ export class DashboardService {
   getDashboardData(): Observable<DashboardData> {
     // Get real dashboard data from API
     return this.apiService.get<DashboardData>('/dashboard').pipe(
+      map(data => {
+        console.log('Dashboard API response:', data);
+        // Ensure the data structure is complete and convert timestamps
+        const result = {
+          stats: data.stats || [],
+          recentActivities: (data.recentActivities || []).map(activity => ({
+            ...activity,
+            timestamp: typeof activity.timestamp === 'string' ? new Date(activity.timestamp) : activity.timestamp
+          })),
+          lastUpdated: data.lastUpdated ? new Date(data.lastUpdated) : new Date()
+        };
+        console.log('Processed dashboard data:', result);
+        return result;
+      }),
       catchError(error => {
         console.error('Error loading dashboard data:', error);
         // Fallback to cached data or initial data
-        return of(this.dashboardData$.value);
+        const fallbackData = this.dashboardData$.value;
+        console.log('Using fallback data:', fallbackData);
+        return of({
+          stats: fallbackData.stats || [],
+          recentActivities: fallbackData.recentActivities || [],
+          lastUpdated: fallbackData.lastUpdated || new Date()
+        });
       })
     );
   }
@@ -416,12 +436,23 @@ export class DashboardService {
     );
   }
 
-  formatTimeAgo(date: Date): string {
+  formatTimeAgo(date: Date | string): string {
     const now = new Date();
-    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
     
-    if (diffInMinutes < 60) {
-      return `${diffInMinutes} minutes ago`;
+    // Convert string to Date if needed
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    
+    // Validate that we have a valid date
+    if (isNaN(dateObj.getTime())) {
+      return 'Invalid date';
+    }
+    
+    const diffInMinutes = Math.floor((now.getTime() - dateObj.getTime()) / (1000 * 60));
+    
+    if (diffInMinutes < 1) {
+      return 'Just now';
+    } else if (diffInMinutes < 60) {
+      return `${diffInMinutes} minute${diffInMinutes !== 1 ? 's' : ''} ago`;
     } else if (diffInMinutes < 1440) { // 24 hours
       const hours = Math.floor(diffInMinutes / 60);
       return `${hours} hour${hours !== 1 ? 's' : ''} ago`;

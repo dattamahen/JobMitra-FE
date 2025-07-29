@@ -84,9 +84,9 @@ export class ProfilePage implements OnInit, OnDestroy {
       summary: ['', [Validators.maxLength(500)]],
       certifications: [''],
       areaOfExpertise: [''],
-      githubLink: ['', [Validators.pattern(/^https?:\/\/(www\.)?github\.com\/[a-zA-Z0-9_-]+\/?$/)]],
-      portfolioLink: ['', [Validators.pattern(/^https?:\/\/.+/)]],
-      youtubeChannel: ['', [Validators.pattern(/^https?:\/\/(www\.)?youtube\.com\/@[a-zA-Z0-9_-]+\/?$/)]],
+      githubLink: ['', [Validators.pattern(/^$|^https?:\/\/(www\.)?github\.com\/[a-zA-Z0-9_-]+\/?$/)]],
+      portfolioLink: ['', [Validators.pattern(/^$|^https?:\/\/.+\..+/)]],
+      youtubeChannel: ['', [Validators.pattern(/^$|^https?:\/\/(www\.)?youtube\.com\/@[a-zA-Z0-9_-]+\/?$/)]],
       contributions: ['', [Validators.maxLength(1000)]],
       workType: [[]],
       employmentType: [[]]
@@ -305,10 +305,25 @@ export class ProfilePage implements OnInit, OnDestroy {
         return `${this.getFieldDisplayName(fieldName)} must not exceed ${control.errors['maxlength'].requiredLength} characters`;
       }
       if (control.errors['pattern']) {
-        return 'Please enter a valid phone number';
+        return this.getPatternErrorMessage(fieldName);
       }
     }
     return '';
+  }
+
+  private getPatternErrorMessage(fieldName: string): string {
+    switch (fieldName) {
+      case 'phone':
+        return 'Please enter a valid phone number (e.g., +1 (555) 123-4567)';
+      case 'githubLink':
+        return 'Please enter a valid GitHub URL (e.g., https://github.com/username)';
+      case 'portfolioLink':
+        return 'Please enter a valid URL (e.g., https://yourportfolio.com)';
+      case 'youtubeChannel':
+        return 'Please enter a valid YouTube channel URL (e.g., https://youtube.com/@username)';
+      default:
+        return 'Please enter a valid format';
+    }
   }
 
   togglePanel(panel: string): void {
@@ -353,8 +368,17 @@ export class ProfilePage implements OnInit, OnDestroy {
       'currentJobTitle': 'Current Job Title',
       'experience': 'Years of Experience',
       'desiredJobTitle': 'Desired Job Title',
+      'salaryRange': 'Expected Salary Range',
       'skills': 'Skills',
-      'summary': 'Professional Summary'
+      'summary': 'Professional Summary',
+      'certifications': 'Certifications',
+      'areaOfExpertise': 'Area of Expertise',
+      'githubLink': 'GitHub Profile',
+      'portfolioLink': 'Portfolio Link',
+      'youtubeChannel': 'YouTube Channel',
+      'contributions': 'Key Contributions',
+      'workType': 'Work Type',
+      'employmentType': 'Employment Type'
     };
     return fieldNames[fieldName] || fieldName;
   }

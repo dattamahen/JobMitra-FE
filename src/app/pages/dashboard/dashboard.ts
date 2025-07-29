@@ -74,7 +74,7 @@ export class DashboardPage implements OnInit, OnDestroy {
   }
 
   // Helper methods for template
-  getActivityTimeAgo(timestamp: Date): string {
+  getActivityTimeAgo(timestamp: Date | string): string {
     return this.dashboardService.formatTimeAgo(timestamp);
   }
 
