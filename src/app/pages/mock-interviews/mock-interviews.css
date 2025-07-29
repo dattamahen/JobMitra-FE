@@ -2,6 +2,12 @@
   padding: 20px; 
 }
 
+/* Header Styles */
+h1, h2 {
+  color: #1976d2;
+  font-weight: 600;
+}
+
 .interview-options {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -18,7 +24,7 @@
 
 .interview-card h3 { 
   margin: 0 0 10px 0; 
-  color: #22252f; 
+  color: #1976d2; 
 }
 
 .difficulty-badges, .topics {

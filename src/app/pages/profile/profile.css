@@ -4,6 +4,17 @@
   margin: 0 auto;
 }
 
+/* Global Header Styles */
+h1, h2 {
+  color: #1976d2;
+  font-weight: 600;
+}
+
+mat-card-title {
+  color: #1976d2 !important;
+  font-weight: 600;
+}
+
 /* Horizontal Timeline Progress */
 .progress-timeline {
   padding: 32px 0;
@@ -484,7 +495,7 @@
   margin: 0 0 4px 0;
   font-size: 24px;
   font-weight: 600;
-  color: #333;
+  color: #1976d2;
 }
 
 .job-title {
@@ -520,7 +531,7 @@
   margin: 0 0 8px 0;
   font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: #1976d2;
 }
 
 .preview-section h4 mat-icon {
@@ -625,7 +636,7 @@
   margin: 0 0 12px 0;
   font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: #1976d2;
 }
 
 .profile-completion mat-progress-bar {
@@ -707,7 +718,7 @@
 }
 
 h3 {
-  color: #333;
+  color: #1976d2;
   font-weight: 500;
   margin: 16px 0 8px 0;
 }

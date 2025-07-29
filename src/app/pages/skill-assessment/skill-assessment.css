@@ -2,6 +2,17 @@
   padding: 20px; 
 }
 
+/* Global Header Styles */
+h1, h2 {
+  color: #1976d2;
+  font-weight: 600;
+}
+
+mat-card-title {
+  color: #1976d2 !important;
+  font-weight: 600;
+}
+
 .skill-categories {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -18,7 +29,7 @@
 
 .category-card h3 { 
   margin: 0 0 15px 0; 
-  color: #22252f; 
+  color: #1976d2; 
 }
 
 .skill-item {
@@ -138,6 +149,7 @@
 .usage-info h3 {
   margin: 0;
   font-size: 1.2rem;
+  color: #1976d2;
 }
 
 .usage-details {
@@ -468,7 +480,7 @@
 }
 
 .no-resources h3 {
-  color: #1a202c;
+  color: #1976d2;
   margin: 0 0 10px 0;
   font-size: 1.5rem;
 }
@@ -528,7 +540,7 @@
 }
 
 .form-header h3 {
-  color: #1a202c;
+  color: #1976d2;
   margin: 0 0 10px 0;
   font-size: 1.4rem;
 }
@@ -642,7 +654,7 @@
 
 .interview-details h3,
 .interview-tips h3 {
-  color: #1a202c;
+  color: #1976d2;
   margin: 0 0 15px 0;
   font-size: 1.1rem;
   display: flex;
@@ -671,7 +683,7 @@
 }
 
 .sample-questions h3 {
-  color: #1a202c;
+  color: #1976d2;
   margin: 0 0 15px 0;
   font-size: 1.1rem;
 }
@@ -757,7 +769,7 @@
 }
 
 .progress-indicator h3 {
-  color: #1a202c;
+  color: #1976d2;
   margin: 0;
   font-size: 1.4rem;
 }
@@ -1258,7 +1270,7 @@
 .plan-header h3 {
   margin: 0 0 10px 0;
   font-size: 1.4rem;
-  color: #333;
+  color: #1976d2;
   font-weight: 600;
 }
 

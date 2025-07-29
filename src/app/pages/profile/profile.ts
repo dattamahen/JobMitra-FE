@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -11,7 +11,10 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatListModule } from '@angular/material/list';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { Subject, takeUntil, finalize } from 'rxjs';
 import { PROFILE_FORM_DATA, PROFILE_FORM_FIELDS, ProfileFormData, FormFieldConfig } from '../../data/profile-data';
+import { UserService, UserProfile, UpdateUserRequest } from '../../services';
 
 @Component({
   selector: 'app-profile',
@@ -28,13 +31,19 @@ import { PROFILE_FORM_DATA, PROFILE_FORM_FIELDS, ProfileFormData, FormFieldConfi
     MatChipsModule,
     MatProgressBarModule,
     MatListModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatSnackBarModule
   ],
   templateUrl: './profile.html',
   styleUrls: ['./profile.css']
 })
-export class ProfilePage {
-  profileForm: FormGroup;
+export class ProfilePage implements OnInit, OnDestroy {
+  profileForm!: FormGroup;
+  currentUser: UserProfile | null = null;
+  isLoading = false;
+  isSaving = false;
+  private destroy$ = new Subject<void>();
+  
   expandedPanels: { [key: string]: boolean } = {
     basic: true,
     professional: false,
@@ -44,7 +53,24 @@ export class ProfilePage {
   formData: ProfileFormData = PROFILE_FORM_DATA;
   formFields = PROFILE_FORM_FIELDS;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private userService: UserService,
+    private snackBar: MatSnackBar
+  ) {
+    this.createForm();
+  }
+
+  ngOnInit(): void {
+    this.loadCurrentUser();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private createForm(): void {
     this.profileForm = this.fb.group({
       fullName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
@@ -67,13 +93,104 @@ export class ProfilePage {
     });
   }
 
+  private loadCurrentUser(): void {
+    this.isLoading = true;
+    this.userService.getCurrentUser()
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.isLoading = false)
+      )
+      .subscribe({
+        next: (user) => {
+          if (user) {
+            this.currentUser = user;
+            this.populateForm(user);
+          }
+        },
+        error: (error) => {
+          console.error('Error loading user profile:', error);
+          this.snackBar.open('Error loading profile data', 'Close', { duration: 3000 });
+        }
+      });
+  }
+
+  private populateForm(user: UserProfile): void {
+    this.profileForm.patchValue({
+      fullName: user.full_name,
+      email: user.email,
+      phone: user.phone,
+      location: user.location?.city || '',
+      currentJobTitle: user.current_job_title,
+      experience: user.experience_years,
+      desiredJobTitle: user.desired_job_title,
+      salaryRange: user.expected_salary ? `${user.expected_salary.min}-${user.expected_salary.max} ${user.expected_salary.currency}` : '',
+      skills: user.skills.join(', '),
+      summary: user.professional_summary,
+      certifications: user.certifications.join(', '),
+      areaOfExpertise: user.area_of_expertise.join(', '),
+      githubLink: user.social_links?.github || '',
+      portfolioLink: user.social_links?.portfolio || '',
+      youtubeChannel: user.social_links?.youtube || '',
+      contributions: user.key_contributions,
+      workType: user.preferred_work_types,
+      employmentType: user.preferred_employment_types
+    });
+  }
+
   // Getter for easy access to form controls
   get f() { return this.profileForm.controls; }
 
   saveProfile(): void {
-    if (this.profileForm.valid) {
-      console.log('Profile saved:', this.profileForm.value);
-      // Here you would typically send the data to a service
+    if (this.profileForm.valid && !this.isSaving) {
+      this.isSaving = true;
+      const formValue = this.profileForm.value;
+      
+      // Convert form data to API format
+      const updateData: UpdateUserRequest = {
+        full_name: formValue.fullName,
+        phone: formValue.phone,
+        current_job_title: formValue.currentJobTitle,
+        desired_job_title: formValue.desiredJobTitle,
+        experience_years: formValue.experience,
+        skills: formValue.skills.split(',').map((s: string) => s.trim()).filter((s: string) => s),
+        professional_summary: formValue.summary,
+        certifications: formValue.certifications ? formValue.certifications.split(',').map((s: string) => s.trim()).filter((s: string) => s) : [],
+        area_of_expertise: formValue.areaOfExpertise ? formValue.areaOfExpertise.split(',').map((s: string) => s.trim()).filter((s: string) => s) : [],
+        key_contributions: formValue.contributions,
+        preferred_work_types: formValue.workType,
+        preferred_employment_types: formValue.employmentType,
+        social_links: {
+          github: formValue.githubLink || undefined,
+          portfolio: formValue.portfolioLink || undefined,
+          youtube: formValue.youtubeChannel || undefined
+        },
+        location: formValue.location ? {
+          city: formValue.location,
+          country: 'US', // You might want to add a country field
+          type: 'hybrid' as const
+        } : undefined
+      };
+
+      this.userService.updateCurrentUser(updateData)
+        .pipe(
+          takeUntil(this.destroy$),
+          finalize(() => this.isSaving = false)
+        )
+        .subscribe({
+          next: (response) => {
+            this.snackBar.open('Profile updated successfully!', 'Close', { 
+              duration: 3000,
+              panelClass: ['success-snackbar']
+            });
+          },
+          error: (error) => {
+            console.error('Error saving profile:', error);
+            this.snackBar.open('Error saving profile. Please try again.', 'Close', { 
+              duration: 3000,
+              panelClass: ['error-snackbar']
+            });
+          }
+        });
     } else {
       this.markFormGroupTouched();
     }
@@ -81,8 +198,19 @@ export class ProfilePage {
 
   resetForm(): void {
     if (confirm('Are you sure you want to reset all changes?')) {
-      this.profileForm.reset();
+      if (this.currentUser) {
+        this.populateForm(this.currentUser);
+      } else {
+        this.profileForm.reset();
+      }
     }
+  }
+
+  getProfileCompletion(): number {
+    if (this.currentUser) {
+      return this.userService.calculateProfileCompletion(this.currentUser);
+    }
+    return 0;
   }
 
   private markFormGroupTouched(): void {
