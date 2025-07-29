@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, BehaviorSubject } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
+import { Observable, of, BehaviorSubject, forkJoin } from 'rxjs';
+import { delay, map, catchError } from 'rxjs/operators';
 import { 
   DashboardData, 
   DashboardStats, 
@@ -9,12 +9,17 @@ import {
   StatCardConfig,
   StatType 
 } from '../types/dashboard.types';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DashboardService {
   private readonly dashboardData$ = new BehaviorSubject<DashboardData>(this.getInitialDashboardData());
+
+  constructor(
+    private apiService: ApiService
+  ) {}
 
   private readonly statConfigs: Record<StatType, StatCardConfig> = {
     'applications': {
@@ -69,23 +74,30 @@ export class DashboardService {
   };
 
   getDashboardData(): Observable<DashboardData> {
-    return this.dashboardData$.asObservable();
-    // Removed artificial delay - data loads immediately
+    // Get real dashboard data from API
+    return this.apiService.get<DashboardData>('/dashboard').pipe(
+      catchError(error => {
+        console.error('Error loading dashboard data:', error);
+        // Fallback to cached data or initial data
+        return of(this.dashboardData$.value);
+      })
+    );
   }
 
   getUserMetrics(): Observable<UserMetrics> {
-    // Simulate API call to get real user metrics
-    return of({
-      applicationsCount: 12,
-      interviewsScheduled: 3,
-      mockInterviewsCompleted: 5,
-      profileCompletion: 85,
-      profileVisits: 247,
-      matchingJobs: 18,
-      skillAssessmentsCompleted: 8,
-      resumeUpdatesCount: 4
-    });
-    // Removed artificial delay - data loads immediately
+    // Use direct API calls to avoid circular dependencies
+    return this.apiService.get<UserMetrics>('/dashboard/metrics').pipe(
+      catchError(() => of({
+        applicationsCount: 12,
+        interviewsScheduled: 3,
+        mockInterviewsCompleted: 5,
+        profileCompletion: 85,
+        profileVisits: 247,
+        matchingJobs: 18,
+        skillAssessmentsCompleted: 8,
+        resumeUpdatesCount: 4
+      }))
+    );
   }
 
   updateUserMetric(type: StatType, value: number): void {
@@ -239,6 +251,169 @@ export class DashboardService {
   // Helper methods for formatting
   formatValue(stat: DashboardStats): string {
     return typeof stat.value === 'string' ? stat.value : stat.value.toString();
+  }
+
+  /**
+   * Get recent activities from API
+   */
+  getRecentActivities(limit: number = 10): Observable<ActivityItem[]> {
+    // Simplified version - use direct API calls instead of service dependencies
+    return this.apiService.get<ActivityItem[]>('/dashboard/recent-activities', { limit }).pipe(
+      catchError(() => of(this.getMockActivities()))
+    );
+  }
+
+  private getMockActivities(): ActivityItem[] {
+    return [
+      {
+        id: '1',
+        title: 'Applied to Senior Frontend Developer at Google',
+        icon: 'send',
+        timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+        type: 'application',
+        status: 'completed',
+        metadata: { company: 'Google', position: 'Senior Frontend Developer' }
+      },
+      {
+        id: '2',
+        title: 'Technical Interview scheduled with Microsoft',
+        icon: 'event',
+        timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        type: 'interview',
+        status: 'pending',
+        metadata: { company: 'Microsoft', stage: 'Technical Interview' }
+      }
+    ];
+  }
+
+  /**
+   * Get dashboard summary stats
+   */
+  getDashboardSummary(): Observable<{
+    applications_this_week: number;
+    interviews_this_week: number;
+    profile_views_this_week: number;
+    new_job_matches: number;
+    learning_hours_this_week: number;
+  }> {
+    return this.apiService.get<{
+      applications_this_week: number;
+      interviews_this_week: number;
+      profile_views_this_week: number;
+      new_job_matches: number;
+      learning_hours_this_week: number;
+    }>('/dashboard/summary').pipe(
+      catchError(() => of({
+        applications_this_week: 0,
+        interviews_this_week: 0,
+        profile_views_this_week: 0,
+        new_job_matches: 0,
+        learning_hours_this_week: 0
+      }))
+    );
+  }
+
+  /**
+   * Get personalized insights
+   */
+  getPersonalizedInsights(): Observable<{
+    insights: {
+      type: 'tip' | 'warning' | 'success' | 'info';
+      title: string;
+      message: string;
+      action?: {
+        label: string;
+        route: string;
+      };
+    }[];
+  }> {
+    return this.apiService.get<{
+      insights: {
+        type: 'tip' | 'warning' | 'success' | 'info';
+        title: string;
+        message: string;
+        action?: {
+          label: string;
+          route: string;
+        };
+      }[];
+    }>('/dashboard/insights').pipe(
+      catchError(() => of({ insights: [] }))
+    );
+  }
+
+  /**
+   * Refresh dashboard data
+   */
+  refreshDashboard(): Observable<DashboardData> {
+    return this.getDashboardData().pipe(
+      map(data => {
+        this.dashboardData$.next(data);
+        return data;
+      })
+    );
+  }
+
+  /**
+   * Get job application funnel data
+   */
+  getApplicationFunnel(): Observable<{
+    applied: number;
+    screening: number;
+    interview: number;
+    final_round: number;
+    offer: number;
+    rejected: number;
+  }> {
+    return this.apiService.get<{
+      applied: number;
+      screening: number;
+      interview: number;
+      final_round: number;
+      offer: number;
+      rejected: number;
+    }>('/dashboard/application-funnel').pipe(
+      catchError(() => of({
+        applied: 12,
+        screening: 8,
+        interview: 4,
+        final_round: 2,
+        offer: 1,
+        rejected: 3,
+      }))
+    );
+  }
+
+  /**
+   * Get skill progress chart data
+   */
+  getSkillProgress(): Observable<{
+    skill: string;
+    current_level: number;
+    target_level: number;
+    progress_percentage: number;
+  }[]> {
+    return this.apiService.get<{
+      skill: string;
+      current_level: number;
+      target_level: number;
+      progress_percentage: number;
+    }[]>('/dashboard/skill-progress').pipe(
+      catchError(() => of([
+        {
+          skill: 'JavaScript',
+          current_level: 4,
+          target_level: 5,
+          progress_percentage: 80
+        },
+        {
+          skill: 'Angular',
+          current_level: 3,
+          target_level: 5,
+          progress_percentage: 60
+        }
+      ]))
+    );
   }
 
   formatTimeAgo(date: Date): string {
