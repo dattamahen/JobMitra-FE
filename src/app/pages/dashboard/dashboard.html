@@ -64,14 +64,14 @@
               Recent Activity
             </mat-card-title>
             <div class="activity-badge">
-              <mat-icon matBadge="{{ dashboardData.recentActivities.length }}" matBadgeColor="accent">
+              <mat-icon [matBadge]="(dashboardData.recentActivities.length || 0)" matBadgeColor="accent">
                 notifications
               </mat-icon>
             </div>
           </mat-card-header>
           
           <mat-card-content>
-            @if (dashboardData.recentActivities.length > 0) {
+            @if (dashboardData.recentActivities && dashboardData.recentActivities.length > 0) {
               <mat-list class="activity-list">
                 @for (activity of dashboardData.recentActivities; track activity.id) {
                   <mat-list-item class="activity-item" 
