@@ -62,7 +62,39 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.loadCurrentUser();
+    // Force refresh user data from API for testing
+    console.log('Profile component: ngOnInit - forcing user data refresh');
+    this.forceRefreshUserData();
+  }
+
+  private forceRefreshUserData(): void {
+    console.log('Profile component: Forcing refresh of user data from API');
+    // Clear localStorage to force API call
+    localStorage.removeItem('currentUser');
+    
+    // Force refresh from API
+    this.isLoading = true;
+    this.userService.refreshCurrentUser()
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => {
+          console.log('Profile component: Finished force refresh');
+          this.isLoading = false;
+        })
+      )
+      .subscribe({
+        next: (user) => {
+          console.log('Profile component: Force refresh received user data:', user);
+          if (user) {
+            this.currentUser = user;
+            this.populateForm(user);
+          }
+        },
+        error: (error) => {
+          console.error('Profile component: Error in force refresh:', error);
+          this.snackBar.open('Error loading profile data', 'Close', { duration: 3000 });
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -94,21 +126,28 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   private loadCurrentUser(): void {
+    console.log('Profile component: Loading current user...');
     this.isLoading = true;
     this.userService.getCurrentUser()
       .pipe(
         takeUntil(this.destroy$),
-        finalize(() => this.isLoading = false)
+        finalize(() => {
+          console.log('Profile component: Finished loading user');
+          this.isLoading = false;
+        })
       )
       .subscribe({
         next: (user) => {
+          console.log('Profile component: Received user data:', user);
           if (user) {
             this.currentUser = user;
             this.populateForm(user);
+          } else {
+            console.log('Profile component: No user data received');
           }
         },
         error: (error) => {
-          console.error('Error loading user profile:', error);
+          console.error('Profile component: Error loading user profile:', error);
           this.snackBar.open('Error loading profile data', 'Close', { duration: 3000 });
         }
       });
