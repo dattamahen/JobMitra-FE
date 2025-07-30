@@ -289,25 +289,25 @@ const COMMON_BENEFITS: readonly JobBenefit[] = [
   {
     id: 'benefit-1',
     title: 'Health Insurance',
-    description: 'Comprehensive medical, dental, and vision coverage',
+    description: 'Comprehensive medical coverage for employee and family',
     category: 'health'
   },
   {
     id: 'benefit-2',
-    title: '401(k) Matching',
-    description: 'Company matches up to 6% of salary',
+    title: 'PF & ESI',
+    description: 'Provident Fund and Employee State Insurance',
     category: 'financial'
   },
   {
     id: 'benefit-3',
-    title: 'Flexible PTO',
-    description: 'Unlimited paid time off policy',
+    title: 'Paid Leave',
+    description: 'Annual leave, sick leave, and public holidays',
     category: 'time-off'
   },
   {
     id: 'benefit-4',
     title: 'Learning Budget',
-    description: '$2000 annual professional development budget',
+    description: '₹1,50,000 annual professional development budget',
     category: 'professional'
   },
   {

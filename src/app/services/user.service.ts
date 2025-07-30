@@ -107,7 +107,17 @@ export class UserService {
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private apiService: ApiService) {
+    console.log('UserService: Constructor called');
     this.loadCurrentUser();
+  }
+
+  /**
+   * Force refresh current user from API (bypass localStorage)
+   */
+  refreshCurrentUser(): Observable<UserProfile | null> {
+    console.log('UserService: Force refreshing current user from API');
+    this.fetchCurrentUserFromAPI();
+    return this.currentUser$;
   }
 
   /**
@@ -171,24 +181,119 @@ export class UserService {
    * Set current user
    */
   setCurrentUser(user: UserProfile): void {
+    console.log('UserService: Setting current user:', user.full_name);
     this.currentUserSubject.next(user);
     localStorage.setItem('currentUser', JSON.stringify(user));
+    console.log('UserService: User data saved to localStorage');
   }
 
   /**
    * Load current user from localStorage or API
    */
   private loadCurrentUser(): void {
+    console.log('UserService: Loading current user...');
+    
+    // First try to get from localStorage
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
       try {
         const user = JSON.parse(storedUser);
+        console.log('UserService: Found user in localStorage:', user.full_name);
         this.currentUserSubject.next(user);
+        return;
       } catch (error) {
-        console.error('Error parsing stored user:', error);
+        console.error('UserService: Error parsing stored user:', error);
         localStorage.removeItem('currentUser');
       }
     }
+
+    console.log('UserService: No stored user found, fetching from API...');
+    // If no stored user, fetch from API
+    this.fetchCurrentUserFromAPI();
+  }
+
+  /**
+   * Fetch current user from API
+   */
+  private fetchCurrentUserFromAPI(): void {
+    console.log('UserService: Making API call to /profile/current');
+    this.apiService.get<UserProfile>('/profile/current')
+      .pipe(
+        catchError(error => {
+          console.warn('UserService: API unavailable - Using fallback profile data:', error.message);
+          // Return fallback dummy profile
+          return of(this.getDummyProfile());
+        })
+      )
+      .subscribe({
+        next: (user) => {
+          console.log('UserService: Successfully received user data:', user.full_name);
+          this.setCurrentUser(user);
+        },
+        error: (error) => {
+          console.error('UserService: Error loading current user:', error);
+        }
+      });
+  }
+
+  /**
+   * Get dummy profile data for fallback
+   */
+  private getDummyProfile(): UserProfile {
+    return {
+      user_id: "usr_001",
+      email: "priya.sharma@example.com",
+      full_name: "Priya Sharma",
+      phone: "+91 98765 43210",
+      current_job_title: "Senior Software Engineer",
+      desired_job_title: "Technical Lead",
+      experience_years: "4-5",
+      skills: [
+        "JavaScript", "React", "Node.js", "Python", "MongoDB", 
+        "AWS", "Docker", "Git", "TypeScript", "Express.js"
+      ],
+      certifications: [
+        "AWS Certified Developer Associate",
+        "Google Cloud Professional Developer",
+        "Certified Kubernetes Administrator"
+      ],
+      area_of_expertise: [
+        "Full Stack Development",
+        "Cloud Architecture", 
+        "DevOps",
+        "Team Leadership"
+      ],
+      professional_summary: "Experienced software engineer with a passion for building scalable web applications. Skilled in full-stack development with expertise in modern JavaScript frameworks and cloud technologies. Looking to transition into a technical leadership role.",
+      key_contributions: "Led the development of a microservices architecture that improved system performance by 40%. Mentored 3 junior developers and established coding standards for the team. Implemented CI/CD pipelines reducing deployment time by 60%.",
+      preferred_work_types: ["remote", "hybrid"],
+      preferred_employment_types: ["full-time"],
+      social_links: {
+        github: "https://github.com/priyasharma",
+        portfolio: "https://priyasharma.dev",
+        youtube: "https://youtube.com/@priyatech"
+      },
+      location: {
+        city: "Bangalore, Karnataka",
+        country: "India",
+        type: "hybrid"
+      },
+      expected_salary: {
+        min: 18,
+        max: 25,
+        currency: "INR",
+        period: "yearly"
+      },
+      profile_completion_percentage: 92,
+      profile_views: 156,
+      last_active: new Date().toISOString(),
+      is_active: true,
+      is_public: true,
+      email_notifications: true,
+      profile_searchable: true,
+      created_at: "2024-01-15T10:30:00Z",
+      updated_at: new Date().toISOString(),
+      preferred_locations: ["Bangalore", "Mumbai", "Remote"]
+    };
   }
 
   /**

@@ -50,6 +50,25 @@ export interface JobListing {
   applications_count: number;
   source: 'internal' | 'linkedin' | 'indeed' | 'glassdoor' | 'other';
   job_score?: number;
+  match_percentage?: number;
+  hr_contact?: {
+    name: string;
+    email: string;
+    phone: string;
+    title?: string;
+    department?: string;
+  };
+  learning_resources?: {
+    id: string;
+    title: string;
+    description: string;
+    youtube_url: string;
+    duration: string;
+    level: 'beginner' | 'intermediate' | 'advanced';
+    channel: string;
+    skill: string;
+    rating?: number;
+  }[];
 }
 
 export interface JobSearchFilters {
@@ -69,12 +88,20 @@ export interface JobSearchFilters {
 
 export interface JobSearchResponse {
   jobs: JobListing[];
+  filters?: {
+    locations: string[];
+    experience_levels: string[];
+    employment_types: string[];
+    job_types: string[];
+    companies: string[];
+    salary_ranges: { label: string; min: number; max: number }[];
+  };
   total_count: number;
   page: number;
   per_page: number;
-  total_pages: number;
-  has_next: boolean;
-  has_prev: boolean;
+  total_pages?: number;
+  has_next?: boolean;
+  has_prev?: boolean;
 }
 
 export interface SavedJob {
@@ -105,6 +132,8 @@ export class JobService {
     page: number = 1,
     perPage: number = 20
   ): Observable<JobSearchResponse> {
+    console.log('🔍 JobService: Searching jobs with filters:', filters, 'page:', page);
+    
     const params: any = {
       page,
       per_page: perPage,
@@ -131,8 +160,12 @@ export class JobService {
       params.industry = filters.industry.join(',');
     }
 
-    return this.apiService.get<JobSearchResponse>('/jobs/search', params)
+    return this.apiService.get<JobSearchResponse>('/jobs', params)
       .pipe(
+        map(response => {
+          console.log('✅ JobService: Received jobs from API:', response);
+          return response;
+        }),
         catchError(error => {
           console.warn('🔥 API unavailable - Using mock job search data:', error.message);
           return of(this.getMockJobSearchResponse(filters, page, perPage));

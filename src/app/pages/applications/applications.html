@@ -1,114 +1,141 @@
 <div class="page-container">
+  <!-- Loading indicator -->
+  @if (isLoading) {
+  <div class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Loading applications...</p>
+  </div>
+  }
+
+  <!-- Applications list -->
+  @if (!isLoading) {
   <div class="applications-list">
-    <mat-card class="application-card">
-      <mat-card-header>
-        <mat-card-title>Senior Software Engineer</mat-card-title>
-        <mat-card-subtitle>TechCorp Inc.</mat-card-subtitle>
-        <div class="status-chip">
-          <mat-chip-set>
-            <mat-chip class="status-pending">Under Review</mat-chip>
-          </mat-chip-set>
-        </div>
-      </mat-card-header>
-      <mat-card-content>
-        <p class="applied-date">Applied: March 15, 2025</p>
-        <div class="progress-section">
-          <div class="progress-label">Application Progress</div>
-          <mat-progress-bar mode="determinate" value="50"></mat-progress-bar>
-          <div class="progress-steps">
-            <mat-chip-set>
-              <mat-chip class="step-completed">
-                <mat-icon matChipIcon>check</mat-icon>
-                Applied
-              </mat-chip>
-              <mat-chip class="step-active">
-                <mat-icon matChipIcon>hourglass_empty</mat-icon>
-                Screening
-              </mat-chip>
-              <mat-chip disabled>Interview</mat-chip>
-              <mat-chip disabled>Decision</mat-chip>
-            </mat-chip-set>
+    @if (applications.length === 0) {
+    <div class="no-applications">
+      <mat-card>
+        <mat-card-content>
+          <div class="empty-state">
+            <mat-icon>work_off</mat-icon>
+            <h3>No Applications Yet</h3>
+            <p>Start applying for jobs to see your applications here.</p>
           </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-    
+        </mat-card-content>
+      </mat-card>
+    </div>
+    } @else {
+    @for (application of applications; track application.application_id) {
     <mat-card class="application-card">
       <mat-card-header>
-        <mat-card-title>Product Manager</mat-card-title>
-        <mat-card-subtitle>InnovateAI</mat-card-subtitle>
+        <mat-card-title>{{application.job_title}}</mat-card-title>
+        <mat-card-subtitle>{{application.company}}</mat-card-subtitle>
         <div class="status-chip">
           <mat-chip-set>
-            <mat-chip class="status-interview">Interview Scheduled</mat-chip>
+            <mat-chip [class]="getStatusClass(application.status)">
+              {{getStatusLabel(application.status)}}
+            </mat-chip>
           </mat-chip-set>
         </div>
       </mat-card-header>
       <mat-card-content>
-        <p class="applied-date">Applied: March 12, 2025</p>
+        <p class="applied-date">Applied: {{formatDate(application.applied_date)}}</p>
+
+        <!-- Interview date for scheduled interviews -->
+        @if (application.status === 'interview_scheduled' && getNextInterviewStage(application)) {
         <p class="interview-date">
           <mat-icon>event</mat-icon>
-          Interview: March 22, 2025 at 2:00 PM
+          Interview: {{formatDateTime(getNextInterviewStage(application).scheduled_date)}}
         </p>
+        }
+
+        <!-- Offer details -->
+        @if (application.status === 'offer_received' && application.offer_details) {
+        <div class="offer-details">
+          <p class="offer-salary">
+            <mat-icon>attach_money</mat-icon>
+            Offer: {{formatSalary(application.offer_details.salary, application.offer_details.currency)}}
+          </p>
+          @if (application.offer_details.start_date) {
+          <p class="start-date">
+            <mat-icon>schedule</mat-icon>
+            Start Date: {{formatDate(application.offer_details.start_date)}}
+          </p>
+          }
+        </div>
+        }
+
+        <!-- Rejection feedback -->
+        @if (application.status === 'rejected' && application.rejection_feedback) {
+        <div class="rejection-feedback">
+          <p><strong>Feedback:</strong> {{application.rejection_feedback}}</p>
+        </div>
+        }
+
+        <!-- Application progress -->
         <div class="progress-section">
           <div class="progress-label">Application Progress</div>
-          <mat-progress-bar mode="determinate" value="75"></mat-progress-bar>
+          <mat-progress-bar 
+            mode="determinate" 
+            [value]="getProgressPercentage(application)"
+            [color]="application.status === 'rejected' ? 'warn' : application.status === 'offer_received' ? 'accent' : 'primary'">
+          </mat-progress-bar>
           <div class="progress-steps">
             <mat-chip-set>
-              <mat-chip class="step-completed">
-                <mat-icon matChipIcon>check</mat-icon>
-                Applied
+              @for (step of getProgressSteps(application); track step.name) {
+              <mat-chip 
+                [class.step-completed]="step.completed" 
+                [class.step-active]="step.active"
+                [disabled]="!step.completed && !step.active">
+                <mat-icon matChipIcon>{{step.icon}}</mat-icon>
+                {{step.name}}
               </mat-chip>
-              <mat-chip class="step-completed">
-                <mat-icon matChipIcon>check</mat-icon>
-                Screening
-              </mat-chip>
-              <mat-chip class="step-active">
-                <mat-icon matChipIcon>record_voice_over</mat-icon>
-                Interview
-              </mat-chip>
-              <mat-chip disabled>Decision</mat-chip>
+              }
             </mat-chip-set>
           </div>
         </div>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-button color="primary">Prepare for Interview</button>
-      </mat-card-actions>
-    </mat-card>
-    
-    <mat-card class="application-card">
-      <mat-card-header>
-        <mat-card-title>Frontend Developer</mat-card-title>
-        <mat-card-subtitle>WebSolutions</mat-card-subtitle>
-        <div class="status-chip">
+
+        <!-- Notes -->
+        @if (application.notes) {
+        <div class="application-notes">
+          <p><strong>Notes:</strong> {{application.notes}}</p>
+        </div>
+        }
+
+        <!-- Tags -->
+        @if (application.tags && application.tags.length > 0) {
+        <div class="application-tags">
           <mat-chip-set>
-            <mat-chip class="status-rejected">Not Selected</mat-chip>
+            @for (tag of application.tags; track tag) {
+            <mat-chip class="tag-chip">{{tag}}</mat-chip>
+            }
           </mat-chip-set>
         </div>
-      </mat-card-header>
-      <mat-card-content>
-        <p class="applied-date">Applied: March 8, 2025</p>
-        <div class="progress-section">
-          <div class="progress-label">Application Progress</div>
-          <mat-progress-bar mode="determinate" value="100" color="warn"></mat-progress-bar>
-          <div class="progress-steps">
-            <mat-chip-set>
-              <mat-chip class="step-completed">
-                <mat-icon matChipIcon>check</mat-icon>
-                Applied
-              </mat-chip>
-              <mat-chip class="step-completed">
-                <mat-icon matChipIcon>check</mat-icon>
-                Screening
-              </mat-chip>
-              <mat-chip class="step-rejected">
-                <mat-icon matChipIcon>close</mat-icon>
-                Decision
-              </mat-chip>
-            </mat-chip-set>
-          </div>
-        </div>
+        }
       </mat-card-content>
+
+      <!-- Actions -->
+      <mat-card-actions>
+        @if (application.status === 'interview_scheduled') {
+        <button mat-raised-button color="primary" (click)="prepareForInterview(application.application_id)">
+          Prepare for Interview
+        </button>
+        }
+        @if (application.status === 'offer_received') {
+        <button mat-raised-button color="accent">
+          View Offer Details
+        </button>
+        }
+        <button mat-button (click)="viewApplicationDetails(application.application_id)">
+          View Details
+        </button>
+        @if (application.status === 'applied' || application.status === 'under_review') {
+        <button mat-button color="warn" (click)="withdrawApplication(application.application_id)">
+          Withdraw
+        </button>
+        }
+      </mat-card-actions>
     </mat-card>
+    }
+    }
   </div>
+  }
 </div>

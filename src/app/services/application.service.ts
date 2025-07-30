@@ -173,6 +173,10 @@ export class ApplicationService {
 
     return this.apiService.get<ApplicationsResponse>('/applications', params)
       .pipe(
+        map(response => {
+          console.log('✅ ApplicationService: Received applications from API:', response);
+          return response;
+        }),
         catchError(error => {
           console.warn('🔥 API unavailable - Using mock applications data:', error.message);
           return of(this.getMockApplicationsResponse(filters, page, perPage));
