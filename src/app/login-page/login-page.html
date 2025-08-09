@@ -99,17 +99,27 @@
         </mat-divider>
         
         <!-- Traditional Login Form -->
-        <form (ngSubmit)="onLogin()" class="login-form">
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
+          <!-- Error Message Display -->
+          <div *ngIf="errorMessage" class="error-message">
+            <mat-icon>error</mat-icon>
+            {{ errorMessage }}
+          </div>
+
           <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Username</mat-label>
-            <input matInput [(ngModel)]="username" name="username" required placeholder="Enter your username">
-            <mat-icon matSuffix>person</mat-icon>
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" required placeholder="Enter your email">
+            <mat-icon matSuffix>email</mat-icon>
+            <mat-error *ngIf="getFieldError('email')">{{ getFieldError('email') }}</mat-error>
           </mat-form-field>
           
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Password</mat-label>
-            <input matInput type="password" [(ngModel)]="password" name="password" required placeholder="Enter your password">
-            <mat-icon matSuffix>lock</mat-icon>
+            <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="password" required placeholder="Enter your password">
+            <mat-icon matSuffix (click)="togglePasswordVisibility()" style="cursor: pointer">
+              {{ showPassword ? 'visibility_off' : 'visibility' }}
+            </mat-icon>
+            <mat-error *ngIf="getFieldError('password')">{{ getFieldError('password') }}</mat-error>
           </mat-form-field>
           
           <div class="form-options">
@@ -117,8 +127,14 @@
             <a href="#" class="forgot-password">Forgot password?</a>
           </div>
           
-          <button mat-raised-button color="primary" type="submit" class="login-btn full-width">
-            Sign In
+          <button mat-raised-button color="primary" type="submit" class="login-btn full-width" [disabled]="isLoading">
+            <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+            <span *ngIf="!isLoading">Sign In</span>
+          </button>
+
+          <!-- Demo Login Button -->
+          <button mat-stroked-button type="button" class="demo-login-btn full-width" (click)="loginWithTestUser()" [disabled]="isLoading">
+            Demo Login (Test User)
           </button>
         </form>
       </mat-card-content>

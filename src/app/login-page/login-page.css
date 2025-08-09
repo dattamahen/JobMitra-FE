@@ -565,3 +565,49 @@
   text-decoration: none;
   font-weight: 500;
 }
+
+/* Error Message Styles */
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(244, 67, 54, 0.1);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+  color: #f44336;
+  font-size: 14px;
+}
+
+.error-message mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+/* Demo Login Button */
+.demo-login-btn {
+  margin-top: 12px;
+  border: 2px solid #78dbff;
+  color: #78dbff;
+}
+
+.demo-login-btn:hover {
+  background: rgba(120, 219, 255, 0.1);
+}
+
+/* Loading Spinner in Button */
+.login-btn mat-spinner {
+  margin-right: 8px;
+}
+
+/* Form Field Error States */
+.mat-mdc-form-field.mat-form-field-invalid .mat-mdc-text-field-wrapper {
+  border-color: #f44336;
+}
+
+.mat-mdc-form-field-error {
+  color: #f44336;
+  font-size: 12px;
+}
