@@ -10,6 +10,7 @@ import { ResumeBuilderPage } from '../pages/resume-builder/resume-builder';
 import { SkillAssessmentPage } from '../pages/skill-assessment/skill-assessment';
 import { ProfilePage } from '../pages/profile/profile';
 import { SettingsPage } from '../pages/settings/settings';
+import { PostJobPage } from '../pages/post-job/post-job';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -25,7 +26,8 @@ import { AuthService } from '../services/auth.service';
     ResumeBuilderPage,
     SkillAssessmentPage,
     ProfilePage,
-    SettingsPage
+    SettingsPage,
+    PostJobPage
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'

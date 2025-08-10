@@ -60,6 +60,13 @@
             <div class="loading-placeholder">Loading Settings...</div>
           }
         }
+        @case ('post-job') {
+          @defer (on immediate) {
+            <app-post-job />
+          } @placeholder {
+            <div class="loading-placeholder">Loading Post Job...</div>
+          }
+        }
         @default {
           @defer (on immediate) {
             <app-dashboard-page />
