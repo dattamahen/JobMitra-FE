@@ -40,7 +40,6 @@ export type {
   ResourceFilters
 } from './learning.service';
 export type {
-  LoginCredentials,
   HRUser,
   JobPostingRequest,
   JobListing as HRJobListing,

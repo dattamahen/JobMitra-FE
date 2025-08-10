@@ -117,13 +117,21 @@ export class NavigationService {
   getNavigationItems(): NavItem[] {
     const userType = this.authService.getUserType();
     
+    console.log('NavigationService: Current user type:', userType);
+    console.log('NavigationService: Current user:', this.authService.getCurrentUserValue());
+    
     if (!userType) {
+      console.log('NavigationService: No user type found, returning empty array');
       return [];
     }
 
-    return this.allNavItems.filter(item => 
+    const filteredItems = this.allNavItems.filter(item => 
       item.userTypes.includes(userType as any)
     );
+    
+    console.log('NavigationService: Filtered navigation items:', filteredItems);
+    
+    return filteredItems;
   }
 
   getDefaultRoute(): string {

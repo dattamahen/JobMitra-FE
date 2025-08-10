@@ -1,0 +1,239 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2>My Job Postings</h2>
+    <p>Manage and track your job postings</p>
+  </div>
+
+  <mat-card class="search-filters">
+    <mat-card-content>
+      <div class="filter-row">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search your jobs</mat-label>
+          <input matInput placeholder="Enter job title, skills, or description" [(ngModel)]="searchQuery"
+            (keyup.enter)="onSearchButtonClick()">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Location</mat-label>
+          <mat-select [(value)]="selectedLocation" (selectionChange)="onLocationChange($event.value)">
+            <mat-option value="all">All Locations</mat-option>
+            @if (filterOptions.locations) {
+            @for (location of filterOptions.locations; track location) {
+            <mat-option [value]="location.toLowerCase().replace(' ', '-')">
+              {{location}}
+            </mat-option>
+            }
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Experience Level</mat-label>
+          <mat-select [(value)]="selectedExperience" (selectionChange)="onExperienceChange($event.value)">
+            <mat-option value="all">All Experience Levels</mat-option>
+            @if (filterOptions.experience_levels) {
+            @for (experience of filterOptions.experience_levels; track experience) {
+            <mat-option [value]="experience.toLowerCase().replace(' ', '-')">
+              {{experience}}
+            </mat-option>
+            }
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Job Status</mat-label>
+          <mat-select [(value)]="selectedStatus" (selectionChange)="onStatusChange($event.value)">
+            <mat-option value="all">All Status</mat-option>
+            <mat-option value="active">Active</mat-option>
+            <mat-option value="inactive">Inactive</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      
+      <div class="search-button-container">
+        <button mat-raised-button color="primary" class="search-button" (click)="onSearchButtonClick()">
+          <mat-icon>search</mat-icon>
+          Search Jobs
+        </button>
+        <div class="results-summary">
+          {{filteredJobs.length}} job{{filteredJobs.length !== 1 ? 's' : ''}} found
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="job-listings">
+    <!-- Loading indicator -->
+    @if (isLoading) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Loading your job postings...</p>
+    </div>
+    } @else if (filteredJobs.length === 0) {
+    <!-- No jobs found -->
+    <div class="no-jobs-container">
+      <mat-icon class="no-jobs-icon">work_off</mat-icon>
+      <h3>No job postings found</h3>
+      @if (jobListings.length === 0) {
+      <p>You haven't posted any jobs yet. Create your first job posting to get started!</p>
+      } @else {
+      <p>Try adjusting your search filters to find the jobs you're looking for.</p>
+      }
+    </div>
+    } @else {
+    <!-- Job cards -->
+    @for (job of filteredJobs; track job.job_id) {
+    <mat-card class="job-card" [class.inactive-job]="!job.is_active">
+      <mat-card-header>
+        <mat-card-title>{{job.title}}</mat-card-title>
+        <mat-card-subtitle class="company">{{job.company}}</mat-card-subtitle>
+        <div class="header-badges">
+          <div class="action-badges">
+            <mat-chip class="action-chip" (click)="viewJobStats(job)" matTooltip="View job statistics">
+              <mat-icon matChipIcon>analytics</mat-icon>
+              Statistics
+            </mat-chip>
+            <mat-chip class="action-chip" (click)="editJob(job)" matTooltip="Edit job posting">
+              <mat-icon matChipIcon>edit</mat-icon>
+              Edit
+            </mat-chip>
+            <mat-chip class="action-chip" (click)="copyJobLink(job)" matTooltip="Copy job link">
+              <mat-icon matChipIcon>link</mat-icon>
+              Share
+            </mat-chip>
+          </div>
+          <div class="status-badge">
+            <mat-chip [class]="job.is_active ? 'status-active' : 'status-inactive'">
+              {{job.is_active ? 'Active' : 'Inactive'}}
+            </mat-chip>
+          </div>
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="job-details">
+          <mat-chip-set>
+            <mat-chip>
+              <mat-icon matChipIcon>location_on</mat-icon>
+              {{formatLocation(job)}}
+            </mat-chip>
+            <mat-chip>
+              <mat-icon matChipIcon>work</mat-icon>
+              {{getEmploymentTypeDisplay(job.employment_type)}}
+            </mat-chip>
+            <mat-chip>
+              <mat-icon matChipIcon>trending_up</mat-icon>
+              {{getExperienceLevelDisplay(job.experience_level)}}
+            </mat-chip>
+            @if (job.salary) {
+            <mat-chip>
+              <mat-icon matChipIcon>payments</mat-icon>
+              {{formatSalary(job)}}
+            </mat-chip>
+            }
+          </mat-chip-set>
+
+          <div class="job-description">
+            <p>{{job.description}}</p>
+          </div>
+
+          @if (job.skills_required.length > 0) {
+          <div class="skills-section">
+            <h4>Required Skills:</h4>
+            <mat-chip-set>
+              @for (skill of job.skills_required; track skill) {
+              <mat-chip class="skill-chip">{{skill}}</mat-chip>
+              }
+            </mat-chip-set>
+          </div>
+          }
+
+          @if (job.requirements.length > 0) {
+          <div class="requirements-section">
+            <h4>Requirements:</h4>
+            <ul>
+              @for (requirement of job.requirements; track requirement) {
+              <li>{{requirement}}</li>
+              }
+            </ul>
+          </div>
+          }
+
+          <div class="job-stats">
+            <div class="stat-item">
+              <mat-icon>visibility</mat-icon>
+              <span>{{job.views_count}} views</span>
+            </div>
+            <div class="stat-item">
+              <mat-icon>people</mat-icon>
+              <span>{{job.applications_count}} applications</span>
+            </div>
+            <div class="stat-item">
+              <mat-icon>schedule</mat-icon>
+              <span>Posted {{getDaysAgo(job.posted_date)}} days ago</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <div class="card-actions">
+          <div class="primary-actions">
+            <button mat-raised-button color="primary" (click)="editJob(job)">
+              <mat-icon>edit</mat-icon>
+              Edit Job
+            </button>
+            <button mat-raised-button (click)="viewJobStats(job)">
+              <mat-icon>analytics</mat-icon>
+              View Stats
+            </button>
+          </div>
+          
+          <div class="secondary-actions">
+            <button mat-icon-button [matMenuTriggerFor]="jobMenu" matTooltip="More actions">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #jobMenu="matMenu">
+              <button mat-menu-item (click)="toggleJobStatus(job)">
+                <mat-icon>{{job.is_active ? 'pause' : 'play_arrow'}}</mat-icon>
+                <span>{{job.is_active ? 'Deactivate' : 'Activate'}}</span>
+              </button>
+              <button mat-menu-item (click)="duplicateJob(job)">
+                <mat-icon>content_copy</mat-icon>
+                <span>Duplicate</span>
+              </button>
+              <button mat-menu-item (click)="copyJobLink(job)">
+                <mat-icon>share</mat-icon>
+                <span>Copy Link</span>
+              </button>
+              <mat-divider></mat-divider>
+              <button mat-menu-item (click)="deleteJob(job)" class="delete-action">
+                <mat-icon>delete</mat-icon>
+                <span>Delete</span>
+              </button>
+            </mat-menu>
+          </div>
+        </div>
+      </mat-card-actions>
+    </mat-card>
+    }
+    }
+  </div>
+
+  <!-- Pagination (if needed) -->
+  @if (totalJobs > itemsPerPage) {
+  <div class="pagination-container">
+    <button mat-raised-button [disabled]="currentPage === 1" (click)="currentPage = currentPage - 1; loadMyJobs()">
+      <mat-icon>chevron_left</mat-icon>
+      Previous
+    </button>
+    <span class="page-info">
+      Page {{currentPage}} of {{Math.ceil(totalJobs / itemsPerPage)}}
+    </span>
+    <button mat-raised-button [disabled]="currentPage * itemsPerPage >= totalJobs" (click)="currentPage = currentPage + 1; loadMyJobs()">
+      Next
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+  }
+</div>

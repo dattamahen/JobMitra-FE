@@ -36,6 +36,10 @@ export class SideNav implements OnInit {
     // Get navigation items based on current user
     this.navItems = this.navigationService.getNavigationItems();
     
+    console.log('SideNav: Navigation items received:', this.navItems);
+    console.log('SideNav: Current user authenticated:', this.authService.isAuthenticated());
+    console.log('SideNav: Current user type:', this.authService.getUserType());
+    
     // Initialize with dashboard as default
     this.activeItem = 'dashboard';
   }
@@ -44,16 +48,10 @@ export class SideNav implements OnInit {
     this.activeItem = itemId;
     this.pageSelected.emit(itemId);
     
-    // Only navigate away from dashboard for external routes
-    // For dashboard pages, stay within dashboard and let the component handle the page switching
-    if (itemId === 'dashboard' || itemId === 'post-job' || itemId === 'my-jobs' || 
-        itemId === 'find-candidates' || itemId === 'applications-received') {
-      // These are handled within the dashboard component
-      return;
-    }
-    
-    // Navigate to separate routes for job seeker pages
-    this.router.navigate([`/${itemId}`]);
+    // ALL pages should stay within the dashboard layout to keep side navigation visible
+    // The dashboard component will handle switching between different page components
+    // No need to navigate away from dashboard for any page
+    return;
   }
 
   logout() {

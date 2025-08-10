@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
-import { AuthService, LoginRequest } from '../services/auth.service';
+import { AuthService, LoginRequest, LoginResponse } from '../services/auth.service';
 import { NavigationService } from '../services/navigation.service';
 
 @Component({
@@ -73,17 +73,20 @@ export class LoginPage implements OnInit {
         password: this.loginForm.value.password
       };
 
-      // Use the new mock login for now
-      this.authService.mockLogin(credentials.email, credentials.password).then((user: any) => {
-        console.log('Login successful:', user);
-        this.isLoading = false;
-        
-        // Redirect based on user type
-        this.redirectBasedOnUserType(user.user_type);
-      }).catch((error: any) => {
-        console.error('Login failed:', error);
-        this.isLoading = false;
-        this.errorMessage = error.message || 'Login failed. Please try again.';
+      // Use real authentication API
+      this.authService.login(credentials).subscribe({
+        next: (response: LoginResponse) => {
+          console.log('Login successful:', response);
+          this.isLoading = false;
+          
+          // Redirect based on user type
+          this.redirectBasedOnUserType(response.user.user_type);
+        },
+        error: (error: any) => {
+          console.error('Login failed:', error);
+          this.isLoading = false;
+          this.errorMessage = error.error?.detail || 'Login failed. Please try again.';
+        }
       });
     } else {
       this.markFormGroupTouched();
@@ -126,7 +129,7 @@ export class LoginPage implements OnInit {
   loginWithTestUser(): void {
     this.loginForm.patchValue({
       email: 'arjun.sharma@email.com',
-      password: 'TechLead@123'
+      password: 'JobSeeker@123'
     });
     this.onLogin();
   }
@@ -134,8 +137,8 @@ export class LoginPage implements OnInit {
   // Demo HR login
   loginWithHRUser(): void {
     this.loginForm.patchValue({
-      email: 'hr@company.com',
-      password: 'password123'
+      email: 'kavya.nair@email.com',
+      password: 'HRUser@12345'
     });
     this.onLogin();
   }
@@ -143,8 +146,8 @@ export class LoginPage implements OnInit {
   // Demo Admin login  
   loginWithAdminUser(): void {
     this.loginForm.patchValue({
-      email: 'admin@system.com',
-      password: 'password123'
+      email: 'admin@jobmitra.com',
+      password: 'Admin@12345'
     });
     this.onLogin();
   }

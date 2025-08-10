@@ -165,9 +165,11 @@ export class AuthService {
    * Login user with email and password
    */
   login(credentials: LoginRequest): Observable<LoginResponse> {
+    console.log('🔍 AuthService: Attempting real API login with:', credentials.email);
     return this.http.post<LoginResponse>(`${this.API_URL}/login`, credentials)
       .pipe(
         map(response => {
+          console.log('✅ AuthService: Login successful, response:', response);
           // Store token and user data only in browser
           if (this.isBrowser()) {
             localStorage.setItem(this.TOKEN_KEY, response.access_token);
@@ -183,7 +185,10 @@ export class AuthService {
           
           return response;
         }),
-        catchError(this.handleError)
+        catchError(error => {
+          console.error('❌ AuthService: Login failed with error:', error);
+          return this.handleError(error);
+        })
       );
   }
 
