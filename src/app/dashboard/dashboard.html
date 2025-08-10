@@ -67,6 +67,63 @@
             <div class="loading-placeholder">Loading Post Job...</div>
           }
         }
+        @case ('my-jobs') {
+          @defer (on immediate) {
+            <app-my-jobs />
+          } @placeholder {
+            <div class="loading-placeholder">Loading My Jobs...</div>
+          }
+        }
+        @case ('find-candidates') {
+          @defer (on immediate) {
+            <div class="page-placeholder">
+              <h2>Find Candidates</h2>
+              <p>Search and browse candidate profiles</p>
+            </div>
+          } @placeholder {
+            <div class="loading-placeholder">Loading Find Candidates...</div>
+          }
+        }
+        @case ('applications-received') {
+          @defer (on immediate) {
+            <div class="page-placeholder">
+              <h2>Applications Received</h2>
+              <p>Review applications for your job postings</p>
+            </div>
+          } @placeholder {
+            <div class="loading-placeholder">Loading Applications...</div>
+          }
+        }
+        @case ('user-management') {
+          @defer (on immediate) {
+            <div class="page-placeholder">
+              <h2>User Management</h2>
+              <p>Manage users and permissions</p>
+            </div>
+          } @placeholder {
+            <div class="loading-placeholder">Loading User Management...</div>
+          }
+        }
+        @case ('system-analytics') {
+          @defer (on immediate) {
+            <div class="page-placeholder">
+              <h2>System Analytics</h2>
+              <p>View system-wide analytics and reports</p>
+            </div>
+          } @placeholder {
+            <div class="loading-placeholder">Loading Analytics...</div>
+          }
+        }
+        @case ('content-management') {
+          @defer (on immediate) {
+            <div class="page-placeholder">
+              <h2>Content Management</h2>
+              <p>Manage application content and resources</p>
+            </div>
+          } @placeholder {
+            <div class="loading-placeholder">Loading Content Management...</div>
+          }
+        }
         @default {
           @defer (on immediate) {
             <app-dashboard-page />
