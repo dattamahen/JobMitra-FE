@@ -4,12 +4,9 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-
-interface NavItem {
-  id: string;
-  label: string;
-  matIcon: string;
-}
+import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+import { NavigationService, NavItem } from '../services/navigation.service';
 
 @Component({
   selector: 'app-side-nav',
@@ -27,19 +24,18 @@ export class SideNav implements OnInit {
   @Output() pageSelected = new EventEmitter<string>();
 
   activeItem: string = '';
+  navItems: NavItem[] = [];
 
-  navItems: NavItem[] = [
-    { id: 'dashboard', label: 'Dashboard', matIcon: 'dashboard' },
-    { id: 'profile', label: 'Profile', matIcon: 'person' },
-    { id: 'job-search', label: 'Job Search', matIcon: 'search' },
-    { id: 'applications', label: 'My Applications', matIcon: 'assignment' },
-    { id: 'resume-builder', label: 'Resume Builder', matIcon: 'description' },
-    { id: 'skill-assessment', label: 'Skill Assessment', matIcon: 'assessment' },
-    { id: 'mock-interviews', label: 'Mock Interviews', matIcon: 'record_voice_over' },
-    { id: 'settings', label: 'Settings', matIcon: 'settings' }
-  ];
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private navigationService: NavigationService
+  ) {}
 
   ngOnInit() {
+    // Get navigation items based on current user
+    this.navItems = this.navigationService.getNavigationItems();
+    
     // Initialize with dashboard as default
     this.activeItem = 'dashboard';
   }
@@ -47,5 +43,13 @@ export class SideNav implements OnInit {
   selectItem(itemId: string) {
     this.activeItem = itemId;
     this.pageSelected.emit(itemId);
+    
+    // Navigate to the selected route
+    this.router.navigate([`/${itemId}`]);
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

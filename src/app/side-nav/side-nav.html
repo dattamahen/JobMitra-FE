@@ -9,5 +9,13 @@
         <span matListItemTitle>{{ item.label }}</span>
       </mat-list-item>
     }
+    
+    <!-- Logout button -->
+    <mat-list-item 
+      (click)="logout()"
+      class="nav-item logout-item">
+      <mat-icon matListItemIcon class="nav-icon">logout</mat-icon>
+      <span matListItemTitle>Logout</span>
+    </mat-list-item>
   </mat-nav-list>
 </nav>

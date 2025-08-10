@@ -8,6 +8,7 @@ export { ApplicationService } from './application.service';
 export { MockInterviewService } from './mock-interview.service';
 export { LearningService } from './learning.service';
 export { DashboardService } from './dashboard.service';
+export { HrService } from './hr.service';
 
 // Service Types and Interfaces
 export type { UserProfile, CreateUserRequest, UpdateUserRequest } from './user.service';
@@ -38,3 +39,10 @@ export type {
   LearningPath,
   ResourceFilters
 } from './learning.service';
+export type {
+  LoginCredentials,
+  HRUser,
+  JobPostingRequest,
+  JobListing as HRJobListing,
+  HRDashboardStats
+} from './hr.service';

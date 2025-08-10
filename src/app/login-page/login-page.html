@@ -132,10 +132,25 @@
             <span *ngIf="!isLoading">Sign In</span>
           </button>
 
-          <!-- Demo Login Button -->
-          <button mat-stroked-button type="button" class="demo-login-btn full-width" (click)="loginWithTestUser()" [disabled]="isLoading">
-            Demo Login (Test User)
-          </button>
+          <!-- Demo Login Buttons -->
+          <div class="demo-login-section">
+            <button mat-stroked-button type="button" class="demo-login-btn full-width" (click)="loginWithTestUser()" [disabled]="isLoading">
+              Demo Login (Job Seeker)
+            </button>
+            
+            <button mat-stroked-button type="button" class="demo-login-btn full-width" (click)="loginWithHRUser()" [disabled]="isLoading">
+              Demo Login (HR)
+            </button>
+            
+            <button mat-stroked-button type="button" class="demo-login-btn full-width" (click)="loginWithAdminUser()" [disabled]="isLoading">
+              Demo Login (Admin)
+            </button>
+            
+            <!-- Debug button -->
+            <button mat-stroked-button type="button" class="clear-cache-btn full-width" (click)="clearAuthCache()" [disabled]="isLoading">
+              Clear Auth Cache
+            </button>
+          </div>
         </form>
       </mat-card-content>
       

@@ -9,6 +9,9 @@ export interface User {
   user_id: string;
   email: string;
   username: string;
+  user_type: 'job_seeker' | 'hr' | 'admin';
+  full_name?: string;
+  company_name?: string; // For HR users
   personal_info?: {
     first_name: string;
     last_name: string;
@@ -49,6 +52,7 @@ export interface User {
   created_at: string;
   updated_at?: string;
   last_login?: string;
+  profile_completion?: number;
   
   // Backward compatibility fields
   first_name?: string;
@@ -345,6 +349,18 @@ export class AuthService {
   }
 
   /**
+   * Clear authentication data (public method for debugging)
+   */
+  public clearAllAuthData(): void {
+    this.clearAuthData();
+    this.authStateSubject.next({
+      isAuthenticated: false,
+      user: null,
+      token: null
+    });
+  }
+
+  /**
    * Check if user is authenticated
    */
   isAuthenticated(): boolean {
@@ -363,5 +379,110 @@ export class AuthService {
    */
   getToken(): string | null {
     return this.authStateSubject.value.token;
+  }
+
+  /**
+   * Check if user is job seeker
+   */
+  isJobSeeker(): boolean {
+    const user = this.getCurrentUserValue();
+    return user?.user_type === 'job_seeker';
+  }
+
+  /**
+   * Check if user is HR
+   */
+  isHR(): boolean {
+    const user = this.getCurrentUserValue();
+    return user?.user_type === 'hr';
+  }
+
+  /**
+   * Check if user is admin
+   */
+  isAdmin(): boolean {
+    const user = this.getCurrentUserValue();
+    return user?.user_type === 'admin';
+  }
+
+  /**
+   * Get user type
+   */
+  getUserType(): string | null {
+    return this.getCurrentUserValue()?.user_type || null;
+  }
+
+  /**
+   * Mock login for testing - determines user type based on email
+   */
+  async mockLogin(email: string, password: string): Promise<User> {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    let mockUser: User;
+    
+    // Determine user type based on email domain or specific emails
+    if (email.includes('hr@') || email.includes('@hr.') || email === 'hr@example.com') {
+      mockUser = {
+        user_id: 'hr_001',
+        email: email,
+        username: email.split('@')[0],
+        user_type: 'hr',
+        full_name: 'HR Manager',
+        company_name: 'Tech Solutions Inc.',
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+    } else if (email.includes('admin@') || email === 'admin@example.com') {
+      mockUser = {
+        user_id: 'admin_001',
+        email: email,
+        username: email.split('@')[0],
+        user_type: 'admin',
+        full_name: 'System Admin',
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+    } else {
+      mockUser = {
+        user_id: 'user_001',
+        email: email,
+        username: email.split('@')[0],
+        user_type: 'job_seeker',
+        full_name: 'John Doe',
+        profile_completion: 85,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        personal_info: {
+          first_name: 'John',
+          last_name: 'Doe',
+          phone: '+1234567890',
+          location: {
+            city: 'San Francisco',
+            state: 'CA',
+            country: 'USA'
+          }
+        }
+      };
+    }
+
+    // Store mock token and user
+    const mockToken = 'mock_token_' + Date.now();
+    
+    if (this.isBrowser()) {
+      localStorage.setItem(this.TOKEN_KEY, mockToken);
+      localStorage.setItem(this.USER_KEY, JSON.stringify(mockUser));
+    }
+    
+    this.authStateSubject.next({
+      isAuthenticated: true,
+      user: mockUser,
+      token: mockToken
+    });
+    
+    return mockUser;
   }
 }

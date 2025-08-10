@@ -11,6 +11,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { AuthService, LoginRequest } from '../services/auth.service';
+import { NavigationService } from '../services/navigation.service';
 
 @Component({
   selector: 'app-login-page',
@@ -39,7 +40,8 @@ export class LoginPage implements OnInit {
   constructor(
     private router: Router,
     private formBuilder: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private navigationService: NavigationService
   ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
@@ -48,9 +50,16 @@ export class LoginPage implements OnInit {
   }
 
   ngOnInit(): void {
-    // Redirect if already authenticated
-    if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/dashboard']);
+    // Check if user is already authenticated
+    const isAuth = this.authService.isAuthenticated();
+    const userType = this.authService.getUserType();
+    
+    console.log('Login Page - Auth Status:', isAuth);
+    console.log('Login Page - User Type:', userType);
+    
+    if (isAuth && userType) {
+      console.log('User already authenticated, redirecting to:', userType);
+      this.redirectBasedOnUserType(userType);
     }
   }
 
@@ -64,24 +73,17 @@ export class LoginPage implements OnInit {
         password: this.loginForm.value.password
       };
 
-      this.authService.login(credentials).subscribe({
-        next: (response) => {
-          console.log('Login successful:', response);
-          this.isLoading = false;
-          this.router.navigate(['/dashboard']);
-        },
-        error: (error) => {
-          console.error('Login failed:', error);
-          this.isLoading = false;
-          
-          if (error.status === 401) {
-            this.errorMessage = 'Invalid email or password';
-          } else if (error.status === 0) {
-            this.errorMessage = 'Unable to connect to server. Please check your connection.';
-          } else {
-            this.errorMessage = error.error?.detail || 'Login failed. Please try again.';
-          }
-        }
+      // Use the new mock login for now
+      this.authService.mockLogin(credentials.email, credentials.password).then((user: any) => {
+        console.log('Login successful:', user);
+        this.isLoading = false;
+        
+        // Redirect based on user type
+        this.redirectBasedOnUserType(user.user_type);
+      }).catch((error: any) => {
+        console.error('Login failed:', error);
+        this.isLoading = false;
+        this.errorMessage = error.message || 'Login failed. Please try again.';
       });
     } else {
       this.markFormGroupTouched();
@@ -115,6 +117,11 @@ export class LoginPage implements OnInit {
     return '';
   }
 
+  private redirectBasedOnUserType(userType: string): void {
+    // Always redirect to the main dashboard - it will adapt based on user type
+    this.router.navigate(['/dashboard']);
+  }
+
   // Demo login with test user
   loginWithTestUser(): void {
     this.loginForm.patchValue({
@@ -122,6 +129,32 @@ export class LoginPage implements OnInit {
       password: 'TechLead@123'
     });
     this.onLogin();
+  }
+
+  // Demo HR login
+  loginWithHRUser(): void {
+    this.loginForm.patchValue({
+      email: 'hr@company.com',
+      password: 'password123'
+    });
+    this.onLogin();
+  }
+
+  // Demo Admin login  
+  loginWithAdminUser(): void {
+    this.loginForm.patchValue({
+      email: 'admin@system.com',
+      password: 'password123'
+    });
+    this.onLogin();
+  }
+
+  // Clear authentication cache for debugging
+  clearAuthCache(): void {
+    this.authService.clearAllAuthData();
+    console.log('Authentication cache cleared');
+    // Force reload the page
+    window.location.reload();
   }
 
   loginWithGmail() {
