@@ -16,11 +16,12 @@ export const PROFILE_FORM_DATA: ProfileFormData = {
   ],
   
   salaryRanges: [
-    { value: '40-60k', label: '$40,000 - $60,000' },
-    { value: '60-80k', label: '$60,000 - $80,000' },
-    { value: '80-100k', label: '$80,000 - $100,000' },
-    { value: '100-120k', label: '$100,000 - $120,000' },
-    { value: '120k+', label: '$120,000+' }
+    { value: '4-6', label: '₹4 - ₹6 LPA' },
+    { value: '6-8', label: '₹6 - ₹8 LPA' },
+    { value: '8-12', label: '₹8 - ₹12 LPA' },
+    { value: '12-18', label: '₹12 - ₹18 LPA' },
+    { value: '18-25', label: '₹18 - ₹25 LPA' },
+    { value: '25+', label: '₹25+ LPA' }
   ],
   
   workTypes: [

@@ -1,20 +1,61 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { BehaviorSubject, Observable, throwError, of } from 'rxjs';
+import { map, catchError, tap } from 'rxjs/operators';
 
 // Interfaces for authentication
 export interface User {
   user_id: string;
   email: string;
   username: string;
-  first_name: string;
-  last_name: string;
-  phone: string;
-  city: string;
-  state: string;
+  personal_info?: {
+    first_name: string;
+    last_name: string;
+    phone: string;
+    location: {
+      city: string;
+      state: string;
+      country: string;
+    };
+  };
+  professional_info?: {
+    current_role?: string;
+    current_company?: string;
+    total_experience?: string;
+    industry?: string;
+    skills?: string[];
+    current_salary?: number;
+    expected_salary?: number;
+    desired_job_title?: string;
+    professional_summary?: string;
+    certifications?: string[];
+    area_of_expertise?: string[];
+    key_contributions?: string;
+  };
+  preferences?: {
+    job_locations?: string[];
+    remote_preference?: string;
+    notice_period?: string;
+  };
+  social_links?: {
+    github?: string;
+    portfolio?: string;
+    linkedin?: string;
+    twitter?: string;
+  };
   is_active: boolean;
+  is_verified?: boolean;
   created_at: string;
+  updated_at?: string;
+  last_login?: string;
+  
+  // Backward compatibility fields
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
+  city?: string;
+  state?: string;
 }
 
 export interface LoginRequest {
@@ -62,7 +103,10 @@ export class AuthService {
 
   public authState$ = this.authStateSubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {
     // Check for existing token and user on service initialization
     // Only in browser environment
     if (this.isBrowser()) {
@@ -142,13 +186,38 @@ export class AuthService {
   /**
    * Logout current user
    */
-  logout(): void {
-    this.clearAuthData();
-    this.authStateSubject.next({
-      isAuthenticated: false,
-      user: null,
-      token: null
-    });
+  logout(): Observable<any> {
+    console.log('🔍 Logout attempt started');
+    console.log('Auth state:', this.authStateSubject.value);
+    console.log('Token from localStorage:', this.isBrowser() ? localStorage.getItem(this.TOKEN_KEY) : 'N/A');
+    
+    // Call backend logout endpoint
+    return this.http.post(`${this.API_URL}/logout`, {}, {
+      headers: this.getAuthHeaders()
+    })
+      .pipe(
+        tap(() => {
+          this.clearAuthData();
+          this.authStateSubject.next({
+            isAuthenticated: false,
+            user: null,
+            token: null
+          });
+          this.router.navigate(['/login']);
+        }),
+        catchError(error => {
+          // Even if backend call fails, still clear local data
+          console.error('Logout error:', error);
+          this.clearAuthData();
+          this.authStateSubject.next({
+            isAuthenticated: false,
+            user: null,
+            token: null
+          });
+          this.router.navigate(['/login']);
+          return of({ message: 'Logged out locally' });
+        })
+      );
   }
 
   /**
@@ -230,7 +299,17 @@ export class AuthService {
    * Get authentication headers with token
    */
   private getAuthHeaders(): HttpHeaders {
-    const token = this.authStateSubject.value.token;
+    let token = this.authStateSubject.value.token;
+    
+    // Fallback to localStorage if token not in state
+    if (!token && this.isBrowser()) {
+      token = localStorage.getItem(this.TOKEN_KEY);
+    }
+    
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'

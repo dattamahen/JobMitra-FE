@@ -11,11 +11,31 @@
   gap: 16px;
   align-items: center;
   flex-wrap: wrap;
+  margin-bottom: 16px;
 }
 
 .search-field {
   flex: 2;
   min-width: 300px;
+}
+
+.search-button-container {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 8px;
+}
+
+.search-button {
+  height: 56px !important;
+  min-width: 120px !important;
+  font-weight: 500 !important;
+  border-radius: 4px !important;
+  text-transform: none !important;
+  letter-spacing: 0.5px !important;
+}
+
+.search-button mat-icon {
+  margin-right: 8px !important;
 }
 
 mat-form-field {

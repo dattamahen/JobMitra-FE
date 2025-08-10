@@ -67,6 +67,33 @@ export class ProfilePage implements OnInit, OnDestroy {
     this.forceRefreshUserData();
   }
 
+  // Helper function to convert salary range string to expected_salary object
+  private convertSalaryRangeToObject(salaryRange: string): { min: number; max: number; currency: 'INR'; period: 'yearly' } | undefined {
+    if (!salaryRange) return undefined;
+    
+    // Map dropdown values to LPA ranges
+    const rangeMap: { [key: string]: { min: number; max: number } } = {
+      '4-6': { min: 4, max: 6 },
+      '6-8': { min: 6, max: 8 },
+      '8-12': { min: 8, max: 12 },
+      '12-18': { min: 12, max: 18 },
+      '18-25': { min: 18, max: 25 },
+      '25+': { min: 25, max: 30 }
+    };
+    
+    const range = rangeMap[salaryRange];
+    if (range) {
+      return {
+        min: range.min,
+        max: range.max,
+        currency: 'INR' as const,
+        period: 'yearly' as const
+      };
+    }
+    
+    return undefined;
+  }
+
   private forceRefreshUserData(): void {
     console.log('Profile component: Forcing refresh of user data from API');
     // Clear localStorage to force API call
@@ -162,7 +189,7 @@ export class ProfilePage implements OnInit, OnDestroy {
       currentJobTitle: user.current_job_title,
       experience: user.experience_years,
       desiredJobTitle: user.desired_job_title,
-      salaryRange: user.expected_salary ? `${user.expected_salary.min}-${user.expected_salary.max} ${user.expected_salary.currency}` : '',
+      salaryRange: this.userService.getSalaryRangeForDropdown(user),
       skills: user.skills.join(', '),
       summary: user.professional_summary,
       certifications: user.certifications.join(', '),
@@ -198,6 +225,7 @@ export class ProfilePage implements OnInit, OnDestroy {
         key_contributions: formValue.contributions,
         preferred_work_types: formValue.workType,
         preferred_employment_types: formValue.employmentType,
+        expected_salary: this.convertSalaryRangeToObject(formValue.salaryRange),
         social_links: {
           github: formValue.githubLink || undefined,
           portfolio: formValue.portfolioLink || undefined,

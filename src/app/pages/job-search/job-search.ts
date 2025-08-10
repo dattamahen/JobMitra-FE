@@ -196,9 +196,10 @@ export class JobSearchPage implements OnInit {
   }
 
   // Search functionality
-  onSearchChange(query: string): void {
-    this.searchQuery = query;
-    this.applyFilters();
+  onSearchButtonClick(): void {
+    // Reset to first page when search changes
+    this.currentPage = 1;
+    this.loadJobs();
   }
 
   onLocationChange(location: string): void {
