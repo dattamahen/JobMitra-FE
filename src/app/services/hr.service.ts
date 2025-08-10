@@ -21,20 +21,47 @@ export interface HRUser {
 export interface JobPostingRequest {
   title: string;
   company: string;
-  location: string;
+  location: {
+    city: string;
+    state: string;
+    country: string;
+    is_remote: boolean;
+    timezone: string;
+  };
+  employment_type: string;
+  experience_level: string;
+  salary: {
+    min: number;
+    max: number;
+    currency: string;
+    period: string;
+    is_negotiable: boolean;
+  };
   description: string;
   requirements: string[];
-  skills: string[];
-  experience_level: string;
-  employment_type: string;
-  job_type: string;
-  salary_range?: {
-    min?: number;
-    max?: number;
-    currency?: string;
-  };
+  responsibilities: string[];
+  skills_required: string[];
+  skills_preferred: string[];
+  benefits: string[];
   application_deadline?: string;
+  company_info: {
+    company_size: string;
+    industry: string;
+    website?: string;
+    description?: string;
+  };
+  job_type: string;
   is_active: boolean;
+  application_instructions?: string;
+  external_apply_url?: string;
+  hr_contact: {
+    name: string;
+    email: string;
+    phone: string;
+    title: string;
+    department: string;
+  };
+  tags: string[];
 }
 
 export interface JobListing {

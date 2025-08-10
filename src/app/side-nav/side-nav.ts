@@ -44,7 +44,15 @@ export class SideNav implements OnInit {
     this.activeItem = itemId;
     this.pageSelected.emit(itemId);
     
-    // Navigate to the selected route
+    // Only navigate away from dashboard for external routes
+    // For dashboard pages, stay within dashboard and let the component handle the page switching
+    if (itemId === 'dashboard' || itemId === 'post-job' || itemId === 'my-jobs' || 
+        itemId === 'find-candidates' || itemId === 'applications-received') {
+      // These are handled within the dashboard component
+      return;
+    }
+    
+    // Navigate to separate routes for job seeker pages
     this.router.navigate([`/${itemId}`]);
   }
 
