@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -131,7 +131,8 @@ export class MyJobsPage implements OnInit, OnDestroy {
   constructor(
     private hrService: HrService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -144,82 +145,133 @@ export class MyJobsPage implements OnInit, OnDestroy {
   }
 
   async loadMyJobs() {
+    console.log('🚀 Starting to load jobs, setting isLoading = true');
     this.isLoading = true;
     try {
       console.log('Loading HR jobs...');
       const response = await this.hrService.getMyJobs();
       console.log('HR jobs response:', response);
       
-      // Handle different response formats
+      // The HR service already handles the response format and returns the jobs array
       if (Array.isArray(response)) {
         this.jobListings = this.transformJobsToHRFormat(response);
         this.totalJobs = response.length;
+        console.log('Successfully loaded', this.totalJobs, 'jobs');
       } else {
-        console.warn('Unexpected response format:', response);
+        console.warn('Unexpected response format - expected array:', response);
         this.jobListings = [];
         this.totalJobs = 0;
       }
       
       this.filteredJobs = [...this.jobListings];
       this.buildFilterOptions();
-      console.log('Loaded jobs:', this.jobListings);
+      console.log('Transformed jobs:', this.jobListings);
+      console.log('✅ Jobs loading completed successfully');
     } catch (error: any) {
       console.error('Error loading jobs:', error);
       this.snackBar.open(error.message || 'Failed to load your job postings', 'Close', { duration: 5000 });
       this.jobListings = [];
       this.filteredJobs = [];
     } finally {
+      console.log('🏁 Setting isLoading = false in finally block');
       this.isLoading = false;
+      
+      // Force change detection to ensure UI updates
+      this.cdr.detectChanges();
+      
+      console.log('🔍 Current component state:', {
+        isLoading: this.isLoading,
+        jobListingsCount: this.jobListings.length,
+        filteredJobsCount: this.filteredJobs.length,
+        totalJobs: this.totalJobs
+      });
     }
   }
 
-  // Transform legacy job format to new HR format
+  // Transform backend job format to frontend HR format
   private transformJobsToHRFormat(jobs: any[]): HRJobListing[] {
-    return jobs.map(job => ({
-      _id: job._id,
-      job_id: job.job_id || job.id,
-      title: job.title,
-      company: job.company,
-      location: job.location || {
-        city: job.location || 'Not specified',
-        state: '',
-        country: 'India',
-        is_remote: job.job_type === 'remote',
-        timezone: 'IST'
-      },
-      employment_type: job.employment_type || 'full_time',
-      experience_level: job.experience_level || 'mid',
-      job_type: job.job_type || 'onsite',
-      salary: job.salary_range ? {
-        min: job.salary_range.min || 0,
-        max: job.salary_range.max || 0,
-        currency: job.salary_range.currency || 'INR',
-        period: 'yearly',
-        is_negotiable: true
-      } : undefined,
-      description: job.description,
-      requirements: job.requirements || [],
-      responsibilities: job.responsibilities || [],
-      skills_required: job.skills || [],
-      skills_preferred: [],
-      benefits: [],
-      company_info: {
-        company_size: '50-200',
-        industry: 'Technology',
-        website: '',
-        description: ''
-      },
-      application_deadline: job.application_deadline,
-      external_apply_url: job.external_apply_url,
-      application_instructions: job.application_instructions,
-      tags: [],
-      posted_date: job.created_at || new Date().toISOString(),
-      updated_date: job.updated_at || new Date().toISOString(),
-      is_active: job.is_active !== false,
-      posted_by_hr_id: job.hr_id || 'current-user',
-      views_count: 0,
-      applications_count: 0
-    }));
+    return jobs.map((job, index) => {
+      console.log(`Transforming job ${index + 1}:`, job);
+      
+      // Handle location transformation
+      let locationObj;
+      if (typeof job.location === 'string') {
+        locationObj = {
+          city: job.location,
+          state: '',
+          country: 'India',
+          is_remote: job.job_type === 'remote',
+          timezone: 'IST'
+        };
+      } else if (job.location && typeof job.location === 'object') {
+        locationObj = {
+          city: job.location.city || 'Not specified',
+          state: job.location.state || '',
+          country: job.location.country || 'India',
+          is_remote: job.location.is_remote || job.job_type === 'remote',
+          timezone: job.location.timezone || 'IST'
+        };
+      } else {
+        locationObj = {
+          city: 'Not specified',
+          state: '',
+          country: 'India',
+          is_remote: false,
+          timezone: 'IST'
+        };
+      }
+
+      // Handle salary transformation
+      let salaryObj;
+      if (job.salary_range && typeof job.salary_range === 'object') {
+        salaryObj = {
+          min: job.salary_range.min || 0,
+          max: job.salary_range.max || 0,
+          currency: job.salary_range.currency || 'INR',
+          period: job.salary_range.period || 'yearly',
+          is_negotiable: job.salary_range.is_negotiable !== false
+        };
+      } else {
+        salaryObj = undefined;
+      }
+
+      const transformedJob: HRJobListing = {
+        _id: job._id,
+        job_id: job.job_id || job.id || job._id || `job_${index}`,
+        title: job.title || 'Untitled Job',
+        company: job.company || 'Unknown Company',
+        location: locationObj,
+        employment_type: job.employment_type || 'full_time',
+        experience_level: job.experience_level || 'mid',
+        job_type: job.job_type || 'onsite',
+        salary: salaryObj,
+        description: job.description || 'No description provided',
+        requirements: Array.isArray(job.requirements) ? job.requirements : [],
+        responsibilities: Array.isArray(job.responsibilities) ? job.responsibilities : [],
+        skills_required: Array.isArray(job.skills) ? job.skills : (Array.isArray(job.skills_required) ? job.skills_required : []),
+        skills_preferred: Array.isArray(job.skills_preferred) ? job.skills_preferred : [],
+        benefits: Array.isArray(job.benefits) ? job.benefits : [],
+        company_info: {
+          company_size: '50-200',
+          industry: 'Technology',
+          website: '',
+          description: ''
+        },
+        application_deadline: job.application_deadline,
+        external_apply_url: job.external_apply_url,
+        application_instructions: job.application_instructions,
+        tags: Array.isArray(job.tags) ? job.tags : [],
+        posted_date: job.posted_date || job.created_at || new Date().toISOString(),
+        updated_date: job.updated_date || job.updated_at || new Date().toISOString(),
+        is_active: job.is_active !== false,
+        posted_by_hr_id: job.posted_by_hr_id || job.hr_id || 'current-user',
+        views_count: job.views_count || 0,
+        applications_count: job.applications_count || 0
+      };
+
+      console.log(`Transformed job ${index + 1}:`, transformedJob);
+      return transformedJob;
+    });
   }
 
   private buildFilterOptions() {
@@ -325,10 +377,31 @@ export class MyJobsPage implements OnInit, OnDestroy {
 
   // Utility methods (reused from job-search)
   formatLocation(job: HRJobListing): string {
-    if (job.location.is_remote) {
-      return 'Remote';
+    try {
+      if (!job || !job.location) {
+        return 'Location not specified';
+      }
+      
+      if (job.location.is_remote) {
+        return 'Remote';
+      }
+      
+      const city = job.location.city || '';
+      const state = job.location.state || '';
+      
+      if (city && state) {
+        return `${city}, ${state}`;
+      } else if (city) {
+        return city;
+      } else if (state) {
+        return state;
+      } else {
+        return 'Location not specified';
+      }
+    } catch (error) {
+      console.error('Error formatting location:', error, job);
+      return 'Location error';
     }
-    return `${job.location.city}, ${job.location.state}`;
   }
 
   formatSalary(job: HRJobListing): string {

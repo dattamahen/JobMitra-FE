@@ -19,13 +19,24 @@ export class ApiService {
   private readonly baseUrl = environment.apiUrl || 'http://localhost:8000';
   private readonly apiBaseUrl = `${this.baseUrl}/api/v1`;
 
-  private readonly httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json'
-    })
-  };
-
   constructor(private http: HttpClient) {}
+
+  /**
+   * Create HTTP headers with authentication if available
+   */
+  private createHeaders(): HttpHeaders {
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    // Get token from localStorage using correct key (same as AuthService)
+    const token = localStorage.getItem('jobmitra_token');
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    return headers;
+  }
 
   /**
    * GET request
@@ -43,7 +54,7 @@ export class ApiService {
 
     const url = endpoint.startsWith('/api/v1') ? `${this.baseUrl}${endpoint}` : `${this.apiBaseUrl}${endpoint}`;
     
-    return this.http.get<T>(url, { ...this.httpOptions, params: httpParams })
+    return this.http.get<T>(url, { headers: this.createHeaders(), params: httpParams })
       .pipe(
         retry(1),
         catchError(this.handleError)
@@ -56,7 +67,7 @@ export class ApiService {
   post<T>(endpoint: string, data: any): Observable<T> {
     const url = endpoint.startsWith('/api/v1') ? `${this.baseUrl}${endpoint}` : `${this.apiBaseUrl}${endpoint}`;
     
-    return this.http.post<T>(url, JSON.stringify(data), this.httpOptions)
+    return this.http.post<T>(url, JSON.stringify(data), { headers: this.createHeaders() })
       .pipe(
         retry(1),
         catchError(this.handleError)
@@ -69,7 +80,7 @@ export class ApiService {
   put<T>(endpoint: string, data: any): Observable<T> {
     const url = endpoint.startsWith('/api/v1') ? `${this.baseUrl}${endpoint}` : `${this.apiBaseUrl}${endpoint}`;
     
-    return this.http.put<T>(url, JSON.stringify(data), this.httpOptions)
+    return this.http.put<T>(url, JSON.stringify(data), { headers: this.createHeaders() })
       .pipe(
         retry(1),
         catchError(this.handleError)
@@ -82,7 +93,7 @@ export class ApiService {
   delete<T>(endpoint: string): Observable<T> {
     const url = endpoint.startsWith('/api/v1') ? `${this.baseUrl}${endpoint}` : `${this.apiBaseUrl}${endpoint}`;
     
-    return this.http.delete<T>(url, this.httpOptions)
+    return this.http.delete<T>(url, { headers: this.createHeaders() })
       .pipe(
         retry(1),
         catchError(this.handleError)
@@ -96,7 +107,7 @@ export class ApiService {
     return this.http.post<{ response: string; timestamp: string }>(
       `${this.baseUrl}/ask`, 
       { query },
-      this.httpOptions
+      { headers: this.createHeaders() }
     ).pipe(
       retry(1),
       catchError(this.handleError)
