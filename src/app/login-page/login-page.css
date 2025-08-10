@@ -586,15 +586,35 @@
   height: 18px;
 }
 
-/* Demo Login Button */
+/* Demo Login Section */
+.demo-login-section {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .demo-login-btn {
-  margin-top: 12px;
   border: 2px solid #78dbff;
   color: #78dbff;
+  font-size: 13px;
+  padding: 8px 16px;
 }
 
 .demo-login-btn:hover {
   background: rgba(120, 219, 255, 0.1);
+}
+
+.clear-cache-btn {
+  border: 2px solid #ff6b6b;
+  color: #ff6b6b;
+  font-size: 12px;
+  padding: 6px 12px;
+  margin-top: 8px;
+}
+
+.clear-cache-btn:hover {
+  background: rgba(255, 107, 107, 0.1);
 }
 
 /* Loading Spinner in Button */
