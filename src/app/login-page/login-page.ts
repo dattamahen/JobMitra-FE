@@ -137,35 +137,9 @@ export class LoginPage implements OnInit {
   // Demo HR login
   loginWithHRUser(): void {
     this.loginForm.patchValue({
-      email: 'kavya.nair@email.com',
-      password: 'HRUser@12345'
+      email: 'hr001@test.com',
+      password: 'test1234'
     });
     this.onLogin();
-  }
-
-  // Demo Admin login  
-  loginWithAdminUser(): void {
-    this.loginForm.patchValue({
-      email: 'admin@jobmitra.com',
-      password: 'Admin@12345'
-    });
-    this.onLogin();
-  }
-
-  // Clear authentication cache for debugging
-  clearAuthCache(): void {
-    this.authService.clearAllAuthData();
-    console.log('Authentication cache cleared');
-    // Force reload the page
-    window.location.reload();
-  }
-
-  loginWithGmail() {
-    // In a real app, this would integrate with Google OAuth
-    // For now, we'll simulate Gmail login and navigate to dashboard
-    console.log('Gmail login clicked');
-    alert('Gmail login functionality would be implemented here with Google OAuth');
-    // Simulate successful login
-    this.router.navigate(['/dashboard']);
   }
 }

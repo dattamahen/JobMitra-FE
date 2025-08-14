@@ -17,6 +17,7 @@
                 <mat-form-field appearance="outline" class="full-width">
                   <mat-label>Job Title</mat-label>
                   <input matInput formControlName="title" placeholder="e.g. Senior Software Engineer">
+                  <mat-hint>{{JOB_VALIDATION.TITLE.MIN_LENGTH}}-{{JOB_VALIDATION.TITLE.MAX_LENGTH}} characters required</mat-hint>
                   <mat-error>{{ getErrorMessage('title') }}</mat-error>
                 </mat-form-field>
               </div>
@@ -127,13 +128,13 @@
                   <mat-label>Job Description</mat-label>
                   <textarea matInput formControlName="description" rows="6" 
                            placeholder="Describe the role, what the candidate will do, and what makes this opportunity exciting..."></textarea>
-                  <mat-hint>Minimum 50 characters</mat-hint>
+                  <mat-hint>{{JOB_VALIDATION.DESCRIPTION.MIN_LENGTH}}-{{JOB_VALIDATION.DESCRIPTION.MAX_LENGTH}} characters required</mat-hint>
                   <mat-error>{{ getErrorMessage('description') }}</mat-error>
                 </mat-form-field>
               </div>
 
               <div class="form-row">
-                <h4>Responsibilities</h4>
+                <h4>Responsibilities <span style="color: red;">(Minimum {{JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS}} required)</span></h4>
                 <div formArrayName="responsibilities">
                   <div *ngFor="let responsibility of responsibilities.controls; let i = index" class="array-item">
                     <mat-form-field appearance="outline" class="array-input">
@@ -142,7 +143,7 @@
                       <mat-error>This field is required</mat-error>
                     </mat-form-field>
                     <button mat-icon-button type="button" (click)="removeResponsibility(i)" 
-                            [disabled]="responsibilities.length === 1">
+                            [disabled]="responsibilities.length <= JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS">
                       <mat-icon>delete</mat-icon>
                     </button>
                   </div>
@@ -153,7 +154,7 @@
               </div>
 
               <div class="form-row">
-                <h4>Requirements</h4>
+                <h4>Requirements <span style="color: red;">(Minimum {{JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS}} required)</span></h4>
                 <div formArrayName="requirements">
                   <div *ngFor="let requirement of requirements.controls; let i = index" class="array-item">
                     <mat-form-field appearance="outline" class="array-input">
@@ -162,7 +163,7 @@
                       <mat-error>This field is required</mat-error>
                     </mat-form-field>
                     <button mat-icon-button type="button" (click)="removeRequirement(i)" 
-                            [disabled]="requirements.length === 1">
+                            [disabled]="requirements.length <= JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS">
                       <mat-icon>delete</mat-icon>
                     </button>
                   </div>
@@ -185,7 +186,7 @@
               <h3>Required Skills</h3>
               
               <div class="skills-section">
-                <h4>Required Skills</h4>
+                <h4>Required Skills <span style="color: red;">(Minimum {{JOB_VALIDATION.SKILLS_REQUIRED.MIN_ITEMS}} required)</span></h4>
                 <div class="skills-input">
                   <mat-form-field appearance="outline" class="skill-select">
                     <mat-label>Add Required Skill</mat-label>

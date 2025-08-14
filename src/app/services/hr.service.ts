@@ -171,17 +171,27 @@ export class HrService {
       
       // Handle different response formats
       if (Array.isArray(response)) {
+        console.log('HrService: Response is array format');
         return response;
       } else if (response.jobs && Array.isArray(response.jobs)) {
+        console.log('HrService: Response has jobs property:', response.jobs.length, 'jobs');
         return response.jobs;
       } else if (response.data && Array.isArray(response.data)) {
+        console.log('HrService: Response has data property:', response.data.length, 'jobs');
         return response.data;
       } else {
         console.warn('HrService: Unexpected response format, returning empty array');
+        console.warn('HrService: Response structure:', typeof response, Object.keys(response));
         return [];
       }
     } catch (error: any) {
       console.error('HrService: Jobs API error:', error);
+      console.error('HrService: Error details:', {
+        status: error.status,
+        statusText: error.statusText,
+        message: error.message,
+        error: error.error
+      });
       throw new Error(error.error?.detail || 'Failed to load job postings');
     }
   }

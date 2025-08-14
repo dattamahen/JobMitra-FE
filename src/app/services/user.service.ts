@@ -555,8 +555,14 @@ export class UserService {
     }
 
     if (updateData.certifications && updateData.certifications.length > 0) {
-      authData.certifications = updateData.certifications;
-      console.log('UserService: Mapped certifications:', authData.certifications);
+      // Filter out empty strings and invalid objects before sending to backend
+      const validCerts = updateData.certifications.filter(cert => 
+        cert && typeof cert === 'string' && cert.trim() !== '' && cert !== '[object Object]'
+      );
+      if (validCerts.length > 0) {
+        authData.certifications = validCerts;
+        console.log('UserService: Mapped valid certifications:', authData.certifications);
+      }
     }
 
     if (updateData.area_of_expertise && updateData.area_of_expertise.length > 0) {

@@ -19,6 +19,7 @@ import { Router } from '@angular/router';
 import { HrService } from '../../services/hr.service';
 import { AuthService } from '../../services/auth.service';
 import { JobPostingForm, JobPostingConverter } from '../../interfaces/job-posting.interface';
+import { JOB_VALIDATION } from '../../constants/validation.constants';
 
 @Component({
   selector: 'app-post-job',
@@ -46,6 +47,9 @@ import { JobPostingForm, JobPostingConverter } from '../../interfaces/job-postin
 export class PostJobPage implements OnInit {
   jobForm: FormGroup;
   isSubmitting = false;
+  
+  // Make validation constants available to template
+  JOB_VALIDATION = JOB_VALIDATION;
   
   // Form options
   jobTypes = [
@@ -159,8 +163,8 @@ export class PostJobPage implements OnInit {
   private createForm(): FormGroup {
     return this.formBuilder.group({
       // Basic Information
-      title: ['', [Validators.required, Validators.minLength(3)]],
-      company: ['', [Validators.required]],
+      title: ['', [Validators.required, Validators.minLength(JOB_VALIDATION.TITLE.MIN_LENGTH), Validators.maxLength(JOB_VALIDATION.TITLE.MAX_LENGTH)]],
+      company: ['', [Validators.required, Validators.minLength(JOB_VALIDATION.COMPANY.MIN_LENGTH), Validators.maxLength(JOB_VALIDATION.COMPANY.MAX_LENGTH)]],
       department: ['', [Validators.required]],
       
       // Location
@@ -177,9 +181,17 @@ export class PostJobPage implements OnInit {
       experience_level: ['mid', [Validators.required]],
       
       // Description
-      description: ['', [Validators.required, Validators.minLength(50)]],
-      responsibilities: this.formBuilder.array([this.formBuilder.control('', Validators.required)]),
-      requirements: this.formBuilder.array([this.formBuilder.control('', Validators.required)]),
+      description: ['', [Validators.required, Validators.minLength(JOB_VALIDATION.DESCRIPTION.MIN_LENGTH), Validators.maxLength(JOB_VALIDATION.DESCRIPTION.MAX_LENGTH)]],
+      responsibilities: this.formBuilder.array([
+        this.formBuilder.control('Manage and execute assigned tasks'),
+        this.formBuilder.control('Collaborate with team members'),
+        this.formBuilder.control('Deliver high-quality work on time')
+      ]),
+      requirements: this.formBuilder.array([
+        this.formBuilder.control('Bachelor degree or equivalent experience'),
+        this.formBuilder.control('Strong communication skills'),
+        this.formBuilder.control('Ability to work independently')
+      ]),
       
       // Skills
       skills_required: this.formBuilder.array([]),
@@ -242,6 +254,10 @@ export class PostJobPage implements OnInit {
         company: currentUser.company_name || ''
       });
     }
+    
+    // Add default skills to meet minimum requirements
+    this.addSkill('required', 'Communication Skills');
+    this.addSkill('required', 'Problem Solving');
   }
 
   // FormArray getters
@@ -275,7 +291,9 @@ export class PostJobPage implements OnInit {
   }
 
   removeResponsibility(index: number): void {
-    this.responsibilities.removeAt(index);
+    if (this.responsibilities.length > JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS) {
+      this.responsibilities.removeAt(index);
+    }
   }
 
   addRequirement(): void {
@@ -283,7 +301,9 @@ export class PostJobPage implements OnInit {
   }
 
   removeRequirement(index: number): void {
-    this.requirements.removeAt(index);
+    if (this.requirements.length > JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS) {
+      this.requirements.removeAt(index);
+    }
   }
 
   addSkill(type: 'required' | 'preferred', skill: string): void {
@@ -330,10 +350,14 @@ export class PostJobPage implements OnInit {
 
   // Form submission
   async onSubmit(): Promise<void> {
-    if (this.jobForm.invalid) {
+    // Custom validation for arrays
+    const validationErrors = this.validateArrayFields();
+    
+    if (this.jobForm.invalid || validationErrors.length > 0) {
       this.markFormGroupTouched(this.jobForm);
-      this.snackBar.open('Please fill in all required fields', 'Close', {
-        duration: 3000,
+      const errorMessage = validationErrors.length > 0 ? validationErrors.join(', ') : 'Please fill in all required fields';
+      this.snackBar.open(errorMessage, 'Close', {
+        duration: 5000,
         panelClass: ['error-snackbar']
       });
       return;
@@ -352,17 +376,17 @@ export class PostJobPage implements OnInit {
         panelClass: ['success-snackbar']
       });
       
-      // Navigate back to dashboard or job listings
-      this.router.navigate(['/dashboard']);
+      // Reset form for new job posting
+      this.jobForm.reset();
+      this.createForm();
       
     } catch (error: any) {
       console.error('Error posting job:', error);
+      this.isSubmitting = false;
       this.snackBar.open(error.message || 'Failed to post job. Please try again.', 'Close', {
         duration: 5000,
         panelClass: ['error-snackbar']
       });
-    } finally {
-      this.isSubmitting = false;
     }
   }
 
@@ -387,6 +411,26 @@ export class PostJobPage implements OnInit {
         control?.markAsTouched();
       }
     });
+  }
+
+  private validateArrayFields(): string[] {
+    const errors: string[] = [];
+    
+    const validRequirements = this.requirements.value.filter((req: string) => req && req.trim());
+    if (validRequirements.length < JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS) {
+      errors.push(`At least ${JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS} requirements are needed`);
+    }
+    
+    const validResponsibilities = this.responsibilities.value.filter((resp: string) => resp && resp.trim());
+    if (validResponsibilities.length < JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS) {
+      errors.push(`At least ${JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS} responsibilities are needed`);
+    }
+    
+    if (this.skillsRequired.length < JOB_VALIDATION.SKILLS_REQUIRED.MIN_ITEMS) {
+      errors.push(`At least ${JOB_VALIDATION.SKILLS_REQUIRED.MIN_ITEMS} required skills are needed`);
+    }
+    
+    return errors;
   }
 
   // Helper methods for template
