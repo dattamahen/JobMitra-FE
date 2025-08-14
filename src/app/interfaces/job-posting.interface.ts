@@ -137,8 +137,8 @@ export class JobPostingConverter {
         is_negotiable: form.salary.is_negotiable
       },
       description: form.description,
-      requirements: form.requirements,
-      responsibilities: form.responsibilities,
+      requirements: form.requirements.filter(req => req && req.trim()),
+      responsibilities: form.responsibilities.filter(resp => resp && resp.trim()),
       skills_required: form.skills_required,
       skills_preferred: form.skills_preferred,
       benefits: form.benefits,

@@ -5,13 +5,94 @@ import { BehaviorSubject, Observable, throwError, of } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 
 // Interfaces for authentication
+export interface PreviousOrganization {
+  company_name: string;
+  position: string;
+  duration: string;
+  description?: string;
+}
+
+export interface Certification {
+  name: string;
+  issuer: string;
+  issue_date?: Date;
+  expiry_date?: Date;
+  credential_id?: string;
+}
+
+export interface CommunicationSkill {
+  skill: string;
+  level: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+}
+
+export interface RecentActivity {
+  activity_type: 'application' | 'interview' | 'profile_update' | 'skill_assessment' | 'mock_interview' | 'resume_update';
+  description: string;
+  timestamp: Date;
+  metadata?: Record<string, any>;
+}
+
+export interface SocialLinks {
+  github?: string;
+  youtube?: string;
+  linkedin?: string;
+  playstore?: string;
+}
+
 export interface User {
   user_id: string;
   email: string;
-  username: string;
-  user_type: 'job_seeker' | 'hr' | 'admin';
+  
+  // Basic Personal Information
+  first_name: string;
+  last_name: string;
+  date_of_birth?: Date;
+  phone?: string;
+  
+  // Professional Information
+  overall_experience_years?: number;
+  highest_qualification?: string;
+  previous_organizations?: PreviousOrganization[];
+  skills?: string[];
+  certifications?: Certification[];
+  contributions?: string;
+  communication_skills?: CommunicationSkill[];
+  ai_tools?: string[];
+  
+  // Social Links
+  github_link?: string;
+  youtube_link?: string;
+  linkedin_link?: string;
+  playstore_link?: string;
+  
+  // Job Application Tracking
+  overall_jobs_applied?: string[];
+  
+  // User Classification
+  user_type: 'candidate' | 'hire' | 'job_seeker' | 'hr' | 'admin'; // Extended for backward compatibility
+  user_status: 'active' | 'inactive';
+  user_plan: 'free' | 'subscribed' | 'pro';
+  
+  // Preferences
+  job_preferences?: ('remote' | 'hybrid' | 'on-site')[];
+  employment_type?: ('full-time' | 'part-time' | 'freelancing' | 'contract')[];
+  
+  // Timestamps
+  profile_created_on: Date;
+  last_active: Date;
+  
+  // Analytics and Metrics
+  match_analysis_count: number;
+  match_tailored_count: number;
+  mock_interview_count: number;
+  profile_completion_count: number;
+  profile_visits: number;
+  recent_activity?: RecentActivity[];
+  
+  // Legacy compatibility fields
+  username?: string;
   full_name?: string;
-  company_name?: string; // For HR users
+  company_name?: string;
   personal_info?: {
     first_name: string;
     last_name: string;
@@ -55,9 +136,6 @@ export interface User {
   profile_completion?: number;
   
   // Backward compatibility fields
-  first_name?: string;
-  last_name?: string;
-  phone?: string;
   city?: string;
   state?: string;
 }
@@ -70,12 +148,72 @@ export interface LoginRequest {
 export interface RegisterRequest {
   email: string;
   password: string;
-  username: string;
   first_name: string;
   last_name: string;
-  phone: string;
-  city: string;
-  state: string;
+  date_of_birth?: Date;
+  phone?: string;
+  user_type?: 'candidate' | 'hire';
+  overall_experience_years?: number;
+  highest_qualification?: string;
+  skills?: string[];
+  job_preferences?: ('remote' | 'hybrid' | 'on-site')[];
+  employment_type?: ('full-time' | 'part-time' | 'freelancing' | 'contract')[];
+  
+  // Legacy compatibility
+  username?: string;
+  city?: string;
+  state?: string;
+}
+
+export interface UserProfileUpdateRequest {
+  // Basic Personal Information
+  first_name?: string;
+  last_name?: string;
+  date_of_birth?: Date;
+  phone?: string;
+  
+  // Professional Information
+  overall_experience_years?: number;
+  highest_qualification?: string;
+  previous_organizations?: PreviousOrganization[];
+  skills?: string[];
+  certifications?: Certification[];
+  contributions?: string;
+  communication_skills?: CommunicationSkill[];
+  ai_tools?: string[];
+  
+  // Social Links
+  github_link?: string;
+  youtube_link?: string;
+  linkedin_link?: string;
+  playstore_link?: string;
+  
+  // User Classification
+  user_status?: 'active' | 'inactive';
+  user_plan?: 'free' | 'subscribed' | 'pro';
+  
+  // Preferences
+  job_preferences?: ('remote' | 'hybrid' | 'on-site')[];
+  employment_type?: ('full-time' | 'part-time' | 'freelancing' | 'contract')[];
+  
+  // Legacy compatibility fields
+  city?: string;
+  state?: string;
+  current_role?: string;
+  current_company?: string;
+  total_experience?: string;
+  industry?: string;
+  current_salary?: number;
+  expected_salary?: number;
+  desired_job_title?: string;
+  professional_summary?: string;
+  area_of_expertise?: string[];
+  key_contributions?: string;
+  github_url?: string;
+  portfolio_url?: string;
+  linkedin_url?: string;
+  twitter_url?: string;
+  youtube_url?: string;
 }
 
 export interface LoginResponse {
@@ -391,7 +529,7 @@ export class AuthService {
    */
   isJobSeeker(): boolean {
     const user = this.getCurrentUserValue();
-    return user?.user_type === 'job_seeker';
+    return user?.user_type === 'job_seeker' || user?.user_type === 'candidate';
   }
 
   /**
@@ -399,7 +537,7 @@ export class AuthService {
    */
   isHR(): boolean {
     const user = this.getCurrentUserValue();
-    return user?.user_type === 'hr';
+    return user?.user_type === 'hr' || user?.user_type === 'hire';
   }
 
   /**
@@ -433,8 +571,19 @@ export class AuthService {
         email: email,
         username: email.split('@')[0],
         user_type: 'hr',
+        first_name: 'HR',
+        last_name: 'Manager',
         full_name: 'HR Manager',
         company_name: 'Tech Solutions Inc.',
+        user_status: 'active',
+        user_plan: 'pro',
+        profile_created_on: new Date(),
+        last_active: new Date(),
+        match_analysis_count: 0,
+        match_tailored_count: 0,
+        mock_interview_count: 0,
+        profile_completion_count: 85,
+        profile_visits: 25,
         is_active: true,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
@@ -445,7 +594,18 @@ export class AuthService {
         email: email,
         username: email.split('@')[0],
         user_type: 'admin',
+        first_name: 'System',
+        last_name: 'Admin',
         full_name: 'System Admin',
+        user_status: 'active',
+        user_plan: 'pro',
+        profile_created_on: new Date(),
+        last_active: new Date(),
+        match_analysis_count: 0,
+        match_tailored_count: 0,
+        mock_interview_count: 0,
+        profile_completion_count: 100,
+        profile_visits: 50,
         is_active: true,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
@@ -456,7 +616,25 @@ export class AuthService {
         email: email,
         username: email.split('@')[0],
         user_type: 'job_seeker',
+        first_name: 'John',
+        last_name: 'Doe',
         full_name: 'John Doe',
+        date_of_birth: new Date('1990-01-15'),
+        phone: '+1234567890',
+        overall_experience_years: 5,
+        highest_qualification: 'Bachelor of Computer Science',
+        skills: ['JavaScript', 'TypeScript', 'Angular', 'Node.js', 'MongoDB'],
+        user_status: 'active',
+        user_plan: 'free',
+        job_preferences: ['remote', 'hybrid'],
+        employment_type: ['full-time'],
+        profile_created_on: new Date(),
+        last_active: new Date(),
+        match_analysis_count: 15,
+        match_tailored_count: 8,
+        mock_interview_count: 3,
+        profile_completion_count: 85,
+        profile_visits: 42,
         profile_completion: 85,
         is_active: true,
         created_at: new Date().toISOString(),
@@ -470,6 +648,15 @@ export class AuthService {
             state: 'CA',
             country: 'USA'
           }
+        },
+        professional_info: {
+          current_role: 'Frontend Developer',
+          current_company: 'TechCorp',
+          total_experience: '5 years',
+          industry: 'Technology',
+          skills: ['JavaScript', 'TypeScript', 'Angular'],
+          current_salary: 75000,
+          expected_salary: 85000
         }
       };
     }

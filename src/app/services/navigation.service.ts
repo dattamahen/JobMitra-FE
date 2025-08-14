@@ -6,7 +6,7 @@ export interface NavItem {
   label: string;
   matIcon: string;
   route?: string;
-  userTypes: ('job_seeker' | 'hr' | 'admin')[];
+  userTypes: ('job_seeker' | 'candidate' | 'hr' | 'hire' | 'admin')[];
 }
 
 @Injectable({
@@ -20,49 +20,49 @@ export class NavigationService {
       label: 'Dashboard', 
       matIcon: 'dashboard',
       route: '/dashboard',
-      userTypes: ['job_seeker', 'hr', 'admin']
+      userTypes: ['job_seeker', 'candidate', 'hr', 'hire', 'admin']
     },
     { 
       id: 'profile', 
       label: 'Profile', 
       matIcon: 'person',
-      userTypes: ['job_seeker']
+      userTypes: ['job_seeker', 'candidate']
     },
     { 
       id: 'job-search', 
       label: 'Job Search', 
       matIcon: 'search',
-      userTypes: ['job_seeker']
+      userTypes: ['job_seeker', 'candidate']
     },
     { 
       id: 'applications', 
       label: 'My Applications', 
       matIcon: 'assignment',
-      userTypes: ['job_seeker']
+      userTypes: ['job_seeker', 'candidate']
     },
     { 
       id: 'resume-builder', 
       label: 'Resume Builder', 
       matIcon: 'description',
-      userTypes: ['job_seeker']
+      userTypes: ['job_seeker', 'candidate']
     },
     { 
       id: 'skill-assessment', 
       label: 'Skill Assessment', 
       matIcon: 'assessment',
-      userTypes: ['job_seeker']
+      userTypes: ['job_seeker', 'candidate']
     },
     { 
       id: 'mock-interviews', 
       label: 'Mock Interviews', 
       matIcon: 'record_voice_over',
-      userTypes: ['job_seeker']
+      userTypes: ['job_seeker', 'candidate']
     },
     { 
       id: 'settings', 
       label: 'Settings', 
       matIcon: 'settings',
-      userTypes: ['job_seeker', 'hr', 'admin']
+      userTypes: ['job_seeker', 'candidate', 'hr', 'hire', 'admin']
     },
 
     // HR Navigation
@@ -70,25 +70,25 @@ export class NavigationService {
       id: 'post-job', 
       label: 'Post Job', 
       matIcon: 'work_add',
-      userTypes: ['hr']
+      userTypes: ['hr', 'hire']
     },
     { 
       id: 'my-jobs', 
       label: 'My Job Postings', 
       matIcon: 'work',
-      userTypes: ['hr']
+      userTypes: ['hr', 'hire']
     },
     { 
       id: 'find-candidates', 
       label: 'Find Candidates', 
       matIcon: 'people_search',
-      userTypes: ['hr']
+      userTypes: ['hr', 'hire']
     },
     { 
       id: 'applications-received', 
       label: 'Applications Received', 
       matIcon: 'inbox',
-      userTypes: ['hr']
+      userTypes: ['hr', 'hire']
     },
 
     // Admin Navigation
