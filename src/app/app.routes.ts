@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { LoginPage } from './login-page/login-page';
 import { Dashboard } from './dashboard/dashboard';
 import { ViewPage } from './view-page/view-page';
+import { JobApplicationsComponent } from './pages/job-applications/job-applications.component';
 import { AuthGuard } from './guards/auth.guard';
 import { JobSeekerGuard } from './guards/job-seeker.guard';
 import { HRGuard } from './guards/hr.guard';
@@ -20,6 +21,11 @@ export const routes: Routes = [
   { 
     path: 'dashboard/:page', 
     component: Dashboard,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'job-applications/:jobId',
+    component: JobApplicationsComponent,
     canActivate: [AuthGuard]
   },
   // Legacy route support for backwards compatibility
