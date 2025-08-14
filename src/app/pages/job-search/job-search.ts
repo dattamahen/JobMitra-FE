@@ -242,15 +242,18 @@ export class JobSearchPage implements OnInit {
 
   // Format salary for API job data
   formatSalary(job: ApiJobListing): string {
-    if (!job.salary.min && !job.salary.max) return 'Salary not disclosed';
+    // Check if salary object exists
+    if (!job.salary || (!job.salary.min && !job.salary.max)) {
+      return 'Salary not disclosed';
+    }
     
     const formatAmount = (amount: number) => {
-      if (job.salary.currency === 'INR') {
+      if (job.salary!.currency === 'INR') {
         return (amount / 100000).toFixed(0) + ' LPA';
       }
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: job.salary.currency,
+        currency: job.salary!.currency,
         minimumFractionDigits: 0,
         maximumFractionDigits: 0
       }).format(amount);
@@ -260,8 +263,10 @@ export class JobSearchPage implements OnInit {
       return `${formatAmount(job.salary.min)} - ${formatAmount(job.salary.max)}`;
     } else if (job.salary.min) {
       return `From ${formatAmount(job.salary.min)}`;
+    } else if (job.salary.max) {
+      return `Up to ${formatAmount(job.salary.max)}`;
     } else {
-      return `Up to ${formatAmount(job.salary.max!)}`;
+      return 'Salary not disclosed';
     }
   }
 

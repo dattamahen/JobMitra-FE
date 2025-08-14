@@ -80,6 +80,9 @@ export interface JobListing {
   created_at: string;
   updated_at: string;
   hr_id: string;
+  // Additional properties used in the template
+  applications_count?: number;
+  views_count?: number;
 }
 
 export interface HRDashboardStats {
@@ -193,6 +196,16 @@ export class HrService {
         error: error.error
       });
       throw new Error(error.error?.detail || 'Failed to load job postings');
+    }
+  }
+
+  async getJobApplications(jobId: string): Promise<any> {
+    try {
+      return await firstValueFrom(
+        this.http.get(`${this.baseUrl}/hr/jobs/${jobId}/applications`, { headers: this.getAuthHeaders() })
+      );
+    } catch (error: any) {
+      throw new Error(error.error?.detail || 'Failed to load job applications');
     }
   }
 

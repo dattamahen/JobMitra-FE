@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, switchMap } from 'rxjs/operators';
 import { ApiService } from './api.service';
+import { UserService } from './user.service';
 import { JOB_LISTINGS_DATA, JobListing as MockJobListing } from '../data/job-search-data';
 
 export interface JobListing {
@@ -18,7 +19,7 @@ export interface JobListing {
   };
   employment_type: 'full-time' | 'part-time' | 'contract' | 'freelance' | 'internship';
   experience_level: 'entry' | 'mid' | 'senior' | 'lead' | 'executive';
-  salary: {
+  salary?: {
     min?: number;
     max?: number;
     currency: 'USD' | 'EUR' | 'GBP' | 'INR';
@@ -120,12 +121,15 @@ export class JobService {
   private searchFiltersSubject = new BehaviorSubject<JobSearchFilters>({});
   public searchFilters$ = this.searchFiltersSubject.asObservable();
 
-  constructor(private apiService: ApiService) {
+  constructor(
+    private apiService: ApiService,
+    private userService: UserService
+  ) {
     this.loadSavedJobs();
   }
 
   /**
-   * Search for jobs with filters and pagination
+   * Search for jobs with filters and pagination using POST method with user skills
    */
   searchJobs(
     filters: JobSearchFilters = {},
@@ -134,43 +138,111 @@ export class JobService {
   ): Observable<JobSearchResponse> {
     console.log('🔍 JobService: Searching jobs with filters:', filters, 'page:', page);
     
-    const params: any = {
-      page,
-      per_page: perPage,
-      ...filters
-    };
+    // Get current user and their skills
+    return this.userService.getCurrentUser().pipe(
+      switchMap(currentUser => {
+        // Prepare request body for POST API
+        const requestBody: any = {
+          page,
+          per_page: perPage,
+          keywords: filters.keywords,
+          location: filters.location,
+          experience_level: filters.experience_level?.join(','),
+          employment_type: filters.employment_type?.join(','),
+          job_type: filters.job_type?.join(','),
+          user_skills: currentUser?.skills || [],
+          user_certifications: this.extractCertificationNames(currentUser?.certifications),
+          user_experience_keywords: this.extractExperienceKeywords(currentUser)
+        };
 
-    // Convert arrays to comma-separated strings for API
-    if (filters.employment_type?.length) {
-      params.employment_type = filters.employment_type.join(',');
-    }
-    if (filters.experience_level?.length) {
-      params.experience_level = filters.experience_level.join(',');
-    }
-    if (filters.job_type?.length) {
-      params.job_type = filters.job_type.join(',');
-    }
-    if (filters.skills?.length) {
-      params.skills = filters.skills.join(',');
-    }
-    if (filters.company_size?.length) {
-      params.company_size = filters.company_size.join(',');
-    }
-    if (filters.industry?.length) {
-      params.industry = filters.industry.join(',');
+        console.log('🚀 JobService: Making POST request to /jobs with body:', requestBody);
+
+        return this.apiService.post<JobSearchResponse>('/jobs', requestBody)
+          .pipe(
+            map(response => {
+              console.log('✅ JobService: Received jobs from POST API:', response);
+              return response;
+            }),
+            catchError(error => {
+              console.warn('🔥 POST API unavailable - Using mock job search data:', error.message);
+              return of(this.getMockJobSearchResponse(filters, page, perPage));
+            })
+          );
+      }),
+      catchError(error => {
+        console.warn('🔥 User service unavailable - Using mock job search without user skills:', error.message);
+        // Fallback to mock data if user service fails
+        return of(this.getMockJobSearchResponse(filters, page, perPage));
+      })
+    );
+  }
+
+  /**
+   * Extract certification names from user profile (handles both string and object formats)
+   */
+  private extractCertificationNames(certifications: any): string[] {
+    if (!certifications || !Array.isArray(certifications)) return [];
+
+    return certifications.map(cert => {
+      // Handle certification objects with 'name' property
+      if (typeof cert === 'object' && cert.name) {
+        return cert.name;
+      }
+      // Handle certification strings
+      if (typeof cert === 'string') {
+        return cert;
+      }
+      return '';
+    }).filter(name => name && name.trim().length > 0);
+  }
+
+  /**
+   * Extract experience keywords from user profile
+   */
+  private extractExperienceKeywords(currentUser: any): string[] {
+    if (!currentUser) return [];
+
+    const keywords: string[] = [];
+    
+    // Extract from professional summary
+    if (currentUser.professional_summary) {
+      const summaryWords = currentUser.professional_summary
+        .toLowerCase()
+        .split(/\s+/)
+        .filter((word: string) => word.length > 3);
+      keywords.push(...summaryWords);
     }
 
-    return this.apiService.get<JobSearchResponse>('/jobs', params)
-      .pipe(
-        map(response => {
-          console.log('✅ JobService: Received jobs from API:', response);
-          return response;
-        }),
-        catchError(error => {
-          console.warn('🔥 API unavailable - Using mock job search data:', error.message);
-          return of(this.getMockJobSearchResponse(filters, page, perPage));
-        })
-      );
+    // Extract from key contributions
+    if (currentUser.key_contributions) {
+      const contributionWords = currentUser.key_contributions
+        .toLowerCase()
+        .split(/\s+/)
+        .filter((word: string) => word.length > 3);
+      keywords.push(...contributionWords);
+    }
+
+    // Add current job title words
+    if (currentUser.current_job_title) {
+      const jobTitleWords = currentUser.current_job_title
+        .toLowerCase()
+        .split(/\s+/)
+        .filter((word: string) => word.length > 2);
+      keywords.push(...jobTitleWords);
+    }
+
+    // Add area of expertise
+    if (currentUser.area_of_expertise) {
+      const expertiseWords = currentUser.area_of_expertise
+        .join(' ')
+        .toLowerCase()
+        .split(/\s+/)
+        .filter((word: string) => word.length > 3);
+      keywords.push(...expertiseWords);
+    }
+
+    // Remove duplicates and return unique keywords
+    return [...new Set(keywords)].slice(0, 15); // Limit to 15 most relevant keywords
   }
 
   /**
