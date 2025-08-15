@@ -20,7 +20,6 @@
             <mat-grid-tile>
               <mat-card class="stat-card" 
                         [class]="'stat-card-' + stat.color"
-                        (click)="onStatCardClick(stat)"
                         role="button"
                         tabindex="0">
                 <mat-card-content>
@@ -66,8 +65,7 @@
             @if (dashboardData.recentActivities && dashboardData.recentActivities.length > 0) {
               <mat-list class="activity-list">
                 @for (activity of dashboardData.recentActivities; track activity.id) {
-                  <mat-list-item class="activity-item" 
-                                 (click)="onActivityClick(activity)"
+                  <mat-list-item class="activity-item"
                                  role="button">
                     <mat-icon matListItemIcon 
                               [class]="'activity-icon-' + getActivityTypeColor(activity.type)">

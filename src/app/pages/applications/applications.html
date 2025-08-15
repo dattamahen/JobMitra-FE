@@ -33,6 +33,11 @@
             <mat-chip [class]="getStatusClass(application.status)">
               {{getStatusLabel(application.status)}}
             </mat-chip>
+            @if (application.status === 'applied') {
+            <button mat-raised-button color="primary" class="badge-button" (click)="prepareForInterview(application.application_id)">
+              Prepare for Interview
+            </button>
+            }
           </mat-chip-set>
         </div>
       </mat-card-header>
@@ -112,27 +117,7 @@
         }
       </mat-card-content>
 
-      <!-- Actions -->
-      <mat-card-actions>
-        @if (application.status === 'interview_scheduled') {
-        <button mat-raised-button color="primary" (click)="prepareForInterview(application.application_id)">
-          Prepare for Interview
-        </button>
-        }
-        @if (application.status === 'offer_received') {
-        <button mat-raised-button color="accent">
-          View Offer Details
-        </button>
-        }
-        <button mat-button (click)="viewApplicationDetails(application.application_id)">
-          View Details
-        </button>
-        @if (application.status === 'applied' || application.status === 'under_review') {
-        <button mat-button color="warn" (click)="withdrawApplication(application.application_id)">
-          Withdraw
-        </button>
-        }
-      </mat-card-actions>
+
     </mat-card>
     }
     }
