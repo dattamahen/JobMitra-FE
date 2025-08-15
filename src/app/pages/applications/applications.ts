@@ -6,7 +6,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ApplicationService, JobApplication } from '../../services/application.service';
+import { JobService, JobListing, JobApplication } from '../../services/job.service';
+import { UserService } from '../../services/user.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-applications-page',
@@ -18,20 +20,21 @@ import { ApplicationService, JobApplication } from '../../services/application.s
     MatIconModule,
     MatProgressBarModule,
     MatButtonModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatSnackBarModule
   ],
   templateUrl: './applications.html',
   styleUrls: ['./applications.css']
 })
 export class ApplicationsPage implements OnInit {
-  applications: JobApplication[] = [];
+  applications: any[] = [];
   isLoading = false;
-  totalApplications = 0;
-  currentPage = 1;
-  applicationsPerPage = 10;
+  error = '';
 
   constructor(
-    private applicationService: ApplicationService,
+    private jobService: JobService,
+    private userService: UserService,
+    private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -40,26 +43,34 @@ export class ApplicationsPage implements OnInit {
     this.loadApplications();
   }
 
-  private loadApplications(): void {
-    console.log('🎯 loadApplications called');
-    this.isLoading = true;
-    
-    this.applicationService.getApplications({}, this.currentPage, this.applicationsPerPage)
-      .subscribe({
-        next: (response) => {
-          console.log('✅ Applications loaded successfully:', response);
-          this.applications = response.applications || [];
-          this.totalApplications = response.total_count || 0;
-          this.isLoading = false;
-          this.cdr.detectChanges();
-          console.log('✅ Updated applications:', this.applications);
-        },
-        error: (error) => {
-          console.error('❌ Error loading applications:', error);
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        }
-      });
+  loadApplications(): void {
+    this.userService.getCurrentUser().subscribe(currentUser => {
+      if (!currentUser) {
+        this.error = 'Please login to view your applications';
+        return;
+      }
+
+      console.log('🎯 loadApplications called');
+      this.isLoading = true;
+      this.error = '';
+      
+      this.jobService.getUserAppliedJobs(currentUser.user_id)
+        .subscribe({
+          next: (response) => {
+            console.log('✅ Applied jobs loaded successfully:', response);
+            this.applications = response.applied_jobs || [];
+            this.isLoading = false;
+            this.cdr.detectChanges();
+            console.log('✅ Updated applications:', this.applications);
+          },
+          error: (error) => {
+            console.error('❌ Error loading applied jobs:', error);
+            this.error = error.error?.detail || 'Failed to load applications';
+            this.isLoading = false;
+            this.cdr.detectChanges();
+          }
+        });
+    });
   }
 
   getStatusClass(status: string): string {
@@ -88,7 +99,7 @@ export class ApplicationsPage implements OnInit {
     return statusLabels[status] || status;
   }
 
-  getProgressSteps(application: JobApplication): any[] {
+  getProgressSteps(application: any): any[] {
     const allSteps = [
       { name: 'Applied', icon: 'check', completed: true },
       { name: 'Screening', icon: 'hourglass_empty', completed: false, active: false },
@@ -125,7 +136,7 @@ export class ApplicationsPage implements OnInit {
     return allSteps;
   }
 
-  getProgressPercentage(application: JobApplication): number {
+  getProgressPercentage(application: any): number {
     return (application as any).progress_percentage || this.calculateProgressFromStatus(application.status);
   }
 
@@ -160,8 +171,8 @@ export class ApplicationsPage implements OnInit {
     });
   }
 
-  getNextInterviewStage(application: JobApplication): any {
-    return application.interview_stages?.find(stage => stage.status === 'scheduled');
+  getNextInterviewStage(application: any): any {
+    return application.interview_stages?.find((stage: any) => stage.status === 'scheduled');
   }
 
   formatSalary(amount: number, currency: string): string {

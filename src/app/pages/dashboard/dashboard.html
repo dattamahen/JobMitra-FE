@@ -14,14 +14,6 @@
     } @else {
       <!-- Dashboard Content -->
       @if (dashboardData$ | async; as dashboardData) {
-        <!-- Stats Grid -->
-        <div class="dashboard-header">
-          <h1>Dashboard Overview</h1>
-          <button mat-raised-button color="primary" (click)="refreshDashboard()">
-            <mat-icon>refresh</mat-icon>
-            Refresh
-          </button>
-        </div>
 
         <mat-grid-list cols="3" rowHeight="140px" gutterSize="20px" class="stats-grid">
           @for (stat of dashboardData.stats; track stat.id) {

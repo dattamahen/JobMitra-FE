@@ -18,6 +18,10 @@ import {
   LearningResource 
 } from '../../data/job-search-data';
 import { JobService, JobListing as ApiJobListing, JobSearchFilters } from '../../services/job.service';
+import { UserService } from '../../services/user.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Inject } from '@angular/core';
 
 @Component({
   selector: 'app-job-search-page',
@@ -34,7 +38,9 @@ import { JobService, JobListing as ApiJobListing, JobSearchFilters } from '../..
     MatChipsModule,
     MatTooltipModule,
     MatExpansionModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatSnackBarModule,
+    MatDialogModule
   ],
   templateUrl: './job-search.html',
   styleUrls: ['./job-search.css']
@@ -59,6 +65,8 @@ export class JobSearchPage implements OnInit {
   totalJobs = 0;
   jobsPerPage = 10;
 
+
+
   // Debugging getter
   get debugInfo() {
     return {
@@ -70,7 +78,10 @@ export class JobSearchPage implements OnInit {
   
   constructor(
     private jobService: JobService,
-    private cdr: ChangeDetectorRef
+    private userService: UserService,
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef,
+    private dialog: MatDialog
   ) {
     // Initialize filter options with empty arrays to prevent template errors
     this.filterOptions = {
@@ -272,39 +283,165 @@ export class JobSearchPage implements OnInit {
 
   takeMatchAnalysis(jobId: string): void {
     const job = this.getJobById(jobId);
+    if (!job) return;
+    
+    // Check if already done
+    if (job.match_analysis_done) {
+      this.snackBar.open('Match analysis already completed', 'Close', { duration: 3000 });
+      return;
+    }
+    
     console.log(`Analyzing profile match for job: ${job?.title}`);
-    // Here you would typically navigate to profile analysis or show a dialog
-    alert(`Analyzing how well your profile matches the ${job?.title} position...`);
+    
+    this.jobService.performMatchAnalysis(jobId).subscribe({
+      next: (response) => {
+        // Update job object
+        job.match_percentage = response.match_percentage;
+        job.match_analysis_done = response.analysis_done;
+        
+        this.snackBar.open(response.message, 'Close', { duration: 3000 });
+      },
+      error: (error) => {
+        const errorMessage = error.error?.detail || 'Failed to perform match analysis';
+        this.snackBar.open(errorMessage, 'Close', { duration: 3000 });
+        console.error('Match analysis error:', error);
+      }
+    });
   }
 
   modifyCV(jobId: string): void {
     const job = this.getJobById(jobId);
-    console.log(`Modifying CV for job: ${job?.title}`);
-    // Here you would typically navigate to CV modification page or show editing interface
-    alert(`Opening CV modification tool tailored for ${job?.title} position...`);
+    if (!job) return;
+    
+    // Check if already done
+    if (job.tailor_resume_done) {
+      this.snackBar.open('Resume already tailored', 'Close', { duration: 3000 });
+      return;
+    }
+    
+    console.log(`Tailoring resume for job: ${job?.title}`);
+    
+    this.jobService.tailorResume(jobId).subscribe({
+      next: (response) => {
+        // Update job object
+        job.match_percentage = response.match_percentage;
+        job.tailor_resume_done = response.tailor_done;
+        
+        this.snackBar.open(response.message, 'Close', { duration: 3000 });
+      },
+      error: (error) => {
+        const errorMessage = error.error?.detail || 'Failed to tailor resume';
+        this.snackBar.open(errorMessage, 'Close', { duration: 3000 });
+        console.error('Tailor resume error:', error);
+      }
+    });
+  }
+
+  // Check if match analysis button should be disabled
+  isMatchAnalysisDisabled(jobId: string): boolean {
+    const job = this.getJobById(jobId);
+    return job?.match_analysis_done || false;
+  }
+
+  // Check if tailor resume button should be disabled
+  isTailorResumeDisabled(jobId: string): boolean {
+    const job = this.getJobById(jobId);
+    return job?.tailor_resume_done || false;
   }
 
   takeMockInterview(jobId: string): void {
     const job = this.getJobById(jobId);
     console.log(`Starting mock interview for job: ${job?.title}`);
-    // Here you would typically navigate to mock interview page or start interview flow
-    alert(`Starting mock interview preparation for ${job?.title} position...`);
+    
+    const dialogRef = this.dialog.open(MockInterviewDialog, {
+      width: '400px',
+      data: { jobTitle: job?.title }
+    });
   }
 
   // Apply for job
   applyForJob(jobId: string): void {
-    const job = this.getJobById(jobId);
-    console.log(`Applying for job: ${job?.title}`);
-    // Here you would typically handle the job application process
-    alert(`Redirecting to application page for ${job?.title} position...`);
+    this.userService.getCurrentUser().subscribe(currentUser => {
+      if (!currentUser) {
+        this.snackBar.open('Please login to apply for jobs', 'Close', { duration: 3000 });
+        return;
+      }
+
+      const job = this.getJobById(jobId);
+      if (!job) {
+        this.snackBar.open('Job not found', 'Close', { duration: 3000 });
+        return;
+      }
+
+      // First attempt - check if match analysis prompt should be shown
+      this.jobService.applyForJob(jobId, false).subscribe({
+        next: (response) => {
+          if (response.show_match_prompt) {
+            // Show apply confirmation modal
+            this.showApplyConfirmationModal(jobId);
+          } else {
+            // Application successful
+            job.already_applied = true;
+            job.match_analysis_done = true;
+            job.tailor_resume_done = true;
+            this.snackBar.open(response.message, 'Close', { duration: 3000 });
+          }
+        },
+        error: (error) => {
+          const errorMessage = error.error?.detail || 'Failed to apply for job';
+          this.snackBar.open(errorMessage, 'Close', { duration: 3000 });
+          console.error('Apply error:', error);
+        }
+      });
+    });
+  }
+
+  // Show apply confirmation modal
+  private showApplyConfirmationModal(jobId: string): void {
+    const dialogRef = this.dialog.open(ApplyConfirmationDialog, {
+      width: '400px',
+      data: { jobId: jobId }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'apply') {
+        this.forceApplyForJob(jobId);
+      }
+    });
+  }
+
+  // Force apply without match analysis
+  private forceApplyForJob(jobId: string): void {
+    this.jobService.applyForJob(jobId, true).subscribe({
+      next: (response) => {
+        const job = this.getJobById(jobId);
+        if (job) {
+          job.already_applied = true;
+          job.match_analysis_done = true;
+          job.tailor_resume_done = true;
+          if (response.match_percentage) {
+            job.match_percentage = response.match_percentage;
+          }
+        }
+        this.snackBar.open(response.message, 'Close', { duration: 3000 });
+      },
+      error: (error) => {
+        const errorMessage = error.error?.detail || 'Failed to apply for job';
+        this.snackBar.open(errorMessage, 'Close', { duration: 3000 });
+        console.error('Force apply error:', error);
+      }
+    });
   }
 
   // Save job for later
   saveJob(jobId: string): void {
     const job = this.getJobById(jobId);
     console.log(`Saving job: ${job?.title}`);
-    // Here you would typically save the job to user's saved jobs
-    alert(`${job?.title} has been saved to your favorites!`);
+    
+    const dialogRef = this.dialog.open(SaveJobDialog, {
+      width: '400px',
+      data: { jobTitle: job?.title }
+    });
   }
 
   // Get skill level color
@@ -345,5 +482,103 @@ export class JobSearchPage implements OnInit {
   // Open YouTube video in new tab
   openLearningResource(resource: any): void {
     window.open(resource.youtube_url, '_blank');
+  }
+
+  // Get match analysis result text
+  getMatchAnalysisText(jobId: string): string {
+    const job = this.getJobById(jobId);
+    if (job?.match_analysis_done && job.match_percentage) {
+      return `Analysis: ${job.match_percentage}% Match`;
+    }
+    return 'Match Analysis';
+  }
+
+  // Get tailor resume text
+  getTailorResumeText(jobId: string): string {
+    const job = this.getJobById(jobId);
+    if (job?.tailor_resume_done) {
+      return 'Resume Tailored';
+    }
+    return 'Tailor Resume';
+  }
+}
+
+@Component({
+  selector: 'apply-confirmation-dialog',
+  template: `
+    <h2 mat-dialog-title>Apply for Job</h2>
+    <mat-dialog-content>
+      <p>Apply without matching your CV with actual job description?</p>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button (click)="onCancel()">Cancel</button>
+      <button mat-raised-button color="primary" (click)="onApply()">Continue Applying</button>
+    </mat-dialog-actions>
+  `,
+  standalone: true,
+  imports: [MatDialogModule, MatButtonModule]
+})
+export class ApplyConfirmationDialog {
+  constructor(
+    public dialogRef: MatDialogRef<ApplyConfirmationDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: { jobId: string }
+  ) {}
+
+  onCancel(): void {
+    this.dialogRef.close();
+  }
+
+  onApply(): void {
+    this.dialogRef.close('apply');
+  }
+}
+
+@Component({
+  selector: 'mock-interview-dialog',
+  template: `
+    <h2 mat-dialog-title>Mock Interview</h2>
+    <mat-dialog-content>
+      <p>Starting mock interview preparation for {{data.jobTitle}} position...</p>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-raised-button color="primary" (click)="onClose()">OK</button>
+    </mat-dialog-actions>
+  `,
+  standalone: true,
+  imports: [MatDialogModule, MatButtonModule]
+})
+export class MockInterviewDialog {
+  constructor(
+    public dialogRef: MatDialogRef<MockInterviewDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: { jobTitle: string }
+  ) {}
+
+  onClose(): void {
+    this.dialogRef.close();
+  }
+}
+
+@Component({
+  selector: 'save-job-dialog',
+  template: `
+    <h2 mat-dialog-title>Job Saved</h2>
+    <mat-dialog-content>
+      <p>{{data.jobTitle}} has been saved to your favorites!</p>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-raised-button color="primary" (click)="onClose()">OK</button>
+    </mat-dialog-actions>
+  `,
+  standalone: true,
+  imports: [MatDialogModule, MatButtonModule]
+})
+export class SaveJobDialog {
+  constructor(
+    public dialogRef: MatDialogRef<SaveJobDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: { jobTitle: string }
+  ) {}
+
+  onClose(): void {
+    this.dialogRef.close();
   }
 }

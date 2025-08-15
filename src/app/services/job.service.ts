@@ -52,6 +52,9 @@ export interface JobListing {
   source: 'internal' | 'linkedin' | 'indeed' | 'glassdoor' | 'other';
   job_score?: number;
   match_percentage?: number;
+  already_applied?: boolean;
+  match_analysis_done?: boolean;
+  tailor_resume_done?: boolean;
   hr_contact?: {
     name: string;
     email: string;
@@ -70,6 +73,23 @@ export interface JobListing {
     skill: string;
     rating?: number;
   }[];
+}
+
+export interface JobApplication {
+  application_id: string;
+  job_id: string;
+  user_id: string;
+  status: 'applied' | 'under_review' | 'interview_scheduled' | 'interviewed' | 'offer_received' | 'rejected' | 'withdrawn';
+  applied_date: string;
+  last_updated: string;
+  interview_stages?: {
+    stage_id: string;
+    stage_name: string;
+    status: 'scheduled' | 'completed' | 'cancelled';
+    scheduled_date?: string;
+    feedback?: string;
+  }[];
+  progress_percentage?: number;
 }
 
 export interface JobSearchFilters {
@@ -418,6 +438,41 @@ export class JobService {
     description?: string;
   }): Observable<{ message: string; goal_id: string }> {
     return this.apiService.post<{ message: string; goal_id: string }>('/learning/goals', goalData);
+  }
+
+  /**
+   * Apply for a job
+   */
+  applyForJob(jobId: string, forceApply: boolean = false): Observable<{ message: string; success: boolean; show_match_prompt?: boolean; match_percentage?: number }> {
+    return this.apiService.post<{ message: string; success: boolean; show_match_prompt?: boolean; match_percentage?: number }>('/api/v1/apply-job', {
+      job_id: jobId,
+      force_apply: forceApply
+    });
+  }
+
+  /**
+   * Get user's applied jobs
+   */
+  getUserAppliedJobs(userId: string): Observable<{ applied_jobs: JobListing[]; total_count: number }> {
+    return this.apiService.get<{ applied_jobs: JobListing[]; total_count: number }>(`/api/v1/users/${userId}/applied-jobs`);
+  }
+
+  /**
+   * Perform match analysis for a job
+   */
+  performMatchAnalysis(jobId: string): Observable<{ match_percentage: number; message: string; analysis_done: boolean }> {
+    return this.apiService.post<{ match_percentage: number; message: string; analysis_done: boolean }>('/api/v1/match-analysis', {
+      job_id: jobId
+    });
+  }
+
+  /**
+   * Tailor resume for a job
+   */
+  tailorResume(jobId: string): Observable<{ match_percentage: number; message: string; tailor_done: boolean }> {
+    return this.apiService.post<{ match_percentage: number; message: string; tailor_done: boolean }>('/api/v1/tailor-resume', {
+      job_id: jobId
+    });
   }
 
   /**
