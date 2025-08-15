@@ -100,6 +100,21 @@ mat-form-field {
   outline-offset: 2px !important;
 }
 
+.action-chip.disabled {
+  background-color: #e0e0e0 !important;
+  color: #9e9e9e !important;
+  border-color: #bdbdbd !important;
+  cursor: not-allowed !important;
+  opacity: 0.6 !important;
+}
+
+.action-chip.disabled:hover {
+  background-color: #e0e0e0 !important;
+  border-color: #bdbdbd !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
 .action-chip mat-icon {
   font-size: 16px !important;
   width: 16px !important;
