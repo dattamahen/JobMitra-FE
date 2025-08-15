@@ -185,3 +185,12 @@ mat-progress-bar {
   font-size: 12px !important;
   margin-right: 8px !important;
 }
+
+.badge-button {
+  border-radius: 20px !important;
+  font-size: 12px !important;
+  padding: 4px 12px !important;
+  min-width: auto !important;
+  height: 32px !important;
+  margin-left: 8px !important;
+}

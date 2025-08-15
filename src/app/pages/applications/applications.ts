@@ -28,7 +28,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 })
 export class ApplicationsPage implements OnInit {
   applications: any[] = [];
-  isLoading = false;
+  isLoading = true;
   error = '';
 
   constructor(

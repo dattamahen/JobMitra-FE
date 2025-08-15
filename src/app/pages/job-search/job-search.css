@@ -32,6 +32,8 @@
   border-radius: 4px !important;
   text-transform: none !important;
   letter-spacing: 0.5px !important;
+  align-self: flex-end !important;
+  margin-bottom: 1.34375em !important;
 }
 
 .search-button mat-icon {
