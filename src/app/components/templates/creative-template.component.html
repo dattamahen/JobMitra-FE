@@ -1,0 +1,48 @@
+<table style="width:100%; border-collapse:collapse; table-layout:fixed; font-family: 'Segoe UI', sans-serif; background:#fdfdfd;">
+  <tr>
+    <!-- Header across full width -->
+    <td colspan="2" style="background:#3498db; color:#fff; padding:30px; text-align:center;">
+      <h1 style="margin:0; font-size:32px;">{{ cv.sections.personal_info.full_name }}</h1>
+      <p style="margin:5px 0; font-size:15px;">{{ cv.sections.summary }}</p>
+      <p style="margin:0; font-size:13px;">{{ cv.sections.personal_info.email }} | {{ cv.sections.personal_info.phone }} | {{ cv.sections.personal_info.location }}</p>
+    </td>
+  </tr>
+  <tr>
+    <!-- Left -->
+    <td style="width:35%; vertical-align:top; padding:20px; background:#ecf0f1;">
+      <h2 style="color:#3498db; font-size:16px;">Skills</h2>
+      <ul>
+        @for (skill of cv.sections.skills.technical; track skill) {
+          <li>{{ skill }}</li>
+        }
+      </ul>
+
+      @if (cv.sections.projects && cv.sections.projects.length > 0) {
+        <h2 style="color:#3498db; font-size:16px; margin-top:20px;">Projects</h2>
+        @for (project of cv.sections.projects; track project.name) {
+          <p><b>{{ project.name }}</b><br>{{ project.description }}</p>
+        }
+      }
+
+      @if (cv.sections.certifications && cv.sections.certifications.length > 0) {
+        <h2 style="color:#3498db; font-size:16px; margin-top:20px;">Certifications</h2>
+        @for (cert of cv.sections.certifications; track cert.name) {
+          <p>{{ cert.name }}</p>
+        }
+      }
+    </td>
+
+    <!-- Right -->
+    <td style="width:65%; vertical-align:top; padding:20px;">
+      <h2 style="color:#3498db; font-size:18px;">Experience</h2>
+      @for (exp of cv.sections.experience; track exp.company) {
+        <p><b>{{ exp.company }}</b> — {{ exp.position }}<br><i>{{ exp.duration }}</i><br>{{ exp.description }}</p>
+      }
+
+      <h2 style="color:#3498db; font-size:18px; margin-top:20px;">Education</h2>
+      @for (edu of cv.sections.education; track edu.degree) {
+        <p><b>{{ edu.institution }}</b> — {{ edu.degree }} ({{ edu.year }})</p>
+      }
+    </td>
+  </tr>
+</table>

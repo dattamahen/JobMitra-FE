@@ -9,6 +9,7 @@ export { MockInterviewService } from './mock-interview.service';
 export { LearningService } from './learning.service';
 export { DashboardService } from './dashboard.service';
 export { HrService } from './hr.service';
+export { ResumeService } from './resume.service';
 
 // Service Types and Interfaces
 export type { UserProfile, CreateUserRequest, UpdateUserRequest } from './user.service';
@@ -45,3 +46,13 @@ export type {
   JobListing as HRJobListing,
   HRDashboardStats
 } from './hr.service';
+export type {
+  Resume,
+  ResumeSection,
+  ResumeTemplate,
+  PersonalInfo,
+  Experience,
+  Education,
+  Project,
+  Certification
+} from './resume.service';

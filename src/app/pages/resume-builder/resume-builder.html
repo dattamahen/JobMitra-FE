@@ -1,71 +1,664 @@
 <div class="page-container">
-  <div class="resume-builder-content">
-    <div class="builder-sidebar">
-      <div class="section-list">
-        <div class="section-item active">📝 Personal Info</div>
-        <div class="section-item">🎯 Summary</div>
-        <div class="section-item">💼 Experience</div>
-        <div class="section-item">🎓 Education</div>
-        <div class="section-item">🛠️ Skills</div>
-        <div class="section-item">🏆 Projects</div>
-        <div class="section-item">📜 Certifications</div>
+  @if (isLoading()) {
+    <div class="loading-container">
+      <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
+      <div class="loading-content">
+        <mat-icon class="loading-icon">description</mat-icon>
+        <h3>Loading Resume Builder...</h3>
+        <p>Setting up your resume workspace</p>
+      </div>
+    </div>
+  } @else {
+    <div class="resume-builder-content">
+      <!-- Sidebar with sections and AI suggestions -->
+      <div class="builder-sidebar">
+        <div class="progress-section">
+          <h4>
+            <mat-icon>trending_up</mat-icon>
+            Resume Progress
+          </h4>
+          <div class="progress-bar">
+            <mat-progress-bar 
+              mode="determinate" 
+              [value]="completionPercentage()"
+              color="primary">
+            </mat-progress-bar>
+            <span class="progress-text">{{ completionPercentage() }}% Complete</span>
+          </div>
+        </div>
+
+        <div class="section-list">
+          <h4>
+            <mat-icon>list</mat-icon>
+            Resume Sections
+          </h4>
+          @for (section of sections; track section.id) {
+            <div class="section-item" 
+                 [class.active]="activeSection() === section.id"
+                 [class.completed]="isSectionComplete(section.id)"
+                 (click)="selectSection(section.id)"
+                 role="button"
+                 tabindex="0">
+              <div class="section-info">
+                <mat-icon class="section-icon">{{ section.icon }}</mat-icon>
+                <span class="section-label">{{ section.label }}</span>
+                @if (section.required) {
+                  <mat-icon class="required-icon" matTooltip="Required section">star</mat-icon>
+                }
+              </div>
+              @if (isSectionComplete(section.id)) {
+                <mat-icon class="completion-icon" color="primary">check_circle</mat-icon>
+              }
+            </div>
+          }
+        </div>
+        
+        @if (currentResume(); as resume) {
+          <div class="ai-suggestions">
+            <h4>
+              <mat-icon>psychology</mat-icon>
+              AI Suggestions
+            </h4>
+            @if (resume.suggestions && resume.suggestions.length > 0) {
+              @for (suggestion of resume.suggestions; track $index) {
+                <div class="suggestion">
+                  <p>{{ suggestion }}</p>
+                  <button mat-stroked-button class="apply-suggestion" size="small">
+                    <mat-icon>auto_fix_high</mat-icon>
+                    Apply
+                  </button>
+                </div>
+              }
+            } @else {
+              <div class="no-suggestions">
+                <mat-icon>lightbulb</mat-icon>
+                <p>Complete more sections to get AI suggestions</p>
+              </div>
+            }
+          </div>
+
+          <div class="ats-score-section">
+            <h4>
+              <mat-icon>analytics</mat-icon>
+              ATS Score
+            </h4>
+            <div class="ats-score" [class]="getATSScoreClass()">
+              <div class="score-circle">
+                <span class="score-value">{{ resume.ats_score }}%</span>
+              </div>
+              <div class="score-info">
+                @if (resume.ats_score >= 80) {
+                  <span class="score-label excellent">Excellent</span>
+                  <p>Your resume is well-optimized for ATS systems</p>
+                } @else if (resume.ats_score >= 60) {
+                  <span class="score-label good">Good</span>
+                  <p>Your resume has good ATS compatibility</p>
+                } @else {
+                  <span class="score-label needs-improvement">Needs Work</span>
+                  <p>Consider optimizing for better ATS performance</p>
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="template-section">
+            <h4>
+              <mat-icon>palette</mat-icon>
+              CV Templates
+            </h4>
+            <div class="template-grid">
+              @for (template of cvTemplates; track template.id) {
+                <div class="template-card" 
+                     [class.active]="selectedTemplate() === template.id"
+                     (click)="selectTemplate(template.id)">
+                  <div class="template-preview">
+                    <mat-icon>{{ template.icon }}</mat-icon>
+                  </div>
+                  <span class="template-name">{{ template.name }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
       </div>
       
-      <div class="ai-suggestions">
-        <h4>🤖 AI Suggestions</h4>
-        <div class="suggestion">
-          <p>"Add more quantifiable achievements to your experience section"</p>
-          <button class="apply-suggestion">Apply</button>
-        </div>
-        <div class="suggestion">
-          <p>"Include relevant keywords for ATS optimization"</p>
-          <button class="apply-suggestion">Apply</button>
-        </div>
-      </div>
-    </div>
-    
-    <div class="builder-main">
-      <div class="resume-form">
-        <h3>Personal Information</h3>
-        <div class="form-row">
-          <input type="text" placeholder="Full Name" class="form-input">
-          <input type="email" placeholder="Email" class="form-input">
-        </div>
-        <div class="form-row">
-          <input type="tel" placeholder="Phone" class="form-input">
-          <input type="text" placeholder="Location" class="form-input">
-        </div>
-        <div class="form-row">
-          <input type="url" placeholder="LinkedIn URL" class="form-input">
-          <input type="url" placeholder="Portfolio URL" class="form-input">
+      <!-- Main content area -->
+      <div class="builder-main">
+        @if (currentResume(); as resume) {
+          <!-- Personal Information Section -->
+          @if (activeSection() === 'personal_info') {
+            <div class="resume-form">
+              <div class="form-header">
+                <h3>
+                  <mat-icon>person</mat-icon>
+                  Personal Information
+                </h3>
+                <p>Basic contact information and professional links</p>
+              </div>
+              
+              <form [formGroup]="personalInfoForm" (ngSubmit)="savePersonalInfo()">
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Full Name</mat-label>
+                    <input matInput formControlName="full_name" placeholder="e.g., John Doe">
+                    <mat-icon matSuffix>person</mat-icon>
+                    @if (personalInfoForm.get('full_name')?.hasError('required')) {
+                      <mat-error>Full name is required</mat-error>
+                    }
+                  </mat-form-field>
+                </div>
+
+                <div class="form-row">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Email Address</mat-label>
+                    <input matInput formControlName="email" type="email" placeholder="e.g., john@example.com">
+                    <mat-icon matSuffix>email</mat-icon>
+                    @if (personalInfoForm.get('email')?.hasError('required')) {
+                      <mat-error>Email is required</mat-error>
+                    }
+                    @if (personalInfoForm.get('email')?.hasError('email')) {
+                      <mat-error>Please enter a valid email</mat-error>
+                    }
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline">
+                    <mat-label>Phone Number</mat-label>
+                    <input matInput formControlName="phone" placeholder="e.g., +1 (555) 123-4567">
+                    <mat-icon matSuffix>phone</mat-icon>
+                    @if (personalInfoForm.get('phone')?.hasError('required')) {
+                      <mat-error>Phone number is required</mat-error>
+                    }
+                  </mat-form-field>
+                </div>
+
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Location</mat-label>
+                    <input matInput formControlName="location" placeholder="e.g., San Francisco, CA">
+                    <mat-icon matSuffix>location_on</mat-icon>
+                    <mat-hint>City, State/Country</mat-hint>
+                    @if (personalInfoForm.get('location')?.hasError('required')) {
+                      <mat-error>Location is required</mat-error>
+                    }
+                  </mat-form-field>
+                </div>
+
+                <div class="form-row">
+                  <mat-form-field appearance="outline">
+                    <mat-label>LinkedIn Profile</mat-label>
+                    <input matInput formControlName="linkedin" placeholder="e.g., linkedin.com/in/johndoe" type="url">
+                    <mat-icon matSuffix>link</mat-icon>
+                    <mat-hint>Professional networking profile</mat-hint>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline">
+                    <mat-label>Portfolio Website</mat-label>
+                    <input matInput formControlName="portfolio" placeholder="e.g., johndoe.dev" type="url">
+                    <mat-icon matSuffix>web</mat-icon>
+                    <mat-hint>Personal website or portfolio</mat-hint>
+                  </mat-form-field>
+                </div>
+
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>GitHub Profile</mat-label>
+                    <input matInput formControlName="github" placeholder="e.g., github.com/johndoe" type="url">
+                    <mat-icon matSuffix>code</mat-icon>
+                    <mat-hint>Code repository and projects</mat-hint>
+                  </mat-form-field>
+                </div>
+
+
+              </form>
+            </div>
+          }
+
+          <!-- Summary Section -->
+          @if (activeSection() === 'summary') {
+            <div class="resume-form">
+              <div class="form-header">
+                <h3>
+                  <mat-icon>description</mat-icon>
+                  Professional Summary
+                </h3>
+                <p>A compelling summary of your professional background and key achievements</p>
+              </div>
+              
+              <form [formGroup]="summaryForm" (ngSubmit)="saveSummary()">
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Professional Summary</mat-label>
+                    <textarea matInput 
+                              formControlName="summary" 
+                              rows="6"
+                              placeholder="Write a compelling summary of your professional experience, key skills, and career objectives. Aim for 3-4 sentences that highlight your unique value proposition.">
+                    </textarea>
+                    @if (summaryForm.get('summary')?.hasError('required')) {
+                      <mat-error>Professional summary is required</mat-error>
+                    }
+                    @if (summaryForm.get('summary')?.hasError('minlength')) {
+                      <mat-error>Summary should be at least 50 characters long</mat-error>
+                    }
+                  </mat-form-field>
+                </div>
+
+                <div class="form-actions">
+                  <button mat-stroked-button type="button">
+                    <mat-icon>psychology</mat-icon>
+                    AI Enhance
+                  </button>
+                </div>
+              </form>
+            </div>
+          }
+
+          <!-- Skills Section -->
+          @if (activeSection() === 'skills') {
+            <div class="resume-form">
+              <div class="form-header">
+                <h3>
+                  <mat-icon>build</mat-icon>
+                  Skills & Expertise
+                </h3>
+                <p>List your technical and soft skills</p>
+              </div>
+              
+              <form [formGroup]="skillsForm" (ngSubmit)="saveSkills()">
+                <div class="skills-section">
+                  <h4>Technical Skills</h4>
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Technical Skills</mat-label>
+                    <mat-chip-grid #technicalChipGrid>
+                      @for (skill of skillsForm.get('technical')?.value || []; track skill) {
+                        <mat-chip-row (removed)="removeTechnicalSkill(skill)">
+                          {{ skill }}
+                          <button matChipRemove>
+                            <mat-icon>cancel</mat-icon>
+                          </button>
+                        </mat-chip-row>
+                      }
+                    </mat-chip-grid>
+                    <input placeholder="Add technical skills..."
+                           [matChipInputFor]="technicalChipGrid"
+                           (matChipInputTokenEnd)="addTechnicalSkill($event)">
+                  </mat-form-field>
+                </div>
+
+                <div class="skills-section">
+                  <h4>Soft Skills</h4>
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Soft Skills</mat-label>
+                    <mat-chip-grid #softChipGrid>
+                      @for (skill of skillsForm.get('soft')?.value || []; track skill) {
+                        <mat-chip-row (removed)="removeSoftSkill(skill)">
+                          {{ skill }}
+                          <button matChipRemove>
+                            <mat-icon>cancel</mat-icon>
+                          </button>
+                        </mat-chip-row>
+                      }
+                    </mat-chip-grid>
+                    <input placeholder="Add soft skills..."
+                           [matChipInputFor]="softChipGrid"
+                           (matChipInputTokenEnd)="addSoftSkill($event)">
+                  </mat-form-field>
+                </div>
+
+
+              </form>
+            </div>
+          }
+
+          <!-- Experience Section -->
+          @if (activeSection() === 'experience') {
+            <div class="resume-form">
+              <div class="form-header">
+                <h3>
+                  <mat-icon>work</mat-icon>
+                  Work Experience
+                </h3>
+                <p>Add your professional work experience</p>
+              </div>
+              
+              <form [formGroup]="experienceForm">
+                <div class="dynamic-section">
+                  @for (exp of getExperienceControls(); track $index) {
+                    <mat-card class="experience-item" appearance="outlined">
+                      <mat-card-content>
+                        <div class="item-header">
+                          <div class="section-title">
+                            <div class="item-number">{{ $index + 1 }}</div>
+                            <span>Experience {{ $index + 1 }}</span>
+                          </div>
+                          <button mat-icon-button class="delete-button" (click)="removeExperience($index)" type="button" matTooltip="Remove this experience">
+                            <mat-icon>delete_outline</mat-icon>
+                          </button>
+                        </div>
+                        
+                        <div class="form-row">
+                          <mat-form-field appearance="outline">
+                            <mat-label>Company Name</mat-label>
+                            <input matInput [formControlName]="'company_' + $index" placeholder="e.g., Google, Microsoft">
+                            <mat-icon matSuffix>business</mat-icon>
+                          </mat-form-field>
+                          <mat-form-field appearance="outline">
+                            <mat-label>Job Title</mat-label>
+                            <input matInput [formControlName]="'position_' + $index" placeholder="e.g., Senior Software Engineer">
+                            <mat-icon matSuffix>work</mat-icon>
+                          </mat-form-field>
+                        </div>
+                        
+                        <div class="form-row">
+                          <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Employment Duration</mat-label>
+                            <input matInput [formControlName]="'duration_' + $index" placeholder="e.g., Jan 2021 - Present">
+                            <mat-icon matSuffix>schedule</mat-icon>
+                            <mat-hint>Include start and end dates</mat-hint>
+                          </mat-form-field>
+                        </div>
+                        
+                        <mat-form-field appearance="outline" class="full-width">
+                          <mat-label>Job Description & Achievements</mat-label>
+                          <textarea matInput [formControlName]="'description_' + $index" rows="4" 
+                                    placeholder="• Led development of microservices architecture&#10;• Improved system performance by 40%&#10;• Mentored junior developers"></textarea>
+                          <mat-icon matSuffix>description</mat-icon>
+                          <mat-hint>Use bullet points to highlight key achievements and responsibilities</mat-hint>
+                        </mat-form-field>
+                      </mat-card-content>
+                    </mat-card>
+                  }
+                  
+                  <button mat-stroked-button class="add-item-button" (click)="addExperience()" type="button">
+                    <mat-icon>add_circle_outline</mat-icon>
+                    Add Work Experience
+                  </button>
+                </div>
+                
+
+              </form>
+            </div>
+          }
+
+          <!-- Education Section -->
+          @if (activeSection() === 'education') {
+            <div class="resume-form">
+              <div class="form-header">
+                <h3>
+                  <mat-icon>school</mat-icon>
+                  Education
+                </h3>
+                <p>Add your educational background</p>
+              </div>
+              
+              <form [formGroup]="educationForm">
+                <div class="dynamic-section">
+                  @for (edu of getEducationControls(); track $index) {
+                    <mat-card class="education-item" appearance="outlined">
+                      <mat-card-content>
+                        <div class="item-header">
+                          <div class="section-title">
+                            <div class="item-number">{{ $index + 1 }}</div>
+                            <span>Education {{ $index + 1 }}</span>
+                          </div>
+                          <button mat-icon-button class="delete-button" (click)="removeEducation($index)" type="button" matTooltip="Remove this education">
+                            <mat-icon>delete_outline</mat-icon>
+                          </button>
+                        </div>
+                        
+                        <div class="form-row">
+                          <mat-form-field appearance="outline">
+                            <mat-label>Institution Name</mat-label>
+                            <input matInput [formControlName]="'institution_' + $index" placeholder="e.g., Stanford University">
+                            <mat-icon matSuffix>school</mat-icon>
+                          </mat-form-field>
+                          <mat-form-field appearance="outline">
+                            <mat-label>Degree & Major</mat-label>
+                            <input matInput [formControlName]="'degree_' + $index" placeholder="e.g., Bachelor of Computer Science">
+                            <mat-icon matSuffix>military_tech</mat-icon>
+                          </mat-form-field>
+                        </div>
+                        
+                        <div class="form-row">
+                          <mat-form-field appearance="outline">
+                            <mat-label>Graduation Year</mat-label>
+                            <input matInput [formControlName]="'year_' + $index" placeholder="e.g., 2019" type="number">
+                            <mat-icon matSuffix>event</mat-icon>
+                          </mat-form-field>
+                          <mat-form-field appearance="outline">
+                            <mat-label>GPA (Optional)</mat-label>
+                            <input matInput [formControlName]="'gpa_' + $index" placeholder="e.g., 3.8/4.0">
+                            <mat-icon matSuffix>grade</mat-icon>
+                            <mat-hint>Include if 3.5 or higher</mat-hint>
+                          </mat-form-field>
+                        </div>
+                      </mat-card-content>
+                    </mat-card>
+                  }
+                  
+                  <button mat-stroked-button class="add-item-button" (click)="addEducation()" type="button">
+                    <mat-icon>add_circle_outline</mat-icon>
+                    Add Education
+                  </button>
+                </div>
+                
+
+              </form>
+            </div>
+          }
+
+          <!-- Projects Section -->
+          @if (activeSection() === 'projects') {
+            <div class="resume-form">
+              <div class="form-header">
+                <h3>
+                  <mat-icon>code</mat-icon>
+                  Projects
+                </h3>
+                <p>Showcase your key projects and achievements</p>
+              </div>
+              
+              <form [formGroup]="projectsForm">
+                <div class="dynamic-section">
+                  @for (proj of getProjectControls(); track $index) {
+                    <mat-card class="project-item" appearance="outlined">
+                      <mat-card-content>
+                        <div class="item-header">
+                          <div class="section-title">
+                            <div class="item-number">{{ $index + 1 }}</div>
+                            <span>Project {{ $index + 1 }}</span>
+                          </div>
+                          <button mat-icon-button class="delete-button" (click)="removeProject($index)" type="button" matTooltip="Remove this project">
+                            <mat-icon>delete_outline</mat-icon>
+                          </button>
+                        </div>
+                        
+                        <div class="form-row">
+                          <mat-form-field appearance="outline">
+                            <mat-label>Project Name</mat-label>
+                            <input matInput [formControlName]="'name_' + $index" placeholder="e.g., E-commerce Platform">
+                            <mat-icon matSuffix>code</mat-icon>
+                          </mat-form-field>
+                          <mat-form-field appearance="outline">
+                            <mat-label>Project URL</mat-label>
+                            <input matInput [formControlName]="'url_' + $index" placeholder="e.g., github.com/user/project" type="url">
+                            <mat-icon matSuffix>link</mat-icon>
+                            <mat-hint>GitHub, live demo, or portfolio link</mat-hint>
+                          </mat-form-field>
+                        </div>
+                        
+                        <mat-form-field appearance="outline" class="full-width">
+                          <mat-label>Project Description</mat-label>
+                          <textarea matInput [formControlName]="'description_' + $index" rows="4" 
+                                    placeholder="• Built a full-stack e-commerce platform&#10;• Implemented secure payment processing&#10;• Achieved 99.9% uptime with 1000+ users"></textarea>
+                          <mat-icon matSuffix>description</mat-icon>
+                          <mat-hint>Highlight your role, technologies used, and impact</mat-hint>
+                        </mat-form-field>
+                        
+                        <mat-form-field appearance="outline" class="full-width">
+                          <mat-label>Technologies Used</mat-label>
+                          <input matInput [formControlName]="'technologies_' + $index" placeholder="e.g., React, Node.js, MongoDB, AWS">
+                          <mat-icon matSuffix>build</mat-icon>
+                          <mat-hint>Separate technologies with commas</mat-hint>
+                        </mat-form-field>
+                      </mat-card-content>
+                    </mat-card>
+                  }
+                  
+                  <button mat-stroked-button class="add-item-button" (click)="addProject()" type="button">
+                    <mat-icon>add_circle_outline</mat-icon>
+                    Add Project
+                  </button>
+                </div>
+                
+
+              </form>
+            </div>
+          }
+
+          <!-- Certifications Section -->
+          @if (activeSection() === 'certifications') {
+            <div class="resume-form">
+              <div class="form-header">
+                <h3>
+                  <mat-icon>verified</mat-icon>
+                  Certifications
+                </h3>
+                <p>Add your professional certifications and licenses</p>
+              </div>
+              
+              <form [formGroup]="certificationsForm">
+                <div class="dynamic-section">
+                  @for (cert of getCertificationControls(); track $index) {
+                    <mat-card class="certification-item" appearance="outlined">
+                      <mat-card-content>
+                        <div class="item-header">
+                          <div class="section-title">
+                            <div class="item-number">{{ $index + 1 }}</div>
+                            <span>Certification {{ $index + 1 }}</span>
+                          </div>
+                          <button mat-icon-button class="delete-button" (click)="removeCertification($index)" type="button" matTooltip="Remove this certification">
+                            <mat-icon>delete_outline</mat-icon>
+                          </button>
+                        </div>
+                        
+                        <div class="form-row">
+                          <mat-form-field appearance="outline">
+                            <mat-label>Certification Name</mat-label>
+                            <input matInput [formControlName]="'name_' + $index" placeholder="e.g., AWS Solutions Architect">
+                            <mat-icon matSuffix>verified</mat-icon>
+                          </mat-form-field>
+                          <mat-form-field appearance="outline">
+                            <mat-label>Issuing Organization</mat-label>
+                            <input matInput [formControlName]="'issuer_' + $index" placeholder="e.g., Amazon Web Services">
+                            <mat-icon matSuffix>business</mat-icon>
+                          </mat-form-field>
+                        </div>
+                        
+                        <div class="form-row">
+                          <mat-form-field appearance="outline">
+                            <mat-label>Issue Date</mat-label>
+                            <input matInput [formControlName]="'date_' + $index" placeholder="e.g., March 2023">
+                            <mat-icon matSuffix>event</mat-icon>
+                          </mat-form-field>
+                          <mat-form-field appearance="outline">
+                            <mat-label>Credential ID</mat-label>
+                            <input matInput [formControlName]="'credential_id_' + $index" placeholder="e.g., ABC123XYZ">
+                            <mat-icon matSuffix>fingerprint</mat-icon>
+                            <mat-hint>Optional verification ID</mat-hint>
+                          </mat-form-field>
+                        </div>
+                      </mat-card-content>
+                    </mat-card>
+                  }
+                  
+                  <button mat-stroked-button class="add-item-button" (click)="addCertification()" type="button">
+                    <mat-icon>add_circle_outline</mat-icon>
+                    Add Certification
+                  </button>
+                </div>
+                
+
+              </form>
+            </div>
+          }
+        }
+        
+        <!-- Action buttons -->
+        <div class="resume-actions">
+
+          
+          <button mat-stroked-button (click)="optimizeResume()" [disabled]="isOptimizing()">
+            @if (isOptimizing()) {
+              <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
+            } @else {
+              <mat-icon>psychology</mat-icon>
+            }
+            AI Optimize
+          </button>
+          
+          <button mat-stroked-button (click)="downloadPDF()">
+            <mat-icon>download</mat-icon>
+            Download PDF
+          </button>
+          
+          <button mat-stroked-button>
+            <mat-icon>visibility</mat-icon>
+            Preview
+          </button>
         </div>
       </div>
       
-      <div class="resume-actions">
-        <button class="action-btn primary">💾 Save Resume</button>
-        <button class="action-btn">👁️ Preview</button>
-        <button class="action-btn">📄 Download PDF</button>
-        <button class="action-btn">🤖 AI Optimize</button>
+      <!-- Live preview panel -->
+      <div class="builder-preview">
+        @if (currentResume(); as resume) {
+          <div class="preview-header">
+            <h3>
+              <mat-icon>visibility</mat-icon>
+              Live Preview
+            </h3>
+            <div class="preview-actions">
+              <button mat-icon-button matTooltip="Refresh preview">
+                <mat-icon>refresh</mat-icon>
+              </button>
+              <button mat-icon-button matTooltip="Fullscreen preview" (click)="toggleFullscreen()">
+                <mat-icon>fullscreen</mat-icon>
+              </button>
+            </div>
+          </div>
+          
+          <div class="resume-preview" [class.template-modern]="selectedTemplate() === 'modern'" 
+                                        [class.template-classic]="selectedTemplate() === 'classic'"
+                                        [class.template-creative]="selectedTemplate() === 'creative'"
+                                        [class.template-executive]="selectedTemplate() === 'executive'">
+            <div class="preview-content">
+              @if (selectedTemplate() === 'modern') {
+                <app-modern-template [cv]="resume"></app-modern-template>
+              } @else if (selectedTemplate() === 'classic') {
+                <app-classic-template [cv]="resume"></app-classic-template>
+              } @else if (selectedTemplate() === 'creative') {
+                <app-creative-template [cv]="resume"></app-creative-template>
+              } @else if (selectedTemplate() === 'minimal') {
+                <app-minimal-template [cv]="resume"></app-minimal-template>
+              } @else {
+                <app-executive-template [cv]="resume"></app-executive-template>
+              }
+            </div>
+            
+            <!-- ATS Score in preview -->
+            <div class="preview-ats-score">
+              <div class="ats-badge" [class]="getATSScoreClass()">
+                <mat-icon>analytics</mat-icon>
+                <span>ATS Score: {{ resume.ats_score }}%</span>
+              </div>
+            </div>
+          </div>
+        } @else {
+          <div class="no-preview">
+            <mat-icon>description</mat-icon>
+            <p>Resume preview will appear here</p>
+          </div>
+        }
       </div>
     </div>
-    
-    <div class="builder-preview">
-      <h3>Live Preview</h3>
-      <div class="resume-preview">
-        <div class="preview-header">
-          <h4>John Doe</h4>
-          <p>john.doe&#64;email.com | (555) 123-4567</p>
-          <p>San Francisco, CA | linkedin.com/in/johndoe</p>
-        </div>
-        <div class="preview-section">
-          <h5>Professional Summary</h5>
-          <p>Experienced software engineer with 5+ years...</p>
-        </div>
-        <div class="ats-score">
-          <span class="score-label">ATS Score:</span>
-          <span class="score-value">85%</span>
-        </div>
-      </div>
-    </div>
-  </div>
+  }
 </div>
