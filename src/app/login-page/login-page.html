@@ -79,40 +79,28 @@
     </div>
   </div>
 
-  <!-- Right side - Login Form (34%) -->
+  <!-- Right side - Login/Signup Form (34%) -->
   <div class="login-form-section">
     <mat-card class="login-card">
       <mat-card-header>
-        <mat-card-title>Welcome Back</mat-card-title>
-        <mat-card-subtitle>Sign in to your account</mat-card-subtitle>
+        <mat-card-title>{{ isSignupMode() ? 'Create Account' : 'Welcome Back' }}</mat-card-title>
+        <mat-card-subtitle>{{ isSignupMode() ? 'Sign up for a new account' : 'Sign in to your account' }}</mat-card-subtitle>
       </mat-card-header>
       
       <mat-card-content>
-        <!-- Gmail Login Option - Hidden for now -->
-        <!-- 
-        <button mat-raised-button color="primary" class="gmail-login-btn" (click)="loginWithGmail()">
-          <mat-icon>mail</mat-icon>
-          Continue with Gmail
-        </button>
-        
-        <mat-divider class="divider">
-          <span>or</span>
-        </mat-divider>
-        -->
-        
-        <!-- Traditional Login Form -->
-        <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
-          <!-- Error Message Display -->
-          <div *ngIf="errorMessage" class="error-message">
-            <mat-icon>error</mat-icon>
-            {{ errorMessage }}
-          </div>
+        <!-- Error Message Display -->
+        <div *ngIf="errorMessage" class="error-message">
+          <mat-icon>error</mat-icon>
+          {{ errorMessage }}
+        </div>
 
+        <!-- Login Form -->
+        <form *ngIf="!isSignupMode()" [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Email</mat-label>
             <input matInput formControlName="email" required placeholder="Enter your email">
             <mat-icon matSuffix>email</mat-icon>
-            <mat-error *ngIf="getFieldError('email')">{{ getFieldError('email') }}</mat-error>
+            <mat-error *ngIf="getFieldError('email', 'login')">{{ getFieldError('email', 'login') }}</mat-error>
           </mat-form-field>
           
           <mat-form-field appearance="outline" class="full-width">
@@ -121,7 +109,7 @@
             <mat-icon matSuffix (click)="togglePasswordVisibility()" style="cursor: pointer">
               {{ showPassword ? 'visibility_off' : 'visibility' }}
             </mat-icon>
-            <mat-error *ngIf="getFieldError('password')">{{ getFieldError('password') }}</mat-error>
+            <mat-error *ngIf="getFieldError('password', 'login')">{{ getFieldError('password', 'login') }}</mat-error>
           </mat-form-field>
           
           <div class="form-options">
@@ -133,13 +121,59 @@
             <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
             <span *ngIf="!isLoading">Sign In</span>
           </button>
+        </form>
 
+        <!-- Signup Form -->
+        <form *ngIf="isSignupMode()" [formGroup]="signupForm" (ngSubmit)="onSignup()" class="signup-form">
+          <div class="name-row">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>First Name</mat-label>
+              <input matInput formControlName="first_name" required placeholder="First name">
+              <mat-error *ngIf="getFieldError('first_name', 'signup')">{{ getFieldError('first_name', 'signup') }}</mat-error>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Last Name</mat-label>
+              <input matInput formControlName="last_name" required placeholder="Last name">
+              <mat-error *ngIf="getFieldError('last_name', 'signup')">{{ getFieldError('last_name', 'signup') }}</mat-error>
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" required placeholder="Enter your email">
+            <mat-icon matSuffix>email</mat-icon>
+            <mat-error *ngIf="getFieldError('email', 'signup')">{{ getFieldError('email', 'signup') }}</mat-error>
+          </mat-form-field>
           
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="password" required placeholder="Create a password">
+            <mat-icon matSuffix (click)="togglePasswordVisibility()" style="cursor: pointer">
+              {{ showPassword ? 'visibility_off' : 'visibility' }}
+            </mat-icon>
+            <mat-error *ngIf="getFieldError('password', 'signup')">{{ getFieldError('password', 'signup') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Account Type</mat-label>
+            <mat-select formControlName="user_type" required>
+              <mat-option value="candidate">Job Seeker</mat-option>
+              <mat-option value="hire">HR / Recruiter</mat-option>
+            </mat-select>
+            <mat-error *ngIf="getFieldError('user_type', 'signup')">{{ getFieldError('user_type', 'signup') }}</mat-error>
+          </mat-form-field>
+          
+          <button mat-raised-button color="primary" type="submit" class="signup-btn full-width" [disabled]="isLoading">
+            <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+            <span *ngIf="!isLoading">Create Account</span>
+          </button>
         </form>
       </mat-card-content>
       
-      <mat-card-actions class="signup-section">
-        <p>Don't have an account? <a href="#" class="signup-link">Sign up</a></p>
+      <mat-card-actions class="toggle-section">
+        <p *ngIf="!isSignupMode()">Don't have an account? <a (click)="toggleSignupMode()" class="toggle-link">Sign up</a></p>
+        <p *ngIf="isSignupMode()">Already have an account? <a (click)="toggleSignupMode()" class="toggle-link">Sign in</a></p>
       </mat-card-actions>
     </mat-card>
   </div>

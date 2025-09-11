@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -9,8 +9,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
-import { AuthService, LoginRequest, LoginResponse } from '../services/auth.service';
+import { AuthService, LoginRequest, LoginResponse, RegisterRequest } from '../services/auth.service';
 import { NavigationService } from '../services/navigation.service';
 
 @Component({
@@ -26,13 +27,16 @@ import { NavigationService } from '../services/navigation.service';
     MatCheckboxModule,
     MatIconModule,
     MatDividerModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatSelectModule
   ],
   templateUrl: './login-page.html',
   styleUrl: './login-page.css'
 })
 export class LoginPage implements OnInit {
+  isSignupMode = signal(false);
   loginForm: FormGroup;
+  signupForm: FormGroup;
   isLoading = false;
   errorMessage = '';
   showPassword = false;
@@ -46,6 +50,14 @@ export class LoginPage implements OnInit {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]]
+    });
+    
+    this.signupForm = this.formBuilder.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
+      first_name: ['', [Validators.required]],
+      last_name: ['', [Validators.required]],
+      user_type: ['candidate', [Validators.required]]
     });
   }
 
@@ -89,7 +101,7 @@ export class LoginPage implements OnInit {
         }
       });
     } else {
-      this.markFormGroupTouched();
+      this.markFormGroupTouched('login');
     }
   }
 
@@ -97,15 +109,11 @@ export class LoginPage implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
-  private markFormGroupTouched(): void {
-    Object.keys(this.loginForm.controls).forEach(key => {
-      const control = this.loginForm.get(key);
-      control?.markAsTouched();
-    });
-  }
 
-  getFieldError(fieldName: string): string {
-    const field = this.loginForm.get(fieldName);
+
+  getFieldError(fieldName: string, formType: 'login' | 'signup' = 'login'): string {
+    const form = formType === 'login' ? this.loginForm : this.signupForm;
+    const field = form.get(fieldName);
     if (field?.errors && field.touched) {
       if (field.errors['required']) {
         return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} is required`;
@@ -141,5 +149,54 @@ export class LoginPage implements OnInit {
       password: 'test1234'
     });
     this.onLogin();
+  }
+
+  toggleSignupMode(): void {
+    this.isSignupMode.set(!this.isSignupMode());
+    this.errorMessage = '';
+  }
+
+  onSignup(): void {
+    if (this.signupForm.valid) {
+      this.isLoading = true;
+      this.errorMessage = '';
+
+      const signupData: RegisterRequest = {
+        email: this.signupForm.value.email,
+        password: this.signupForm.value.password,
+        first_name: this.signupForm.value.first_name,
+        last_name: this.signupForm.value.last_name,
+        user_type: this.signupForm.value.user_type
+      };
+
+      this.authService.register(signupData).then(
+        (response) => {
+          console.log('Signup successful:', response);
+          this.isLoading = false;
+          this.isSignupMode.set(false);
+          // Auto-fill login form
+          this.loginForm.patchValue({
+            email: signupData.email,
+            password: signupData.password
+          });
+        }
+      ).catch(
+        (error) => {
+          console.error('Signup failed:', error);
+          this.isLoading = false;
+          this.errorMessage = error.error?.detail || 'Signup failed. Please try again.';
+        }
+      );
+    } else {
+      this.markFormGroupTouched('signup');
+    }
+  }
+
+  private markFormGroupTouched(formType: 'login' | 'signup' = 'login'): void {
+    const form = formType === 'login' ? this.loginForm : this.signupForm;
+    Object.keys(form.controls).forEach(key => {
+      const control = form.get(key);
+      control?.markAsTouched();
+    });
   }
 }

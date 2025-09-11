@@ -100,8 +100,94 @@
               </div>
             </div>
 
-            <!-- Full width fields -->
-            <div *ngFor="let field of formFields['professional'].slice(4)" class="full-width-field">
+            <!-- Skills and Summary fields -->
+            <div *ngFor="let field of formFields['professional'].slice(4, 6)" class="full-width-field">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>{{field.label}}{{field.required ? ' *' : ''}}</mat-label>
+                
+                <!-- Text Input -->
+                <input *ngIf="field.type === 'text'" 
+                       matInput 
+                       [formControlName]="field.name" 
+                       [placeholder]="field.placeholder">
+                
+                <!-- Textarea -->
+                <textarea *ngIf="field.type === 'textarea'" 
+                          matInput 
+                          [formControlName]="field.name" 
+                          [placeholder]="field.placeholder" 
+                          rows="4"></textarea>
+                
+                <mat-hint *ngIf="field.hint">{{field.hint}}</mat-hint>
+                <mat-error>{{getFieldErrorMessage(field.name)}}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <!-- Certifications Section -->
+            <div class="certifications-section">
+              <div class="section-header">
+                <h4>Certifications</h4>
+                <button mat-icon-button type="button" (click)="addCertification()" color="primary">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+              
+              <div formArrayName="certifications">
+                <div *ngFor="let cert of certificationsArray.controls; let i = index" [formGroupName]="i" class="certification-form">
+                  <div class="cert-header">
+                    <span>Certification {{i + 1}}</span>
+                    <button mat-icon-button type="button" (click)="removeCertification(i)" color="warn" *ngIf="certificationsArray.length > 1">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                  
+                  <div class="cert-fields">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Certification Name *</mat-label>
+                      <input matInput formControlName="name" placeholder="e.g., AWS Certified Solutions Architect">
+                      <mat-error *ngIf="cert.get('name')?.errors?.['required'] && cert.get('name')?.touched">
+                        Certification name is required
+                      </mat-error>
+                    </mat-form-field>
+                    
+                    <mat-form-field appearance="outline">
+                      <mat-label>Issuing Organization *</mat-label>
+                      <input matInput formControlName="issuer" placeholder="e.g., Amazon Web Services">
+                      <mat-error *ngIf="cert.get('issuer')?.errors?.['required'] && cert.get('issuer')?.touched">
+                        Issuer is required
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                  
+                  <div class="cert-fields">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Issue Date</mat-label>
+                      <input matInput type="date" formControlName="issue_date">
+                    </mat-form-field>
+                    
+                    <mat-form-field appearance="outline">
+                      <mat-label>Expiry Date</mat-label>
+                      <input matInput type="date" formControlName="expiry_date">
+                    </mat-form-field>
+                  </div>
+                  
+                  <div class="cert-fields">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Credential ID</mat-label>
+                      <input matInput formControlName="credential_id" placeholder="e.g., ABC123XYZ">
+                    </mat-form-field>
+                    
+                    <mat-form-field appearance="outline">
+                      <mat-label>Verification Link</mat-label>
+                      <input matInput formControlName="link" placeholder="https://...">
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Remaining fields -->
+            <div *ngFor="let field of formFields['professional'].slice(6)" class="full-width-field">
               <mat-form-field appearance="outline" class="full-width">
                 <mat-label>{{field.label}}{{field.required ? ' *' : ''}}</mat-label>
                 
@@ -156,14 +242,14 @@
         </mat-card>
 
         <div class="action-buttons">
-          <button mat-raised-button color="primary" type="submit" [disabled]="profileForm.invalid">
+          <button mat-raised-button color="primary" type="submit" [disabled]="isSaving">
             <mat-icon>save</mat-icon>
             Save Profile
           </button>
-          <button mat-stroked-button type="button" (click)="resetForm()">
+          <!-- <button mat-stroked-button type="button" (click)="resetForm()">
             <mat-icon>refresh</mat-icon>
             Reset
-          </button>
+          </button> -->
         </div>
       </form>
     </div>
@@ -209,12 +295,14 @@
 
             <div class="preview-section">
               <h4><mat-icon>verified</mat-icon> Certifications</h4>
-              <div class="certification-list" *ngIf="f['certifications'].value">
-                <span *ngFor="let cert of getCertificationsArray(); let last = last" class="certification-item">
-                  {{cert}}<span *ngIf="!last">, </span>
-                </span>
+              <div class="certification-list" *ngIf="certificationsArray.length > 0">
+                <div *ngFor="let cert of getCertificationsArray()" class="certification-item">
+                  <strong>{{cert.name}}</strong>
+                  <span *ngIf="cert.issuer"> - {{cert.issuer}}</span>
+                  <span *ngIf="cert.issue_date"> ({{cert.issue_date}})</span>
+                </div>
               </div>
-              <p *ngIf="!f['certifications'].value" class="placeholder">Add your certifications</p>
+              <p *ngIf="certificationsArray.length === 0" class="placeholder">Add your certifications</p>
             </div>
 
             <div class="preview-section">

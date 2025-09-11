@@ -12,6 +12,7 @@ import { ProfilePage } from '../pages/profile/profile';
 import { SettingsPage } from '../pages/settings/settings';
 import { PostJobPage } from '../pages/post-job/post-job';
 import { MyJobsPage } from '../pages/my-jobs/my-jobs';
+import { ApplicationsReceivedPage } from '../pages/applications-received/applications-received';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -29,7 +30,8 @@ import { AuthService } from '../services/auth.service';
     ProfilePage,
     SettingsPage,
     PostJobPage,
-    MyJobsPage
+    MyJobsPage,
+    ApplicationsReceivedPage
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
@@ -68,12 +70,24 @@ export class Dashboard implements OnInit {
   }
 
   onPageSelected(pageId: string) {
+    console.log('Dashboard: Page selected:', pageId);
     this.currentPage = pageId;
     // Navigate to the selected page with URL update
     if (pageId === 'dashboard') {
       this.router.navigate(['/dashboard']);
     } else {
       this.router.navigate(['/dashboard', pageId]);
+    }
+  }
+
+  onNavigateToPage(event: {page: string, params?: any}) {
+    console.log('Dashboard: Navigate to page with params:', event);
+    this.currentPage = event.page;
+    
+    if (event.params) {
+      this.router.navigate(['/dashboard', event.page], { queryParams: event.params });
+    } else {
+      this.router.navigate(['/dashboard', event.page]);
     }
   }
 }

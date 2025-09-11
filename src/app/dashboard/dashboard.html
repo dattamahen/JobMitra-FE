@@ -69,7 +69,7 @@
         }
         @case ('my-jobs') {
           @defer (on immediate) {
-            <app-my-jobs />
+            <app-my-jobs (navigateToPage)="onNavigateToPage($event)" />
           } @placeholder {
             <div class="loading-placeholder">Loading My Jobs...</div>
           }
@@ -86,10 +86,7 @@
         }
         @case ('applications-received') {
           @defer (on immediate) {
-            <div class="page-placeholder">
-              <h2>Applications Received</h2>
-              <p>Review applications for your job postings</p>
-            </div>
+            <app-applications-received></app-applications-received>
           } @placeholder {
             <div class="loading-placeholder">Loading Applications...</div>
           }

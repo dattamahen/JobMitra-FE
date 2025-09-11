@@ -78,12 +78,7 @@ export class NavigationService {
       matIcon: 'work',
       userTypes: ['hr', 'hire']
     },
-    { 
-      id: 'find-candidates', 
-      label: 'Find Candidates', 
-      matIcon: 'people_search',
-      userTypes: ['hr', 'hire']
-    },
+
     { 
       id: 'applications-received', 
       label: 'Applications Received', 

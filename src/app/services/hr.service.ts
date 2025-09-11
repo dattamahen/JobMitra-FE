@@ -83,6 +83,8 @@ export interface JobListing {
   // Additional properties used in the template
   applications_count?: number;
   views_count?: number;
+  posted_date?: string;
+  posted_by_hr_id?: string;
 }
 
 export interface HRDashboardStats {
@@ -166,19 +168,20 @@ export class HrService {
 
   async getMyJobs(): Promise<JobListing[]> {
     try {
-      console.log('HrService: Making jobs API call');
+      console.log('HrService: Making jobs with applications API call');
       const response = await firstValueFrom(
-        this.http.get<any>(`${this.baseUrl}/hr/jobs`, { headers: this.getAuthHeaders() })
+        this.http.get<any>(`${this.baseUrl}/hr/jobs-with-applications`, { headers: this.getAuthHeaders() })
       );
-      console.log('HrService: Jobs response:', response);
+      console.log('HrService: Jobs with applications response:', response);
+      console.log('First job applications_count:', response?.jobs?.[0]?.applications_count);
       
-      // Handle different response formats
-      if (Array.isArray(response)) {
-        console.log('HrService: Response is array format');
-        return response;
-      } else if (response.jobs && Array.isArray(response.jobs)) {
+      // Handle response format from /hr/jobs-with-applications
+      if (response && response.jobs && Array.isArray(response.jobs)) {
         console.log('HrService: Response has jobs property:', response.jobs.length, 'jobs');
         return response.jobs;
+      } else if (Array.isArray(response)) {
+        console.log('HrService: Response is array format');
+        return response;
       } else if (response.data && Array.isArray(response.data)) {
         console.log('HrService: Response has data property:', response.data.length, 'jobs');
         return response.data;
@@ -236,6 +239,19 @@ export class HrService {
       );
     } catch (error: any) {
       throw new Error(error.error?.detail || 'Failed to delete job posting');
+    }
+  }
+
+  async getAllApplications(jobId?: string): Promise<any> {
+    try {
+      const params = jobId && jobId !== 'all' ? `?job_id=${jobId}` : '';
+      const url = `${this.baseUrl}/hr/applications${params}`;
+      console.log('HrService: Calling URL:', url);
+      return await firstValueFrom(
+        this.http.get(url, { headers: this.getAuthHeaders() })
+      );
+    } catch (error: any) {
+      throw new Error(error.error?.detail || 'Failed to load applications');
     }
   }
 

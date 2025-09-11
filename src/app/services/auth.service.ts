@@ -292,11 +292,13 @@ export class AuthService {
   /**
    * Register a new user
    */
-  register(userData: RegisterRequest): Observable<User> {
-    return this.http.post<User>(`${this.API_URL}/register`, userData)
-      .pipe(
-        catchError(this.handleError)
-      );
+  async register(userData: RegisterRequest): Promise<User> {
+    try {
+      const response = await this.http.post<User>(`${this.API_URL}/register`, userData).toPromise();
+      return response!;
+    } catch (error: any) {
+      throw new Error(error.error?.detail || 'Registration failed');
+    }
   }
 
   /**

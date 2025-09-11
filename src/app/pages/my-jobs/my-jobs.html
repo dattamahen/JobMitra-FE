@@ -87,17 +87,12 @@
         <mat-card-subtitle class="company">{{job.company}}</mat-card-subtitle>
         <div class="header-badges">
           <div class="action-badges">
-            <mat-chip class="action-chip" (click)="viewJobStats(job)" matTooltip="View job statistics">
-              <mat-icon matChipIcon>analytics</mat-icon>
-              Statistics
-            </mat-chip>
-            <mat-chip class="action-chip" (click)="editJob(job)" matTooltip="Edit job posting">
-              <mat-icon matChipIcon>edit</mat-icon>
-              Edit
-            </mat-chip>
-            <mat-chip class="action-chip" (click)="copyJobLink(job)" matTooltip="Copy job link">
-              <mat-icon matChipIcon>link</mat-icon>
-              Share
+            <mat-chip class="action-chip applications-chip" 
+                     (click)="viewApplications(job)" 
+                     [class.has-applications]="job.applications_count > 0"
+                     matTooltip="View applications">
+              <mat-icon matChipIcon>people</mat-icon>
+              {{job.applications_count}} Applications
             </mat-chip>
           </div>
           <div class="status-badge">
@@ -157,13 +152,14 @@
           }
 
           <div class="job-stats">
-            <div class="stat-item">
-              <mat-icon>visibility</mat-icon>
-              <span>{{job.views_count}} views</span>
-            </div>
-            <div class="stat-item">
+            <div class="stat-item clickable-stat" (click)="viewApplications(job)" 
+                 [class.has-applications]="job.applications_count > 0"
+                 matTooltip="Click to view applications">
               <mat-icon>people</mat-icon>
               <span>{{job.applications_count}} applications</span>
+              @if (job.applications_count > 0) {
+                <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+              }
             </div>
             <div class="stat-item">
               <mat-icon>schedule</mat-icon>
@@ -174,41 +170,6 @@
       </mat-card-content>
       <mat-card-actions>
         <div class="card-actions">
-          <div class="primary-actions">
-            <button mat-raised-button color="primary" (click)="editJob(job)">
-              <mat-icon>edit</mat-icon>
-              Edit Job
-            </button>
-            <button mat-raised-button (click)="viewJobStats(job)">
-              <mat-icon>analytics</mat-icon>
-              View Stats
-            </button>
-          </div>
-          
-          <div class="secondary-actions">
-            <button mat-icon-button [matMenuTriggerFor]="jobMenu" matTooltip="More actions">
-              <mat-icon>more_vert</mat-icon>
-            </button>
-            <mat-menu #jobMenu="matMenu">
-              <button mat-menu-item (click)="toggleJobStatus(job)">
-                <mat-icon>{{job.is_active ? 'pause' : 'play_arrow'}}</mat-icon>
-                <span>{{job.is_active ? 'Deactivate' : 'Activate'}}</span>
-              </button>
-              <button mat-menu-item (click)="duplicateJob(job)">
-                <mat-icon>content_copy</mat-icon>
-                <span>Duplicate</span>
-              </button>
-              <button mat-menu-item (click)="copyJobLink(job)">
-                <mat-icon>share</mat-icon>
-                <span>Copy Link</span>
-              </button>
-              <mat-divider></mat-divider>
-              <button mat-menu-item (click)="deleteJob(job)" class="delete-action">
-                <mat-icon>delete</mat-icon>
-                <span>Delete</span>
-              </button>
-            </mat-menu>
-          </div>
         </div>
       </mat-card-actions>
     </mat-card>

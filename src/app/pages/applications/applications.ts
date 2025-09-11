@@ -47,29 +47,48 @@ export class ApplicationsPage implements OnInit {
     this.userService.getCurrentUser().subscribe(currentUser => {
       if (!currentUser) {
         this.error = 'Please login to view your applications';
+        this.isLoading = false;
         return;
       }
 
-      console.log('🎯 loadApplications called');
-      this.isLoading = true;
-      this.error = '';
-      
-      this.jobService.getUserAppliedJobs(currentUser.user_id)
-        .subscribe({
-          next: (response) => {
-            console.log('✅ Applied jobs loaded successfully:', response);
-            this.applications = response.applied_jobs || [];
-            this.isLoading = false;
-            this.cdr.detectChanges();
-            console.log('✅ Updated applications:', this.applications);
-          },
-          error: (error) => {
-            console.error('❌ Error loading applied jobs:', error);
-            this.error = error.error?.detail || 'Failed to load applications';
-            this.isLoading = false;
-            this.cdr.detectChanges();
-          }
-        });
+      // Get the actual user ID from auth token instead of using fallback
+      const token = localStorage.getItem('jobmitra_token');
+      if (!token) {
+        this.error = 'Please login to view your applications';
+        this.isLoading = false;
+        return;
+      }
+
+      // Decode token to get user ID
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const actualUserId = payload.user_id;
+        
+        console.log('🎯 loadApplications called with actual user ID:', actualUserId);
+        this.isLoading = true;
+        this.error = '';
+        
+        this.jobService.getUserAppliedJobs(actualUserId)
+          .subscribe({
+            next: (response) => {
+              console.log('✅ Applied jobs loaded successfully:', response);
+              this.applications = response.applications || [];
+              this.isLoading = false;
+              this.cdr.detectChanges();
+              console.log('✅ Updated applications:', this.applications);
+            },
+            error: (error) => {
+              console.error('❌ Error loading applied jobs:', error);
+              this.error = error.error?.detail || 'Failed to load applications';
+              this.isLoading = false;
+              this.cdr.detectChanges();
+            }
+          });
+      } catch (e) {
+        console.error('❌ Error decoding token:', e);
+        this.error = 'Invalid authentication. Please login again.';
+        this.isLoading = false;
+      }
     });
   }
 
