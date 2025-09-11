@@ -96,106 +96,27 @@
           </div>
         }
 
-        <!-- Login Form -->
+        <!-- Dynamic Forms -->
         @if (!isSignupMode()) {
-          <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Email</mat-label>
-            <input matInput formControlName="email" required placeholder="Enter your email">
-            <mat-icon matSuffix>email</mat-icon>
-            @if (getFieldError('email', 'login')) {
-              <mat-error>{{ getFieldError('email', 'login') }}</mat-error>
-            }
-          </mat-form-field>
-          
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Password</mat-label>
-            <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="password" required placeholder="Enter your password">
-            <mat-icon matSuffix (click)="togglePasswordVisibility()" style="cursor: pointer">
-              {{ showPassword ? 'visibility_off' : 'visibility' }}
-            </mat-icon>
-            @if (getFieldError('password', 'login')) {
-              <mat-error>{{ getFieldError('password', 'login') }}</mat-error>
-            }
-          </mat-form-field>
-          
-          <div class="form-options">
-            <mat-checkbox>Remember me</mat-checkbox>
-            <a href="#" class="forgot-password">Forgot password?</a>
+          <div class="login-form">
+            <app-dynamic-form 
+              [config]="loginFormConfig" 
+              (formSubmit)="onLogin($event)">
+            </app-dynamic-form>
+            
+            <div class="form-options">
+              <a href="#" class="forgot-password">Forgot password?</a>
+            </div>
           </div>
-          
-            <button mat-raised-button color="primary" type="submit" class="login-btn full-width" [disabled]="isLoading">
-              @if (isLoading) {
-                <mat-spinner diameter="20"></mat-spinner>
-              }
-              @if (!isLoading) {
-                <span>Sign In</span>
-              }
-            </button>
-          </form>
         }
 
-        <!-- Signup Form -->
         @if (isSignupMode()) {
-          <form [formGroup]="signupForm" (ngSubmit)="onSignup()" class="signup-form">
-          <div class="name-row">
-            <mat-form-field appearance="outline" class="half-width">
-              <mat-label>First Name</mat-label>
-              <input matInput formControlName="first_name" required placeholder="First name">
-              @if (getFieldError('first_name', 'signup')) {
-                <mat-error>{{ getFieldError('first_name', 'signup') }}</mat-error>
-              }
-            </mat-form-field>
-            
-            <mat-form-field appearance="outline" class="half-width">
-              <mat-label>Last Name</mat-label>
-              <input matInput formControlName="last_name" required placeholder="Last name">
-              @if (getFieldError('last_name', 'signup')) {
-                <mat-error>{{ getFieldError('last_name', 'signup') }}</mat-error>
-              }
-            </mat-form-field>
+          <div class="signup-form">
+            <app-dynamic-form 
+              [config]="signupFormConfig" 
+              (formSubmit)="onSignup($event)">
+            </app-dynamic-form>
           </div>
-
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Email</mat-label>
-            <input matInput formControlName="email" required placeholder="Enter your email">
-            <mat-icon matSuffix>email</mat-icon>
-            @if (getFieldError('email', 'signup')) {
-              <mat-error>{{ getFieldError('email', 'signup') }}</mat-error>
-            }
-          </mat-form-field>
-          
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Password</mat-label>
-            <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="password" required placeholder="Create a password">
-            <mat-icon matSuffix (click)="togglePasswordVisibility()" style="cursor: pointer">
-              {{ showPassword ? 'visibility_off' : 'visibility' }}
-            </mat-icon>
-            @if (getFieldError('password', 'signup')) {
-              <mat-error>{{ getFieldError('password', 'signup') }}</mat-error>
-            }
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Account Type</mat-label>
-            <mat-select formControlName="user_type" required>
-              <mat-option value="candidate">Job Seeker</mat-option>
-              <mat-option value="hire">HR / Recruiter</mat-option>
-            </mat-select>
-            @if (getFieldError('user_type', 'signup')) {
-              <mat-error>{{ getFieldError('user_type', 'signup') }}</mat-error>
-            }
-          </mat-form-field>
-          
-            <button mat-raised-button color="primary" type="submit" class="signup-btn full-width" [disabled]="isLoading">
-              @if (isLoading) {
-                <mat-spinner diameter="20"></mat-spinner>
-              }
-              @if (!isLoading) {
-                <span>Create Account</span>
-              }
-            </button>
-          </form>
         }
       </mat-card-content>
       

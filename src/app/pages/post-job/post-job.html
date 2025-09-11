@@ -9,446 +9,211 @@
       <form [formGroup]="jobForm" (ngSubmit)="onSubmit()">
         <mat-stepper #stepper linear>
           <!-- Step 1: Basic Information -->
-          <mat-step label="Basic Information" [stepControl]="jobForm.get('title')!">
-            <div class="form-section">
-              <h3>Job Details</h3>
-              
-              <div class="form-row">
-                <mat-form-field appearance="outline" class="full-width">
-                  <mat-label>Job Title</mat-label>
-                  <input matInput formControlName="title" placeholder="e.g. Senior Software Engineer">
-                  <mat-hint>{{JOB_VALIDATION.TITLE.MIN_LENGTH}}-{{JOB_VALIDATION.TITLE.MAX_LENGTH}} characters required</mat-hint>
-                  <mat-error>{{ getErrorMessage('title') }}</mat-error>
-                </mat-form-field>
-              </div>
-
-              <div class="form-row">
-                <mat-form-field appearance="outline" class="half-width">
-                  <mat-label>Company</mat-label>
-                  <input matInput formControlName="company" placeholder="Company name">
-                  <mat-error>{{ getErrorMessage('company') }}</mat-error>
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" class="half-width">
-                  <mat-label>Department</mat-label>
-                  <input matInput formControlName="department" placeholder="e.g. Engineering">
-                  <mat-error>{{ getErrorMessage('department') }}</mat-error>
-                </mat-form-field>
-              </div>
-
-              <div class="form-row">
-                <mat-form-field appearance="outline" class="half-width">
-                  <mat-label>Employment Type</mat-label>
-                  <mat-select formControlName="employment_type">
-                    @for (type of employmentTypes; track type.value) {
-                      <mat-option [value]="type.value">
-                        {{ type.label }}
-                      </mat-option>
-                    }
-                  </mat-select>
-                  <mat-error>{{ getErrorMessage('employment_type') }}</mat-error>
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" class="half-width">
-                  <mat-label>Experience Level</mat-label>
-                  <mat-select formControlName="experience_level">
-                    @for (level of experienceLevels; track level.value) {
-                      <mat-option [value]="level.value">
-                        {{ level.label }}
-                      </mat-option>
-                    }
-                  </mat-select>
-                  <mat-error>{{ getErrorMessage('experience_level') }}</mat-error>
-                </mat-form-field>
-              </div>
-
-              <div class="navigation-buttons">
-                <button mat-raised-button color="primary" matStepperNext type="button">Next</button>
-              </div>
-            </div>
+          <mat-step label="Basic Information">
+            <app-dynamic-form 
+              [config]="step1Config" 
+              (formSubmit)="onStep1Submit($event)"
+              submitButtonText="Next">
+            </app-dynamic-form>
           </mat-step>
 
-          <!-- Step 2: Location & Work Type -->
-          <mat-step label="Location & Work Type" [stepControl]="jobForm.get('location')!">
-            <div class="form-section">
-              <h3>Location Information</h3>
-              
-              <div formGroupName="location">
-                <div class="form-row">
-                  <mat-form-field appearance="outline" class="half-width">
-                    <mat-label>City</mat-label>
-                    <input matInput formControlName="city" placeholder="e.g. Bangalore">
-                    <mat-error>{{ getErrorMessage('location', 'city') }}</mat-error>
-                  </mat-form-field>
+        <!-- Step 2: Location & Work Type -->
+        <mat-step label="Location & Work Type">
+          <app-dynamic-form 
+            [config]="step2Config" 
+            (formSubmit)="onStep2Submit($event)"
+            submitButtonText="Next"
+            [showBackButton]="true"
+            (backClick)="stepper.previous()">
+          </app-dynamic-form>
+        </mat-step>
 
-                  <mat-form-field appearance="outline" class="half-width">
-                    <mat-label>State</mat-label>
-                    <input matInput formControlName="state" placeholder="e.g. Karnataka">
-                    <mat-error>{{ getErrorMessage('location', 'state') }}</mat-error>
-                  </mat-form-field>
-                </div>
-
-                <div class="form-row">
-                  <mat-form-field appearance="outline" class="half-width">
-                    <mat-label>Country</mat-label>
-                    <input matInput formControlName="country">
-                    <mat-error>{{ getErrorMessage('location', 'country') }}</mat-error>
-                  </mat-form-field>
-
-                  <mat-form-field appearance="outline" class="half-width">
-                    <mat-label>Timezone</mat-label>
-                    <input matInput formControlName="timezone">
-                    <mat-error>{{ getErrorMessage('location', 'timezone') }}</mat-error>
-                  </mat-form-field>
-                </div>
+        <!-- Step 3: Job Description -->
+        <mat-step label="Job Description">
+          <app-dynamic-form 
+            [config]="step3Config" 
+            (formSubmit)="onStep3Submit($event)"
+            submitButtonText="Next"
+            [showBackButton]="true"
+            (backClick)="stepper.previous()">
+          </app-dynamic-form>
+          
+          <!-- Custom sections for arrays -->
+          <div class="form-section">
+            <div class="form-row">
+              <h4>Responsibilities <span style="color: red;">(Minimum {{JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS}} required)</span></h4>
+              <div formArrayName="responsibilities">
+                @for (responsibility of responsibilities.controls; track $index; let i = $index) {
+                  <div class="array-item">
+                    <mat-form-field appearance="outline" class="array-input">
+                      <mat-label>Responsibility {{ i + 1 }}</mat-label>
+                      <input matInput [formControlName]="i" placeholder="Describe a key responsibility">
+                      <mat-error>This field is required</mat-error>
+                    </mat-form-field>
+                    <button mat-icon-button type="button" (click)="removeResponsibility(i)" 
+                            [disabled]="responsibilities.length <= JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                }
               </div>
+              <button mat-stroked-button type="button" (click)="addResponsibility()">
+                <mat-icon>add</mat-icon> Add Responsibility
+              </button>
+            </div>
 
-              <div class="form-row">
-                <mat-form-field appearance="outline" class="full-width">
-                  <mat-label>Work Type</mat-label>
-                  <mat-select formControlName="job_type">
-                    @for (type of jobTypes; track type.value) {
-                      <mat-option [value]="type.value">
-                        {{ type.label }}
-                      </mat-option>
+            <div class="form-row">
+              <h4>Requirements <span style="color: red;">(Minimum {{JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS}} required)</span></h4>
+              <div formArrayName="requirements">
+                @for (requirement of requirements.controls; track $index; let i = $index) {
+                  <div class="array-item">
+                    <mat-form-field appearance="outline" class="array-input">
+                      <mat-label>Requirement {{ i + 1 }}</mat-label>
+                      <input matInput [formControlName]="i" placeholder="Describe a requirement">
+                      <mat-error>This field is required</mat-error>
+                    </mat-form-field>
+                    <button mat-icon-button type="button" (click)="removeRequirement(i)" 
+                            [disabled]="requirements.length <= JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                }
+              </div>
+              <button mat-stroked-button type="button" (click)="addRequirement()">
+                <mat-icon>add</mat-icon> Add Requirement
+              </button>
+            </div>
+          </div>
+        </mat-step>
+
+        <!-- Step 4: Skills -->
+        <mat-step label="Skills">
+          <div class="form-section">
+            <h3>Required Skills</h3>
+            
+            <div class="skills-section">
+              <h4>Required Skills <span style="color: red;">(Minimum {{JOB_VALIDATION.SKILLS_REQUIRED.MIN_ITEMS}} required)</span></h4>
+              <div class="skills-input">
+                <mat-form-field appearance="outline" class="skill-select">
+                  <mat-label>Add Required Skill</mat-label>
+                  <mat-select #requiredSkillSelect (selectionChange)="addSkill('required', requiredSkillSelect.value); requiredSkillSelect.value = ''">
+                    @for (skill of commonSkills; track skill) {
+                      <mat-option [value]="skill">{{ skill }}</mat-option>
                     }
                   </mat-select>
-                  <mat-error>{{ getErrorMessage('job_type') }}</mat-error>
                 </mat-form-field>
               </div>
-
-              <div class="navigation-buttons">
-                <button mat-button matStepperPrevious type="button">Back</button>
-                <button mat-raised-button color="primary" matStepperNext type="button">Next</button>
-              </div>
-            </div>
-          </mat-step>
-
-          <!-- Step 3: Job Description -->
-          <mat-step label="Job Description" [stepControl]="jobForm.get('description')!">
-            <div class="form-section">
-              <h3>Job Description</h3>
               
-              <div class="form-row">
-                <mat-form-field appearance="outline" class="full-width">
-                  <mat-label>Job Description</mat-label>
-                  <textarea matInput formControlName="description" rows="6" 
-                           placeholder="Describe the role, what the candidate will do, and what makes this opportunity exciting..."></textarea>
-                  <mat-hint>{{JOB_VALIDATION.DESCRIPTION.MIN_LENGTH}}-{{JOB_VALIDATION.DESCRIPTION.MAX_LENGTH}} characters required</mat-hint>
-                  <mat-error>{{ getErrorMessage('description') }}</mat-error>
-                </mat-form-field>
-              </div>
-
-              <div class="form-row">
-                <h4>Responsibilities <span style="color: red;">(Minimum {{JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS}} required)</span></h4>
-                <div formArrayName="responsibilities">
-                  @for (responsibility of responsibilities.controls; track $index; let i = $index) {
-                    <div class="array-item">
-                      <mat-form-field appearance="outline" class="array-input">
-                        <mat-label>Responsibility {{ i + 1 }}</mat-label>
-                        <input matInput [formControlName]="i" placeholder="Describe a key responsibility">
-                        <mat-error>This field is required</mat-error>
-                      </mat-form-field>
-                      <button mat-icon-button type="button" (click)="removeResponsibility(i)" 
-                              [disabled]="responsibilities.length <= JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS">
-                        <mat-icon>delete</mat-icon>
-                      </button>
-                    </div>
-                  }
-                </div>
-                <button mat-stroked-button type="button" (click)="addResponsibility()">
-                  <mat-icon>add</mat-icon> Add Responsibility
-                </button>
-              </div>
-
-              <div class="form-row">
-                <h4>Requirements <span style="color: red;">(Minimum {{JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS}} required)</span></h4>
-                <div formArrayName="requirements">
-                  @for (requirement of requirements.controls; track $index; let i = $index) {
-                    <div class="array-item">
-                      <mat-form-field appearance="outline" class="array-input">
-                        <mat-label>Requirement {{ i + 1 }}</mat-label>
-                        <input matInput [formControlName]="i" placeholder="Describe a requirement">
-                        <mat-error>This field is required</mat-error>
-                      </mat-form-field>
-                      <button mat-icon-button type="button" (click)="removeRequirement(i)" 
-                              [disabled]="requirements.length <= JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS">
-                        <mat-icon>delete</mat-icon>
-                      </button>
-                    </div>
-                  }
-                </div>
-                <button mat-stroked-button type="button" (click)="addRequirement()">
-                  <mat-icon>add</mat-icon> Add Requirement
-                </button>
-              </div>
-
-              <div class="navigation-buttons">
-                <button mat-button matStepperPrevious type="button">Back</button>
-                <button mat-raised-button color="primary" matStepperNext type="button">Next</button>
-              </div>
-            </div>
-          </mat-step>
-
-          <!-- Step 4: Skills -->
-          <mat-step label="Skills">
-            <div class="form-section">
-              <h3>Required Skills</h3>
-              
-              <div class="skills-section">
-                <h4>Required Skills <span style="color: red;">(Minimum {{JOB_VALIDATION.SKILLS_REQUIRED.MIN_ITEMS}} required)</span></h4>
-                <div class="skills-input">
-                  <mat-form-field appearance="outline" class="skill-select">
-                    <mat-label>Add Required Skill</mat-label>
-                    <mat-select #requiredSkillSelect (selectionChange)="addSkill('required', requiredSkillSelect.value); requiredSkillSelect.value = ''">
-                      <mat-option *ngFor="let skill of commonSkills" [value]="skill">{{ skill }}</mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-                
-                <div formArrayName="skills_required" class="skills-chips">
-                  <mat-chip-set>
-                    <mat-chip *ngFor="let skill of skillsRequired.controls; let i = index" 
-                             (removed)="removeSkill('required', i)">
+              <div formArrayName="skills_required" class="skills-chips">
+                <mat-chip-set>
+                  @for (skill of skillsRequired.controls; track $index; let i = $index) {
+                    <mat-chip (removed)="removeSkill('required', i)">
                       {{ skill.value }}
                       <mat-icon matChipRemove>cancel</mat-icon>
                     </mat-chip>
-                  </mat-chip-set>
-                </div>
+                  }
+                </mat-chip-set>
               </div>
+            </div>
 
-              <div class="skills-section">
-                <h4>Preferred Skills</h4>
-                <div class="skills-input">
-                  <mat-form-field appearance="outline" class="skill-select">
-                    <mat-label>Add Preferred Skill</mat-label>
-                    <mat-select #preferredSkillSelect (selectionChange)="addSkill('preferred', preferredSkillSelect.value); preferredSkillSelect.value = ''">
-                      <mat-option *ngFor="let skill of commonSkills" [value]="skill">{{ skill }}</mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-                
-                <div formArrayName="skills_preferred" class="skills-chips">
-                  <mat-chip-set>
-                    <mat-chip *ngFor="let skill of skillsPreferred.controls; let i = index" 
-                             (removed)="removeSkill('preferred', i)">
+            <div class="skills-section">
+              <h4>Preferred Skills</h4>
+              <div class="skills-input">
+                <mat-form-field appearance="outline" class="skill-select">
+                  <mat-label>Add Preferred Skill</mat-label>
+                  <mat-select #preferredSkillSelect (selectionChange)="addSkill('preferred', preferredSkillSelect.value); preferredSkillSelect.value = ''">
+                    @for (skill of commonSkills; track skill) {
+                      <mat-option [value]="skill">{{ skill }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              
+              <div formArrayName="skills_preferred" class="skills-chips">
+                <mat-chip-set>
+                  @for (skill of skillsPreferred.controls; track $index; let i = $index) {
+                    <mat-chip (removed)="removeSkill('preferred', i)">
                       {{ skill.value }}
                       <mat-icon matChipRemove>cancel</mat-icon>
                     </mat-chip>
-                  </mat-chip-set>
-                </div>
-              </div>
-
-              <div class="navigation-buttons">
-                <button mat-button matStepperPrevious type="button">Back</button>
-                <button mat-raised-button color="primary" matStepperNext type="button">Next</button>
+                  }
+                </mat-chip-set>
               </div>
             </div>
-          </mat-step>
 
-          <!-- Step 5: Compensation & Benefits -->
-          <mat-step label="Compensation" [stepControl]="jobForm.get('salary')!">
-            <div class="form-section">
-              <h3>Salary & Benefits</h3>
-              
-              <div formGroupName="salary">
-                <div class="form-row">
-                  <mat-form-field appearance="outline" class="quarter-width">
-                    <mat-label>Min Salary</mat-label>
-                    <input matInput type="number" formControlName="min" placeholder="0">
-                    <mat-error>{{ getErrorMessage('salary', 'min') }}</mat-error>
-                  </mat-form-field>
-
-                  <mat-form-field appearance="outline" class="quarter-width">
-                    <mat-label>Max Salary</mat-label>
-                    <input matInput type="number" formControlName="max" placeholder="0">
-                    <mat-error>{{ getErrorMessage('salary', 'max') }}</mat-error>
-                  </mat-form-field>
-
-                  <mat-form-field appearance="outline" class="quarter-width">
-                    <mat-label>Currency</mat-label>
-                    <mat-select formControlName="currency">
-                      <mat-option *ngFor="let currency of currencies" [value]="currency.value">
-                        {{ currency.label }}
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field>
-
-                  <mat-form-field appearance="outline" class="quarter-width">
-                    <mat-label>Period</mat-label>
-                    <mat-select formControlName="period">
-                      <mat-option *ngFor="let period of salaryPeriods" [value]="period.value">
-                        {{ period.label }}
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-
-                <div class="form-row">
-                  <mat-checkbox formControlName="is_negotiable">Salary is negotiable</mat-checkbox>
-                </div>
-              </div>
-
-              <mat-divider></mat-divider>
-
-              <div class="benefits-section">
-                <h4>Benefits</h4>
-                <div class="benefits-input">
-                  <mat-form-field appearance="outline" class="benefit-select">
-                    <mat-label>Add Benefit</mat-label>
-                    <mat-select #benefitSelect (selectionChange)="addBenefit(benefitSelect.value); benefitSelect.value = ''">
-                      <mat-option *ngFor="let benefit of commonBenefits" [value]="benefit">{{ benefit }}</mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-                
-                <div formArrayName="benefits" class="benefits-chips">
-                  <mat-chip-set>
-                    <mat-chip *ngFor="let benefit of benefits.controls; let i = index" 
-                             (removed)="removeBenefit(i)">
-                      {{ benefit.value }}
-                      <mat-icon matChipRemove>cancel</mat-icon>
-                    </mat-chip>
-                  </mat-chip-set>
-                </div>
-              </div>
-
-              <div class="navigation-buttons">
-                <button mat-button matStepperPrevious type="button">Back</button>
-                <button mat-raised-button color="primary" matStepperNext type="button">Next</button>
-              </div>
+            <div class="navigation-buttons">
+              <button mat-button matStepperPrevious type="button">Back</button>
+              <button mat-raised-button color="primary" matStepperNext type="button">Next</button>
             </div>
-          </mat-step>
+          </div>
+        </mat-step>
 
-          <!-- Step 6: Company Information -->
-          <mat-step label="Company Info" [stepControl]="jobForm.get('company_info')!">
-            <div class="form-section">
-              <h3>Company Information</h3>
-              
-              <div formGroupName="company_info">
-                <div class="form-row">
-                  <mat-form-field appearance="outline" class="half-width">
-                    <mat-label>Company Size</mat-label>
-                    <mat-select formControlName="company_size">
-                      <mat-option *ngFor="let size of companySizes" [value]="size.value">
-                        {{ size.label }}
-                      </mat-option>
-                    </mat-select>
-                    <mat-error>{{ getErrorMessage('company_info', 'company_size') }}</mat-error>
-                  </mat-form-field>
+        <!-- Step 5: Compensation & Benefits -->
+        <mat-step label="Compensation">
+          <app-dynamic-form 
+            [config]="step5Config" 
+            (formSubmit)="onStep5Submit($event)"
+            submitButtonText="Next"
+            [showBackButton]="true"
+            (backClick)="stepper.previous()">
+          </app-dynamic-form>
+          
+          <mat-divider></mat-divider>
 
-                  <mat-form-field appearance="outline" class="half-width">
-                    <mat-label>Industry</mat-label>
-                    <mat-select formControlName="industry">
-                      <mat-option *ngFor="let industry of industries" [value]="industry">
-                        {{ industry }}
-                      </mat-option>
-                    </mat-select>
-                    <mat-error>{{ getErrorMessage('company_info', 'industry') }}</mat-error>
-                  </mat-form-field>
-                </div>
-
-                <div class="form-row">
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Company Website</mat-label>
-                    <input matInput formControlName="website" placeholder="https://company.com">
-                  </mat-form-field>
-                </div>
-
-                <div class="form-row">
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Company Description</mat-label>
-                    <textarea matInput formControlName="description" rows="3" 
-                             placeholder="Brief description of your company..."></textarea>
-                  </mat-form-field>
-                </div>
-              </div>
-
-              <div class="navigation-buttons">
-                <button mat-button matStepperPrevious type="button">Back</button>
-                <button mat-raised-button color="primary" matStepperNext type="button">Next</button>
-              </div>
+          <div class="benefits-section">
+            <h4>Benefits</h4>
+            <div class="benefits-input">
+              <mat-form-field appearance="outline" class="benefit-select">
+                <mat-label>Add Benefit</mat-label>
+                <mat-select #benefitSelect (selectionChange)="addBenefit(benefitSelect.value); benefitSelect.value = ''">
+                  @for (benefit of commonBenefits; track benefit) {
+                    <mat-option [value]="benefit">{{ benefit }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
             </div>
-          </mat-step>
-
-          <!-- Step 7: HR Contact & Final Details -->
-          <mat-step label="Contact & Publish">
-            <div class="form-section">
-              <h3>HR Contact Information</h3>
-              
-              <div formGroupName="hr_contact">
-                <div class="form-row">
-                  <mat-form-field appearance="outline" class="half-width">
-                    <mat-label>Contact Name</mat-label>
-                    <input matInput formControlName="name" placeholder="HR Contact Name">
-                    <mat-error>{{ getErrorMessage('hr_contact', 'name') }}</mat-error>
-                  </mat-form-field>
-
-                  <mat-form-field appearance="outline" class="half-width">
-                    <mat-label>Contact Email</mat-label>
-                    <input matInput type="email" formControlName="email" placeholder="hr@company.com">
-                    <mat-error>{{ getErrorMessage('hr_contact', 'email') }}</mat-error>
-                  </mat-form-field>
-                </div>
-
-                <div class="form-row">
-                  <mat-form-field appearance="outline" class="half-width">
-                    <mat-label>Phone Number</mat-label>
-                    <input matInput formControlName="phone" placeholder="+91 98765 43210">
-                    <mat-error>{{ getErrorMessage('hr_contact', 'phone') }}</mat-error>
-                  </mat-form-field>
-
-                  <mat-form-field appearance="outline" class="half-width">
-                    <mat-label>Job Title</mat-label>
-                    <input matInput formControlName="title" placeholder="HR Manager">
-                    <mat-error>{{ getErrorMessage('hr_contact', 'title') }}</mat-error>
-                  </mat-form-field>
-                </div>
-              </div>
-
-              <mat-divider></mat-divider>
-
-              <h3>Application Details</h3>
-              <div class="form-row">
-                <mat-form-field appearance="outline" class="half-width">
-                  <mat-label>Application Deadline</mat-label>
-                  <input matInput [matDatepicker]="picker" formControlName="application_deadline">
-                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                  <mat-datepicker #picker></mat-datepicker>
-                </mat-form-field>
-              </div>
-
-              <div class="form-row">
-                <mat-form-field appearance="outline" class="full-width">
-                  <mat-label>Application Instructions</mat-label>
-                  <textarea matInput formControlName="application_instructions" rows="3" 
-                           placeholder="Special instructions for applicants..."></textarea>
-                </mat-form-field>
-              </div>
-
-              <div class="form-row">
-                <mat-form-field appearance="outline" class="full-width">
-                  <mat-label>External Apply URL (Optional)</mat-label>
-                  <input matInput formControlName="external_apply_url" 
-                         placeholder="https://company.com/apply">
-                </mat-form-field>
-              </div>
-
-              <div class="form-row">
-                <mat-checkbox formControlName="is_active">Publish job immediately</mat-checkbox>
-              </div>
-
-              <div class="navigation-buttons">
-                <button mat-button matStepperPrevious type="button">Back</button>
-                <button mat-button type="button" (click)="onCancel()">Cancel</button>
-                <button mat-raised-button color="primary" type="submit" [disabled]="isSubmitting">
-                  <span *ngIf="!isSubmitting">Post Job</span>
-                  <span *ngIf="isSubmitting">Posting...</span>
-                </button>
-              </div>
+            
+            <div formArrayName="benefits" class="benefits-chips">
+              <mat-chip-set>
+                @for (benefit of benefits.controls; track $index; let i = $index) {
+                  <mat-chip (removed)="removeBenefit(i)">
+                    {{ benefit.value }}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                  </mat-chip>
+                }
+              </mat-chip-set>
             </div>
-          </mat-step>
-        </mat-stepper>
+          </div>
+        </mat-step>
+
+        <!-- Step 6: Company Information -->
+        <mat-step label="Company Info">
+          <app-dynamic-form 
+            [config]="step6Config" 
+            (formSubmit)="onStep6Submit($event)"
+            submitButtonText="Next"
+            [showBackButton]="true"
+            (backClick)="stepper.previous()">
+          </app-dynamic-form>
+        </mat-step>
+
+        <!-- Step 7: HR Contact & Final Details -->
+        <mat-step label="Contact & Publish">
+          <app-dynamic-form 
+            [config]="step7Config" 
+            (formSubmit)="onStep7Submit($event)"
+            submitButtonText="Post Job"
+            [showBackButton]="true"
+            (backClick)="stepper.previous()">
+          </app-dynamic-form>
+          
+
+          
+          <div class="navigation-buttons">
+            <button mat-button type="button" (click)="onCancel()">Cancel</button>
+          </div>
+        </mat-step>
+      </mat-stepper>
       </form>
     </mat-card-content>
   </mat-card>
