@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -141,7 +141,7 @@ export class ProfilePage implements OnInit, OnDestroy {
       salaryRange: [''],
       skills: ['', [Validators.required, Validators.minLength(3)]],
       summary: ['', [Validators.maxLength(500)]],
-      certifications: [''],
+      certifications: this.fb.array([]),
       areaOfExpertise: [''],
       githubLink: ['', [Validators.pattern(/^$|^https?:\/\/(www\.)?github\.com\/[a-zA-Z0-9_-]+\/?$/)]],
       portfolioLink: ['', [Validators.pattern(/^$|^https?:\/\/.+\..+/)]],
@@ -192,7 +192,6 @@ export class ProfilePage implements OnInit, OnDestroy {
       salaryRange: this.userService.getSalaryRangeForDropdown(user),
       skills: user.skills.join(', '),
       summary: user.professional_summary,
-      certifications: user.certifications.join(', '),
       areaOfExpertise: user.area_of_expertise.join(', '),
       githubLink: user.social_links?.github || '',
       portfolioLink: user.social_links?.portfolio || '',
@@ -201,13 +200,23 @@ export class ProfilePage implements OnInit, OnDestroy {
       workType: user.preferred_work_types,
       employmentType: user.preferred_employment_types
     });
+    
+    // Populate certifications array
+    this.certificationsArray.clear();
+    if (user.certifications && user.certifications.length > 0) {
+      user.certifications.forEach(cert => {
+        this.certificationsArray.push(this.createCertificationGroup(cert));
+      });
+    } else {
+      this.addCertification(); // Add one empty certification by default
+    }
   }
 
   // Getter for easy access to form controls
   get f() { return this.profileForm.controls; }
 
   saveProfile(): void {
-    if (this.profileForm.valid && !this.isSaving) {
+    if (!this.isSaving) {
       this.isSaving = true;
       const formValue = this.profileForm.value;
       
@@ -220,7 +229,7 @@ export class ProfilePage implements OnInit, OnDestroy {
         experience_years: formValue.experience,
         skills: formValue.skills.split(',').map((s: string) => s.trim()).filter((s: string) => s),
         professional_summary: formValue.summary,
-        certifications: formValue.certifications ? formValue.certifications.split(',').map((s: string) => s.trim()).filter((s: string) => s) : [],
+        certifications: this.certificationsArray.value,
         area_of_expertise: formValue.areaOfExpertise ? formValue.areaOfExpertise.split(',').map((s: string) => s.trim()).filter((s: string) => s) : [],
         key_contributions: formValue.contributions,
         preferred_work_types: formValue.workType,
@@ -238,6 +247,8 @@ export class ProfilePage implements OnInit, OnDestroy {
         } : undefined
       };
 
+      console.log('Sending update data:', updateData);
+      
       this.userService.updateCurrentUser(updateData)
         .pipe(
           takeUntil(this.destroy$),
@@ -245,6 +256,7 @@ export class ProfilePage implements OnInit, OnDestroy {
         )
         .subscribe({
           next: (response) => {
+            console.log('Profile update response:', response);
             this.snackBar.open('Profile updated successfully!', 'Close', { 
               duration: 3000,
               panelClass: ['success-snackbar']
@@ -258,12 +270,11 @@ export class ProfilePage implements OnInit, OnDestroy {
             });
           }
         });
-    } else {
-      this.markFormGroupTouched();
-    }
-  }
 
-  resetForm(): void {
+  }
+}
+
+  public resetForm(): void {
     if (confirm('Are you sure you want to reset all changes?')) {
       if (this.currentUser) {
         this.populateForm(this.currentUser);
@@ -292,9 +303,33 @@ export class ProfilePage implements OnInit, OnDestroy {
     return skills ? skills.split(',').map((skill: string) => skill.trim()).filter((skill: string) => skill) : [];
   }
 
-  getCertificationsArray(): string[] {
-    const certifications = this.profileForm.get('certifications')?.value;
-    return certifications ? certifications.split(',').map((cert: string) => cert.trim()).filter((cert: string) => cert) : [];
+  get certificationsArray(): FormArray {
+    return this.profileForm.get('certifications') as FormArray;
+  }
+
+  createCertificationGroup(cert?: any): FormGroup {
+    return this.fb.group({
+      name: [cert?.name || '', Validators.required],
+      issuer: [cert?.issuer || '', Validators.required],
+      issue_date: [cert?.issue_date || ''],
+      expiry_date: [cert?.expiry_date || ''],
+      credential_id: [cert?.credential_id || ''],
+      link: [cert?.link || '']
+    });
+  }
+
+  addCertification(): void {
+    this.certificationsArray.push(this.createCertificationGroup());
+    this.profileForm.markAsDirty();
+  }
+
+  removeCertification(index: number): void {
+    this.certificationsArray.removeAt(index);
+    this.profileForm.markAsDirty();
+  }
+
+  getCertificationsArray(): any[] {
+    return this.certificationsArray.value;
   }
 
   getExpertiseArray(): string[] {

@@ -2,6 +2,7 @@ import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { AuthService } from './auth.service';
 
 export interface PersonalInfo {
   full_name: string;
@@ -58,6 +59,7 @@ export interface ResumeSection {
 export interface Resume {
   resume_id: string;
   title: string;
+  template_id?: string;
   sections: ResumeSection;
   ats_score: number;
   suggestions: string[];
@@ -103,7 +105,10 @@ export class ResumeService {
     return 'danger';
   });
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {
     this.loadTemplates();
   }
 
@@ -181,8 +186,17 @@ export class ResumeService {
 
   // Helper methods
   private getCurrentUserId(): string {
-    // Get from auth service or localStorage
-    return localStorage.getItem('userId') || 'user_123';
+    // Get from JWT token or localStorage
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.user_id;
+      } catch (e) {
+        console.error('Error parsing token:', e);
+      }
+    }
+    return localStorage.getItem('userId') || 'user003';
   }
 
   private getDefaultSections(): ResumeSection {
@@ -206,6 +220,26 @@ export class ResumeService {
       projects: [],
       certifications: []
     };
+  }
+
+  // Fetch user profile and populate resume with real data
+  getUserProfileData(): Observable<any> {
+    return this.authService.getCurrentUser();
+  }
+
+  createResumeFromProfile(title: string, templateId: string = 'modern'): Observable<any> {
+    const userId = this.getCurrentUserId();
+    return this.http.post(`${this.apiUrl}/resumes`, {
+      user_id: userId,
+      title,
+      template_id: templateId,
+      sections: this.getDefaultSections(),
+      populate_from_profile: true
+    });
+  }
+
+  populateResumeFromProfile(resumeId: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/resumes/${resumeId}/populate-from-profile`, {});
   }
 
   // Validation helpers

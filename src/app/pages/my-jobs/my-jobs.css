@@ -100,6 +100,9 @@
   font-weight: 600;
   color: #1976d2;
   margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .job-card .company {
@@ -133,6 +136,10 @@
 .action-chip:hover {
   background: #1976d2;
   color: white;
+}
+
+.action-chip.applications-chip:hover {
+  transform: scale(1.05);
 }
 
 .status-badge {
@@ -230,6 +237,45 @@
   font-size: 1.1rem;
   width: 1.1rem;
   height: 1.1rem;
+}
+
+.clickable-stat {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  padding: 4px 8px;
+  margin: -4px -8px;
+}
+
+.clickable-stat:hover {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.clickable-stat.has-applications {
+  font-weight: 600;
+}
+
+.clickable-stat .arrow-icon {
+  font-size: 1rem;
+  width: 1rem;
+  height: 1rem;
+  margin-left: 4px;
+}
+
+.applications-chip {
+  background: #e8f5e8 !important;
+  color: #2e7d32 !important;
+  font-weight: 600;
+}
+
+.applications-chip.has-applications {
+  background: #1976d2 !important;
+  color: white !important;
+}
+
+.applications-chip.has-applications:hover {
+  background: #1565c0 !important;
 }
 
 /* Card Actions */

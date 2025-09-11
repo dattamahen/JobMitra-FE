@@ -737,3 +737,64 @@ h3 {
     align-items: center;
   }
 }
+/* Certification Section Styles */
+.certifications-section {
+  margin: 20px 0;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.section-header h4 {
+  margin: 0;
+  color: #333;
+}
+
+.certification-form {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background: #fafafa;
+}
+
+.cert-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.cert-header span {
+  font-weight: 500;
+  color: #666;
+}
+
+.cert-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.cert-fields:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .cert-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+.certification-item {
+  display: block;
+  margin-bottom: 8px;
+  padding: 8px;
+  background: #f5f5f5;
+  border-radius: 4px;
+}

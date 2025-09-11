@@ -453,8 +453,8 @@ export class JobService {
   /**
    * Get user's applied jobs
    */
-  getUserAppliedJobs(userId: string): Observable<{ applied_jobs: JobListing[]; total_count: number }> {
-    return this.apiService.get<{ applied_jobs: JobListing[]; total_count: number }>(`/api/v1/users/${userId}/applied-jobs`);
+  getUserAppliedJobs(userId: string): Observable<{ applications: JobListing[]; total_count: number }> {
+    return this.apiService.get<{ applications: JobListing[]; total_count: number }>(`/users/${userId}/applications`);
   }
 
   /**

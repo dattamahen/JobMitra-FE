@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, signal, computed, effect, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,11 +21,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ResumeService, Resume, ResumeTemplate } from '../../services/resume.service';
-import { ClassicTemplateComponent } from '../../components/templates/classic-template.component';
-import { ModernTemplateComponent } from '../../components/templates/modern-template.component';
-import { CreativeTemplateComponent } from '../../components/templates/creative-template.component';
-import { MinimalTemplateComponent } from '../../components/templates/minimal-template.component';
-import { ExecutiveTemplateComponent } from '../../components/templates/executive-template.component';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+
 
 @Component({
   selector: 'app-resume-builder-page',
@@ -47,11 +46,7 @@ import { ExecutiveTemplateComponent } from '../../components/templates/executive
     MatBadgeModule,
     MatTooltipModule,
     MatProgressSpinnerModule,
-    ClassicTemplateComponent,
-    ModernTemplateComponent,
-    CreativeTemplateComponent,
-    MinimalTemplateComponent,
-    ExecutiveTemplateComponent
+
   ],
   templateUrl: './resume-builder.html',
   styleUrls: ['./resume-builder.css']
@@ -114,7 +109,8 @@ export class ResumeBuilderPage implements OnInit {
     private resumeService: ResumeService,
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private http: HttpClient
   ) {
     this.initializeForms();
     
@@ -128,7 +124,118 @@ export class ResumeBuilderPage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadOrCreateResume();
+    this.loadUserData();
+    this.loadTemplates();
+  }
+
+  private loadUserData(): void {
+    this.resumeService.setLoading(true);
+    this.resumeService.getUserProfileData().pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
+      next: (profile) => {
+        this.populateFormsFromProfile(profile);
+        this.createResumeFromProfile(profile);
+        this.resumeService.setLoading(false);
+      },
+      error: (error) => {
+        console.error('Error loading user data:', error);
+        this.resumeService.setLoading(false);
+      }
+    });
+  }
+
+  private loadTemplates(): void {
+    this.resumeService.getTemplates().pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
+      next: (response) => {
+        // Templates are already loaded in service
+      },
+      error: (error) => {
+        console.error('Error loading templates:', error);
+      }
+    });
+  }
+
+  private createResumeFromProfile(profile: any): void {
+    const resume: Resume = {
+      resume_id: 'temp_resume',
+      title: 'My Resume',
+      sections: {
+        personal_info: {
+          full_name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim(),
+          email: profile.email || '',
+          phone: profile.phone || '',
+          location: profile.personal_info?.location?.city || '',
+          linkedin: profile.social_links?.linkedin || '',
+          portfolio: profile.social_links?.portfolio || '',
+          github: profile.social_links?.github || ''
+        },
+        summary: profile.professional_info?.professional_summary || '',
+        experience: [],
+        education: [],
+        skills: {
+          technical: profile.skills || [],
+          soft: profile.communication_skills || []
+        },
+        projects: [],
+        certifications: (profile.certifications || []).map((cert: any) => ({
+          name: typeof cert === 'string' ? cert : cert.name || '',
+          issuer: typeof cert === 'object' ? cert.issuer || '' : '',
+          date: typeof cert === 'object' ? cert.issue_date || '' : '',
+          credential_id: typeof cert === 'object' ? cert.credential_id || '' : ''
+        }))
+      },
+      ats_score: 75,
+      suggestions: []
+    };
+    
+    this.resumeService.setCurrentResume(resume);
+  }
+
+  private populateFormsFromProfile(profile: any): void {
+    // Populate personal info from profile
+    this.personalInfoForm.patchValue({
+      full_name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim(),
+      email: profile.email || '',
+      phone: profile.phone || '',
+      location: profile.personal_info?.location?.city || '',
+      linkedin: profile.social_links?.linkedin || '',
+      portfolio: profile.social_links?.portfolio || '',
+      github: profile.social_links?.github || ''
+    });
+
+    // Populate summary from professional info
+    if (profile.professional_info?.professional_summary) {
+      this.summaryForm.patchValue({
+        summary: profile.professional_info.professional_summary
+      });
+    }
+
+    // Populate skills
+    this.skillsForm.patchValue({
+      technical: profile.skills || [],
+      soft: profile.communication_skills || []
+    });
+
+    // Populate certifications if available
+    if (profile.certifications?.length > 0) {
+      this.certificationCount.set(profile.certifications.length);
+      profile.certifications.forEach((cert: any, index: number) => {
+        const certName = typeof cert === 'string' ? cert : cert.name;
+        const certIssuer = typeof cert === 'object' ? cert.issuer : '';
+        const certDate = typeof cert === 'object' ? cert.issue_date : '';
+        const credentialId = typeof cert === 'object' ? cert.credential_id : '';
+        
+        this.certificationsForm.patchValue({
+          [`name_${index}`]: certName,
+          [`issuer_${index}`]: certIssuer,
+          [`date_${index}`]: certDate,
+          [`credential_id_${index}`]: credentialId
+        });
+      });
+    }
   }
 
   private initializeForms(): void {
@@ -180,59 +287,7 @@ export class ResumeBuilderPage implements OnInit {
     });
   }
 
-  private loadOrCreateResume(): void {
-    this.resumeService.setLoading(true);
-    
-    // Try to load existing resume or create new one
-    this.resumeService.getUserResumes().pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: (response) => {
-        if (response.resumes?.length > 0) {
-          const primaryResume = response.resumes.find((r: any) => r.is_primary) || response.resumes[0];
-          this.loadResume(primaryResume.resume_id);
-        } else {
-          this.createNewResume();
-        }
-      },
-      error: (error) => {
-        console.error('Error loading resumes:', error);
-        this.createNewResume();
-      }
-    });
-  }
 
-  private loadResume(resumeId: string): void {
-    this.resumeService.getResume(resumeId).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: (resume) => {
-        this.resumeService.setCurrentResume(resume);
-        this.populateForms(resume);
-        this.resumeService.setLoading(false);
-      },
-      error: (error) => {
-        console.error('Error loading resume:', error);
-        this.resumeService.setLoading(false);
-        this.snackBar.open('Error loading resume', 'Close', { duration: 3000 });
-      }
-    });
-  }
-
-  private createNewResume(): void {
-    this.resumeService.createResume('My Resume', 'modern').pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: (response) => {
-        this.loadResume(response.resume_id);
-      },
-      error: (error) => {
-        console.error('Error creating resume:', error);
-        this.resumeService.setLoading(false);
-        this.snackBar.open('Error creating resume', 'Close', { duration: 3000 });
-      }
-    });
-  }
 
   private populateForms(resume: Resume): void {
     // Populate personal info
@@ -244,7 +299,57 @@ export class ResumeBuilderPage implements OnInit {
     // Populate skills
     this.skillsForm.patchValue(resume.sections.skills);
     
-    // TODO: Populate arrays for experience, education, projects, certifications
+    // Populate experience forms
+    if (resume.sections.experience?.length > 0) {
+      this.experienceCount.set(resume.sections.experience.length);
+      resume.sections.experience.forEach((exp, index) => {
+        this.experienceForm.patchValue({
+          [`company_${index}`]: exp.company,
+          [`position_${index}`]: exp.position,
+          [`duration_${index}`]: exp.duration,
+          [`description_${index}`]: exp.description
+        });
+      });
+    }
+    
+    // Populate education forms
+    if (resume.sections.education?.length > 0) {
+      this.educationCount.set(resume.sections.education.length);
+      resume.sections.education.forEach((edu, index) => {
+        this.educationForm.patchValue({
+          [`institution_${index}`]: edu.institution,
+          [`degree_${index}`]: edu.degree,
+          [`year_${index}`]: edu.year,
+          [`gpa_${index}`]: edu.gpa
+        });
+      });
+    }
+    
+    // Populate projects forms
+    if (resume.sections.projects?.length > 0) {
+      this.projectCount.set(resume.sections.projects.length);
+      resume.sections.projects.forEach((proj, index) => {
+        this.projectsForm.patchValue({
+          [`name_${index}`]: proj.name,
+          [`description_${index}`]: proj.description,
+          [`technologies_${index}`]: proj.technologies?.join(', '),
+          [`url_${index}`]: proj.url
+        });
+      });
+    }
+    
+    // Populate certifications forms
+    if (resume.sections.certifications?.length > 0) {
+      this.certificationCount.set(resume.sections.certifications.length);
+      resume.sections.certifications.forEach((cert, index) => {
+        this.certificationsForm.patchValue({
+          [`name_${index}`]: cert.name,
+          [`issuer_${index}`]: cert.issuer,
+          [`date_${index}`]: cert.date,
+          [`credential_id_${index}`]: cert.credential_id
+        });
+      });
+    }
   }
 
   // Section navigation
@@ -257,7 +362,6 @@ export class ResumeBuilderPage implements OnInit {
     if (this.personalInfoForm.valid) {
       const formValue = this.personalInfoForm.value;
       this.resumeService.updateCurrentResumeSection('personal_info', formValue);
-      this.saveResume();
     }
   }
 
@@ -265,7 +369,6 @@ export class ResumeBuilderPage implements OnInit {
     if (this.summaryForm.valid) {
       const summary = this.summaryForm.value.summary;
       this.resumeService.updateCurrentResumeSection('summary', summary);
-      this.saveResume();
     }
   }
 
@@ -273,25 +376,7 @@ export class ResumeBuilderPage implements OnInit {
     if (this.skillsForm.valid) {
       const skills = this.skillsForm.value;
       this.resumeService.updateCurrentResumeSection('skills', skills);
-      this.saveResume();
     }
-  }
-
-  saveResume(): void {
-    const resume = this.currentResume();
-    if (!resume) return;
-
-    this.resumeService.updateResume(resume.resume_id, resume.sections).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: () => {
-        this.snackBar.open('Resume saved successfully', 'Close', { duration: 2000 });
-      },
-      error: (error) => {
-        console.error('Error saving resume:', error);
-        this.snackBar.open('Error saving resume', 'Close', { duration: 3000 });
-      }
-    });
   }
 
   private autoSave(): void {
@@ -317,8 +402,6 @@ export class ResumeBuilderPage implements OnInit {
       next: (optimization) => {
         this.isOptimizing.set(false);
         this.snackBar.open(`Resume optimized! Score improved from ${optimization.original_score}% to ${optimization.optimized_score}%`, 'Close', { duration: 5000 });
-        // Reload resume to get optimized version
-        this.loadResume(resume.resume_id);
       },
       error: (error) => {
         this.isOptimizing.set(false);
@@ -404,6 +487,9 @@ export class ResumeBuilderPage implements OnInit {
   selectedTemplate = signal('modern');
   isFullscreen = signal(false);
   
+  // Layout management
+  isFormExpanded = signal(false);
+  
   cvTemplates = [
     { id: 'modern', name: 'Modern', icon: 'article' },
     { id: 'classic', name: 'Classic', icon: 'description' },
@@ -458,7 +544,6 @@ export class ResumeBuilderPage implements OnInit {
       }
     }
     this.resumeService.updateCurrentResumeSection('experience', experiences);
-    this.saveResume();
   }
 
   // Education methods
@@ -492,7 +577,6 @@ export class ResumeBuilderPage implements OnInit {
       }
     }
     this.resumeService.updateCurrentResumeSection('education', education);
-    this.saveResume();
   }
 
   // Project methods
@@ -527,7 +611,6 @@ export class ResumeBuilderPage implements OnInit {
       }
     }
     this.resumeService.updateCurrentResumeSection('projects', projects);
-    this.saveResume();
   }
 
   // Certification methods
@@ -561,46 +644,190 @@ export class ResumeBuilderPage implements OnInit {
       }
     }
     this.resumeService.updateCurrentResumeSection('certifications', certifications);
-    this.saveResume();
   }
 
   // Template methods
   selectTemplate(templateId: string): void {
     this.selectedTemplate.set(templateId);
+    // Update current resume template
+    const currentResume = this.currentResume();
+    if (currentResume) {
+      const updatedResume = { ...currentResume };
+      this.resumeService.setCurrentResume(updatedResume);
+    }
   }
 
   toggleFullscreen(): void {
     this.isFullscreen.set(!this.isFullscreen());
-    if (this.isFullscreen()) {
-      document.documentElement.requestFullscreen();
-    } else {
+    const previewElement = document.querySelector('.builder-preview') as HTMLElement;
+    if (this.isFullscreen() && previewElement) {
+      previewElement.requestFullscreen();
+    } else if (document.fullscreenElement) {
       document.exitFullscreen();
     }
   }
 
-  downloadPDF(): void {
-    const element = document.querySelector('.preview-content') as HTMLElement;
-    if (element) {
-      // Simple print functionality as fallback
-      const printWindow = window.open('', '_blank');
-      if (printWindow) {
-        printWindow.document.write(`
-          <html>
-            <head>
-              <title>Resume</title>
-              <style>
-                body { font-family: Arial, sans-serif; margin: 20px; }
-                .preview-content { max-width: 800px; margin: 0 auto; }
-              </style>
-            </head>
-            <body>
-              <div class="preview-content">${element.innerHTML}</div>
-            </body>
-          </html>
-        `);
-        printWindow.document.close();
-        printWindow.print();
+  toggleFormExpansion(): void {
+    this.isFormExpanded.set(!this.isFormExpanded());
+  }
+
+  expandPreview(): void {
+    this.isFormExpanded.set(false);
+  }
+
+  async downloadPDF(): Promise<void> {
+    const resume = this.currentResume();
+    if (!resume) return;
+
+    const tempElement = document.createElement('div');
+    tempElement.style.position = 'absolute';
+    tempElement.style.left = '-9999px';
+    tempElement.style.width = '210mm';
+    tempElement.style.padding = '20mm';
+    tempElement.style.fontFamily = 'Arial, sans-serif';
+    tempElement.style.fontSize = '12px';
+    tempElement.style.lineHeight = '1.4';
+    tempElement.style.color = '#000';
+    tempElement.style.backgroundColor = '#fff';
+
+    tempElement.innerHTML = this.generateResumeHTML(resume);
+    document.body.appendChild(tempElement);
+
+    try {
+      const canvas = await html2canvas(tempElement, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff'
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      
+      const imgWidth = 210;
+      const pageHeight = 297;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
       }
+
+      pdf.save(`${resume.sections.personal_info?.full_name || 'Resume'}.pdf`);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      this.snackBar.open('Error generating PDF', 'Close', { duration: 3000 });
+    } finally {
+      document.body.removeChild(tempElement);
     }
+  }
+
+  private generateResumeHTML(resume: Resume): string {
+    const personalInfo = resume.sections.personal_info;
+    const summary = resume.sections.summary;
+    const experience = resume.sections.experience || [];
+    const education = resume.sections.education || [];
+    const skills = resume.sections.skills;
+    const projects = resume.sections.projects || [];
+    const certifications = resume.sections.certifications || [];
+
+    return `
+      <div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 15px;">
+          <h1 style="margin: 0; font-size: 28px; font-weight: bold;">${personalInfo?.full_name || ''}</h1>
+          <div style="margin: 10px 0; font-size: 14px;">
+            ${personalInfo?.email || ''} | ${personalInfo?.phone || ''} | ${personalInfo?.location || ''}
+          </div>
+          ${personalInfo?.linkedin || personalInfo?.github || personalInfo?.portfolio ? `
+            <div style="font-size: 14px; color: #1976d2;">
+              ${personalInfo?.linkedin ? `LinkedIn: ${personalInfo.linkedin}` : ''}
+              ${personalInfo?.github ? ` | GitHub: ${personalInfo.github}` : ''}
+              ${personalInfo?.portfolio ? ` | Portfolio: ${personalInfo.portfolio}` : ''}
+            </div>
+          ` : ''}
+        </div>
+
+        ${summary ? `
+          <div style="margin-bottom: 25px;">
+            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 10px;">PROFESSIONAL SUMMARY</h2>
+            <p style="margin: 0; text-align: justify;">${summary}</p>
+          </div>
+        ` : ''}
+
+        ${skills?.technical?.length || skills?.soft?.length ? `
+          <div style="margin-bottom: 25px;">
+            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 10px;">SKILLS</h2>
+            ${skills.technical?.length ? `<p><strong>Technical:</strong> ${skills.technical.join(', ')}</p>` : ''}
+            ${skills.soft?.length ? `<p><strong>Soft Skills:</strong> ${skills.soft.join(', ')}</p>` : ''}
+          </div>
+        ` : ''}
+
+        ${experience.length ? `
+          <div style="margin-bottom: 25px;">
+            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 10px;">WORK EXPERIENCE</h2>
+            ${experience.map(exp => `
+              <div style="margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                  <h3 style="margin: 0; font-size: 16px;">${exp.position} - ${exp.company}</h3>
+                  <span style="font-style: italic; color: #666;">${exp.duration}</span>
+                </div>
+                <p style="margin: 0; white-space: pre-line;">${exp.description}</p>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+
+        ${education.length ? `
+          <div style="margin-bottom: 25px;">
+            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 10px;">EDUCATION</h2>
+            ${education.map(edu => `
+              <div style="margin-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <h3 style="margin: 0; font-size: 16px;">${edu.degree} - ${edu.institution}</h3>
+                  <span style="font-style: italic; color: #666;">${edu.year}</span>
+                </div>
+                ${edu.gpa ? `<p style="margin: 0; color: #666;">GPA: ${edu.gpa}</p>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+
+        ${projects.length ? `
+          <div style="margin-bottom: 25px;">
+            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 10px;">PROJECTS</h2>
+            ${projects.map(proj => `
+              <div style="margin-bottom: 15px;">
+                <h3 style="margin: 0 0 5px 0; font-size: 16px;">${proj.name}</h3>
+                ${proj.url ? `<p style="margin: 0 0 5px 0; color: #1976d2;">${proj.url}</p>` : ''}
+                <p style="margin: 0 0 5px 0; white-space: pre-line;">${proj.description}</p>
+                ${proj.technologies?.length ? `<p style="margin: 0; font-style: italic;"><strong>Technologies:</strong> ${proj.technologies.join(', ')}</p>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+
+        ${certifications.length ? `
+          <div style="margin-bottom: 25px;">
+            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 10px;">CERTIFICATIONS</h2>
+            ${certifications.map(cert => `
+              <div style="margin-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <h3 style="margin: 0; font-size: 16px;">${cert.name}</h3>
+                  <span style="font-style: italic; color: #666;">${cert.date}</span>
+                </div>
+                <p style="margin: 0; color: #666;">${cert.issuer}</p>
+                ${cert.credential_id ? `<p style="margin: 0; font-size: 12px; color: #999;">ID: ${cert.credential_id}</p>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+      </div>
+    `;
   }
 }

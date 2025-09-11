@@ -9,23 +9,9 @@
       </div>
     </div>
   } @else {
-    <div class="resume-builder-content">
+    <div class="resume-builder-content full-width">
       <!-- Sidebar with sections and AI suggestions -->
       <div class="builder-sidebar">
-        <div class="progress-section">
-          <h4>
-            <mat-icon>trending_up</mat-icon>
-            Resume Progress
-          </h4>
-          <div class="progress-bar">
-            <mat-progress-bar 
-              mode="determinate" 
-              [value]="completionPercentage()"
-              color="primary">
-            </mat-progress-bar>
-            <span class="progress-text">{{ completionPercentage() }}% Complete</span>
-          </div>
-        </div>
 
         <div class="section-list">
           <h4>
@@ -122,8 +108,13 @@
         }
       </div>
       
-      <!-- Main content area -->
-      <div class="builder-main">
+      <!-- Main content area - Full width -->
+      <div class="builder-main full-width">
+        <div class="form-header-actions">
+          <button mat-icon-button (click)="toggleFormExpansion()" matTooltip="{{ isFormExpanded() ? 'Collapse Form' : 'Expand Form' }}">
+            <mat-icon>{{ isFormExpanded() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
+          </button>
+        </div>
         @if (currentResume(); as resume) {
           <!-- Personal Information Section -->
           @if (activeSection() === 'personal_info') {
@@ -608,57 +599,10 @@
         </div>
       </div>
       
-      <!-- Live preview panel -->
-      <div class="builder-preview">
-        @if (currentResume(); as resume) {
-          <div class="preview-header">
-            <h3>
-              <mat-icon>visibility</mat-icon>
-              Live Preview
-            </h3>
-            <div class="preview-actions">
-              <button mat-icon-button matTooltip="Refresh preview">
-                <mat-icon>refresh</mat-icon>
-              </button>
-              <button mat-icon-button matTooltip="Fullscreen preview" (click)="toggleFullscreen()">
-                <mat-icon>fullscreen</mat-icon>
-              </button>
-            </div>
-          </div>
-          
-          <div class="resume-preview" [class.template-modern]="selectedTemplate() === 'modern'" 
-                                        [class.template-classic]="selectedTemplate() === 'classic'"
-                                        [class.template-creative]="selectedTemplate() === 'creative'"
-                                        [class.template-executive]="selectedTemplate() === 'executive'">
-            <div class="preview-content">
-              @if (selectedTemplate() === 'modern') {
-                <app-modern-template [cv]="resume"></app-modern-template>
-              } @else if (selectedTemplate() === 'classic') {
-                <app-classic-template [cv]="resume"></app-classic-template>
-              } @else if (selectedTemplate() === 'creative') {
-                <app-creative-template [cv]="resume"></app-creative-template>
-              } @else if (selectedTemplate() === 'minimal') {
-                <app-minimal-template [cv]="resume"></app-minimal-template>
-              } @else {
-                <app-executive-template [cv]="resume"></app-executive-template>
-              }
-            </div>
-            
-            <!-- ATS Score in preview -->
-            <div class="preview-ats-score">
-              <div class="ats-badge" [class]="getATSScoreClass()">
-                <mat-icon>analytics</mat-icon>
-                <span>ATS Score: {{ resume.ats_score }}%</span>
-              </div>
-            </div>
-          </div>
-        } @else {
-          <div class="no-preview">
-            <mat-icon>description</mat-icon>
-            <p>Resume preview will appear here</p>
-          </div>
-        }
-      </div>
+      <!-- Live preview panel - Hidden to reduce congestion -->
+      <!-- <div class="builder-preview" style="display: none;"> -->
+      <!-- Preview content hidden for cleaner interface -->
+      <!-- </div> -->
     </div>
   }
 </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,6 +16,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { HrService } from '../../services/hr.service';
+import { Router } from '@angular/router';
 
 export interface HRJobListing {
   _id?: string;
@@ -98,6 +99,8 @@ export interface FilterOptions {
 export class MyJobsPage implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   
+  @Output() navigateToPage = new EventEmitter<{page: string, params?: any}>();
+  
   // Expose Math for template use
   Math = Math;
   
@@ -132,7 +135,8 @@ export class MyJobsPage implements OnInit, OnDestroy {
     private hrService: HrService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -166,6 +170,7 @@ export class MyJobsPage implements OnInit, OnDestroy {
       this.filteredJobs = [...this.jobListings];
       this.buildFilterOptions();
       console.log('Transformed jobs:', this.jobListings);
+      console.log('First job applications_count after transform:', this.jobListings[0]?.applications_count);
       console.log('✅ Jobs loading completed successfully');
     } catch (error: any) {
       console.error('Error loading jobs:', error);
@@ -266,7 +271,7 @@ export class MyJobsPage implements OnInit, OnDestroy {
         is_active: job.is_active !== false,
         posted_by_hr_id: job.posted_by_hr_id || job.hr_id || 'current-user',
         views_count: job.views_count || 0,
-        applications_count: job.applications_count || 0
+        applications_count: job.applications_received ? job.applications_received.length : (job.applications_count || 0)
       };
 
       console.log(`Transformed job ${index + 1}:`, transformedJob);
@@ -492,6 +497,19 @@ export class MyJobsPage implements OnInit, OnDestroy {
   viewJobStats(job: HRJobListing) {
     // TODO: Show job statistics
     this.snackBar.open('Job statistics functionality coming soon', 'Close', { duration: 3000 });
+  }
+
+  viewApplications(job: HRJobListing) {
+    if (job.applications_count === 0) {
+      this.snackBar.open('No applications received for this job yet', 'Close', { duration: 3000 });
+      return;
+    }
+    
+    // Navigate to applications-received page with specific job ID
+    this.navigateToPage.emit({
+      page: 'applications-received',
+      params: { jobId: job.job_id }
+    });
   }
 
   async deleteJob(job: HRJobListing) {
