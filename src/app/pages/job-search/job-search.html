@@ -92,7 +92,9 @@
             </mat-chip>
           </div>
           <div class="match-badge">
-            <mat-chip class="match-chip" *ngIf="job.match_percentage">{{job.match_percentage}}% Match</mat-chip>
+            @if (job.match_percentage) {
+              <mat-chip class="match-chip">{{job.match_percentage}}% Match</mat-chip>
+            }
           </div>
         </div>
       </mat-card-header>

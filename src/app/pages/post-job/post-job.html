@@ -40,9 +40,11 @@
                 <mat-form-field appearance="outline" class="half-width">
                   <mat-label>Employment Type</mat-label>
                   <mat-select formControlName="employment_type">
-                    <mat-option *ngFor="let type of employmentTypes" [value]="type.value">
-                      {{ type.label }}
-                    </mat-option>
+                    @for (type of employmentTypes; track type.value) {
+                      <mat-option [value]="type.value">
+                        {{ type.label }}
+                      </mat-option>
+                    }
                   </mat-select>
                   <mat-error>{{ getErrorMessage('employment_type') }}</mat-error>
                 </mat-form-field>
@@ -50,9 +52,11 @@
                 <mat-form-field appearance="outline" class="half-width">
                   <mat-label>Experience Level</mat-label>
                   <mat-select formControlName="experience_level">
-                    <mat-option *ngFor="let level of experienceLevels" [value]="level.value">
-                      {{ level.label }}
-                    </mat-option>
+                    @for (level of experienceLevels; track level.value) {
+                      <mat-option [value]="level.value">
+                        {{ level.label }}
+                      </mat-option>
+                    }
                   </mat-select>
                   <mat-error>{{ getErrorMessage('experience_level') }}</mat-error>
                 </mat-form-field>
@@ -103,9 +107,11 @@
                 <mat-form-field appearance="outline" class="full-width">
                   <mat-label>Work Type</mat-label>
                   <mat-select formControlName="job_type">
-                    <mat-option *ngFor="let type of jobTypes" [value]="type.value">
-                      {{ type.label }}
-                    </mat-option>
+                    @for (type of jobTypes; track type.value) {
+                      <mat-option [value]="type.value">
+                        {{ type.label }}
+                      </mat-option>
+                    }
                   </mat-select>
                   <mat-error>{{ getErrorMessage('job_type') }}</mat-error>
                 </mat-form-field>
@@ -136,17 +142,19 @@
               <div class="form-row">
                 <h4>Responsibilities <span style="color: red;">(Minimum {{JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS}} required)</span></h4>
                 <div formArrayName="responsibilities">
-                  <div *ngFor="let responsibility of responsibilities.controls; let i = index" class="array-item">
-                    <mat-form-field appearance="outline" class="array-input">
-                      <mat-label>Responsibility {{ i + 1 }}</mat-label>
-                      <input matInput [formControlName]="i" placeholder="Describe a key responsibility">
-                      <mat-error>This field is required</mat-error>
-                    </mat-form-field>
-                    <button mat-icon-button type="button" (click)="removeResponsibility(i)" 
-                            [disabled]="responsibilities.length <= JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS">
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                  </div>
+                  @for (responsibility of responsibilities.controls; track $index; let i = $index) {
+                    <div class="array-item">
+                      <mat-form-field appearance="outline" class="array-input">
+                        <mat-label>Responsibility {{ i + 1 }}</mat-label>
+                        <input matInput [formControlName]="i" placeholder="Describe a key responsibility">
+                        <mat-error>This field is required</mat-error>
+                      </mat-form-field>
+                      <button mat-icon-button type="button" (click)="removeResponsibility(i)" 
+                              [disabled]="responsibilities.length <= JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  }
                 </div>
                 <button mat-stroked-button type="button" (click)="addResponsibility()">
                   <mat-icon>add</mat-icon> Add Responsibility
@@ -156,17 +164,19 @@
               <div class="form-row">
                 <h4>Requirements <span style="color: red;">(Minimum {{JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS}} required)</span></h4>
                 <div formArrayName="requirements">
-                  <div *ngFor="let requirement of requirements.controls; let i = index" class="array-item">
-                    <mat-form-field appearance="outline" class="array-input">
-                      <mat-label>Requirement {{ i + 1 }}</mat-label>
-                      <input matInput [formControlName]="i" placeholder="Describe a requirement">
-                      <mat-error>This field is required</mat-error>
-                    </mat-form-field>
-                    <button mat-icon-button type="button" (click)="removeRequirement(i)" 
-                            [disabled]="requirements.length <= JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS">
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                  </div>
+                  @for (requirement of requirements.controls; track $index; let i = $index) {
+                    <div class="array-item">
+                      <mat-form-field appearance="outline" class="array-input">
+                        <mat-label>Requirement {{ i + 1 }}</mat-label>
+                        <input matInput [formControlName]="i" placeholder="Describe a requirement">
+                        <mat-error>This field is required</mat-error>
+                      </mat-form-field>
+                      <button mat-icon-button type="button" (click)="removeRequirement(i)" 
+                              [disabled]="requirements.length <= JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  }
                 </div>
                 <button mat-stroked-button type="button" (click)="addRequirement()">
                   <mat-icon>add</mat-icon> Add Requirement
