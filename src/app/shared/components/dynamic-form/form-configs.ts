@@ -338,3 +338,140 @@ export const POST_JOB_STEP7_CONFIG: FormConfig = {
     }
   ]
 };
+
+// Profile Form Configurations
+export const PROFILE_BASIC_INFO_CONFIG: FormConfig = {
+  title: 'Basic Information',
+  fields: [
+    {
+      name: 'first_name',
+      type: 'text',
+      label: 'First Name',
+      required: true
+    },
+    {
+      name: 'last_name',
+      type: 'text',
+      label: 'Last Name',
+      required: true
+    },
+    {
+      name: 'phone',
+      type: 'text',
+      label: 'Phone Number',
+      placeholder: '+91 98765 43210'
+    },
+    {
+      name: 'city',
+      type: 'text',
+      label: 'City',
+      placeholder: 'City'
+    },
+    {
+      name: 'state',
+      type: 'text',
+      label: 'State',
+      placeholder: 'State'
+    },
+    {
+      name: 'date_of_birth',
+      type: 'text',
+      label: 'Date of Birth',
+      placeholder: 'YYYY-MM-DD'
+    }
+  ]
+};
+
+export const PROFILE_PROFESSIONAL_CONFIG: FormConfig = {
+  title: 'Professional Information',
+  fields: [
+    {
+      name: 'current_role',
+      type: 'text',
+      label: 'Current Role',
+      placeholder: 'e.g. Senior Software Engineer'
+    },
+    {
+      name: 'current_company',
+      type: 'text',
+      label: 'Current Company',
+      placeholder: 'Company name'
+    },
+    {
+      name: 'overall_experience_years',
+      type: 'number',
+      label: 'Years of Experience',
+      placeholder: '0'
+    },
+    {
+      name: 'highest_qualification',
+      type: 'select',
+      label: 'Highest Qualification',
+      options: [
+        { value: 'high_school', label: 'High School' },
+        { value: 'diploma', label: 'Diploma' },
+        { value: 'bachelors', label: 'Bachelor\'s Degree' },
+        { value: 'masters', label: 'Master\'s Degree' },
+        { value: 'phd', label: 'PhD' }
+      ]
+    },
+    {
+      name: 'professional_summary',
+      type: 'textarea',
+      label: 'Professional Summary',
+      placeholder: 'Brief description of your professional background...',
+      rows: 3
+    },
+    {
+      name: 'linkedin_link',
+      type: 'text',
+      label: 'LinkedIn Profile',
+      placeholder: 'https://linkedin.com/in/username'
+    },
+    {
+      name: 'github_link',
+      type: 'text',
+      label: 'GitHub Profile',
+      placeholder: 'https://github.com/username'
+    }
+  ]
+};
+
+export const PROFILE_JOB_PREFERENCES_CONFIG: FormConfig = {
+  title: 'Job Preferences',
+  fields: [
+    {
+      name: 'job_preferences',
+      type: 'select',
+      label: 'Preferred Work Type',
+      options: [
+        { value: 'remote', label: 'Remote' },
+        { value: 'on-site', label: 'On-site' },
+        { value: 'hybrid', label: 'Hybrid' }
+      ]
+    },
+    {
+      name: 'employment_type',
+      type: 'select',
+      label: 'Employment Type',
+      options: [
+        { value: 'full-time', label: 'Full-time' },
+        { value: 'part-time', label: 'Part-time' },
+        { value: 'contract', label: 'Contract' },
+        { value: 'freelancing', label: 'Freelancing' }
+      ]
+    },
+    {
+      name: 'expected_salary',
+      type: 'number',
+      label: 'Expected Salary',
+      placeholder: '0'
+    },
+    {
+      name: 'desired_job_title',
+      type: 'text',
+      label: 'Desired Job Title',
+      placeholder: 'e.g. Senior Software Engineer'
+    }
+  ]
+};

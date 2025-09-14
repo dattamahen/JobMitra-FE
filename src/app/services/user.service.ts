@@ -120,7 +120,11 @@ export class UserService {
    */
   refreshCurrentUser(): Observable<UserProfile | null> {
     console.log('UserService: Force refreshing current user from API');
-    this.fetchCurrentUserFromAPI();
+    
+    if (this.authService.isAuthenticated()) {
+      this.fetchCurrentUserFromAPI();
+    }
+    
     return this.currentUser$;
   }
 
@@ -145,14 +149,7 @@ export class UserService {
    * Get user profile by ID
    */
   getUserProfile(userId: string): Observable<UserProfile> {
-    return this.apiService.get<UserProfile>(`/users/${userId}`)
-      .pipe(
-        catchError(error => {
-          console.warn('🔥 API unavailable - Using mock user profile data:', error.message);
-          // Return mock user profile
-          return of(this.getMockUserProfile(userId));
-        })
-      );
+    return this.apiService.get<UserProfile>(`/users/${userId}`);
   }
 
   /**
@@ -196,8 +193,21 @@ export class UserService {
    */
   private loadCurrentUser(): void {
     console.log('UserService: Loading current user...');
+    console.log('UserService: Auth service authenticated?', this.authService.isAuthenticated());
+    console.log('UserService: Auth service user:', this.authService.getCurrentUserValue());
 
-    // First try to get from localStorage
+    // Check if user is authenticated and get from auth service first
+    if (this.authService.isAuthenticated()) {
+      const authUser = this.authService.getCurrentUserValue();
+      if (authUser) {
+        console.log('UserService: Found user in auth service:', authUser.full_name || authUser.first_name);
+        const userProfile = this.convertUserToProfile(authUser);
+        this.setCurrentUser(userProfile);
+        return;
+      }
+    }
+
+    // Fallback to localStorage
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
       try {
@@ -211,9 +221,7 @@ export class UserService {
       }
     }
 
-    console.log('UserService: No stored user found, fetching from API...');
-    // If no stored user, fetch from API
-    this.fetchCurrentUserFromAPI();
+    console.log('UserService: No user found');
   }
 
   /**
@@ -221,18 +229,25 @@ export class UserService {
    */
   private fetchCurrentUserFromAPI(): void {
     console.log('UserService: Making authenticated API call to /auth/me');
+    
+    if (!this.authService.isAuthenticated()) {
+      return;
+    }
+    
     this.authService.getCurrentUser()
       .pipe(
         catchError(error => {
-          console.warn('UserService: API unavailable - Using fallback profile data:', error.message);
-          // Return fallback dummy profile
-          return of(this.convertUserToProfile(null));
+          console.warn('UserService: API call failed:', error.message);
+          if (error.status === 401) {
+            console.log('UserService: Authentication failed, clearing auth data');
+            this.authService.clearAllAuthData();
+          }
+          throw error;
         })
       )
       .subscribe({
         next: (user: any) => {
           console.log('UserService: Successfully received user data:', user);
-          // Convert User to UserProfile format
           const userProfile = this.convertUserToProfile(user);
           this.setCurrentUser(userProfile);
         },
@@ -272,7 +287,7 @@ export class UserService {
 
   private convertUserToProfile(user: any): UserProfile {
     if (!user) {
-      return this.getDummyProfile();
+      throw new Error('No user data provided');
     }
 
     console.log('UserService: convertUserToProfile - Social links structure:', user.social_links);
@@ -370,50 +385,7 @@ export class UserService {
     return Math.round((completedFields / fields.length) * 100);
   }
 
-  /**
-   * Get dummy profile data for fallback (should rarely be used now)
-   */
-  private getDummyProfile(): UserProfile {
-    return {
-      user_id: "usr_fallback",
-      email: "user@example.com",
-      full_name: "Test User",
-      phone: "+91 98765 43210",
-      current_job_title: "Software Engineer",
-      desired_job_title: "Senior Software Engineer",
-      experience_years: "2-3",
-      skills: ["JavaScript", "React", "Node.js", "Python"],
-      certifications: [],
-      area_of_expertise: ["Frontend Development"],
-      professional_summary: "Software engineer with experience in modern web technologies.",
-      key_contributions: "Contributed to multiple web development projects.",
-      preferred_work_types: ["remote", "hybrid"],
-      preferred_employment_types: ["full-time"],
-      social_links: {},
-      location: {
-        city: "Bangalore",
-        state: "Karnataka",
-        country: "India",
-        type: "hybrid"
-      },
-      expected_salary: {
-        min: 12,
-        max: 18,
-        currency: "INR",
-        period: "yearly"
-      },
-      profile_completion_percentage: 60,
-      profile_views: 0,
-      last_active: new Date().toISOString(),
-      is_active: true,
-      is_public: true,
-      email_notifications: true,
-      profile_searchable: true,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      preferred_locations: ["Bangalore", "Remote"]
-    };
-  }
+
 
   /**
    * Login user (set current user)
@@ -475,130 +447,15 @@ export class UserService {
   }
 
   /**
-   * Convert UpdateUserRequest to format expected by AuthService
+   * Convert update data to format expected by AuthService
    */
-  private convertUpdateRequestToAuthFormat(updateData: UpdateUserRequest): Partial<any> {
-    const authData: any = {};
-
+  private convertUpdateRequestToAuthFormat(updateData: any): Partial<any> {
     console.log('UserService: Converting update data to auth format:', updateData);
-
-    // Map UpdateUserRequest fields to AuthService User fields that match UserProfileUpdateRequest schema
-    if (updateData.full_name) {
-      // Split full name into first and last name for backend compatibility
-      const nameParts = updateData.full_name.split(' ');
-      authData.first_name = nameParts[0] || '';
-      authData.last_name = nameParts.slice(1).join(' ') || '';
-      console.log('UserService: Mapped full_name to first_name/last_name:', authData.first_name, authData.last_name);
-    }
-
-    if (updateData.phone) {
-      authData.phone = updateData.phone;
-      console.log('UserService: Mapped phone:', authData.phone);
-    }
-
-    if (updateData.location?.city) {
-      authData.city = updateData.location.city;
-      console.log('UserService: Mapped city:', authData.city);
-    }
-
-    if (updateData.location?.state) {
-      authData.state = updateData.location.state;
-      console.log('UserService: Mapped state:', authData.state);
-    }
-
-    if (updateData.current_job_title) {
-      authData.current_role = updateData.current_job_title;
-      console.log('UserService: Mapped current_job_title to current_role:', authData.current_role);
-    }
-
-    // Map company information - infer from current job title or add as separate field
-    if (updateData.current_job_title) {
-      // For now, we don't have company info in UpdateUserRequest, but backend expects it
-      // You might want to add this field to the form later
-      authData.current_company = 'Updated via Profile'; // Placeholder
-      console.log('UserService: Set placeholder current_company:', authData.current_company);
-    }
-
-    if (updateData.experience_years) {
-      authData.total_experience = updateData.experience_years;
-      console.log('UserService: Mapped experience_years to total_experience:', authData.total_experience);
-    }
-
-    // Map industry - infer from area of expertise or add as separate field
-    if (updateData.area_of_expertise && updateData.area_of_expertise.length > 0) {
-      authData.industry = updateData.area_of_expertise[0]; // Use first area as industry
-      console.log('UserService: Mapped area_of_expertise to industry:', authData.industry);
-    }
-
-    if (updateData.skills && updateData.skills.length > 0) {
-      authData.skills = updateData.skills;
-      console.log('UserService: Mapped skills:', authData.skills);
-    }
-
-    // Map current salary - not available in UpdateUserRequest, but backend supports it
-    // This would need to be added to the form if needed
-
-    // Handle expected salary conversion (LPA to absolute value for backend)
-    if (updateData.expected_salary && updateData.expected_salary.min) {
-      authData.expected_salary = updateData.expected_salary.min * 100000; // Convert LPA to absolute
-      console.log('UserService: Mapped expected_salary (LPA to absolute):', authData.expected_salary);
-    }
-
-    if (updateData.professional_summary) {
-      authData.professional_summary = updateData.professional_summary;
-      console.log('UserService: Mapped professional_summary:', authData.professional_summary);
-    }
-
-    if (updateData.desired_job_title) {
-      authData.desired_job_title = updateData.desired_job_title;
-      console.log('UserService: Mapped desired_job_title:', authData.desired_job_title);
-    }
-
-    if (updateData.certifications && updateData.certifications.length > 0) {
-      // Filter out empty strings and invalid objects before sending to backend
-      const validCerts = updateData.certifications.filter(cert => 
-        cert && typeof cert === 'string' && cert.trim() !== '' && cert !== '[object Object]'
-      );
-      if (validCerts.length > 0) {
-        authData.certifications = validCerts;
-        console.log('UserService: Mapped valid certifications:', authData.certifications);
-      }
-    }
-
-    if (updateData.area_of_expertise && updateData.area_of_expertise.length > 0) {
-      authData.area_of_expertise = updateData.area_of_expertise;
-      console.log('UserService: Mapped area_of_expertise:', authData.area_of_expertise);
-    }
-
-    if (updateData.key_contributions) {
-      authData.key_contributions = updateData.key_contributions;
-      console.log('UserService: Mapped key_contributions:', authData.key_contributions);
-    }
-
-    // Map social links
-    if (updateData.social_links) {
-      if (updateData.social_links.github) {
-        authData.github_url = updateData.social_links.github;
-        console.log('UserService: Mapped github_url:', authData.github_url);
-      }
-      if (updateData.social_links.portfolio) {
-        authData.portfolio_url = updateData.social_links.portfolio;
-        console.log('UserService: Mapped portfolio_url:', authData.portfolio_url);
-      }
-      if (updateData.social_links.linkedin) {
-        authData.linkedin_url = updateData.social_links.linkedin;
-        console.log('UserService: Mapped linkedin_url:', authData.linkedin_url);
-      }
-      if (updateData.social_links.twitter) {
-        authData.twitter_url = updateData.social_links.twitter;
-        console.log('UserService: Mapped twitter_url:', authData.twitter_url);
-      }
-      if (updateData.social_links.youtube) {
-        authData.youtube_url = updateData.social_links.youtube;
-        console.log('UserService: Mapped youtube_url:', authData.youtube_url);
-      }
-    }
-
+    
+    // Since the profile component now sends data with backend field names directly,
+    // we can pass it through with minimal transformation
+    const authData = { ...updateData };
+    
     console.log('UserService: Final auth data for backend:', authData);
     return authData;
   }
@@ -649,56 +506,5 @@ export class UserService {
         throw error;
       })
     );
-  }
-
-  /**
-   * Get mock user profile for fallback when API is unavailable
-   */
-  private getMockUserProfile(userId: string): UserProfile {
-    return {
-      user_id: userId,
-      email: 'john.doe@example.com',
-      full_name: 'John Doe',
-      phone: '+1-555-0123',
-      location: {
-        city: 'San Francisco',
-        state: 'CA',
-        country: 'USA',
-        timezone: 'PST',
-        type: 'hybrid'
-      },
-      avatar_url: 'https://via.placeholder.com/150',
-      current_job_title: 'Senior Frontend Developer',
-      desired_job_title: 'Lead Frontend Architect',
-      experience_years: '5-8',
-      skills: ['JavaScript', 'TypeScript', 'Angular', 'React', 'Node.js', 'Python'],
-      certifications: ['AWS Certified Developer', 'Google Cloud Professional'],
-      area_of_expertise: ['Frontend Development', 'UI/UX Design', 'API Integration'],
-      professional_summary: 'Experienced frontend developer with expertise in modern web technologies and frameworks.',
-      key_contributions: 'Led the development of multiple high-traffic web applications, improved performance by 40%.',
-      expected_salary: {
-        min: 12,
-        max: 18,
-        currency: 'INR',
-        period: 'yearly'
-      },
-      preferred_work_types: ['remote', 'hybrid'],
-      preferred_employment_types: ['full-time'],
-      preferred_locations: ['San Francisco', 'New York', 'Remote'],
-      social_links: {
-        github: 'https://github.com/johndoe',
-        portfolio: 'https://johndoe.dev',
-        linkedin: 'https://linkedin.com/in/johndoe'
-      },
-      profile_completion_percentage: 85,
-      profile_views: 247,
-      last_active: new Date().toISOString(),
-      is_active: true,
-      is_public: true,
-      email_notifications: true,
-      profile_searchable: true,
-      created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-      updated_at: new Date().toISOString()
-    };
   }
 }

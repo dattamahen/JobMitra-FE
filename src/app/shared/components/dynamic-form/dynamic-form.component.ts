@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, ChangeDetectorRef, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -204,7 +204,7 @@ export interface FormConfig {
     }
   `]
 })
-export class DynamicFormComponent implements OnInit {
+export class DynamicFormComponent implements OnInit, OnChanges {
   @Input() config!: FormConfig;
   @Input() initialValues: any = {};
   @Input() submitButtonText = 'Submit';
@@ -217,10 +217,18 @@ export class DynamicFormComponent implements OnInit {
   form!: FormGroup;
   showPassword = signal(false);
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.buildForm();
+  }
+
+  ngOnChanges() {
+    if (this.form && this.initialValues && Object.keys(this.initialValues).length > 0) {
+      console.log('Dynamic form patching values:', this.initialValues);
+      this.form.patchValue(this.initialValues);
+      this.cdr.detectChanges();
+    }
   }
 
   private buildForm() {
@@ -255,7 +263,7 @@ export class DynamicFormComponent implements OnInit {
         }
       }
       
-      const initialValue = this.initialValues[field.name] || 
+      const initialValue = this.initialValues?.[field.name] || 
         (field.type === 'checkbox' ? false : '');
       
       formControls[field.name] = [initialValue, validators];
@@ -283,14 +291,44 @@ export class DynamicFormComponent implements OnInit {
   }
 
   getFieldClass(field: FormFieldConfig): string {
+    // Job posting fields
     if (field.name.includes('employment_type') || field.name.includes('experience_level')) {
       return 'half-width';
     }
     if (field.name.includes('salary.min') || field.name.includes('salary.max') || field.name.includes('salary.currency') || field.name.includes('salary.period')) {
       return 'quarter-width';
     }
-    if (field.name.includes('location.') || field.name.includes('company_info.company_size') || field.name.includes('company_info.industry') || field.name.includes('hr_contact.')) {
+    if (field.name.includes('location.') || field.name.includes('company_info.') || field.name.includes('hr_contact.')) {
       return 'half-width';
+    }
+    // Profile fields - half width for related fields
+    if (field.name === 'full_name' || field.name === 'email') {
+      return 'half-width';
+    }
+    if (field.name === 'phone' || field.name === 'location') {
+      return 'half-width';
+    }
+    if (field.name === 'current_role' || field.name === 'current_company') {
+      return 'half-width';
+    }
+    if (field.name === 'experience_years' || field.name === 'highest_qualification') {
+      return 'half-width';
+    }
+    if (field.name === 'linkedin_url' || field.name === 'github_url') {
+      return 'half-width';
+    }
+    if (field.name.includes('job_preferences.expected_salary') || field.name.includes('job_preferences.currency')) {
+      return 'half-width';
+    }
+    if (field.name.includes('job_preferences.work_type') || field.name.includes('job_preferences.employment_type')) {
+      return 'half-width';
+    }
+    if (field.name.includes('job_preferences.notice_period')) {
+      return 'half-width';
+    }
+    // Full width for text areas and long text fields
+    if (field.type === 'textarea') {
+      return 'full-width';
     }
     return 'full-width';
   }

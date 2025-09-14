@@ -107,7 +107,6 @@ export class LoginPage implements OnInit {
         this.redirectBasedOnUserType(response.user.user_type);
       },
       error: (error: any) => {
-        console.error('Login failed:', error);
         this.isLoading = false;
         this.loginFormConfig.loading = false;
         this.errorMessage = error.error?.detail || 'Login failed. Please try again.';

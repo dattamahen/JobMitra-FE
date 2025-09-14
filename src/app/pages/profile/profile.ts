@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -13,8 +13,10 @@ import { MatListModule } from '@angular/material/list';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { Subject, takeUntil, finalize } from 'rxjs';
-import { PROFILE_FORM_DATA, PROFILE_FORM_FIELDS, ProfileFormData, FormFieldConfig } from '../../data/profile-data';
 import { UserService, UserProfile, UpdateUserRequest } from '../../services';
+import { AuthService } from '../../services/auth.service';
+import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
+import { PROFILE_BASIC_INFO_CONFIG, PROFILE_PROFESSIONAL_CONFIG, PROFILE_JOB_PREFERENCES_CONFIG } from '../../shared/components/dynamic-form/form-configs';
 
 @Component({
   selector: 'app-profile',
@@ -32,39 +34,209 @@ import { UserService, UserProfile, UpdateUserRequest } from '../../services';
     MatProgressBarModule,
     MatListModule,
     MatExpansionModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    DynamicFormComponent
   ],
   templateUrl: './profile.html',
   styleUrls: ['./profile.css']
 })
-export class ProfilePage implements OnInit, OnDestroy {
+export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild('basicForm') basicForm!: DynamicFormComponent;
+  @ViewChild('professionalForm') professionalForm!: DynamicFormComponent;
+  @ViewChild('jobPreferencesForm') jobPreferencesForm!: DynamicFormComponent;
   profileForm!: FormGroup;
   currentUser: UserProfile | null = null;
   isLoading = false;
   isSaving = false;
   private destroy$ = new Subject<void>();
   
-  expandedPanels: { [key: string]: boolean } = {
-    basic: true,
-    professional: false,
-    preferences: false
-  };
-  
-  formData: ProfileFormData = PROFILE_FORM_DATA;
-  formFields = PROFILE_FORM_FIELDS;
+  // Form configurations
+  basicInfoConfig = PROFILE_BASIC_INFO_CONFIG;
+  professionalConfig = PROFILE_PROFESSIONAL_CONFIG;
+  jobPreferencesConfig = PROFILE_JOB_PREFERENCES_CONFIG;
+
+  // Dynamic form handlers
+  onBasicInfoSubmit(formData: any): void {
+    const updateData: any = {};
+    
+    // Basic Personal Information - strings
+    if (formData.first_name?.trim()) updateData.first_name = formData.first_name.trim();
+    if (formData.last_name?.trim()) updateData.last_name = formData.last_name.trim();
+    if (formData.phone?.trim()) updateData.phone = formData.phone.trim();
+    
+    // Direct city/state fields (backend supports both direct and nested)
+    if (formData.city?.trim()) updateData.city = formData.city.trim();
+    if (formData.state?.trim()) updateData.state = formData.state.trim();
+    
+    // date_of_birth - datetime (ISO string)
+    if (formData.date_of_birth?.trim()) {
+      try {
+        const date = new Date(formData.date_of_birth);
+        if (!isNaN(date.getTime())) {
+          updateData.date_of_birth = date.toISOString();
+        }
+      } catch (e) {
+        console.warn('Invalid date format:', formData.date_of_birth);
+      }
+    }
+    
+    console.log('Basic Info Update Data:', updateData);
+    this.updateProfile(updateData, 'Basic information updated successfully!');
+  }
+
+  onProfessionalSubmit(formData: any): void {
+    const updateData: any = {};
+    
+    // Legacy compatibility fields - strings
+    if (formData.current_role?.trim()) updateData.current_role = formData.current_role.trim();
+    if (formData.current_company?.trim()) updateData.current_company = formData.current_company.trim();
+    if (formData.professional_summary?.trim()) updateData.professional_summary = formData.professional_summary.trim();
+    
+    // Professional Information - int (must be >= 0)
+    if (formData.overall_experience_years !== undefined && formData.overall_experience_years !== null && formData.overall_experience_years !== '') {
+      const exp = Number(formData.overall_experience_years);
+      if (!isNaN(exp) && exp >= 0) {
+        updateData.overall_experience_years = Math.floor(exp);
+      }
+    }
+    
+    // highest_qualification - string
+    if (formData.highest_qualification?.trim()) updateData.highest_qualification = formData.highest_qualification.trim();
+    
+    // Social Links - strings
+    if (formData.linkedin_link?.trim()) updateData.linkedin_link = formData.linkedin_link.trim();
+    if (formData.github_link?.trim()) updateData.github_link = formData.github_link.trim();
+    
+    this.updateProfile(updateData, 'Professional information updated successfully!');
+  }
+
+  onJobPreferencesSubmit(formData: any): void {
+    const updateData: any = {};
+    
+    // Preferences - List[Literal] (arrays of specific string values)
+    if (formData.job_preferences?.trim()) {
+      const validPrefs = ['remote', 'hybrid', 'on-site'];
+      if (validPrefs.includes(formData.job_preferences)) {
+        updateData.job_preferences = [formData.job_preferences];
+      }
+    }
+    
+    if (formData.employment_type?.trim()) {
+      const validTypes = ['full-time', 'part-time', 'freelancing', 'contract'];
+      if (validTypes.includes(formData.employment_type)) {
+        updateData.employment_type = [formData.employment_type];
+      }
+    }
+    
+    // Legacy compatibility - expected_salary as float
+    if (formData.expected_salary !== undefined && formData.expected_salary !== null && formData.expected_salary !== '') {
+      const salary = Number(formData.expected_salary);
+      if (!isNaN(salary) && salary >= 0) {
+        updateData.expected_salary = salary;
+      }
+    }
+    
+    // Legacy compatibility - desired_job_title as string
+    if (formData.desired_job_title?.trim()) updateData.desired_job_title = formData.desired_job_title.trim();
+    
+    this.updateProfile(updateData, 'Job preferences updated successfully!');
+  }
+
+  private updateProfile(updateData: any, successMessage: string): void {
+    this.isSaving = true;
+    
+    this.userService.updateCurrentUser(updateData)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.isSaving = false)
+      )
+      .subscribe({
+        next: () => {
+          this.snackBar.open(successMessage, 'Close', {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+          });
+          // Refresh user data after successful update
+          this.loadUserProfile();
+        },
+        error: (error) => {
+          this.snackBar.open('Error updating profile. Please try again.', 'Close', {
+            duration: 3000,
+            panelClass: ['error-snackbar']
+          });
+        }
+      });
+  }
+
+  basicInfoValues: any = {};
+  professionalValues: any = {};
+  jobPreferencesValues: any = {};
+
+  private updateFormValues(): void {
+    const user = this.currentUser as any;
+    console.log('Updating form values with user:', user);
+    
+    this.basicInfoValues = {
+      first_name: user?.first_name || '',
+      last_name: user?.last_name || '',
+      phone: user?.phone || '',
+      // Check both direct fields and nested personal_info structure
+      city: user?.city || user?.personal_info?.location?.city || '',
+      state: user?.state || user?.personal_info?.location?.state || '',
+      date_of_birth: user?.date_of_birth ? new Date(user.date_of_birth).toISOString().split('T')[0] : ''
+    };
+    console.log('Basic info values:', this.basicInfoValues);
+
+    this.professionalValues = {
+      // Check both direct fields and nested professional_info structure
+      current_role: user?.current_role || user?.professional_info?.current_role || '',
+      current_company: user?.current_company || user?.professional_info?.current_company || '',
+      overall_experience_years: user?.overall_experience_years || 0,
+      highest_qualification: user?.highest_qualification || '',
+      professional_summary: user?.professional_summary || user?.professional_info?.professional_summary || '',
+      linkedin_link: user?.linkedin_link || user?.social_links?.linkedin || '',
+      github_link: user?.github_link || user?.social_links?.github || ''
+    };
+    console.log('Professional values:', this.professionalValues);
+
+    this.jobPreferencesValues = {
+      job_preferences: user?.job_preferences?.[0] || '',
+      employment_type: user?.employment_type?.[0] || '',
+      expected_salary: user?.expected_salary || user?.professional_info?.expected_salary || 0,
+      desired_job_title: user?.desired_job_title || user?.professional_info?.desired_job_title || ''
+    };
+    console.log('Job preferences values:', this.jobPreferencesValues);
+  }
 
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
+    private authService: AuthService,
     private snackBar: MatSnackBar
   ) {
     this.createForm();
   }
 
   ngOnInit(): void {
-    // Force refresh user data from API for testing
-    console.log('Profile component: ngOnInit - forcing user data refresh');
-    this.forceRefreshUserData();
+    this.loadUserProfile();
+  }
+
+  ngAfterViewInit(): void {
+    // Forms are now available
+  }
+
+  private updateDynamicForms(): void {
+    setTimeout(() => {
+      if (this.basicForm) {
+        this.basicForm.patchValue(this.basicInfoValues);
+      }
+      if (this.professionalForm) {
+        this.professionalForm.patchValue(this.professionalValues);
+      }
+      if (this.jobPreferencesForm) {
+        this.jobPreferencesForm.patchValue(this.jobPreferencesValues);
+      }
+    }, 100);
   }
 
   // Helper function to convert salary range string to expected_salary object
@@ -94,34 +266,47 @@ export class ProfilePage implements OnInit, OnDestroy {
     return undefined;
   }
 
-  private forceRefreshUserData(): void {
-    console.log('Profile component: Forcing refresh of user data from API');
-    // Clear localStorage to force API call
-    localStorage.removeItem('currentUser');
+  private loadUserProfile(): void {
+    if (!this.authService.isAuthenticated()) {
+      return;
+    }
     
-    // Force refresh from API
     this.isLoading = true;
-    this.userService.refreshCurrentUser()
+    this.authService.getCurrentUser()
       .pipe(
         takeUntil(this.destroy$),
-        finalize(() => {
-          console.log('Profile component: Finished force refresh');
-          this.isLoading = false;
-        })
+        finalize(() => this.isLoading = false)
       )
       .subscribe({
-        next: (user) => {
-          console.log('Profile component: Force refresh received user data:', user);
-          if (user) {
-            this.currentUser = user;
-            this.populateForm(user);
-          }
+        next: (user: any) => {
+          this.currentUser = user as any;
+          this.updateFormValues();
+          this.updateDynamicForms();
         },
-        error: (error) => {
-          console.error('Profile component: Error in force refresh:', error);
+        error: (error: any) => {
+          if (error.status === 401) {
+            this.authService.clearAllAuthData();
+          }
           this.snackBar.open('Error loading profile data', 'Close', { duration: 3000 });
         }
       });
+  }
+
+  private convertToUserProfile(user: any): any {
+    return {
+      full_name: user.full_name || `${user.first_name} ${user.last_name}`,
+      email: user.email,
+      phone: user.phone || user.personal_info?.phone,
+      location: { city: user.personal_info?.location?.city || user.city || '' },
+      professional_summary: user.professional_info?.professional_summary,
+      current_job_title: user.professional_info?.current_role,
+      experience_years: user.professional_info?.total_experience,
+      social_links: user.social_links || {},
+      expected_salary: { min: user.professional_info?.expected_salary || 0 },
+      desired_job_title: user.professional_info?.desired_job_title,
+      preferred_work_types: user.job_preferences || [user.preferences?.remote_preference || 'hybrid'],
+      preferred_employment_types: user.employment_type || ['full-time']
+    };
   }
 
   ngOnDestroy(): void {
@@ -347,34 +532,94 @@ export class ProfilePage implements OnInit, OnDestroy {
     return employmentType && employmentType.length > 0 ? employmentType.join(', ') : 'Not specified';
   }
 
+  // Getter methods for profile summary section
+  getFullName(): string {
+    const user = this.currentUser as any;
+    return user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() : '';
+  }
+
+  getCurrentRole(): string {
+    const user = this.currentUser as any;
+    return user?.current_role || user?.professional_info?.current_role || '';
+  }
+
+  getLocation(): string {
+    const user = this.currentUser as any;
+    const city = user?.city || user?.personal_info?.location?.city || '';
+    const state = user?.state || user?.personal_info?.location?.state || '';
+    return [city, state].filter(Boolean).join(', ');
+  }
+
+  getExperience(): string {
+    const user = this.currentUser as any;
+    return user?.overall_experience_years?.toString() || '0';
+  }
+
+  getProfessionalSummary(): string {
+    const user = this.currentUser as any;
+    return user?.professional_summary || user?.professional_info?.professional_summary || '';
+  }
+
+  getSkills(): string[] {
+    const user = this.currentUser as any;
+    return user?.skills || [];
+  }
+
+  getEmail(): string {
+    const user = this.currentUser as any;
+    return user?.email || '';
+  }
+
+  getPhone(): string {
+    const user = this.currentUser as any;
+    return user?.phone || '';
+  }
+
+  getGithubLink(): string {
+    const user = this.currentUser as any;
+    return user?.github_link || user?.social_links?.github || '';
+  }
+
+  getLinkedinLink(): string {
+    const user = this.currentUser as any;
+    return user?.linkedin_link || user?.social_links?.linkedin || '';
+  }
+
+  getJobPreferences(): string {
+    const user = this.currentUser as any;
+    return user?.job_preferences?.[0] || '';
+  }
+
+  getEmploymentType(): string {
+    const user = this.currentUser as any;
+    return user?.employment_type?.[0] || '';
+  }
+
+  getExpectedSalary(): string {
+    const user = this.currentUser as any;
+    const salary = user?.expected_salary || user?.professional_info?.expected_salary;
+    return salary ? `₹${salary.toLocaleString()}` : '';
+  }
+
   getCompletionPercentage(): number {
-    const requiredFields = ['fullName', 'email', 'phone', 'location', 'currentJobTitle', 'experience', 'desiredJobTitle', 'skills'];
-    const optionalFields = ['salaryRange', 'summary', 'workType', 'employmentType'];
+    if (!this.currentUser) return 0;
     
-    let completedRequired = 0;
-    let completedOptional = 0;
+    const fields = [
+      this.getFullName(),
+      this.getEmail(),
+      this.getPhone(),
+      this.getCurrentRole(),
+      this.getSkills().length > 0,
+      this.getLocation(),
+      this.getProfessionalSummary(),
+      this.getExperience() !== '0'
+    ];
 
-    requiredFields.forEach(field => {
-      const value = this.profileForm.get(field)?.value;
-      if (value && (Array.isArray(value) ? value.length > 0 : value.trim())) {
-        completedRequired++;
-      }
-    });
+    const completedFields = fields.filter(field => 
+      field !== undefined && field !== null && field !== '' && field !== false
+    ).length;
 
-    optionalFields.forEach(field => {
-      const value = this.profileForm.get(field)?.value;
-      if (value && (Array.isArray(value) ? value.length > 0 : value.trim())) {
-        completedOptional++;
-      }
-    });
-
-    const requiredWeight = 0.8;
-    const optionalWeight = 0.2;
-    
-    return Math.round(
-      (completedRequired / requiredFields.length) * requiredWeight * 100 +
-      (completedOptional / optionalFields.length) * optionalWeight * 100
-    );
+    return Math.round((completedFields / fields.length) * 100);
   }
 
   isBasicInfoComplete(): boolean {
@@ -429,13 +674,7 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   togglePanel(panel: string): void {
-    // Close all panels first
-    Object.keys(this.expandedPanels).forEach(key => {
-      this.expandedPanels[key] = false;
-    });
-    
-    // Open the selected panel
-    this.expandedPanels[panel] = true;
+    // Method kept for compatibility but not used with dynamic forms
   }
 
   getCompletionSteps() {
