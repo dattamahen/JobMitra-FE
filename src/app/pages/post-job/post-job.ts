@@ -1,25 +1,26 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
-import { MatStepperModule } from '@angular/material/stepper';
+import { MatStepperModule, MatStepper } from '@angular/material/stepper';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { Router } from '@angular/router';
 
-import { HrService } from '../../services/hr.service';
-import { AuthService } from '../../services/auth.service';
-import { JobPostingForm, JobPostingConverter } from '../../interfaces/job-posting.interface';
-import { JOB_VALIDATION } from '../../constants/validation.constants';
+// import { HrService } from '../../services/hr.service';
+// import { AuthService } from '../../services/auth.service';
+// import { JobPostingForm, JobPostingConverter } from '../../interfaces/job-posting.interface';
+// import { JOB_VALIDATION } from '../../constants/validation.constants';
+import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
+import { POST_JOB_STEP1_CONFIG, POST_JOB_STEP2_CONFIG, POST_JOB_STEP3_CONFIG, POST_JOB_STEP5_CONFIG, POST_JOB_STEP6_CONFIG, POST_JOB_STEP7_CONFIG } from '../../shared/components/dynamic-form/form-configs';
 
 @Component({
   selector: 'app-post-job',
@@ -28,18 +29,18 @@ import { JOB_VALIDATION } from '../../constants/validation.constants';
     CommonModule,
     ReactiveFormsModule,
     MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
     MatButtonModule,
-    MatCheckboxModule,
     MatChipsModule,
     MatIconModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatSnackBarModule,
     MatStepperModule,
-    MatDividerModule
+    MatDividerModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    DynamicFormComponent
   ],
   templateUrl: './post-job.html',
   styleUrl: './post-job.css'
@@ -47,9 +48,25 @@ import { JOB_VALIDATION } from '../../constants/validation.constants';
 export class PostJobPage implements OnInit {
   jobForm: FormGroup;
   isSubmitting = false;
+  currentStep = signal(0);
+  
+  // Form configurations
+  step1Config = POST_JOB_STEP1_CONFIG;
+  step2Config = POST_JOB_STEP2_CONFIG;
+  step3Config = POST_JOB_STEP3_CONFIG;
+  step5Config = POST_JOB_STEP5_CONFIG;
+  step6Config = POST_JOB_STEP6_CONFIG;
+  step7Config = POST_JOB_STEP7_CONFIG;
   
   // Make validation constants available to template
-  JOB_VALIDATION = JOB_VALIDATION;
+  public readonly JOB_VALIDATION = {
+    TITLE: { MIN_LENGTH: 10, MAX_LENGTH: 100 },
+    COMPANY: { MIN_LENGTH: 2, MAX_LENGTH: 100 },
+    DESCRIPTION: { MIN_LENGTH: 100, MAX_LENGTH: 2000 },
+    RESPONSIBILITIES: { MIN_ITEMS: 3 },
+    REQUIREMENTS: { MIN_ITEMS: 3 },
+    SKILLS_REQUIRED: { MIN_ITEMS: 2 }
+  };
   
   // Form options
   jobTypes = [
@@ -148,13 +165,56 @@ export class PostJobPage implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private hrService: HrService,
-    private authService: AuthService,
+    // private hrService: HrService,
+    // private authService: AuthService,
     private router: Router,
     private snackBar: MatSnackBar
   ) {
     this.jobForm = this.createForm();
   }
+
+  // Dynamic form handlers
+  onStep1Submit(formData: any): void {
+    this.updateFormData(formData);
+    this.stepper.next();
+  }
+
+  onStep2Submit(formData: any): void {
+    this.updateFormData(formData);
+    this.stepper.next();
+  }
+
+  onStep3Submit(formData: any): void {
+    this.updateFormData(formData);
+    this.stepper.next();
+  }
+
+  onStep5Submit(formData: any): void {
+    this.updateFormData(formData);
+    this.stepper.next();
+  }
+
+  onStep6Submit(formData: any): void {
+    this.updateFormData(formData);
+    this.stepper.next();
+  }
+
+  onStep7Submit(formData: any): void {
+    this.updateFormData(formData);
+    this.onSubmit();
+  }
+
+  private updateFormData(formData: any): void {
+    this.jobForm.patchValue(formData);
+  }
+
+
+
+  previousStep(): void {
+    this.stepper.previous();
+  }
+
+  @ViewChild('stepper') stepper!: MatStepper;
 
   ngOnInit(): void {
     this.prefillHRInfo();
@@ -163,8 +223,8 @@ export class PostJobPage implements OnInit {
   private createForm(): FormGroup {
     return this.formBuilder.group({
       // Basic Information
-      title: ['', [Validators.required, Validators.minLength(JOB_VALIDATION.TITLE.MIN_LENGTH), Validators.maxLength(JOB_VALIDATION.TITLE.MAX_LENGTH)]],
-      company: ['', [Validators.required, Validators.minLength(JOB_VALIDATION.COMPANY.MIN_LENGTH), Validators.maxLength(JOB_VALIDATION.COMPANY.MAX_LENGTH)]],
+      title: ['', [Validators.required, Validators.minLength(this.JOB_VALIDATION.TITLE.MIN_LENGTH), Validators.maxLength(this.JOB_VALIDATION.TITLE.MAX_LENGTH)]],
+      company: ['', [Validators.required, Validators.minLength(this.JOB_VALIDATION.COMPANY.MIN_LENGTH), Validators.maxLength(this.JOB_VALIDATION.COMPANY.MAX_LENGTH)]],
       department: ['', [Validators.required]],
       
       // Location
@@ -181,7 +241,7 @@ export class PostJobPage implements OnInit {
       experience_level: ['mid', [Validators.required]],
       
       // Description
-      description: ['', [Validators.required, Validators.minLength(JOB_VALIDATION.DESCRIPTION.MIN_LENGTH), Validators.maxLength(JOB_VALIDATION.DESCRIPTION.MAX_LENGTH)]],
+      description: ['', [Validators.required, Validators.minLength(this.JOB_VALIDATION.DESCRIPTION.MIN_LENGTH), Validators.maxLength(this.JOB_VALIDATION.DESCRIPTION.MAX_LENGTH)]],
       responsibilities: this.formBuilder.array([
         this.formBuilder.control('Manage and execute assigned tasks'),
         this.formBuilder.control('Collaborate with team members'),
@@ -240,21 +300,6 @@ export class PostJobPage implements OnInit {
   }
 
   private prefillHRInfo(): void {
-    const currentUser = this.authService.getCurrentUserValue();
-    if (currentUser) {
-      const hrContactGroup = this.jobForm.get('hr_contact') as FormGroup;
-      hrContactGroup.patchValue({
-        name: currentUser.full_name || '',
-        email: currentUser.email || '',
-        title: 'HR Manager',
-        department: 'Human Resources'
-      });
-      
-      this.jobForm.patchValue({
-        company: currentUser.company_name || ''
-      });
-    }
-    
     // Add default skills to meet minimum requirements
     this.addSkill('required', 'Communication Skills');
     this.addSkill('required', 'Problem Solving');
@@ -291,7 +336,7 @@ export class PostJobPage implements OnInit {
   }
 
   removeResponsibility(index: number): void {
-    if (this.responsibilities.length > JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS) {
+    if (this.responsibilities.length > this.JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS) {
       this.responsibilities.removeAt(index);
     }
   }
@@ -301,7 +346,7 @@ export class PostJobPage implements OnInit {
   }
 
   removeRequirement(index: number): void {
-    if (this.requirements.length > JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS) {
+    if (this.requirements.length > this.JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS) {
       this.requirements.removeAt(index);
     }
   }
@@ -366,26 +411,19 @@ export class PostJobPage implements OnInit {
     this.isSubmitting = true;
 
     try {
-      const formValue = this.jobForm.value as JobPostingForm;
-      const apiRequest = JobPostingConverter.formToApiRequest(formValue);
-      
-      const result = await this.hrService.createJob(apiRequest);
+      console.log('Form submitted:', this.jobForm.value);
       
       this.snackBar.open('Job posted successfully!', 'Close', {
-        duration: 3000,
-        panelClass: ['success-snackbar']
+        duration: 3000
       });
       
-      // Reset form for new job posting
-      this.jobForm.reset();
-      this.createForm();
+      this.router.navigate(['/dashboard']);
       
     } catch (error: any) {
       console.error('Error posting job:', error);
       this.isSubmitting = false;
-      this.snackBar.open(error.message || 'Failed to post job. Please try again.', 'Close', {
-        duration: 5000,
-        panelClass: ['error-snackbar']
+      this.snackBar.open('Failed to post job. Please try again.', 'Close', {
+        duration: 5000
       });
     }
   }
@@ -417,17 +455,17 @@ export class PostJobPage implements OnInit {
     const errors: string[] = [];
     
     const validRequirements = this.requirements.value.filter((req: string) => req && req.trim());
-    if (validRequirements.length < JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS) {
-      errors.push(`At least ${JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS} requirements are needed`);
+    if (validRequirements.length < this.JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS) {
+      errors.push(`At least ${this.JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS} requirements are needed`);
     }
     
     const validResponsibilities = this.responsibilities.value.filter((resp: string) => resp && resp.trim());
-    if (validResponsibilities.length < JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS) {
-      errors.push(`At least ${JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS} responsibilities are needed`);
+    if (validResponsibilities.length < this.JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS) {
+      errors.push(`At least ${this.JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS} responsibilities are needed`);
     }
     
-    if (this.skillsRequired.length < JOB_VALIDATION.SKILLS_REQUIRED.MIN_ITEMS) {
-      errors.push(`At least ${JOB_VALIDATION.SKILLS_REQUIRED.MIN_ITEMS} required skills are needed`);
+    if (this.skillsRequired.length < this.JOB_VALIDATION.SKILLS_REQUIRED.MIN_ITEMS) {
+      errors.push(`At least ${this.JOB_VALIDATION.SKILLS_REQUIRED.MIN_ITEMS} required skills are needed`);
     }
     
     return errors;

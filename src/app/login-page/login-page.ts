@@ -13,6 +13,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
 import { AuthService, LoginRequest, LoginResponse, RegisterRequest } from '../services/auth.service';
 import { NavigationService } from '../services/navigation.service';
+import { DynamicFormComponent, FormConfig } from '../shared/components/dynamic-form/dynamic-form.component';
+import { LOGIN_FORM_CONFIG, SIGNUP_FORM_CONFIG } from '../shared/components/dynamic-form/form-configs';
 
 @Component({
   selector: 'app-login-page',
@@ -28,7 +30,8 @@ import { NavigationService } from '../services/navigation.service';
     MatIconModule,
     MatDividerModule,
     MatProgressSpinnerModule,
-    MatSelectModule
+    MatSelectModule,
+    DynamicFormComponent
   ],
   templateUrl: './login-page.html',
   styleUrl: './login-page.css'
@@ -40,6 +43,9 @@ export class LoginPage implements OnInit {
   isLoading = false;
   errorMessage = '';
   showPassword = false;
+  
+  loginFormConfig: FormConfig = { ...LOGIN_FORM_CONFIG, loading: false };
+  signupFormConfig: FormConfig = { ...SIGNUP_FORM_CONFIG, loading: false };
 
   constructor(
     private router: Router,
@@ -75,34 +81,37 @@ export class LoginPage implements OnInit {
     }
   }
 
-  onLogin(): void {
-    if (this.loginForm.valid) {
-      this.isLoading = true;
-      this.errorMessage = '';
+  onLogin(formData?: any): void {
+    const credentials = formData || {
+      email: this.loginForm.value.email,
+      password: this.loginForm.value.password
+    };
+    
+    this.isLoading = true;
+    this.loginFormConfig.loading = true;
+    this.errorMessage = '';
 
-      const credentials: LoginRequest = {
-        email: this.loginForm.value.email,
-        password: this.loginForm.value.password
-      };
+    const loginRequest: LoginRequest = {
+      email: credentials.email,
+      password: credentials.password
+    };
 
-      // Use real authentication API
-      this.authService.login(credentials).subscribe({
-        next: (response: LoginResponse) => {
-          console.log('Login successful:', response);
-          this.isLoading = false;
-          
-          // Redirect based on user type
-          this.redirectBasedOnUserType(response.user.user_type);
-        },
-        error: (error: any) => {
-          console.error('Login failed:', error);
-          this.isLoading = false;
-          this.errorMessage = error.error?.detail || 'Login failed. Please try again.';
-        }
-      });
-    } else {
-      this.markFormGroupTouched('login');
-    }
+    // Use real authentication API
+    this.authService.login(loginRequest).subscribe({
+      next: (response: LoginResponse) => {
+        console.log('Login successful:', response);
+        this.isLoading = false;
+        this.loginFormConfig.loading = false;
+        
+        // Redirect based on user type
+        this.redirectBasedOnUserType(response.user.user_type);
+      },
+      error: (error: any) => {
+        this.isLoading = false;
+        this.loginFormConfig.loading = false;
+        this.errorMessage = error.error?.detail || 'Login failed. Please try again.';
+      }
+    });
   }
 
   togglePasswordVisibility(): void {
@@ -156,40 +165,39 @@ export class LoginPage implements OnInit {
     this.errorMessage = '';
   }
 
-  onSignup(): void {
-    if (this.signupForm.valid) {
-      this.isLoading = true;
-      this.errorMessage = '';
+  onSignup(formData: any): void {
+    this.isLoading = true;
+    this.signupFormConfig.loading = true;
+    this.errorMessage = '';
 
-      const signupData: RegisterRequest = {
-        email: this.signupForm.value.email,
-        password: this.signupForm.value.password,
-        first_name: this.signupForm.value.first_name,
-        last_name: this.signupForm.value.last_name,
-        user_type: this.signupForm.value.user_type
-      };
+    const signupData: RegisterRequest = {
+      email: formData.email,
+      password: formData.password,
+      first_name: formData.first_name,
+      last_name: formData.last_name,
+      user_type: formData.user_type
+    };
 
-      this.authService.register(signupData).then(
-        (response) => {
-          console.log('Signup successful:', response);
-          this.isLoading = false;
-          this.isSignupMode.set(false);
-          // Auto-fill login form
-          this.loginForm.patchValue({
-            email: signupData.email,
-            password: signupData.password
-          });
-        }
-      ).catch(
-        (error) => {
-          console.error('Signup failed:', error);
-          this.isLoading = false;
-          this.errorMessage = error.error?.detail || 'Signup failed. Please try again.';
-        }
-      );
-    } else {
-      this.markFormGroupTouched('signup');
-    }
+    this.authService.register(signupData).then(
+      (response) => {
+        console.log('Signup successful:', response);
+        this.isLoading = false;
+        this.signupFormConfig.loading = false;
+        this.isSignupMode.set(false);
+        // Auto-fill login form
+        this.loginForm.patchValue({
+          email: signupData.email,
+          password: signupData.password
+        });
+      }
+    ).catch(
+      (error) => {
+        console.error('Signup failed:', error);
+        this.isLoading = false;
+        this.signupFormConfig.loading = false;
+        this.errorMessage = error.error?.detail || 'Signup failed. Please try again.';
+      }
+    );
   }
 
   private markFormGroupTouched(formType: 'login' | 'signup' = 'login'): void {

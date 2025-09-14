@@ -1,458 +1,212 @@
 <div class="page-container">
-
   <div class="profile-layout">
     <!-- Profile Form -->
     <div class="profile-form-section">
       <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
         <!-- Basic Information Card -->
         <mat-card class="form-card">
-          <mat-card-header>
-            <mat-card-title>
-              Basic Information
-            </mat-card-title>
-          </mat-card-header>
           <mat-card-content>
-            <div class="form-group">
-              @for (field of formFields['basic'].slice(0, 2); track field.name) {
-                <div class="field-container">
-                  <mat-form-field appearance="outline">
-                    <mat-label>{{field.label}}{{field.required ? ' *' : ''}}</mat-label>
-                    <input matInput 
-                           [type]="field.type" 
-                           [formControlName]="field.name" 
-                           [placeholder]="field.placeholder">
-                    <mat-icon matSuffix>{{field.icon}}</mat-icon>
-                    <mat-error>{{getFieldErrorMessage(field.name)}}</mat-error>
-                  </mat-form-field>
-                </div>
-              }
-            </div>
-
-            <div class="form-group">
-              @for (field of formFields['basic'].slice(2, 4); track field.name) {
-                <div class="field-container">
-                  <mat-form-field appearance="outline">
-                    <mat-label>{{field.label}}{{field.required ? ' *' : ''}}</mat-label>
-                    <input matInput 
-                           [type]="field.type" 
-                           [formControlName]="field.name" 
-                           [placeholder]="field.placeholder">
-                    <mat-icon matSuffix>{{field.icon}}</mat-icon>
-                    <mat-error>{{getFieldErrorMessage(field.name)}}</mat-error>
-                  </mat-form-field>
-                </div>
-              }
-            </div>
+            <app-dynamic-form 
+              #basicForm
+              [config]="basicInfoConfig" 
+              [initialValues]="basicInfoValues"
+              (formSubmit)="onBasicInfoSubmit($event)"
+              submitButtonText="Update Basic Info">
+            </app-dynamic-form>
           </mat-card-content>
         </mat-card>
 
         <!-- Professional Information Card -->
         <mat-card class="form-card">
-          <mat-card-header>
-            <mat-card-title>
-              Professional Information
-            </mat-card-title>
-          </mat-card-header>
           <mat-card-content>
-            <div class="form-group">
-              @for (field of formFields['professional'].slice(0, 2); track field.name) {
-                <div class="field-container">
-                  <mat-form-field appearance="outline">
-                    <mat-label>{{field.label}}{{field.required ? ' *' : ''}}</mat-label>
-                    
-                    <!-- Text Input -->
-                    @if (field.type === 'text') {
-                      <input matInput 
-                             [formControlName]="field.name" 
-                             [placeholder]="field.placeholder">
-                    }
-                    
-                    <!-- Select Dropdown -->
-                    @if (field.type === 'select') {
-                      <mat-select [formControlName]="field.name">
-                        @for (option of field.options; track option.value) {
-                          <mat-option [value]="option.value">
-                            {{option.label}}
-                          </mat-option>
-                        }
-                      </mat-select>
-                    }
-                    
-                    <mat-icon matSuffix>{{field.icon}}</mat-icon>
-                    <mat-error>{{getFieldErrorMessage(field.name)}}</mat-error>
-                  </mat-form-field>
-                </div>
-              }
-            </div>
-
-            <div class="form-group">
-              @for (field of formFields['professional'].slice(2, 4); track field.name) {
-                <div class="field-container">
-                  <mat-form-field appearance="outline">
-                    <mat-label>{{field.label}}{{field.required ? ' *' : ''}}</mat-label>
-                    
-                    <!-- Text Input -->
-                    @if (field.type === 'text') {
-                      <input matInput 
-                             [formControlName]="field.name" 
-                             [placeholder]="field.placeholder">
-                    }
-                    
-                    <!-- Select Dropdown -->
-                    @if (field.type === 'select') {
-                      <mat-select [formControlName]="field.name">
-                        @for (option of field.options; track option.value) {
-                          <mat-option [value]="option.value">
-                            {{option.label}}
-                          </mat-option>
-                        }
-                      </mat-select>
-                    }
-                    
-                    <mat-icon matSuffix>{{field.icon}}</mat-icon>
-                    <mat-error>{{getFieldErrorMessage(field.name)}}</mat-error>
-                  </mat-form-field>
-                </div>
-              }
-            </div>
-
-            <!-- Skills and Summary fields -->
-            @for (field of formFields['professional'].slice(4, 6); track field.name) {
-              <div class="full-width-field">
-                <mat-form-field appearance="outline" class="full-width">
-                  <mat-label>{{field.label}}{{field.required ? ' *' : ''}}</mat-label>
-                  
-                  <!-- Text Input -->
-                  @if (field.type === 'text') {
-                    <input matInput 
-                           [formControlName]="field.name" 
-                           [placeholder]="field.placeholder">
-                  }
-                  
-                  <!-- Textarea -->
-                  @if (field.type === 'textarea') {
-                    <textarea matInput 
-                              [formControlName]="field.name" 
-                              [placeholder]="field.placeholder" 
-                              rows="4"></textarea>
-                  }
-                  
-                  @if (field.hint) {
-                    <mat-hint>{{field.hint}}</mat-hint>
-                  }
-                  <mat-error>{{getFieldErrorMessage(field.name)}}</mat-error>
-                </mat-form-field>
-              </div>
-            }
-
-            <!-- Certifications Section -->
-            <div class="certifications-section">
-              <div class="section-header">
-                <h4>Certifications</h4>
-                <button mat-icon-button type="button" (click)="addCertification()" color="primary">
-                  <mat-icon>add</mat-icon>
-                </button>
-              </div>
-              
-              <div formArrayName="certifications">
-                @for (cert of certificationsArray.controls; track $index; let i = $index) {
-                  <div [formGroupName]="i" class="certification-form">
-                    <div class="cert-header">
-                      <span>Certification {{i + 1}}</span>
-                      @if (certificationsArray.length > 1) {
-                        <button mat-icon-button type="button" (click)="removeCertification(i)" color="warn">
-                          <mat-icon>delete</mat-icon>
-                        </button>
-                      }
-                    </div>
-                    
-                    <div class="cert-fields">
-                      <mat-form-field appearance="outline">
-                        <mat-label>Certification Name *</mat-label>
-                        <input matInput formControlName="name" placeholder="e.g., AWS Certified Solutions Architect">
-                        @if (cert.get('name')?.errors?.['required'] && cert.get('name')?.touched) {
-                          <mat-error>
-                            Certification name is required
-                          </mat-error>
-                        }
-                      </mat-form-field>
-                      
-                      <mat-form-field appearance="outline">
-                        <mat-label>Issuing Organization *</mat-label>
-                        <input matInput formControlName="issuer" placeholder="e.g., Amazon Web Services">
-                        @if (cert.get('issuer')?.errors?.['required'] && cert.get('issuer')?.touched) {
-                          <mat-error>
-                            Issuer is required
-                          </mat-error>
-                        }
-                      </mat-form-field>
-                    </div>
-                    
-                    <div class="cert-fields">
-                      <mat-form-field appearance="outline">
-                        <mat-label>Issue Date</mat-label>
-                        <input matInput type="date" formControlName="issue_date">
-                      </mat-form-field>
-                      
-                      <mat-form-field appearance="outline">
-                        <mat-label>Expiry Date</mat-label>
-                        <input matInput type="date" formControlName="expiry_date">
-                      </mat-form-field>
-                    </div>
-                    
-                    <div class="cert-fields">
-                      <mat-form-field appearance="outline">
-                        <mat-label>Credential ID</mat-label>
-                        <input matInput formControlName="credential_id" placeholder="e.g., ABC123XYZ">
-                      </mat-form-field>
-                      
-                      <mat-form-field appearance="outline">
-                        <mat-label>Verification Link</mat-label>
-                        <input matInput formControlName="link" placeholder="https://...">
-                      </mat-form-field>
-                    </div>
-                  </div>
-                }
-              </div>
-            </div>
-
-            <!-- Remaining fields -->
-            @for (field of formFields['professional'].slice(6); track field.name) {
-              <div class="full-width-field">
-                <mat-form-field appearance="outline" class="full-width">
-                  <mat-label>{{field.label}}{{field.required ? ' *' : ''}}</mat-label>
-                  
-                  <!-- Text Input -->
-                  @if (field.type === 'text') {
-                    <input matInput 
-                           [formControlName]="field.name" 
-                           [placeholder]="field.placeholder">
-                  }
-                  
-                  <!-- Textarea -->
-                  @if (field.type === 'textarea') {
-                    <textarea matInput 
-                              [formControlName]="field.name" 
-                              [placeholder]="field.placeholder" 
-                              rows="4"></textarea>
-                  }
-                  
-                  @if (field.hint) {
-                    <mat-hint>{{field.hint}}</mat-hint>
-                  }
-                  <mat-error>{{getFieldErrorMessage(field.name)}}</mat-error>
-                </mat-form-field>
-              </div>
-            }
+            <app-dynamic-form 
+              #professionalForm
+              [config]="professionalConfig" 
+              [initialValues]="professionalValues"
+              (formSubmit)="onProfessionalSubmit($event)"
+              submitButtonText="Update Professional Info">
+            </app-dynamic-form>
           </mat-card-content>
         </mat-card>
 
         <!-- Job Preferences Card -->
         <mat-card class="form-card">
-          <mat-card-header>
-            <mat-card-title>
-              Job Preferences
-            </mat-card-title>
-          </mat-card-header>
           <mat-card-content>
-            <div class="form-group">
-              @for (field of formFields['preferences']; track field.name) {
-                <div class="field-container">
-                  <mat-form-field appearance="outline">
-                    <mat-label>{{field.label}}{{field.required ? ' *' : ''}}</mat-label>
-                    
-                    <!-- Multi-select Dropdown -->
-                    @if (field.type === 'multiselect') {
-                      <mat-select [formControlName]="field.name" multiple>
-                        @for (option of field.options; track option.value) {
-                          <mat-option [value]="option.value">
-                            {{option.label}}
-                          </mat-option>
-                        }
-                      </mat-select>
-                    }
-                    
-                    <mat-icon matSuffix>{{field.icon}}</mat-icon>
-                    <mat-error>{{getFieldErrorMessage(field.name)}}</mat-error>
-                  </mat-form-field>
-                </div>
-              }
-            </div>
+            <app-dynamic-form 
+              #jobPreferencesForm
+              [config]="jobPreferencesConfig" 
+              [initialValues]="jobPreferencesValues"
+              (formSubmit)="onJobPreferencesSubmit($event)"
+              submitButtonText="Update Job Preferences">
+            </app-dynamic-form>
           </mat-card-content>
         </mat-card>
 
-        <div class="action-buttons">
-          <button mat-raised-button color="primary" type="submit" [disabled]="isSaving">
-            <mat-icon>save</mat-icon>
-            Save Profile
-          </button>
-          <!-- <button mat-stroked-button type="button" (click)="resetForm()">
-            <mat-icon>refresh</mat-icon>
-            Reset
-          </button> -->
-        </div>
+
       </form>
     </div>
 
-    <!-- Right Side - Profile Summary -->
+    <!-- Right Side - LinkedIn-style Profile Preview -->
     <div class="profile-summary-section">
-      <mat-card class="summary-card">
+      <!-- Main Profile Card -->
+      <mat-card class="linkedin-profile-card">
+        <!-- Cover & Avatar Section -->
+        <div class="profile-cover">
+          <div class="cover-gradient"></div>
+          <div class="profile-avatar-section">
+            <div class="avatar-wrapper">
+              <mat-icon class="profile-avatar">account_circle</mat-icon>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Profile Info Section -->
+        <mat-card-content class="profile-content">
+          <div class="profile-header">
+            <h1 class="profile-name">{{getFullName() || 'Your Name'}}</h1>
+            <p class="profile-headline">{{getCurrentRole() || 'Add your professional headline'}}</p>
+            <div class="profile-location">
+              {{getLocation() || 'Add your location'}} • 
+              <span class="contact-info">Contact info</span>
+            </div>
+          </div>
+          
+          <!-- Profile Stats -->
+          <div class="profile-stats">
+            <div class="stat-item">
+              <span class="stat-number">{{getExperience() || '0'}}</span>
+              <span class="stat-label">Years Experience</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <span class="stat-number">{{getCompletionPercentage()}}</span>
+              <span class="stat-label">% Complete</span>
+            </div>
+          </div>
+          
+          <!-- Action Buttons -->
+          <div class="profile-actions">
+            <button mat-raised-button color="primary" class="primary-btn">
+              <mat-icon>visibility</mat-icon>
+              View Public Profile
+            </button>
+            <button mat-stroked-button class="secondary-btn">
+              <mat-icon>share</mat-icon>
+              Share Profile
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      
+      <!-- About Section -->
+      <mat-card class="section-card">
+        <div class="section-header">
+          <h3>About</h3>
+        </div>
         <mat-card-content>
-          <div class="profile-preview">
-            <div class="preview-header">
-              <div class="avatar-section">
-                <mat-icon class="profile-avatar">account_circle</mat-icon>
-              </div>
-              <div class="basic-info">
-                <h3>{{f['fullName'].value || 'Your Name'}}</h3>
-                <p class="job-title">{{f['currentJobTitle'].value || 'Job Title'}}</p>
-                <p class="location">
-                  <mat-icon>location_on</mat-icon>
-                  {{f['location'].value || 'Location'}}
-                </p>
-              </div>
+          @if (getProfessionalSummary()) {
+            <p class="about-text">{{getProfessionalSummary()}}</p>
+          } @else {
+            <div class="empty-section">
+              <p class="empty-text">Add a summary to help people discover you and your professional interests.</p>
+              <button mat-button color="primary" class="add-btn">
+                <mat-icon>add</mat-icon>
+                Add summary
+              </button>
             </div>
-
-            <div class="preview-section">
-              <h4><mat-icon>work</mat-icon> Experience</h4>
-              <p>{{f['experience'].value || 'Years of experience'}} in {{f['currentJobTitle'].value || 'your field'}}</p>
-            </div>
-
-            <div class="preview-section">
-              <h4><mat-icon>trending_up</mat-icon> Career Goal</h4>
-              <p>Seeking {{f['desiredJobTitle'].value || 'desired position'}} role</p>
-            </div>
-
-            <div class="preview-section">
-              <h4><mat-icon>code</mat-icon> Key Skills</h4>
-              <div class="skills-chips">
-                @if (f['skills'].value) {
-                  <mat-chip-set>
-                    @for (skill of getSkillsArray(); track skill) {
-                      <mat-chip>{{skill}}</mat-chip>
-                    }
-                  </mat-chip-set>
-                }
-                @if (!f['skills'].value) {
-                  <p class="placeholder">Add your skills</p>
-                }
-              </div>
-            </div>
-
-            <div class="preview-section">
-              <h4><mat-icon>verified</mat-icon> Certifications</h4>
-              @if (certificationsArray.length > 0) {
-                <div class="certification-list">
-                  @for (cert of getCertificationsArray(); track cert.name) {
-                    <div class="certification-item">
-                      <strong>{{cert.name}}</strong>
-                      @if (cert.issuer) {
-                        <span> - {{cert.issuer}}</span>
-                      }
-                      @if (cert.issue_date) {
-                        <span> ({{cert.issue_date}})</span>
-                      }
-                    </div>
-                  }
+          }
+        </mat-card-content>
+      </mat-card>
+      
+      <!-- Skills Section -->
+      <mat-card class="section-card">
+        <div class="section-header">
+          <h3>Skills</h3>
+          @if (getSkills().length > 0) {
+            <span class="skills-count">{{getSkills().length}} skills</span>
+          }
+        </div>
+        <mat-card-content>
+          @if (getSkills().length > 0) {
+            <div class="skills-list">
+              @for (skill of getSkills().slice(0, 6); track skill) {
+                <div class="skill-item">
+                  <span class="skill-name">{{skill}}</span>
                 </div>
               }
-              @if (certificationsArray.length === 0) {
-                <p class="placeholder">Add your certifications</p>
+              @if (getSkills().length > 6) {
+                <button mat-button class="show-more-btn">
+                  Show all {{getSkills().length}} skills
+                  <mat-icon>arrow_forward</mat-icon>
+                </button>
               }
             </div>
-
-            <div class="preview-section">
-              <h4><mat-icon>psychology</mat-icon> Area of Expertise</h4>
-              @if (f['areaOfExpertise'].value) {
-                <div class="expertise-list">
-                  @for (area of getExpertiseArray(); track area; let last = $last) {
-                    <span class="expertise-item">
-                      {{area}}@if (!last) {<span>, </span>}
-                    </span>
-                  }
-                </div>
-              }
-              @if (!f['areaOfExpertise'].value) {
-                <p class="placeholder">Add your areas of expertise</p>
-              }
+          } @else {
+            <div class="empty-section">
+              <p class="empty-text">Add skills to showcase your expertise to potential employers.</p>
+              <button mat-button color="primary" class="add-btn">
+                <mat-icon>add</mat-icon>
+                Add skills
+              </button>
             </div>
-
-            <div class="preview-section">
-              <h4><mat-icon>attach_money</mat-icon> Salary Expectation</h4>
-              <p>{{f['salaryRange'].value || 'Not specified'}}</p>
+          }
+        </mat-card-content>
+      </mat-card>
+      
+      <!-- Career Preferences -->
+      <mat-card class="section-card">
+        <div class="section-header">
+          <h3>Career Preferences</h3>
+        </div>
+        <mat-card-content>
+          <div class="preferences-list">
+            <div class="preference-row">
+              <span class="pref-label">Job types</span>
+              <span class="pref-value">{{getEmploymentType() || 'Not specified'}}</span>
             </div>
-
-            <div class="preview-section">
-              <h4><mat-icon>work_outline</mat-icon> Work Preferences</h4>
-              <div class="preferences">
-                <p><strong>Work Type:</strong> {{getWorkTypeDisplay()}}</p>
-                <p><strong>Employment:</strong> {{getEmploymentTypeDisplay()}}</p>
+            <div class="preference-row">
+              <span class="pref-label">Work arrangement</span>
+              <span class="pref-value">{{getJobPreferences() || 'Not specified'}}</span>
+            </div>
+            @if (getExpectedSalary()) {
+              <div class="preference-row">
+                <span class="pref-label">Salary expectation</span>
+                <span class="pref-value">{{getExpectedSalary()}}</span>
               </div>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+      
+      <!-- Contact Info -->
+      <mat-card class="section-card">
+        <div class="section-header">
+          <h3>Contact</h3>
+        </div>
+        <mat-card-content>
+          <div class="contact-list">
+            <div class="contact-row">
+              <mat-icon class="contact-icon">email</mat-icon>
+              <span class="contact-text">{{getEmail() || 'Add email'}}</span>
             </div>
-
-            <div class="preview-section">
-              <h4><mat-icon>link</mat-icon> Links & Portfolio</h4>
-              <div class="links-section">
-                @if (f['githubLink'].value) {
-                  <p>
-                    <mat-icon>code</mat-icon>
-                    <a [href]="f['githubLink'].value" target="_blank">GitHub Profile</a>
-                  </p>
-                }
-                @if (!f['githubLink'].value) {
-                  <p class="placeholder-link">
-                    <mat-icon>code</mat-icon>
-                    <span class="placeholder">Add GitHub profile</span>
-                  </p>
-                }
-                
-                @if (f['portfolioLink'].value) {
-                  <p>
-                    <mat-icon>web</mat-icon>
-                    <a [href]="f['portfolioLink'].value" target="_blank">Portfolio/Apps</a>
-                  </p>
-                }
-                @if (!f['portfolioLink'].value) {
-                  <p class="placeholder-link">
-                    <mat-icon>web</mat-icon>
-                    <span class="placeholder">Add portfolio/app link</span>
-                  </p>
-                }
-                
-                @if (f['youtubeChannel'].value) {
-                  <p>
-                    <mat-icon>video_library</mat-icon>
-                    <a [href]="f['youtubeChannel'].value" target="_blank">YouTube Channel</a>
-                  </p>
-                }
-                @if (!f['youtubeChannel'].value) {
-                  <p class="placeholder-link">
-                    <mat-icon>video_library</mat-icon>
-                    <span class="placeholder">Add YouTube channel</span>
-                  </p>
-                }
+            @if (getPhone()) {
+              <div class="contact-row">
+                <mat-icon class="contact-icon">phone</mat-icon>
+                <span class="contact-text">{{getPhone()}}</span>
               </div>
-            </div>
-
-            <div class="preview-section">
-              <h4><mat-icon>star</mat-icon> Key Contributions</h4>
-              @if (f['contributions'].value) {
-                <p>{{f['contributions'].value}}</p>
-              }
-              @if (!f['contributions'].value) {
-                <p class="placeholder">Describe your key contributions and achievements</p>
-              }
-            </div>
-
-            <div class="preview-section">
-              <h4><mat-icon>description</mat-icon> Summary</h4>
-              @if (f['summary'].value) {
-                <p>{{f['summary'].value}}</p>
-              }
-              @if (!f['summary'].value) {
-                <p class="placeholder">Add your professional summary</p>
-              }
-            </div>
+            }
+            @if (getGithubLink()) {
+              <div class="contact-row">
+                <mat-icon class="contact-icon">code</mat-icon>
+                <a [href]="getGithubLink()" target="_blank" class="contact-link">GitHub Profile</a>
+              </div>
+            }
+            @if (getLinkedinLink()) {
+              <div class="contact-row">
+                <mat-icon class="contact-icon">business</mat-icon>
+                <a [href]="getLinkedinLink()" target="_blank" class="contact-link">LinkedIn Profile</a>
+              </div>
+            }
           </div>
         </mat-card-content>
       </mat-card>
