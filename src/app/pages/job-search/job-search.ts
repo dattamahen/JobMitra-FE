@@ -22,6 +22,7 @@ import { UserService } from '../../services/user.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Inject } from '@angular/core';
+import { maskEmail, maskPhone } from '../../utils/mask.util';
 
 @Component({
   selector: 'app-job-search-page',
@@ -47,6 +48,7 @@ import { Inject } from '@angular/core';
 })
 export class JobSearchPage implements OnInit {
   expandedJobs: { [key: string]: boolean } = {};
+  unmaskedHRDetails: { [key: string]: boolean } = {};
   
   // Data properties using the API service
   jobListings: ApiJobListing[] = [];
@@ -509,6 +511,25 @@ export class JobSearchPage implements OnInit {
       return 'Resume Tailored';
     }
     return 'Tailor Resume';
+  }
+
+  // Mask HR contact details
+  getMaskedEmail(email: string, jobId: string): string {
+    return maskEmail(email, !this.unmaskedHRDetails[jobId]);
+  }
+
+  getMaskedPhone(phone: string, jobId: string): string {
+    return maskPhone(phone, !this.unmaskedHRDetails[jobId]);
+  }
+
+  // Toggle HR details visibility
+  getHRDetails(jobId: string): void {
+    this.unmaskedHRDetails[jobId] = true;
+  }
+
+  // Check if HR details are unmasked
+  isHRDetailsUnmasked(jobId: string): boolean {
+    return this.unmaskedHRDetails[jobId] || false;
   }
 }
 

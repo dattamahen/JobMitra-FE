@@ -259,12 +259,18 @@
               <div class="contact-methods">
                 <p class="contact-detail">
                   <mat-icon>email</mat-icon>
-                  <a href="mailto:{{job.hr_contact.email}}">{{job.hr_contact.email}}</a>
+                  <a href="mailto:{{job.hr_contact.email}}">{{getMaskedEmail(job.hr_contact.email, job.job_id)}}</a>
                 </p>
                 <p class="contact-detail">
                   <mat-icon>phone</mat-icon>
-                  <a href="tel:{{job.hr_contact.phone}}">{{job.hr_contact.phone}}</a>
+                  <a href="tel:{{job.hr_contact.phone}}">{{getMaskedPhone(job.hr_contact.phone, job.job_id)}}</a>
                 </p>
+                @if (!isHRDetailsUnmasked(job.job_id)) {
+                  <button mat-raised-button color="primary" (click)="getHRDetails(job.job_id)" style="margin-top: 12px;">
+                    <mat-icon>visibility</mat-icon>
+                    Get HR Details
+                  </button>
+                }
               </div>
             </div>
           </div>
