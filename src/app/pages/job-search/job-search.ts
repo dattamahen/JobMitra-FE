@@ -51,7 +51,7 @@ export class JobSearchPage implements OnInit {
   // Data properties using the API service
   jobListings: ApiJobListing[] = [];
   filterOptions: any = {};
-  isLoading = false;
+  isLoading = true;
   
   // Filter state
   searchQuery = '';
@@ -148,8 +148,12 @@ export class JobSearchPage implements OnInit {
             this.filterOptions = response.filters;
           }
           
-          // Set loading to false and trigger change detection
+          // Set loading to false immediately
           this.isLoading = false;
+          console.log('✅ Setting isLoading to false immediately');
+          
+          // Mark for check to trigger change detection
+          this.cdr.markForCheck();
           this.cdr.detectChanges();
           
           console.log('✅ Updated jobListings:', this.jobListings);
@@ -159,7 +163,12 @@ export class JobSearchPage implements OnInit {
         error: (error) => {
           console.error('❌ Error loading jobs:', error);
           this.isLoading = false;
+          console.log('❌ Setting isLoading to false on error');
+          
+          // Mark for check to trigger change detection
+          this.cdr.markForCheck();
           this.cdr.detectChanges();
+          
           console.log('❌ Error: Change detection triggered');
         }
       });

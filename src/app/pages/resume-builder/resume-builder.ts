@@ -21,6 +21,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ResumeService, Resume, ResumeTemplate } from '../../services/resume.service';
+
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -105,6 +106,7 @@ export class ResumeBuilderPage implements OnInit {
 
   private destroyRef = inject(DestroyRef);
 
+
   constructor(
     private resumeService: ResumeService,
     private fb: FormBuilder,
@@ -121,6 +123,8 @@ export class ResumeBuilderPage implements OnInit {
         this.autoSave();
       }
     });
+    
+
   }
 
   ngOnInit(): void {
@@ -676,6 +680,9 @@ export class ResumeBuilderPage implements OnInit {
   }
 
   async downloadPDF(): Promise<void> {
+    // Save all current form data to resume before generating PDF
+    this.saveAllSections();
+    
     const resume = this.currentResume();
     if (!resume) return;
 
@@ -738,96 +745,170 @@ export class ResumeBuilderPage implements OnInit {
     const certifications = resume.sections.certifications || [];
 
     return `
-      <div style="max-width: 800px; margin: 0 auto; padding: 20px;">
-        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 15px;">
-          <h1 style="margin: 0; font-size: 28px; font-weight: bold;">${personalInfo?.full_name || ''}</h1>
-          <div style="margin: 10px 0; font-size: 14px;">
+      <div style="width: 100%; margin: 0; padding: 5px 15px 15px 15px; font-family: Arial, sans-serif; font-size: 12px;">
+        <div style="text-align: center; margin-bottom: 15px;">
+          <h1 style="margin: 0 0 5px 0; color: #333; font-size: 18px;">${personalInfo?.full_name || ''}</h1>
+          <p style="margin: 0; color: #666; font-size: 11px;">
             ${personalInfo?.email || ''} | ${personalInfo?.phone || ''} | ${personalInfo?.location || ''}
-          </div>
-          ${personalInfo?.linkedin || personalInfo?.github || personalInfo?.portfolio ? `
-            <div style="font-size: 14px; color: #1976d2;">
-              ${personalInfo?.linkedin ? `LinkedIn: ${personalInfo.linkedin}` : ''}
-              ${personalInfo?.github ? ` | GitHub: ${personalInfo.github}` : ''}
-              ${personalInfo?.portfolio ? ` | Portfolio: ${personalInfo.portfolio}` : ''}
-            </div>
-          ` : ''}
+          </p>
+          ${personalInfo?.linkedin ? `<p style="margin: 2px 0 0 0; color: #666; font-size: 11px;">LinkedIn: ${personalInfo.linkedin}</p>` : ''}
         </div>
 
         ${summary ? `
-          <div style="margin-bottom: 25px;">
-            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 10px;">PROFESSIONAL SUMMARY</h2>
-            <p style="margin: 0; text-align: justify;">${summary}</p>
-          </div>
-        ` : ''}
-
-        ${skills?.technical?.length || skills?.soft?.length ? `
-          <div style="margin-bottom: 25px;">
-            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 10px;">SKILLS</h2>
-            ${skills.technical?.length ? `<p><strong>Technical:</strong> ${skills.technical.join(', ')}</p>` : ''}
-            ${skills.soft?.length ? `<p><strong>Soft Skills:</strong> ${skills.soft.join(', ')}</p>` : ''}
+          <div style="margin-bottom: 15px;">
+            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 2px; margin: 0 0 8px 0; font-size: 14px;">Summary</h2>
+            <p style="font-size: 12px; margin: 0;">${summary}</p>
           </div>
         ` : ''}
 
         ${experience.length ? `
-          <div style="margin-bottom: 25px;">
-            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 10px;">WORK EXPERIENCE</h2>
+          <div style="margin-bottom: 15px;">
+            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 2px; margin: 0 0 8px 0; font-size: 14px;">Experience</h2>
             ${experience.map(exp => `
-              <div style="margin-bottom: 15px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                  <h3 style="margin: 0; font-size: 16px;">${exp.position} - ${exp.company}</h3>
-                  <span style="font-style: italic; color: #666;">${exp.duration}</span>
-                </div>
-                <p style="margin: 0; white-space: pre-line;">${exp.description}</p>
+              <div style="margin-bottom: 12px;">
+                <h3 style="margin: 0; color: #333; font-size: 13px;">${exp.position}</h3>
+                <p style="margin: 2px 0; font-weight: bold; color: #666; font-size: 11px;">${exp.company} | ${exp.duration}</p>
+                <p style="margin: 5px 0 0 0; font-size: 12px;">${exp.description}</p>
               </div>
             `).join('')}
           </div>
         ` : ''}
 
         ${education.length ? `
-          <div style="margin-bottom: 25px;">
-            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 10px;">EDUCATION</h2>
+          <div style="margin-bottom: 15px;">
+            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 2px; margin: 0 0 8px 0; font-size: 14px;">Education</h2>
             ${education.map(edu => `
               <div style="margin-bottom: 10px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <h3 style="margin: 0; font-size: 16px;">${edu.degree} - ${edu.institution}</h3>
-                  <span style="font-style: italic; color: #666;">${edu.year}</span>
-                </div>
-                ${edu.gpa ? `<p style="margin: 0; color: #666;">GPA: ${edu.gpa}</p>` : ''}
+                <h3 style="margin: 0; color: #333; font-size: 13px;">${edu.degree}</h3>
+                <p style="margin: 2px 0; color: #666; font-size: 11px;">${edu.institution} | ${edu.year}</p>
+                ${edu.gpa ? `<p style="margin: 2px 0; color: #666; font-size: 11px;">GPA: ${edu.gpa}</p>` : ''}
               </div>
             `).join('')}
           </div>
         ` : ''}
 
+        ${skills?.technical?.length || skills?.soft?.length ? `
+          <div style="margin-bottom: 15px;">
+            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 2px; margin: 0 0 8px 0; font-size: 14px;">Skills</h2>
+            ${skills.technical?.length ? `<p style="font-size: 12px; margin: 0 0 5px 0;"><strong>Technical:</strong> ${skills.technical.join(', ')}</p>` : ''}
+            ${skills.soft?.length ? `<p style="font-size: 12px; margin: 0;"><strong>Soft Skills:</strong> ${skills.soft.join(', ')}</p>` : ''}
+          </div>
+        ` : ''}
+
         ${projects.length ? `
-          <div style="margin-bottom: 25px;">
-            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 10px;">PROJECTS</h2>
+          <div style="margin-bottom: 15px;">
+            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 2px; margin: 0 0 8px 0; font-size: 14px;">Projects</h2>
             ${projects.map(proj => `
-              <div style="margin-bottom: 15px;">
-                <h3 style="margin: 0 0 5px 0; font-size: 16px;">${proj.name}</h3>
-                ${proj.url ? `<p style="margin: 0 0 5px 0; color: #1976d2;">${proj.url}</p>` : ''}
-                <p style="margin: 0 0 5px 0; white-space: pre-line;">${proj.description}</p>
-                ${proj.technologies?.length ? `<p style="margin: 0; font-style: italic;"><strong>Technologies:</strong> ${proj.technologies.join(', ')}</p>` : ''}
+              <div style="margin-bottom: 10px;">
+                <h3 style="margin: 0; color: #333; font-size: 13px;">${proj.name}</h3>
+                ${proj.url ? `<p style="margin: 2px 0; color: #666; font-size: 11px;">${proj.url}</p>` : ''}
+                <p style="margin: 5px 0 0 0; font-size: 12px;">${proj.description}</p>
+                ${proj.technologies?.length ? `<p style="margin: 2px 0; color: #666; font-size: 11px;"><strong>Technologies:</strong> ${proj.technologies.join(', ')}</p>` : ''}
               </div>
             `).join('')}
           </div>
         ` : ''}
 
         ${certifications.length ? `
-          <div style="margin-bottom: 25px;">
-            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 10px;">CERTIFICATIONS</h2>
+          <div style="margin-bottom: 15px;">
+            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 2px; margin: 0 0 8px 0; font-size: 14px;">Certifications</h2>
             ${certifications.map(cert => `
               <div style="margin-bottom: 10px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <h3 style="margin: 0; font-size: 16px;">${cert.name}</h3>
-                  <span style="font-style: italic; color: #666;">${cert.date}</span>
-                </div>
-                <p style="margin: 0; color: #666;">${cert.issuer}</p>
-                ${cert.credential_id ? `<p style="margin: 0; font-size: 12px; color: #999;">ID: ${cert.credential_id}</p>` : ''}
+                <h3 style="margin: 0; color: #333; font-size: 13px;">${cert.name}</h3>
+                <p style="margin: 2px 0; color: #666; font-size: 11px;">${cert.issuer} | ${cert.date}</p>
+                ${cert.credential_id ? `<p style="margin: 2px 0; color: #666; font-size: 11px;">ID: ${cert.credential_id}</p>` : ''}
               </div>
             `).join('')}
           </div>
         ` : ''}
       </div>
     `;
+  }
+
+
+
+  private saveAllSections(): void {
+    // Collect all form data regardless of validation state
+    const personalInfo = this.personalInfoForm.value;
+    const summary = this.summaryForm.value.summary;
+    const skills = this.skillsForm.value;
+    
+    // Collect experience data
+    const experiences = [];
+    for (let i = 0; i < this.experienceCount(); i++) {
+      const company = this.experienceForm.get(`company_${i}`)?.value;
+      if (company && String(company).trim()) {
+        experiences.push({
+          company: String(company).trim(),
+          position: String(this.experienceForm.get(`position_${i}`)?.value || '').trim(),
+          duration: String(this.experienceForm.get(`duration_${i}`)?.value || '').trim(),
+          description: String(this.experienceForm.get(`description_${i}`)?.value || '').trim()
+        });
+      }
+    }
+    
+    // Collect education data
+    const education = [];
+    for (let i = 0; i < this.educationCount(); i++) {
+      const institution = this.educationForm.get(`institution_${i}`)?.value;
+      if (institution && String(institution).trim()) {
+        education.push({
+          institution: String(institution).trim(),
+          degree: String(this.educationForm.get(`degree_${i}`)?.value || '').trim(),
+          year: String(this.educationForm.get(`year_${i}`)?.value || '').trim(),
+          gpa: String(this.educationForm.get(`gpa_${i}`)?.value || '').trim()
+        });
+      }
+    }
+    
+    // Collect projects data
+    const projects = [];
+    for (let i = 0; i < this.projectCount(); i++) {
+      const name = this.projectsForm.get(`name_${i}`)?.value;
+      if (name && String(name).trim()) {
+        const technologies = this.projectsForm.get(`technologies_${i}`)?.value;
+        projects.push({
+          name: String(name).trim(),
+          description: String(this.projectsForm.get(`description_${i}`)?.value || '').trim(),
+          technologies: technologies ? String(technologies).split(',').map((t: string) => t.trim()).filter((t: string) => t) : [],
+          url: String(this.projectsForm.get(`url_${i}`)?.value || '').trim()
+        });
+      }
+    }
+    
+    // Collect certifications data
+    const certifications = [];
+    for (let i = 0; i < this.certificationCount(); i++) {
+      const name = this.certificationsForm.get(`name_${i}`)?.value;
+      if (name && String(name).trim()) {
+        certifications.push({
+          name: String(name).trim(),
+          issuer: String(this.certificationsForm.get(`issuer_${i}`)?.value || '').trim(),
+          date: String(this.certificationsForm.get(`date_${i}`)?.value || '').trim(),
+          credential_id: String(this.certificationsForm.get(`credential_id_${i}`)?.value || '').trim()
+        });
+      }
+    }
+    
+    // Update resume with all collected data
+    this.resumeService.updateCurrentResumeSection('personal_info', personalInfo);
+    this.resumeService.updateCurrentResumeSection('summary', summary);
+    this.resumeService.updateCurrentResumeSection('skills', skills);
+    this.resumeService.updateCurrentResumeSection('experience', experiences);
+    this.resumeService.updateCurrentResumeSection('education', education);
+    this.resumeService.updateCurrentResumeSection('projects', projects);
+    this.resumeService.updateCurrentResumeSection('certifications', certifications);
+    
+    this.markAsSaved();
+  }
+
+  private markAsSaved(): void {
+    this.personalInfoForm?.markAsPristine();
+    this.summaryForm?.markAsPristine();
+    this.experienceForm?.markAsPristine();
+    this.educationForm?.markAsPristine();
+    this.skillsForm?.markAsPristine();
+    this.projectsForm?.markAsPristine();
+    this.certificationsForm?.markAsPristine();
   }
 }

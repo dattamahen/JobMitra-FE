@@ -49,13 +49,13 @@
       </div>
       
       <div class="search-button-container">
+        <div class="results-summary">
+          {{filteredJobs.length}} job{{filteredJobs.length !== 1 ? 's' : ''}} found
+        </div>
         <button mat-raised-button color="primary" class="search-button" (click)="onSearchButtonClick()">
           <mat-icon>search</mat-icon>
           Search Jobs
         </button>
-        <div class="results-summary">
-          {{filteredJobs.length}} job{{filteredJobs.length !== 1 ? 's' : ''}} found
-        </div>
       </div>
     </mat-card-content>
   </mat-card>
