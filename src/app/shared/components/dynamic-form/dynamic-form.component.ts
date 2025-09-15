@@ -27,6 +27,7 @@ export interface FormFieldConfig {
   hint?: string;
   rows?: number;
   cssClass?: string;
+  width?: 'full' | 'half' | 'quarter' | 'three-quarter';
 }
 
 export interface FormConfig {
@@ -195,6 +196,10 @@ export interface FormConfig {
       width: 23%;
     }
     
+    .three-quarter-width {
+      width: 73%;
+    }
+    
     mat-spinner {
       margin-right: 8px;
     }
@@ -291,45 +296,22 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   }
 
   getFieldClass(field: FormFieldConfig): string {
-    // Job posting fields
-    if (field.name.includes('employment_type') || field.name.includes('experience_level')) {
-      return 'half-width';
+    // Use explicit width if provided
+    if (field.width) {
+      switch (field.width) {
+        case 'half': return 'half-width';
+        case 'quarter': return 'quarter-width';
+        case 'three-quarter': return 'three-quarter-width';
+        case 'full': return 'full-width';
+        default: return 'full-width';
+      }
     }
-    if (field.name.includes('salary.min') || field.name.includes('salary.max') || field.name.includes('salary.currency') || field.name.includes('salary.period')) {
-      return 'quarter-width';
-    }
-    if (field.name.includes('location.') || field.name.includes('company_info.') || field.name.includes('hr_contact.')) {
-      return 'half-width';
-    }
-    // Profile fields - half width for related fields
-    if (field.name === 'full_name' || field.name === 'email') {
-      return 'half-width';
-    }
-    if (field.name === 'phone' || field.name === 'location') {
-      return 'half-width';
-    }
-    if (field.name === 'current_role' || field.name === 'current_company') {
-      return 'half-width';
-    }
-    if (field.name === 'experience_years' || field.name === 'highest_qualification') {
-      return 'half-width';
-    }
-    if (field.name === 'linkedin_url' || field.name === 'github_url') {
-      return 'half-width';
-    }
-    if (field.name.includes('job_preferences.expected_salary') || field.name.includes('job_preferences.currency')) {
-      return 'half-width';
-    }
-    if (field.name.includes('job_preferences.work_type') || field.name.includes('job_preferences.employment_type')) {
-      return 'half-width';
-    }
-    if (field.name.includes('job_preferences.notice_period')) {
-      return 'half-width';
-    }
-    // Full width for text areas and long text fields
+    
+    // Default to full width for textareas
     if (field.type === 'textarea') {
       return 'full-width';
     }
+    
     return 'full-width';
   }
 
