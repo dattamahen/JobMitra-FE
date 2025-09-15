@@ -86,20 +86,23 @@ export const POST_JOB_STEP1_CONFIG: FormConfig = {
       type: 'text',
       label: 'Company',
       placeholder: 'Company name',
-      required: true
+      required: true,
+      width: 'half'
     },
     {
       name: 'department',
       type: 'text',
       label: 'Department',
       placeholder: 'e.g. Engineering',
-      required: true
+      required: true,
+      width: 'half'
     },
     {
       name: 'employment_type',
       type: 'select',
       label: 'Employment Type',
       required: true,
+      width: 'half',
       options: [
         { value: 'full-time', label: 'Full-time' },
         { value: 'part-time', label: 'Part-time' },
@@ -113,6 +116,7 @@ export const POST_JOB_STEP1_CONFIG: FormConfig = {
       type: 'select',
       label: 'Experience Level',
       required: true,
+      width: 'half',
       options: [
         { value: 'entry', label: 'Entry Level' },
         { value: 'junior', label: 'Junior' },
@@ -133,26 +137,30 @@ export const POST_JOB_STEP2_CONFIG: FormConfig = {
       type: 'text',
       label: 'City',
       placeholder: 'e.g. Bangalore',
-      required: true
+      required: true,
+      width: 'half'
     },
     {
       name: 'location.state',
       type: 'text',
       label: 'State',
       placeholder: 'e.g. Karnataka',
-      required: true
+      required: true,
+      width: 'half'
     },
     {
       name: 'location.country',
       type: 'text',
       label: 'Country',
-      required: true
+      required: true,
+      width: 'half'
     },
     {
       name: 'location.timezone',
       type: 'text',
       label: 'Timezone',
-      required: true
+      required: true,
+      width: 'half'
     },
     {
       name: 'job_type',
@@ -192,20 +200,23 @@ export const POST_JOB_STEP5_CONFIG: FormConfig = {
       type: 'number',
       label: 'Min Salary',
       placeholder: '0',
-      required: true
+      required: true,
+      width: 'half'
     },
     {
       name: 'salary.max',
       type: 'number',
       label: 'Max Salary',
       placeholder: '0',
-      required: true
+      required: true,
+      width: 'half'
     },
     {
       name: 'salary.currency',
       type: 'select',
       label: 'Currency',
       required: true,
+      width: 'half',
       options: [
         { value: 'INR', label: 'INR (₹)' },
         { value: 'USD', label: 'USD ($)' },
@@ -218,6 +229,7 @@ export const POST_JOB_STEP5_CONFIG: FormConfig = {
       type: 'select',
       label: 'Period',
       required: true,
+      width: 'half',
       options: [
         { value: 'yearly', label: 'Per Year' },
         { value: 'monthly', label: 'Per Month' },
@@ -240,6 +252,7 @@ export const POST_JOB_STEP6_CONFIG: FormConfig = {
       type: 'select',
       label: 'Company Size',
       required: true,
+      width: 'half',
       options: [
         { value: '1-10', label: '1-10 employees' },
         { value: '11-50', label: '11-50 employees' },
@@ -254,6 +267,7 @@ export const POST_JOB_STEP6_CONFIG: FormConfig = {
       type: 'select',
       label: 'Industry',
       required: true,
+      width: 'half',
       options: [
         { value: 'Technology', label: 'Technology' },
         { value: 'Healthcare', label: 'Healthcare' },
@@ -295,28 +309,32 @@ export const POST_JOB_STEP7_CONFIG: FormConfig = {
       type: 'text',
       label: 'Contact Name',
       placeholder: 'HR Contact Name',
-      required: true
+      required: true,
+      width: 'half'
     },
     {
       name: 'hr_contact.email',
       type: 'email',
       label: 'Contact Email',
       placeholder: 'hr@company.com',
-      required: true
+      required: true,
+      width: 'half'
     },
     {
       name: 'hr_contact.phone',
       type: 'text',
       label: 'Phone Number',
       placeholder: '+91 98765 43210',
-      required: true
+      required: true,
+      width: 'half'
     },
     {
       name: 'hr_contact.title',
       type: 'text',
       label: 'Job Title',
       placeholder: 'HR Manager',
-      required: true
+      required: true,
+      width: 'half'
     },
     {
       name: 'application_instructions',
