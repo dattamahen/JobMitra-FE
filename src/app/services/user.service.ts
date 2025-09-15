@@ -184,8 +184,12 @@ export class UserService {
   setCurrentUser(user: UserProfile): void {
     console.log('UserService: Setting current user:', user.full_name);
     this.currentUserSubject.next(user);
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    console.log('UserService: User data saved to localStorage');
+    
+    // Only use localStorage if available (browser environment)
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      console.log('UserService: User data saved to localStorage');
+    }
   }
 
   /**
@@ -207,17 +211,22 @@ export class UserService {
       }
     }
 
-    // Fallback to localStorage
-    const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) {
-      try {
-        const user = JSON.parse(storedUser);
-        console.log('UserService: Found user in localStorage:', user.full_name);
-        this.currentUserSubject.next(user);
-        return;
-      } catch (error) {
-        console.error('UserService: Error parsing stored user:', error);
-        localStorage.removeItem('currentUser');
+    // Check if localStorage is available (browser environment)
+    if (typeof localStorage !== 'undefined') {
+      // Fallback to localStorage
+      const storedUser = localStorage.getItem('currentUser');
+      if (storedUser) {
+        try {
+          const user = JSON.parse(storedUser);
+          console.log('UserService: Found user in localStorage:', user.full_name);
+          this.currentUserSubject.next(user);
+          return;
+        } catch (error) {
+          console.error('UserService: Error parsing stored user:', error);
+          if (typeof localStorage !== 'undefined') {
+            localStorage.removeItem('currentUser');
+          }
+        }
       }
     }
 
@@ -404,7 +413,11 @@ export class UserService {
    */
   logout(): void {
     this.currentUserSubject.next(null);
-    localStorage.removeItem('currentUser');
+    
+    // Only use localStorage if available (browser environment)
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('currentUser');
+    }
   }
 
   /**
