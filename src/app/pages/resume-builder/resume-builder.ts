@@ -21,7 +21,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ResumeService, Resume, ResumeTemplate } from '../../services/resume.service';
-import { CanComponentDeactivate } from '../../guards/cv-builder.guard';
+
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -52,7 +52,7 @@ import html2canvas from 'html2canvas';
   templateUrl: './resume-builder.html',
   styleUrls: ['./resume-builder.css']
 })
-export class ResumeBuilderPage implements OnInit, CanComponentDeactivate {
+export class ResumeBuilderPage implements OnInit {
   // Reactive signals - initialized after constructor
   readonly currentResume = computed(() => this.resumeService.currentResume());
   readonly isLoading = computed(() => this.resumeService.isLoading());
@@ -105,7 +105,7 @@ export class ResumeBuilderPage implements OnInit, CanComponentDeactivate {
   ];
 
   private destroyRef = inject(DestroyRef);
-  private hasUnsavedChanges = signal(false);
+
 
   constructor(
     private resumeService: ResumeService,
@@ -124,15 +124,7 @@ export class ResumeBuilderPage implements OnInit, CanComponentDeactivate {
       }
     });
     
-    // Track form changes for guard
-    effect(() => {
-      if (this.personalInfoForm?.dirty || this.summaryForm?.dirty || 
-          this.experienceForm?.dirty || this.educationForm?.dirty ||
-          this.skillsForm?.dirty || this.projectsForm?.dirty ||
-          this.certificationsForm?.dirty) {
-        this.hasUnsavedChanges.set(true);
-      }
-    });
+
   }
 
   ngOnInit(): void {
@@ -833,12 +825,7 @@ export class ResumeBuilderPage implements OnInit, CanComponentDeactivate {
     `;
   }
 
-  canDeactivate(): boolean {
-    if (this.hasUnsavedChanges()) {
-      return confirm('You have unsaved changes in your CV. Are you sure you want to leave? All progress will be lost.');
-    }
-    return true;
-  }
+
 
   private saveAllSections(): void {
     // Collect all form data regardless of validation state
@@ -916,7 +903,6 @@ export class ResumeBuilderPage implements OnInit, CanComponentDeactivate {
   }
 
   private markAsSaved(): void {
-    this.hasUnsavedChanges.set(false);
     this.personalInfoForm?.markAsPristine();
     this.summaryForm?.markAsPristine();
     this.experienceForm?.markAsPristine();

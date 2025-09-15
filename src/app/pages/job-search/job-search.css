@@ -25,6 +25,18 @@
   padding-top: 8px;
 }
 
+.filter-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.filter-row .search-button {
+  margin-left: auto;
+}
+
 .search-button {
   height: 56px !important;
   min-width: 120px !important;
@@ -135,6 +147,32 @@ mat-form-field {
 
 mat-chip {
   margin-right: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+mat-chip mat-icon,
+mat-chip [matChipIcon] {
+  font-size: 1rem !important;
+  width: 1rem !important;
+  height: 1rem !important;
+  vertical-align: middle !important;
+  line-height: 1 !important;
+}
+
+.job-details mat-chip-set mat-chip {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.job-details mat-chip-set mat-chip mat-icon {
+  font-size: 1rem !important;
+  width: 1rem !important;
+  height: 1rem !important;
+  vertical-align: middle !important;
+  line-height: 1 !important;
 }
 
 .description {
@@ -329,6 +367,17 @@ mat-chip {
   background-color: #f9f9f9;
   border-radius: 6px;
   border-left: 3px solid #2196f3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.benefit-item mat-icon {
+  font-size: 1.2rem;
+  width: 1.2rem;
+  height: 1.2rem;
+  color: #4caf50;
+  flex-shrink: 0;
 }
 
 .benefit-item h6 {
