@@ -289,6 +289,118 @@ export class ResumeBuilderPage implements OnInit {
       date_0: [''],
       credential_id_0: ['']
     });
+
+    // Add form change listeners to update resume sections in real-time
+    this.setupFormListeners();
+  }
+
+  private setupFormListeners(): void {
+    this.personalInfoForm.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(value => {
+      this.resumeService.updateCurrentResumeSection('personal_info', value);
+    });
+
+    this.summaryForm.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(value => {
+      this.resumeService.updateCurrentResumeSection('summary', value.summary);
+    });
+
+    this.skillsForm.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(value => {
+      this.resumeService.updateCurrentResumeSection('skills', value);
+    });
+
+    this.experienceForm.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => {
+      this.updateExperienceSection();
+    });
+
+    this.educationForm.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => {
+      this.updateEducationSection();
+    });
+
+    this.projectsForm.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => {
+      this.updateProjectsSection();
+    });
+
+    this.certificationsForm.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => {
+      this.updateCertificationsSection();
+    });
+  }
+
+  private updateExperienceSection(): void {
+    const experiences = [];
+    for (let i = 0; i < this.experienceCount(); i++) {
+      const company = this.experienceForm.get(`company_${i}`)?.value;
+      if (company?.trim()) {
+        experiences.push({
+          company: company.trim(),
+          position: this.experienceForm.get(`position_${i}`)?.value?.trim() || '',
+          duration: this.experienceForm.get(`duration_${i}`)?.value?.trim() || '',
+          description: this.experienceForm.get(`description_${i}`)?.value?.trim() || ''
+        });
+      }
+    }
+    this.resumeService.updateCurrentResumeSection('experience', experiences);
+  }
+
+  private updateEducationSection(): void {
+    const education = [];
+    for (let i = 0; i < this.educationCount(); i++) {
+      const institution = this.educationForm.get(`institution_${i}`)?.value;
+      if (institution?.trim()) {
+        education.push({
+          institution: institution.trim(),
+          degree: this.educationForm.get(`degree_${i}`)?.value?.trim() || '',
+          year: this.educationForm.get(`year_${i}`)?.value?.trim() || '',
+          gpa: this.educationForm.get(`gpa_${i}`)?.value?.trim() || ''
+        });
+      }
+    }
+    this.resumeService.updateCurrentResumeSection('education', education);
+  }
+
+  private updateProjectsSection(): void {
+    const projects = [];
+    for (let i = 0; i < this.projectCount(); i++) {
+      const name = this.projectsForm.get(`name_${i}`)?.value;
+      if (name?.trim()) {
+        const technologies = this.projectsForm.get(`technologies_${i}`)?.value;
+        projects.push({
+          name: name.trim(),
+          description: this.projectsForm.get(`description_${i}`)?.value?.trim() || '',
+          technologies: technologies ? technologies.split(',').map((t: string) => t.trim()).filter((t: string) => t) : [],
+          url: this.projectsForm.get(`url_${i}`)?.value?.trim() || ''
+        });
+      }
+    }
+    this.resumeService.updateCurrentResumeSection('projects', projects);
+  }
+
+  private updateCertificationsSection(): void {
+    const certifications = [];
+    for (let i = 0; i < this.certificationCount(); i++) {
+      const name = this.certificationsForm.get(`name_${i}`)?.value;
+      if (name?.trim()) {
+        certifications.push({
+          name: name.trim(),
+          issuer: this.certificationsForm.get(`issuer_${i}`)?.value?.trim() || '',
+          date: this.certificationsForm.get(`date_${i}`)?.value?.trim() || '',
+          credential_id: this.certificationsForm.get(`credential_id_${i}`)?.value?.trim() || ''
+        });
+      }
+    }
+    this.resumeService.updateCurrentResumeSection('certifications', certifications);
   }
 
 
@@ -428,6 +540,104 @@ export class ResumeBuilderPage implements OnInit {
     return progress[sectionId as keyof typeof progress] || false;
   }
 
+  getSectionCompletionPercentage(sectionId: string): number {
+    const resume = this.currentResume();
+    if (!resume) return 0;
+
+    switch (sectionId) {
+      case 'personal_info':
+        return this.calculatePersonalInfoCompletion(resume.sections.personal_info);
+      case 'summary':
+        return this.calculateSummaryCompletion(resume.sections.summary);
+      case 'experience':
+        return this.calculateExperienceCompletion(resume.sections.experience);
+      case 'education':
+        return this.calculateEducationCompletion(resume.sections.education);
+      case 'skills':
+        return this.calculateSkillsCompletion(resume.sections.skills);
+      case 'projects':
+        return this.calculateProjectsCompletion(resume.sections.projects);
+      case 'certifications':
+        return this.calculateCertificationsCompletion(resume.sections.certifications);
+      default:
+        return 0;
+    }
+  }
+
+  private calculatePersonalInfoCompletion(personalInfo: any): number {
+    if (!personalInfo) return 0;
+    const fields = ['full_name', 'email', 'phone', 'location'];
+    const optionalFields = ['linkedin', 'portfolio', 'github'];
+    const requiredCompleted = fields.filter(field => personalInfo[field]?.trim()).length;
+    const optionalCompleted = optionalFields.filter(field => personalInfo[field]?.trim()).length;
+    return Math.round(((requiredCompleted / fields.length) * 70) + ((optionalCompleted / optionalFields.length) * 30));
+  }
+
+  private calculateSummaryCompletion(summary: string): number {
+    if (!summary?.trim()) return 0;
+    if (summary.trim().length < 50) return 30;
+    if (summary.trim().length < 100) return 60;
+    return 100;
+  }
+
+  private calculateExperienceCompletion(experience: any[]): number {
+    if (!experience?.length) return 0;
+    const totalFields = experience.length * 4; // company, position, duration, description
+    const completedFields = experience.reduce((count, exp) => {
+      return count + 
+        (exp.company?.trim() ? 1 : 0) +
+        (exp.position?.trim() ? 1 : 0) +
+        (exp.duration?.trim() ? 1 : 0) +
+        (exp.description?.trim() ? 1 : 0);
+    }, 0);
+    return Math.round((completedFields / totalFields) * 100);
+  }
+
+  private calculateEducationCompletion(education: any[]): number {
+    if (!education?.length) return 0;
+    const totalFields = education.length * 3; // institution, degree, year (gpa is optional)
+    const completedFields = education.reduce((count, edu) => {
+      return count + 
+        (edu.institution?.trim() ? 1 : 0) +
+        (edu.degree?.trim() ? 1 : 0) +
+        (edu.year?.toString().trim() ? 1 : 0);
+    }, 0);
+    return Math.round((completedFields / totalFields) * 100);
+  }
+
+  private calculateSkillsCompletion(skills: any): number {
+    if (!skills) return 0;
+    const technicalCount = skills.technical?.length || 0;
+    const softCount = skills.soft?.length || 0;
+    if (technicalCount === 0 && softCount === 0) return 0;
+    if (technicalCount > 0 && softCount > 0) return 100;
+    return 50;
+  }
+
+  private calculateProjectsCompletion(projects: any[]): number {
+    if (!projects?.length) return 0;
+    const totalFields = projects.length * 3; // name, description, technologies (url is optional)
+    const completedFields = projects.reduce((count, proj) => {
+      return count + 
+        (proj.name?.trim() ? 1 : 0) +
+        (proj.description?.trim() ? 1 : 0) +
+        (proj.technologies?.length ? 1 : 0);
+    }, 0);
+    return Math.round((completedFields / totalFields) * 100);
+  }
+
+  private calculateCertificationsCompletion(certifications: any[]): number {
+    if (!certifications?.length) return 0;
+    const totalFields = certifications.length * 3; // name, issuer, date (credential_id is optional)
+    const completedFields = certifications.reduce((count, cert) => {
+      return count + 
+        (cert.name?.trim() ? 1 : 0) +
+        (cert.issuer?.trim() ? 1 : 0) +
+        (cert.date?.trim() ? 1 : 0);
+    }, 0);
+    return Math.round((completedFields / totalFields) * 100);
+  }
+
   getATSScoreClass(): string {
     const score = this.currentResume()?.ats_score || 0;
     if (score >= 80) return 'score-excellent';
@@ -525,6 +735,7 @@ export class ResumeBuilderPage implements OnInit {
     this.experienceForm.addControl(`duration_${count}`, this.fb.control(''));
     this.experienceForm.addControl(`description_${count}`, this.fb.control(''));
     this.experienceCount.set(count + 1);
+    this.updateExperienceSection();
   }
 
   removeExperience(index: number): void {
@@ -532,6 +743,7 @@ export class ResumeBuilderPage implements OnInit {
     this.experienceForm.removeControl(`position_${index}`);
     this.experienceForm.removeControl(`duration_${index}`);
     this.experienceForm.removeControl(`description_${index}`);
+    this.updateExperienceSection();
   }
 
   saveExperience(): void {
@@ -558,6 +770,7 @@ export class ResumeBuilderPage implements OnInit {
     this.educationForm.addControl(`year_${count}`, this.fb.control(''));
     this.educationForm.addControl(`gpa_${count}`, this.fb.control(''));
     this.educationCount.set(count + 1);
+    this.updateEducationSection();
   }
 
   removeEducation(index: number): void {
@@ -565,6 +778,7 @@ export class ResumeBuilderPage implements OnInit {
     this.educationForm.removeControl(`degree_${index}`);
     this.educationForm.removeControl(`year_${index}`);
     this.educationForm.removeControl(`gpa_${index}`);
+    this.updateEducationSection();
   }
 
   saveEducation(): void {
@@ -591,6 +805,7 @@ export class ResumeBuilderPage implements OnInit {
     this.projectsForm.addControl(`technologies_${count}`, this.fb.control(''));
     this.projectsForm.addControl(`url_${count}`, this.fb.control(''));
     this.projectCount.set(count + 1);
+    this.updateProjectsSection();
   }
 
   removeProject(index: number): void {
@@ -598,6 +813,7 @@ export class ResumeBuilderPage implements OnInit {
     this.projectsForm.removeControl(`description_${index}`);
     this.projectsForm.removeControl(`technologies_${index}`);
     this.projectsForm.removeControl(`url_${index}`);
+    this.updateProjectsSection();
   }
 
   saveProjects(): void {
@@ -625,6 +841,7 @@ export class ResumeBuilderPage implements OnInit {
     this.certificationsForm.addControl(`date_${count}`, this.fb.control(''));
     this.certificationsForm.addControl(`credential_id_${count}`, this.fb.control(''));
     this.certificationCount.set(count + 1);
+    this.updateCertificationsSection();
   }
 
   removeCertification(index: number): void {
@@ -632,6 +849,7 @@ export class ResumeBuilderPage implements OnInit {
     this.certificationsForm.removeControl(`issuer_${index}`);
     this.certificationsForm.removeControl(`date_${index}`);
     this.certificationsForm.removeControl(`credential_id_${index}`);
+    this.updateCertificationsSection();
   }
 
   saveCertifications(): void {

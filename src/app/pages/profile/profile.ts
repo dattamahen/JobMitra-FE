@@ -54,6 +54,11 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
   basicInfoConfig = PROFILE_BASIC_INFO_CONFIG;
   professionalConfig = PROFILE_PROFESSIONAL_CONFIG;
   jobPreferencesConfig = PROFILE_JOB_PREFERENCES_CONFIG;
+  
+  // Edit mode states
+  isBasicInfoEditing = false;
+  isProfessionalEditing = false;
+  isJobPreferencesEditing = false;
 
   // Dynamic form handlers
   onBasicInfoSubmit(formData: any): void {
@@ -82,6 +87,11 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
     
     console.log('Basic Info Update Data:', updateData);
     this.updateProfile(updateData, 'Basic information updated successfully!');
+    this.isBasicInfoEditing = false;
+  }
+
+  onBasicInfoToggleEdit(): void {
+    this.isBasicInfoEditing = !this.isBasicInfoEditing;
   }
 
   onProfessionalSubmit(formData: any): void {
@@ -108,6 +118,11 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
     if (formData.github_link?.trim()) updateData.github_link = formData.github_link.trim();
     
     this.updateProfile(updateData, 'Professional information updated successfully!');
+    this.isProfessionalEditing = false;
+  }
+
+  onProfessionalToggleEdit(): void {
+    this.isProfessionalEditing = !this.isProfessionalEditing;
   }
 
   onJobPreferencesSubmit(formData: any): void {
@@ -140,6 +155,11 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
     if (formData.desired_job_title?.trim()) updateData.desired_job_title = formData.desired_job_title.trim();
     
     this.updateProfile(updateData, 'Job preferences updated successfully!');
+    this.isJobPreferencesEditing = false;
+  }
+
+  onJobPreferencesToggleEdit(): void {
+    this.isJobPreferencesEditing = !this.isJobPreferencesEditing;
   }
 
   private updateProfile(updateData: any, successMessage: string): void {

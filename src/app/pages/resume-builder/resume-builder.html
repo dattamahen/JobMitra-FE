@@ -28,13 +28,10 @@
               <div class="section-info">
                 <mat-icon class="section-icon">{{ section.icon }}</mat-icon>
                 <span class="section-label">{{ section.label }}</span>
-                @if (section.required) {
-                  <mat-icon class="required-icon" matTooltip="Required section">star</mat-icon>
-                }
               </div>
-              @if (isSectionComplete(section.id)) {
-                <mat-icon class="completion-icon" color="primary">check_circle</mat-icon>
-              }
+              <div class="completion-percentage">
+                <span class="percentage-text">{{ getSectionCompletionPercentage(section.id) }}%</span>
+              </div>
             </div>
           }
         </div>
