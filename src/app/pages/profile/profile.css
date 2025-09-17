@@ -352,6 +352,10 @@ mat-card-title {
   padding: 16px 24px 24px 24px;
 }
 
+.mat-mdc-card-content {
+  padding: 0 16px 16px 16px;
+}
+
 .profile-layout {
   display: grid;
   grid-template-columns: 1fr 400px;
@@ -374,7 +378,8 @@ mat-card-title {
 }
 
 .section-header {
-  margin-bottom: 24px;
+  margin-bottom: 8px;
+  padding: 16px 16px 0 16px;
 }
 
 .section-header h2 {
@@ -579,6 +584,13 @@ mat-card-title {
 
 .links-section {
   margin-top: 8px;
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
 }
 
 .links-section p {

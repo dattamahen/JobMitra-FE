@@ -357,6 +357,89 @@ export const POST_JOB_STEP7_CONFIG: FormConfig = {
   ]
 };
 
+// Resume Builder Form Configurations
+export const RESUME_PERSONAL_INFO_CONFIG: FormConfig = {
+  title: 'Personal Information',
+  fields: [
+    {
+      name: 'full_name',
+      type: 'text',
+      label: 'Full Name',
+      placeholder: 'e.g., John Doe',
+      required: true,
+      icon: 'person'
+    },
+    {
+      name: 'email',
+      type: 'email',
+      label: 'Email Address',
+      placeholder: 'e.g., john@example.com',
+      required: true,
+      width: 'half',
+      icon: 'email'
+    },
+    {
+      name: 'phone',
+      type: 'text',
+      label: 'Phone Number',
+      placeholder: 'e.g., +1 (555) 123-4567',
+      required: true,
+      width: 'half',
+      icon: 'phone'
+    },
+    {
+      name: 'location',
+      type: 'text',
+      label: 'Location',
+      placeholder: 'e.g., San Francisco, CA',
+      required: true,
+      icon: 'location_on',
+      hint: 'City, State/Country'
+    },
+    {
+      name: 'linkedin',
+      type: 'text',
+      label: 'LinkedIn Profile',
+      placeholder: 'e.g., linkedin.com/in/johndoe',
+      width: 'half',
+      icon: 'link',
+      hint: 'Professional networking profile'
+    },
+    {
+      name: 'portfolio',
+      type: 'text',
+      label: 'Portfolio Website',
+      placeholder: 'e.g., johndoe.dev',
+      width: 'half',
+      icon: 'web',
+      hint: 'Personal website or portfolio'
+    },
+    {
+      name: 'github',
+      type: 'text',
+      label: 'GitHub Profile',
+      placeholder: 'e.g., github.com/johndoe',
+      icon: 'code',
+      hint: 'Code repository and projects'
+    }
+  ]
+};
+
+export const RESUME_SUMMARY_CONFIG: FormConfig = {
+  title: 'Professional Summary',
+  fields: [
+    {
+      name: 'summary',
+      type: 'textarea',
+      label: 'Professional Summary',
+      placeholder: 'Write a compelling summary of your professional experience, key skills, and career objectives. Aim for 3-4 sentences that highlight your unique value proposition.',
+      required: true,
+      rows: 6,
+      validators: { minLength: 50 }
+    }
+  ]
+};
+
 // Profile Form Configurations
 export const PROFILE_BASIC_INFO_CONFIG: FormConfig = {
   title: 'Basic Information',
