@@ -217,9 +217,30 @@ export class ResumeBuilderPage implements OnInit {
       });
     }
 
-    // Populate skills
+    // Populate skills - convert old format to new structure
+    const technicalSkills = profile.skills || [];
+    if (technicalSkills.length > 0) {
+      this.technicalSkillCount.set(Math.max(1, technicalSkills.length));
+      
+      // Add form controls for each skill
+      for (let i = 1; i < technicalSkills.length; i++) {
+        this.skillsForm.addControl(`tech_name_${i}`, this.fb.control(''));
+        this.skillsForm.addControl(`tech_version_${i}`, this.fb.control(''));
+        this.skillsForm.addControl(`tech_last_used_${i}`, this.fb.control(''));
+      }
+      
+      // Populate values
+      technicalSkills.forEach((skill: any, index: number) => {
+        const skillName = typeof skill === 'string' ? skill : skill.name || skill;
+        this.skillsForm.patchValue({
+          [`tech_name_${index}`]: skillName,
+          [`tech_version_${index}`]: typeof skill === 'object' ? skill.version || '' : '',
+          [`tech_last_used_${index}`]: typeof skill === 'object' ? skill.last_used || '' : ''
+        });
+      });
+    }
+    
     this.skillsForm.patchValue({
-      technical: profile.skills || [],
       soft: profile.communication_skills || []
     });
 
@@ -272,9 +293,14 @@ export class ResumeBuilderPage implements OnInit {
     });
 
     this.skillsForm = this.fb.group({
-      technical: [[]],
+      tech_name_0: [''],
+      tech_version_0: [''],
+      tech_last_used_0: [''],
       soft: [[]]
     });
+    
+    // Ensure technical skill controls are properly initialized
+    this.technicalSkillCount.set(1);
 
     this.projectsForm = this.fb.group({
       name_0: [''],
@@ -309,8 +335,8 @@ export class ResumeBuilderPage implements OnInit {
 
     this.skillsForm.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(value => {
-      this.resumeService.updateCurrentResumeSection('skills', value);
+    ).subscribe(() => {
+      this.updateSkillsSection();
     });
 
     this.experienceForm.valueChanges.pipe(
@@ -387,6 +413,27 @@ export class ResumeBuilderPage implements OnInit {
     this.resumeService.updateCurrentResumeSection('projects', projects);
   }
 
+  private updateSkillsSection(): void {
+    const technicalSkills = [];
+    for (let i = 0; i < this.technicalSkillCount(); i++) {
+      const name = this.skillsForm.get(`tech_name_${i}`)?.value;
+      if (name?.trim()) {
+        technicalSkills.push({
+          name: name.trim(),
+          version: this.skillsForm.get(`tech_version_${i}`)?.value?.trim() || '',
+          last_used: this.skillsForm.get(`tech_last_used_${i}`)?.value?.trim() || ''
+        });
+      }
+    }
+    
+    const skills = {
+      technical: technicalSkills,
+      soft: this.skillsForm.get('soft')?.value || []
+    };
+    
+    this.resumeService.updateCurrentResumeSection('skills', skills);
+  }
+
   private updateCertificationsSection(): void {
     const certifications = [];
     for (let i = 0; i < this.certificationCount(); i++) {
@@ -413,7 +460,21 @@ export class ResumeBuilderPage implements OnInit {
     this.summaryForm.patchValue({ summary: resume.sections.summary });
     
     // Populate skills
-    this.skillsForm.patchValue(resume.sections.skills);
+    const skills = resume.sections.skills;
+    if (skills?.technical?.length > 0) {
+      this.technicalSkillCount.set(Math.max(1, skills.technical.length));
+      skills.technical.forEach((skill: any, index: number) => {
+        this.skillsForm.patchValue({
+          [`tech_name_${index}`]: skill.name || '',
+          [`tech_version_${index}`]: skill.version || '',
+          [`tech_last_used_${index}`]: skill.last_used || ''
+        });
+      });
+    }
+    
+    this.skillsForm.patchValue({
+      soft: skills?.soft || []
+    });
     
     // Populate experience forms
     if (resume.sections.experience?.length > 0) {
@@ -607,11 +668,22 @@ export class ResumeBuilderPage implements OnInit {
 
   private calculateSkillsCompletion(skills: any): number {
     if (!skills) return 0;
-    const technicalCount = skills.technical?.length || 0;
-    const softCount = skills.soft?.length || 0;
-    if (technicalCount === 0 && softCount === 0) return 0;
-    if (technicalCount > 0 && softCount > 0) return 100;
-    return 50;
+    
+    let technicalCompletion = 0;
+    if (skills.technical?.length > 0) {
+      const totalTechFields = skills.technical.length * 3; // name, version, last_used
+      const completedTechFields = skills.technical.reduce((count: number, skill: any) => {
+        return count + 
+          (skill.name?.trim() ? 1 : 0) +
+          (skill.version?.trim() ? 1 : 0) +
+          (skill.last_used?.trim() ? 1 : 0);
+      }, 0);
+      technicalCompletion = (completedTechFields / totalTechFields) * 70; // 70% weight for technical
+    }
+    
+    const softCompletion = (skills.soft?.length > 0 ? 30 : 0); // 30% weight for soft skills
+    
+    return Math.round(technicalCompletion + softCompletion);
   }
 
   private calculateProjectsCompletion(projects: any[]): number {
@@ -650,25 +722,40 @@ export class ResumeBuilderPage implements OnInit {
     return section?.label || 'Section';
   }
 
-  // Skills management methods
-  addTechnicalSkill(event: any): void {
-    const value = (event.value || '').trim();
-    if (value) {
-      const currentSkills = this.skillsForm.get('technical')?.value || [];
-      if (!currentSkills.includes(value)) {
-        this.skillsForm.get('technical')?.setValue([...currentSkills, value]);
-      }
-    }
-    event.chipInput!.clear();
+  // Technical Skills management methods
+  addTechnicalSkill(): void {
+    const count = this.technicalSkillCount();
+    this.skillsForm.addControl(`tech_name_${count}`, this.fb.control(''));
+    this.skillsForm.addControl(`tech_version_${count}`, this.fb.control(''));
+    this.skillsForm.addControl(`tech_last_used_${count}`, this.fb.control(''));
+    this.technicalSkillCount.set(count + 1);
   }
 
-  removeTechnicalSkill(skill: string): void {
-    const currentSkills = this.skillsForm.get('technical')?.value || [];
-    const index = currentSkills.indexOf(skill);
-    if (index >= 0) {
-      currentSkills.splice(index, 1);
-      this.skillsForm.get('technical')?.setValue([...currentSkills]);
+  removeTechnicalSkill(index: number): void {
+    if (this.technicalSkillCount() <= 1) return;
+    
+    // Remove the controls for this index
+    this.skillsForm.removeControl(`tech_name_${index}`);
+    this.skillsForm.removeControl(`tech_version_${index}`);
+    this.skillsForm.removeControl(`tech_last_used_${index}`);
+    
+    // Shift remaining controls down
+    const currentCount = this.technicalSkillCount();
+    for (let i = index + 1; i < currentCount; i++) {
+      const nameValue = this.skillsForm.get(`tech_name_${i}`)?.value;
+      const versionValue = this.skillsForm.get(`tech_version_${i}`)?.value;
+      const lastUsedValue = this.skillsForm.get(`tech_last_used_${i}`)?.value;
+      
+      this.skillsForm.removeControl(`tech_name_${i}`);
+      this.skillsForm.removeControl(`tech_version_${i}`);
+      this.skillsForm.removeControl(`tech_last_used_${i}`);
+      
+      this.skillsForm.addControl(`tech_name_${i-1}`, this.fb.control(nameValue));
+      this.skillsForm.addControl(`tech_version_${i-1}`, this.fb.control(versionValue));
+      this.skillsForm.addControl(`tech_last_used_${i-1}`, this.fb.control(lastUsedValue));
     }
+    
+    this.technicalSkillCount.set(currentCount - 1);
   }
 
   addSoftSkill(event: any): void {
@@ -696,6 +783,7 @@ export class ResumeBuilderPage implements OnInit {
   educationCount = signal(1);
   projectCount = signal(1);
   certificationCount = signal(1);
+  technicalSkillCount = signal(1);
 
   // Template management
   selectedTemplate = signal('modern');
@@ -725,6 +813,10 @@ export class ResumeBuilderPage implements OnInit {
 
   getCertificationControls(): number[] {
     return Array.from({length: this.certificationCount()}, (_, i) => i);
+  }
+
+  getTechnicalSkillControls(): number[] {
+    return Array.from({length: this.technicalSkillCount()}, (_, i) => i);
   }
 
   // Experience methods
@@ -1008,7 +1100,7 @@ export class ResumeBuilderPage implements OnInit {
         ${skills?.technical?.length || skills?.soft?.length ? `
           <div style="margin-bottom: 15px;">
             <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 2px; margin: 0 0 8px 0; font-size: 14px;">Skills</h2>
-            ${skills.technical?.length ? `<p style="font-size: 12px; margin: 0 0 5px 0;"><strong>Technical:</strong> ${skills.technical.join(', ')}</p>` : ''}
+            ${skills.technical?.length ? `<p style="font-size: 12px; margin: 0 0 5px 0;"><strong>Technical:</strong> ${skills.technical.map((skill: any) => typeof skill === 'string' ? skill : skill.name).join(', ')}</p>` : ''}
             ${skills.soft?.length ? `<p style="font-size: 12px; margin: 0;"><strong>Soft Skills:</strong> ${skills.soft.join(', ')}</p>` : ''}
           </div>
         ` : ''}
@@ -1049,7 +1141,24 @@ export class ResumeBuilderPage implements OnInit {
     // Collect all form data regardless of validation state
     const personalInfo = this.personalInfoForm.value;
     const summary = this.summaryForm.value.summary;
-    const skills = this.skillsForm.value;
+    
+    // Collect technical skills in structured format
+    const technicalSkills = [];
+    for (let i = 0; i < this.technicalSkillCount(); i++) {
+      const name = this.skillsForm.get(`tech_name_${i}`)?.value;
+      if (name?.trim()) {
+        technicalSkills.push({
+          name: name.trim(),
+          version: this.skillsForm.get(`tech_version_${i}`)?.value?.trim() || '',
+          last_used: this.skillsForm.get(`tech_last_used_${i}`)?.value?.trim() || ''
+        });
+      }
+    }
+    
+    const skills = {
+      technical: technicalSkills,
+      soft: this.skillsForm.get('soft')?.value || []
+    };
     
     // Collect experience data
     const experiences = [];
