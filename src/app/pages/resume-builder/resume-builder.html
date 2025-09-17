@@ -70,127 +70,31 @@
           <!-- Personal Information Section -->
           @if (activeSection() === 'personal_info') {
             <div class="resume-form">
-              <div class="form-header">
-                <h3>
-                  <mat-icon>person</mat-icon>
-                  Personal Information
-                </h3>
-                <p>Basic contact information and professional links</p>
-              </div>
-              
-              <form [formGroup]="personalInfoForm" (ngSubmit)="savePersonalInfo()">
-                <div class="form-row">
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Full Name</mat-label>
-                    <input matInput formControlName="full_name" placeholder="e.g., John Doe">
-                    <mat-icon matSuffix>person</mat-icon>
-                    @if (personalInfoForm.get('full_name')?.hasError('required')) {
-                      <mat-error>Full name is required</mat-error>
-                    }
-                  </mat-form-field>
-                </div>
-
-                <div class="form-row">
-                  <mat-form-field appearance="outline">
-                    <mat-label>Email Address</mat-label>
-                    <input matInput formControlName="email" type="email" placeholder="e.g., john@example.com">
-                    <mat-icon matSuffix>email</mat-icon>
-                    @if (personalInfoForm.get('email')?.hasError('required')) {
-                      <mat-error>Email is required</mat-error>
-                    }
-                    @if (personalInfoForm.get('email')?.hasError('email')) {
-                      <mat-error>Please enter a valid email</mat-error>
-                    }
-                  </mat-form-field>
-
-                  <mat-form-field appearance="outline">
-                    <mat-label>Phone Number</mat-label>
-                    <input matInput formControlName="phone" placeholder="e.g., +1 (555) 123-4567">
-                    <mat-icon matSuffix>phone</mat-icon>
-                    @if (personalInfoForm.get('phone')?.hasError('required')) {
-                      <mat-error>Phone number is required</mat-error>
-                    }
-                  </mat-form-field>
-                </div>
-
-                <div class="form-row">
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Location</mat-label>
-                    <input matInput formControlName="location" placeholder="e.g., San Francisco, CA">
-                    <mat-icon matSuffix>location_on</mat-icon>
-                    <mat-hint>City, State/Country</mat-hint>
-                    @if (personalInfoForm.get('location')?.hasError('required')) {
-                      <mat-error>Location is required</mat-error>
-                    }
-                  </mat-form-field>
-                </div>
-
-                <div class="form-row">
-                  <mat-form-field appearance="outline">
-                    <mat-label>LinkedIn Profile</mat-label>
-                    <input matInput formControlName="linkedin" placeholder="e.g., linkedin.com/in/johndoe" type="url">
-                    <mat-icon matSuffix>link</mat-icon>
-                    <mat-hint>Professional networking profile</mat-hint>
-                  </mat-form-field>
-
-                  <mat-form-field appearance="outline">
-                    <mat-label>Portfolio Website</mat-label>
-                    <input matInput formControlName="portfolio" placeholder="e.g., johndoe.dev" type="url">
-                    <mat-icon matSuffix>web</mat-icon>
-                    <mat-hint>Personal website or portfolio</mat-hint>
-                  </mat-form-field>
-                </div>
-
-                <div class="form-row">
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>GitHub Profile</mat-label>
-                    <input matInput formControlName="github" placeholder="e.g., github.com/johndoe" type="url">
-                    <mat-icon matSuffix>code</mat-icon>
-                    <mat-hint>Code repository and projects</mat-hint>
-                  </mat-form-field>
-                </div>
-
-
-              </form>
+              <app-dynamic-form
+                [config]="personalInfoConfig"
+                [initialValues]="personalInfoForm.value"
+                (formSubmit)="savePersonalInfo()"
+                (formChange)="updatePersonalInfo($event)">
+              </app-dynamic-form>
             </div>
           }
 
           <!-- Summary Section -->
           @if (activeSection() === 'summary') {
             <div class="resume-form">
-              <div class="form-header">
-                <h3>
-                  <mat-icon>description</mat-icon>
-                  Professional Summary
-                </h3>
-                <p>A compelling summary of your professional background and key achievements</p>
-              </div>
+              <app-dynamic-form
+                [config]="summaryConfig"
+                [initialValues]="summaryForm.value"
+                (formSubmit)="saveSummary()"
+                (formChange)="updateSummary($event)">
+              </app-dynamic-form>
               
-              <form [formGroup]="summaryForm" (ngSubmit)="saveSummary()">
-                <div class="form-row">
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Professional Summary</mat-label>
-                    <textarea matInput 
-                              formControlName="summary" 
-                              rows="6"
-                              placeholder="Write a compelling summary of your professional experience, key skills, and career objectives. Aim for 3-4 sentences that highlight your unique value proposition.">
-                    </textarea>
-                    @if (summaryForm.get('summary')?.hasError('required')) {
-                      <mat-error>Professional summary is required</mat-error>
-                    }
-                    @if (summaryForm.get('summary')?.hasError('minlength')) {
-                      <mat-error>Summary should be at least 50 characters long</mat-error>
-                    }
-                  </mat-form-field>
-                </div>
-
-                <div class="form-actions">
-                  <button mat-stroked-button type="button">
-                    <mat-icon>psychology</mat-icon>
-                    AI Enhance
-                  </button>
-                </div>
-              </form>
+              <div class="form-actions">
+                <button mat-stroked-button type="button">
+                  <mat-icon>psychology</mat-icon>
+                  AI Enhance
+                </button>
+              </div>
             </div>
           }
 

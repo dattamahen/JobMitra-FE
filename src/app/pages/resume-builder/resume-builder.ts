@@ -21,6 +21,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ResumeService, Resume, ResumeTemplate } from '../../services/resume.service';
+import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
+import { RESUME_PERSONAL_INFO_CONFIG, RESUME_SUMMARY_CONFIG } from '../../shared/components/dynamic-form/form-configs';
 
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -47,7 +49,7 @@ import html2canvas from 'html2canvas';
     MatBadgeModule,
     MatTooltipModule,
     MatProgressSpinnerModule,
-
+    DynamicFormComponent
   ],
   templateUrl: './resume-builder.html',
   styleUrls: ['./resume-builder.css']
@@ -103,6 +105,10 @@ export class ResumeBuilderPage implements OnInit {
     { id: 'projects', label: 'Projects', icon: 'code', required: false },
     { id: 'certifications', label: 'Certifications', icon: 'verified', required: false }
   ];
+
+  // Form configurations
+  readonly personalInfoConfig = RESUME_PERSONAL_INFO_CONFIG;
+  readonly summaryConfig = RESUME_SUMMARY_CONFIG;
 
   private destroyRef = inject(DestroyRef);
 
@@ -535,11 +541,21 @@ export class ResumeBuilderPage implements OnInit {
   }
 
   // Form submission handlers
+  updatePersonalInfo(formData: any): void {
+    this.personalInfoForm.patchValue(formData);
+    this.resumeService.updateCurrentResumeSection('personal_info', formData);
+  }
+
   savePersonalInfo(): void {
     if (this.personalInfoForm.valid) {
       const formValue = this.personalInfoForm.value;
       this.resumeService.updateCurrentResumeSection('personal_info', formValue);
     }
+  }
+
+  updateSummary(formData: any): void {
+    this.summaryForm.patchValue(formData);
+    this.resumeService.updateCurrentResumeSection('summary', formData.summary);
   }
 
   saveSummary(): void {
