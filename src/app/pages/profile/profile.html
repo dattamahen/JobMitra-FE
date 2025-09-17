@@ -10,7 +10,9 @@
               #basicForm
               [config]="basicInfoConfig" 
               [initialValues]="basicInfoValues"
+              [readonly]="!isBasicInfoEditing"
               (formSubmit)="onBasicInfoSubmit($event)"
+              (toggleEdit)="onBasicInfoToggleEdit()"
               submitButtonText="Update Basic Info">
             </app-dynamic-form>
           </mat-card-content>
@@ -23,7 +25,9 @@
               #professionalForm
               [config]="professionalConfig" 
               [initialValues]="professionalValues"
+              [readonly]="!isProfessionalEditing"
               (formSubmit)="onProfessionalSubmit($event)"
+              (toggleEdit)="onProfessionalToggleEdit()"
               submitButtonText="Update Professional Info">
             </app-dynamic-form>
           </mat-card-content>
@@ -36,7 +40,9 @@
               #jobPreferencesForm
               [config]="jobPreferencesConfig" 
               [initialValues]="jobPreferencesValues"
+              [readonly]="!isJobPreferencesEditing"
               (formSubmit)="onJobPreferencesSubmit($event)"
+              (toggleEdit)="onJobPreferencesToggleEdit()"
               submitButtonText="Update Job Preferences">
             </app-dynamic-form>
           </mat-card-content>

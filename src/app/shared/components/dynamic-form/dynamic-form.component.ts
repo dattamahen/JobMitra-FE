@@ -28,6 +28,7 @@ export interface FormFieldConfig {
   rows?: number;
   cssClass?: string;
   width?: 'full' | 'half' | 'quarter' | 'three-quarter';
+  readonly?: boolean;
 }
 
 export interface FormConfig {
@@ -35,6 +36,7 @@ export interface FormConfig {
   fields: FormFieldConfig[];
   submitLabel?: string;
   loading?: boolean;
+  readonly?: boolean;
 }
 
 @Component({
@@ -67,12 +69,12 @@ export interface FormConfig {
               </mat-checkbox>
             }
             @default {
-              <mat-form-field appearance="outline" class="full-width">
+              <mat-form-field appearance="outline" class="full-width" [class.readonly]="readonly || !!field.readonly">
                 <mat-label>{{ field.label }}{{ field.required ? ' *' : '' }}</mat-label>
                 
                 @switch (field.type) {
                   @case ('select') {
-                    <mat-select [formControlName]="field.name">
+                    <mat-select [formControlName]="field.name" [disabled]="readonly || !!field.readonly">
                       @for (option of field.options; track option.value) {
                         <mat-option [value]="option.value">
                           {{ option.label }}
@@ -85,7 +87,8 @@ export interface FormConfig {
                       matInput 
                       [formControlName]="field.name" 
                       [placeholder]="field.placeholder || ''"
-                      [rows]="field.rows || 3">
+                      [rows]="field.rows || 3"
+                      [readonly]="readonly || !!field.readonly">
                     </textarea>
                   }
                   @case ('number') {
@@ -93,14 +96,16 @@ export interface FormConfig {
                       matInput 
                       type="number" 
                       [formControlName]="field.name" 
-                      [placeholder]="field.placeholder || ''">
+                      [placeholder]="field.placeholder || ''"
+                      [readonly]="readonly || !!field.readonly">
                   }
                   @default {
                     <input 
                       matInput 
                       [type]="getInputType(field)" 
                       [formControlName]="field.name" 
-                      [placeholder]="field.placeholder || ''">
+                      [placeholder]="field.placeholder || ''"
+                      [readonly]="readonly || !!field.readonly">
                   }
                 }
                 
@@ -135,19 +140,31 @@ export interface FormConfig {
           </button>
         }
         
-        <button 
-          mat-raised-button 
-          color="primary" 
-          type="submit" 
-          class="submit-btn"
-          [disabled]="form.invalid || isSubmitting">
-          @if (isSubmitting) {
-            <mat-spinner diameter="20"></mat-spinner>
-          }
-          @if (!isSubmitting) {
-            <span>{{ submitButtonText }}</span>
-          }
-        </button>
+        @if (readonly) {
+          <button 
+            mat-raised-button 
+            color="primary" 
+            type="button" 
+            class="submit-btn"
+            (click)="onToggleEdit()">
+            <mat-icon>edit</mat-icon>
+            <span>Edit {{ config.title || 'Info' }}</span>
+          </button>
+        } @else {
+          <button 
+            mat-raised-button 
+            color="primary" 
+            type="submit" 
+            class="submit-btn"
+            [disabled]="form.invalid || isSubmitting">
+            @if (isSubmitting) {
+              <mat-spinner diameter="20"></mat-spinner>
+            }
+            @if (!isSubmitting) {
+              <span>{{ submitButtonText }}</span>
+            }
+          </button>
+        }
       </div>
     </form>
   `,
@@ -207,6 +224,21 @@ export interface FormConfig {
     .password-toggle {
       cursor: pointer;
     }
+    
+    .mat-mdc-form-field.readonly {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    
+    .mat-mdc-form-field.readonly .mat-mdc-text-field-wrapper {
+      background-color: #f5f5f5;
+    }
+    
+    .mat-mdc-form-field.readonly input,
+    .mat-mdc-form-field.readonly textarea {
+      color: #666;
+      cursor: default;
+    }
   `]
 })
 export class DynamicFormComponent implements OnInit, OnChanges {
@@ -215,9 +247,11 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   @Input() submitButtonText = 'Submit';
   @Input() showBackButton = false;
   @Input() isSubmitting = false;
+  @Input() readonly = false;
   @Output() formSubmit = new EventEmitter<any>();
   @Output() formChange = new EventEmitter<any>();
   @Output() backClick = new EventEmitter<void>();
+  @Output() toggleEdit = new EventEmitter<void>();
 
   form!: FormGroup;
   showPassword = signal(false);
@@ -293,6 +327,10 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
   onBack(): void {
     this.backClick.emit();
+  }
+
+  onToggleEdit(): void {
+    this.toggleEdit.emit();
   }
 
   getFieldClass(field: FormFieldConfig): string {
