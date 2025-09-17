@@ -37,52 +37,6 @@
         </div>
         
         @if (currentResume(); as resume) {
-          <div class="ai-suggestions">
-            <h4>
-              <mat-icon>psychology</mat-icon>
-              AI Suggestions
-            </h4>
-            @if (resume.suggestions && resume.suggestions.length > 0) {
-              @for (suggestion of resume.suggestions; track $index) {
-                <div class="suggestion">
-                  <p>{{ suggestion }}</p>
-                  <button mat-stroked-button class="apply-suggestion" size="small">
-                    <mat-icon>auto_fix_high</mat-icon>
-                    Apply
-                  </button>
-                </div>
-              }
-            } @else {
-              <div class="no-suggestions">
-                <mat-icon>lightbulb</mat-icon>
-                <p>Complete more sections to get AI suggestions</p>
-              </div>
-            }
-          </div>
-
-          <div class="ats-score-section">
-            <h4>
-              <mat-icon>analytics</mat-icon>
-              ATS Score
-            </h4>
-            <div class="ats-score" [class]="getATSScoreClass()">
-              <div class="score-circle">
-                <span class="score-value">{{ resume.ats_score }}%</span>
-              </div>
-              <div class="score-info">
-                @if (resume.ats_score >= 80) {
-                  <span class="score-label excellent">Excellent</span>
-                  <p>Your resume is well-optimized for ATS systems</p>
-                } @else if (resume.ats_score >= 60) {
-                  <span class="score-label good">Good</span>
-                  <p>Your resume has good ATS compatibility</p>
-                } @else {
-                  <span class="score-label needs-improvement">Needs Work</span>
-                  <p>Consider optimizing for better ATS performance</p>
-                }
-              </div>
-            </div>
-          </div>
 
           <div class="template-section">
             <h4>
@@ -254,22 +208,47 @@
               <form [formGroup]="skillsForm" (ngSubmit)="saveSkills()">
                 <div class="skills-section">
                   <h4>Technical Skills</h4>
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Technical Skills</mat-label>
-                    <mat-chip-grid #technicalChipGrid>
-                      @for (skill of skillsForm.get('technical')?.value || []; track skill) {
-                        <mat-chip-row (removed)="removeTechnicalSkill(skill)">
-                          {{ skill }}
-                          <button matChipRemove>
-                            <mat-icon>cancel</mat-icon>
-                          </button>
-                        </mat-chip-row>
+                  <mat-card class="skill-container" appearance="outlined">
+                    <mat-card-content>
+                      @for (skill of getTechnicalSkillControls(); track $index) {
+                        <div class="skill-row">
+                          <div class="form-row">
+                            <mat-form-field appearance="outline">
+                              <mat-label>Skill Name</mat-label>
+                              <input matInput [formControlName]="'tech_name_' + $index" placeholder="e.g., JavaScript">
+                              <mat-icon matSuffix>code</mat-icon>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                              <mat-label>Version</mat-label>
+                              <input matInput [formControlName]="'tech_version_' + $index" placeholder="e.g., ES6, v3.9">
+                              <mat-icon matSuffix>tag</mat-icon>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                              <mat-label>Experience</mat-label>
+                              <mat-select [formControlName]="'tech_last_used_' + $index">
+                                <mat-option value="Less than 1 year">Less than 1 year</mat-option>
+                                <mat-option value="1 year">1 year</mat-option>
+                                <mat-option value="2 years">2 years</mat-option>
+                                <mat-option value="3 years">3 years</mat-option>
+                                <mat-option value="4 years">4 years</mat-option>
+                                <mat-option value="5+ years">5+ years</mat-option>
+                              </mat-select>
+                              <mat-icon matSuffix>star</mat-icon>
+                            </mat-form-field>
+                            <button mat-icon-button (click)="removeTechnicalSkill($index)" type="button" matTooltip="Remove skill" [disabled]="technicalSkillCount() === 1">
+                              <mat-icon>remove_circle_outline</mat-icon>
+                            </button>
+                          </div>
+                        </div>
                       }
-                    </mat-chip-grid>
-                    <input placeholder="Add technical skills..."
-                           [matChipInputFor]="technicalChipGrid"
-                           (matChipInputTokenEnd)="addTechnicalSkill($event)">
-                  </mat-form-field>
+                      <div class="add-skill-row">
+                        <button mat-raised-button color="primary" (click)="addTechnicalSkill()" type="button">
+                          <mat-icon>add</mat-icon>
+                          Add Technical Skill
+                        </button>
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
                 </div>
 
                 <div class="skills-section">
@@ -291,7 +270,6 @@
                            (matChipInputTokenEnd)="addSoftSkill($event)">
                   </mat-form-field>
                 </div>
-
 
               </form>
             </div>
@@ -573,33 +551,12 @@
         
         <!-- Action buttons -->
         <div class="resume-actions">
-
-          
-          <button mat-stroked-button (click)="optimizeResume()" [disabled]="isOptimizing()">
-            @if (isOptimizing()) {
-              <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
-            } @else {
-              <mat-icon>psychology</mat-icon>
-            }
-            AI Optimize
-          </button>
-          
-          <button mat-stroked-button (click)="downloadPDF()">
+          <button mat-raised-button color="primary" (click)="downloadPDF()">
             <mat-icon>download</mat-icon>
             Download PDF
           </button>
-          
-          <button mat-stroked-button>
-            <mat-icon>visibility</mat-icon>
-            Preview
-          </button>
         </div>
       </div>
-      
-      <!-- Live preview panel - Hidden to reduce congestion -->
-      <!-- <div class="builder-preview" style="display: none;"> -->
-      <!-- Preview content hidden for cleaner interface -->
-      <!-- </div> -->
     </div>
   }
 </div>

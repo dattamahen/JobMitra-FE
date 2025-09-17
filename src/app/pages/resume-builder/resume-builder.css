@@ -407,6 +407,7 @@
   border-top: 1px solid #e0e0e0;
   background: #fafafa;
   display: flex;
+  justify-content: flex-end;
   gap: 12px;
   flex-wrap: wrap;
 }
@@ -1150,4 +1151,36 @@
 .builder-main::-webkit-scrollbar-thumb:hover,
 .resume-preview::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
+}
+
+/* Technical Skills Container */
+.skill-container {
+  margin-bottom: 24px;
+}
+
+.skill-row {
+  margin-bottom: 16px;
+}
+
+.skill-row .form-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.skill-row .form-row mat-form-field {
+  flex: 1;
+}
+
+.skill-row .form-row button {
+  flex-shrink: 0;
+  margin-top: 8px;
+}
+
+.add-skill-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
 }
