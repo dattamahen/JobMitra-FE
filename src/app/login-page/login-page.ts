@@ -13,7 +13,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
 import { AuthService, LoginRequest, LoginResponse, RegisterRequest } from '../services/auth.service';
 import { NavigationService } from '../services/navigation.service';
-import { DynamicFormComponent, FormConfig } from '../shared/components/dynamic-form/dynamic-form.component';
+import { DynamicFormComponent } from '../shared/components/dynamic-form/dynamic-form.component';
+import { FormConfig } from '../shared/interfaces/form.interfaces';
 import { LOGIN_FORM_CONFIG, SIGNUP_FORM_CONFIG } from '../shared/components/dynamic-form/form-configs';
 
 @Component({

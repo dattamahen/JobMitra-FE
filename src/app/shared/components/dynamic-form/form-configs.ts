@@ -1,4 +1,4 @@
-import { FormConfig } from './dynamic-form.component';
+import { FormConfig } from '../../interfaces/form.interfaces';
 
 export const LOGIN_FORM_CONFIG: FormConfig = {
   fields: [
@@ -446,7 +446,7 @@ export const RESUME_SKILLS_CONFIG: FormConfig = {
     {
       name: 'technical_skills',
       type: 'dynamic-array',
-      label: 'Technical Skills',
+      label: '',
       fields: [
         {
           name: 'name',
@@ -495,7 +495,7 @@ export const RESUME_EXPERIENCE_CONFIG: FormConfig = {
     {
       name: 'experiences',
       type: 'dynamic-array',
-      label: 'Work Experience',
+      label: '',
       fields: [
         {
           name: 'company',
@@ -504,7 +504,7 @@ export const RESUME_EXPERIENCE_CONFIG: FormConfig = {
           placeholder: 'e.g., Google, Microsoft',
           required: true,
           icon: 'business',
-          width: 'half'
+          width: 'quarter'
         },
         {
           name: 'position',
@@ -513,16 +513,23 @@ export const RESUME_EXPERIENCE_CONFIG: FormConfig = {
           placeholder: 'e.g., Senior Software Engineer',
           required: true,
           icon: 'work',
-          width: 'half'
+          width: 'quarter'
         },
         {
-          name: 'duration',
-          type: 'text',
-          label: 'Employment Duration',
-          placeholder: 'e.g., Jan 2021 - Present',
+          name: 'start_date',
+          type: 'date',
+          label: 'Start Date',
           required: true,
-          icon: 'schedule',
-          hint: 'Include start and end dates'
+          icon: 'event',
+          width: 'quarter'
+        },
+        {
+          name: 'end_date',
+          type: 'date',
+          label: 'End Date',
+          icon: 'event',
+          width: 'quarter',
+          hint: 'Leave empty if current position'
         },
         {
           name: 'description',
@@ -545,7 +552,7 @@ export const RESUME_EDUCATION_CONFIG: FormConfig = {
     {
       name: 'education',
       type: 'dynamic-array',
-      label: 'Educational Background',
+      label: '',
       fields: [
         {
           name: 'institution',
@@ -557,31 +564,36 @@ export const RESUME_EDUCATION_CONFIG: FormConfig = {
           width: 'half'
         },
         {
-          name: 'degree',
-          type: 'text',
-          label: 'Degree & Major',
-          placeholder: 'e.g., Bachelor of Computer Science',
+          name: 'education_type',
+          type: 'select',
+          label: 'Education Type',
           required: true,
           icon: 'military_tech',
-          width: 'half'
+          width: 'half',
+          options: [
+            { value: 'school', label: 'School' },
+            { value: 'pu', label: 'PU/Higher Secondary' },
+            { value: 'graduate', label: 'Graduate' },
+            { value: 'post_graduate', label: 'Post Graduate' },
+            { value: 'phd', label: 'PhD' },
+            { value: 'diploma', label: 'Diploma' }
+          ]
         },
         {
-          name: 'year',
-          type: 'number',
-          label: 'Graduation Year',
-          placeholder: 'e.g., 2019',
+          name: 'start_date',
+          type: 'date',
+          label: 'Start Date',
           required: true,
           icon: 'event',
           width: 'half'
         },
         {
-          name: 'gpa',
-          type: 'text',
-          label: 'GPA (Optional)',
-          placeholder: 'e.g., 3.8/4.0',
-          icon: 'grade',
+          name: 'end_date',
+          type: 'date',
+          label: 'End Date',
+          icon: 'event',
           width: 'half',
-          hint: 'Include if 3.5 or higher'
+          hint: 'Leave empty if currently studying'
         }
       ]
     }
@@ -594,7 +606,7 @@ export const RESUME_PROJECTS_CONFIG: FormConfig = {
     {
       name: 'projects',
       type: 'dynamic-array',
-      label: 'Key Projects',
+      label: '',
       fields: [
         {
           name: 'name',
@@ -644,7 +656,7 @@ export const RESUME_CERTIFICATIONS_CONFIG: FormConfig = {
     {
       name: 'certifications',
       type: 'dynamic-array',
-      label: 'Professional Certifications',
+      label: '',
       fields: [
         {
           name: 'name',

@@ -23,6 +23,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Inject } from '@angular/core';
 import { maskEmail, maskPhone } from '../../utils/mask.util';
+import { LoadingComponent } from '../../shared/components/loading/loading.component';
 
 @Component({
   selector: 'app-job-search-page',
@@ -41,7 +42,8 @@ import { maskEmail, maskPhone } from '../../utils/mask.util';
     MatExpansionModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    MatDialogModule
+    MatDialogModule,
+    LoadingComponent
   ],
   templateUrl: './job-search.html',
   styleUrls: ['./job-search.css']
