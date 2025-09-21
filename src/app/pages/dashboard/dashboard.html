@@ -2,15 +2,11 @@
   <div class="dashboard-content">
     <!-- Loading State -->
     @if (!isLoading) {
-      <div class="loading-container">
-        <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
-        <div class="loading-content">
-          <mat-icon class="loading-icon">dashboard</mat-icon>
-          <h3>Loading Dashboard...</h3>
-          <p>Fetching your latest stats and activities</p>
-          <small>This may take a few seconds</small>
-        </div>
-      </div>
+      <app-loading 
+        title="Loading Dashboard..."
+        message="Fetching your latest stats and activities"
+        icon="dashboard">
+      </app-loading>
     } @else {
       <!-- Dashboard Content -->
       @if (dashboardData$ | async; as dashboardData) {

@@ -62,10 +62,11 @@
   <div class="job-listings">
     <!-- Loading indicator -->
     @if (isLoading) {
-    <div class="loading-container">
-      <mat-spinner></mat-spinner>
-      <p>Loading jobs...</p>
-    </div>
+      <app-loading 
+        title="Loading Jobs..."
+        message="Searching for the best opportunities for you"
+        icon="work">
+      </app-loading>
     } @else {
     @for (job of jobListings; track job.job_id) {
     <mat-card class="job-card">

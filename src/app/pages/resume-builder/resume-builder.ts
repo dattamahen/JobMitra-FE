@@ -22,7 +22,16 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ResumeService, Resume, ResumeTemplate } from '../../services/resume.service';
 import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
-import { RESUME_PERSONAL_INFO_CONFIG, RESUME_SUMMARY_CONFIG } from '../../shared/components/dynamic-form/form-configs';
+import { LoadingComponent } from '../../shared/components/loading/loading.component';
+import { 
+  RESUME_PERSONAL_INFO_CONFIG, 
+  RESUME_SUMMARY_CONFIG,
+  RESUME_SKILLS_CONFIG,
+  RESUME_EXPERIENCE_CONFIG,
+  RESUME_EDUCATION_CONFIG,
+  RESUME_PROJECTS_CONFIG,
+  RESUME_CERTIFICATIONS_CONFIG
+} from '../../shared/components/dynamic-form/form-configs';
 
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -49,7 +58,8 @@ import html2canvas from 'html2canvas';
     MatBadgeModule,
     MatTooltipModule,
     MatProgressSpinnerModule,
-    DynamicFormComponent
+    DynamicFormComponent,
+    LoadingComponent
   ],
   templateUrl: './resume-builder.html',
   styleUrls: ['./resume-builder.css']
@@ -109,6 +119,11 @@ export class ResumeBuilderPage implements OnInit {
   // Form configurations
   readonly personalInfoConfig = RESUME_PERSONAL_INFO_CONFIG;
   readonly summaryConfig = RESUME_SUMMARY_CONFIG;
+  readonly skillsConfig = RESUME_SKILLS_CONFIG;
+  readonly experienceConfig = RESUME_EXPERIENCE_CONFIG;
+  readonly educationConfig = RESUME_EDUCATION_CONFIG;
+  readonly projectsConfig = RESUME_PROJECTS_CONFIG;
+  readonly certificationsConfig = RESUME_CERTIFICATIONS_CONFIG;
 
   private destroyRef = inject(DestroyRef);
 
@@ -556,6 +571,31 @@ export class ResumeBuilderPage implements OnInit {
   updateSummary(formData: any): void {
     this.summaryForm.patchValue(formData);
     this.resumeService.updateCurrentResumeSection('summary', formData.summary);
+  }
+
+  updateSkills(formData: any): void {
+    this.skillsForm.patchValue(formData);
+    this.updateSkillsSection();
+  }
+
+  updateExperience(formData: any): void {
+    this.experienceForm.patchValue(formData);
+    this.updateExperienceSection();
+  }
+
+  updateEducation(formData: any): void {
+    this.educationForm.patchValue(formData);
+    this.updateEducationSection();
+  }
+
+  updateProjects(formData: any): void {
+    this.projectsForm.patchValue(formData);
+    this.updateProjectsSection();
+  }
+
+  updateCertifications(formData: any): void {
+    this.certificationsForm.patchValue(formData);
+    this.updateCertificationsSection();
   }
 
   saveSummary(): void {

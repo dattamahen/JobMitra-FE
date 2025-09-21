@@ -440,6 +440,253 @@ export const RESUME_SUMMARY_CONFIG: FormConfig = {
   ]
 };
 
+export const RESUME_SKILLS_CONFIG: FormConfig = {
+  title: 'Skills & Expertise',
+  fields: [
+    {
+      name: 'technical_skills',
+      type: 'dynamic-array',
+      label: 'Technical Skills',
+      fields: [
+        {
+          name: 'name',
+          type: 'text',
+          label: 'Skill Name',
+          placeholder: 'e.g., JavaScript',
+          required: true,
+          icon: 'code'
+        },
+        {
+          name: 'version',
+          type: 'text',
+          label: 'Version',
+          placeholder: 'e.g., ES6, v3.9',
+          icon: 'tag'
+        },
+        {
+          name: 'experience',
+          type: 'select',
+          label: 'Experience',
+          required: true,
+          icon: 'star',
+          options: [
+            { value: 'Less than 1 year', label: 'Less than 1 year' },
+            { value: '1 year', label: '1 year' },
+            { value: '2 years', label: '2 years' },
+            { value: '3 years', label: '3 years' },
+            { value: '4 years', label: '4 years' },
+            { value: '5+ years', label: '5+ years' }
+          ]
+        }
+      ]
+    },
+    {
+      name: 'soft_skills',
+      type: 'chip-list',
+      label: 'Soft Skills',
+      placeholder: 'Add soft skills...'
+    }
+  ]
+};
+
+export const RESUME_EXPERIENCE_CONFIG: FormConfig = {
+  title: 'Work Experience',
+  fields: [
+    {
+      name: 'experiences',
+      type: 'dynamic-array',
+      label: 'Work Experience',
+      fields: [
+        {
+          name: 'company',
+          type: 'text',
+          label: 'Company Name',
+          placeholder: 'e.g., Google, Microsoft',
+          required: true,
+          icon: 'business',
+          width: 'half'
+        },
+        {
+          name: 'position',
+          type: 'text',
+          label: 'Job Title',
+          placeholder: 'e.g., Senior Software Engineer',
+          required: true,
+          icon: 'work',
+          width: 'half'
+        },
+        {
+          name: 'duration',
+          type: 'text',
+          label: 'Employment Duration',
+          placeholder: 'e.g., Jan 2021 - Present',
+          required: true,
+          icon: 'schedule',
+          hint: 'Include start and end dates'
+        },
+        {
+          name: 'description',
+          type: 'textarea',
+          label: 'Job Description & Achievements',
+          placeholder: '• Led development of microservices architecture\n• Improved system performance by 40%\n• Mentored junior developers',
+          required: true,
+          rows: 4,
+          icon: 'description',
+          hint: 'Use bullet points to highlight key achievements and responsibilities'
+        }
+      ]
+    }
+  ]
+};
+
+export const RESUME_EDUCATION_CONFIG: FormConfig = {
+  title: 'Education',
+  fields: [
+    {
+      name: 'education',
+      type: 'dynamic-array',
+      label: 'Educational Background',
+      fields: [
+        {
+          name: 'institution',
+          type: 'text',
+          label: 'Institution Name',
+          placeholder: 'e.g., Stanford University',
+          required: true,
+          icon: 'school',
+          width: 'half'
+        },
+        {
+          name: 'degree',
+          type: 'text',
+          label: 'Degree & Major',
+          placeholder: 'e.g., Bachelor of Computer Science',
+          required: true,
+          icon: 'military_tech',
+          width: 'half'
+        },
+        {
+          name: 'year',
+          type: 'number',
+          label: 'Graduation Year',
+          placeholder: 'e.g., 2019',
+          required: true,
+          icon: 'event',
+          width: 'half'
+        },
+        {
+          name: 'gpa',
+          type: 'text',
+          label: 'GPA (Optional)',
+          placeholder: 'e.g., 3.8/4.0',
+          icon: 'grade',
+          width: 'half',
+          hint: 'Include if 3.5 or higher'
+        }
+      ]
+    }
+  ]
+};
+
+export const RESUME_PROJECTS_CONFIG: FormConfig = {
+  title: 'Projects',
+  fields: [
+    {
+      name: 'projects',
+      type: 'dynamic-array',
+      label: 'Key Projects',
+      fields: [
+        {
+          name: 'name',
+          type: 'text',
+          label: 'Project Name',
+          placeholder: 'e.g., E-commerce Platform',
+          required: true,
+          icon: 'code',
+          width: 'half'
+        },
+        {
+          name: 'url',
+          type: 'url',
+          label: 'Project URL',
+          placeholder: 'e.g., github.com/user/project',
+          icon: 'link',
+          width: 'half',
+          hint: 'GitHub, live demo, or portfolio link'
+        },
+        {
+          name: 'description',
+          type: 'textarea',
+          label: 'Project Description',
+          placeholder: '• Built a full-stack e-commerce platform\n• Implemented secure payment processing\n• Achieved 99.9% uptime with 1000+ users',
+          required: true,
+          rows: 4,
+          icon: 'description',
+          hint: 'Highlight your role, technologies used, and impact'
+        },
+        {
+          name: 'technologies',
+          type: 'text',
+          label: 'Technologies Used',
+          placeholder: 'e.g., React, Node.js, MongoDB, AWS',
+          required: true,
+          icon: 'build',
+          hint: 'Separate technologies with commas'
+        }
+      ]
+    }
+  ]
+};
+
+export const RESUME_CERTIFICATIONS_CONFIG: FormConfig = {
+  title: 'Certifications',
+  fields: [
+    {
+      name: 'certifications',
+      type: 'dynamic-array',
+      label: 'Professional Certifications',
+      fields: [
+        {
+          name: 'name',
+          type: 'text',
+          label: 'Certification Name',
+          placeholder: 'e.g., AWS Solutions Architect',
+          required: true,
+          icon: 'verified',
+          width: 'half'
+        },
+        {
+          name: 'issuer',
+          type: 'text',
+          label: 'Issuing Organization',
+          placeholder: 'e.g., Amazon Web Services',
+          required: true,
+          icon: 'business',
+          width: 'half'
+        },
+        {
+          name: 'date',
+          type: 'text',
+          label: 'Issue Date',
+          placeholder: 'e.g., March 2023',
+          required: true,
+          icon: 'event',
+          width: 'half'
+        },
+        {
+          name: 'credential_id',
+          type: 'text',
+          label: 'Credential ID',
+          placeholder: 'e.g., ABC123XYZ',
+          icon: 'fingerprint',
+          width: 'half',
+          hint: 'Optional verification ID'
+        }
+      ]
+    }
+  ]
+};
+
 // Profile Form Configurations
 export const PROFILE_BASIC_INFO_CONFIG: FormConfig = {
   title: 'Basic Information',

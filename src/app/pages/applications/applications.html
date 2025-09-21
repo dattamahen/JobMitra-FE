@@ -1,10 +1,11 @@
 <div class="page-container">
   <!-- Loading indicator -->
   @if (isLoading) {
-  <div class="loading-container">
-    <mat-spinner></mat-spinner>
-    <p>Loading applications...</p>
-  </div>
+    <app-loading 
+      title="Loading Applications..."
+      message="Fetching your job application status"
+      icon="assignment">
+    </app-loading>
   }
 
   <!-- Applications list -->

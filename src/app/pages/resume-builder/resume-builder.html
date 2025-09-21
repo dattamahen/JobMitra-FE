@@ -1,13 +1,10 @@
 <div class="page-container">
   @if (isLoading()) {
-    <div class="loading-container">
-      <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
-      <div class="loading-content">
-        <mat-icon class="loading-icon">description</mat-icon>
-        <h3>Loading Resume Builder...</h3>
-        <p>Setting up your resume workspace</p>
-      </div>
-    </div>
+    <app-loading 
+      title="Loading Resume Builder..."
+      message="Setting up your resume workspace"
+      icon="description">
+    </app-loading>
   } @else {
     <div class="resume-builder-content full-width">
       <!-- Sidebar with sections and AI suggestions -->
@@ -101,354 +98,60 @@
           <!-- Skills Section -->
           @if (activeSection() === 'skills') {
             <div class="resume-form">
-              <div class="form-header">
-                <h3>
-                  <mat-icon>build</mat-icon>
-                  Skills & Expertise
-                </h3>
-                <p>List your technical and soft skills</p>
-              </div>
-              
-              <form [formGroup]="skillsForm" (ngSubmit)="saveSkills()">
-                <div class="skills-section">
-                  <h4>Technical Skills</h4>
-                  <mat-card class="skill-container" appearance="outlined">
-                    <mat-card-content>
-                      @for (skill of getTechnicalSkillControls(); track $index) {
-                        <div class="skill-row">
-                          <div class="form-row">
-                            <mat-form-field appearance="outline">
-                              <mat-label>Skill Name</mat-label>
-                              <input matInput [formControlName]="'tech_name_' + $index" placeholder="e.g., JavaScript">
-                              <mat-icon matSuffix>code</mat-icon>
-                            </mat-form-field>
-                            <mat-form-field appearance="outline">
-                              <mat-label>Version</mat-label>
-                              <input matInput [formControlName]="'tech_version_' + $index" placeholder="e.g., ES6, v3.9">
-                              <mat-icon matSuffix>tag</mat-icon>
-                            </mat-form-field>
-                            <mat-form-field appearance="outline">
-                              <mat-label>Experience</mat-label>
-                              <mat-select [formControlName]="'tech_last_used_' + $index">
-                                <mat-option value="Less than 1 year">Less than 1 year</mat-option>
-                                <mat-option value="1 year">1 year</mat-option>
-                                <mat-option value="2 years">2 years</mat-option>
-                                <mat-option value="3 years">3 years</mat-option>
-                                <mat-option value="4 years">4 years</mat-option>
-                                <mat-option value="5+ years">5+ years</mat-option>
-                              </mat-select>
-                              <mat-icon matSuffix>star</mat-icon>
-                            </mat-form-field>
-                            <button mat-icon-button (click)="removeTechnicalSkill($index)" type="button" matTooltip="Remove skill" [disabled]="technicalSkillCount() === 1">
-                              <mat-icon>remove_circle_outline</mat-icon>
-                            </button>
-                          </div>
-                        </div>
-                      }
-                      <div class="add-skill-row">
-                        <button mat-raised-button color="primary" (click)="addTechnicalSkill()" type="button">
-                          <mat-icon>add</mat-icon>
-                          Add Technical Skill
-                        </button>
-                      </div>
-                    </mat-card-content>
-                  </mat-card>
-                </div>
-
-                <div class="skills-section">
-                  <h4>Soft Skills</h4>
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Soft Skills</mat-label>
-                    <mat-chip-grid #softChipGrid>
-                      @for (skill of skillsForm.get('soft')?.value || []; track skill) {
-                        <mat-chip-row (removed)="removeSoftSkill(skill)">
-                          {{ skill }}
-                          <button matChipRemove>
-                            <mat-icon>cancel</mat-icon>
-                          </button>
-                        </mat-chip-row>
-                      }
-                    </mat-chip-grid>
-                    <input placeholder="Add soft skills..."
-                           [matChipInputFor]="softChipGrid"
-                           (matChipInputTokenEnd)="addSoftSkill($event)">
-                  </mat-form-field>
-                </div>
-
-              </form>
+              <app-dynamic-form
+                [config]="skillsConfig"
+                [initialValues]="skillsForm.value"
+                (formSubmit)="saveSkills()"
+                (formChange)="updateSkills($event)">
+              </app-dynamic-form>
             </div>
           }
 
           <!-- Experience Section -->
           @if (activeSection() === 'experience') {
             <div class="resume-form">
-              <div class="form-header">
-                <h3>
-                  <mat-icon>work</mat-icon>
-                  Work Experience
-                </h3>
-                <p>Add your professional work experience</p>
-              </div>
-              
-              <form [formGroup]="experienceForm">
-                <div class="dynamic-section">
-                  @for (exp of getExperienceControls(); track $index) {
-                    <mat-card class="experience-item" appearance="outlined">
-                      <mat-card-content>
-                        <div class="item-header">
-                          <div class="section-title">
-                            <div class="item-number">{{ $index + 1 }}</div>
-                            <span>Experience {{ $index + 1 }}</span>
-                          </div>
-                          <button mat-icon-button class="delete-button" (click)="removeExperience($index)" type="button" matTooltip="Remove this experience">
-                            <mat-icon>delete_outline</mat-icon>
-                          </button>
-                        </div>
-                        
-                        <div class="form-row">
-                          <mat-form-field appearance="outline">
-                            <mat-label>Company Name</mat-label>
-                            <input matInput [formControlName]="'company_' + $index" placeholder="e.g., Google, Microsoft">
-                            <mat-icon matSuffix>business</mat-icon>
-                          </mat-form-field>
-                          <mat-form-field appearance="outline">
-                            <mat-label>Job Title</mat-label>
-                            <input matInput [formControlName]="'position_' + $index" placeholder="e.g., Senior Software Engineer">
-                            <mat-icon matSuffix>work</mat-icon>
-                          </mat-form-field>
-                        </div>
-                        
-                        <div class="form-row">
-                          <mat-form-field appearance="outline" class="full-width">
-                            <mat-label>Employment Duration</mat-label>
-                            <input matInput [formControlName]="'duration_' + $index" placeholder="e.g., Jan 2021 - Present">
-                            <mat-icon matSuffix>schedule</mat-icon>
-                            <mat-hint>Include start and end dates</mat-hint>
-                          </mat-form-field>
-                        </div>
-                        
-                        <mat-form-field appearance="outline" class="full-width">
-                          <mat-label>Job Description & Achievements</mat-label>
-                          <textarea matInput [formControlName]="'description_' + $index" rows="4" 
-                                    placeholder="• Led development of microservices architecture&#10;• Improved system performance by 40%&#10;• Mentored junior developers"></textarea>
-                          <mat-icon matSuffix>description</mat-icon>
-                          <mat-hint>Use bullet points to highlight key achievements and responsibilities</mat-hint>
-                        </mat-form-field>
-                      </mat-card-content>
-                    </mat-card>
-                  }
-                  
-                  <button mat-stroked-button class="add-item-button" (click)="addExperience()" type="button">
-                    <mat-icon>add_circle_outline</mat-icon>
-                    Add Work Experience
-                  </button>
-                </div>
-                
-
-              </form>
+              <app-dynamic-form
+                [config]="experienceConfig"
+                [initialValues]="experienceForm.value"
+                (formSubmit)="saveExperience()"
+                (formChange)="updateExperience($event)">
+              </app-dynamic-form>
             </div>
           }
 
           <!-- Education Section -->
           @if (activeSection() === 'education') {
             <div class="resume-form">
-              <div class="form-header">
-                <h3>
-                  <mat-icon>school</mat-icon>
-                  Education
-                </h3>
-                <p>Add your educational background</p>
-              </div>
-              
-              <form [formGroup]="educationForm">
-                <div class="dynamic-section">
-                  @for (edu of getEducationControls(); track $index) {
-                    <mat-card class="education-item" appearance="outlined">
-                      <mat-card-content>
-                        <div class="item-header">
-                          <div class="section-title">
-                            <div class="item-number">{{ $index + 1 }}</div>
-                            <span>Education {{ $index + 1 }}</span>
-                          </div>
-                          <button mat-icon-button class="delete-button" (click)="removeEducation($index)" type="button" matTooltip="Remove this education">
-                            <mat-icon>delete_outline</mat-icon>
-                          </button>
-                        </div>
-                        
-                        <div class="form-row">
-                          <mat-form-field appearance="outline">
-                            <mat-label>Institution Name</mat-label>
-                            <input matInput [formControlName]="'institution_' + $index" placeholder="e.g., Stanford University">
-                            <mat-icon matSuffix>school</mat-icon>
-                          </mat-form-field>
-                          <mat-form-field appearance="outline">
-                            <mat-label>Degree & Major</mat-label>
-                            <input matInput [formControlName]="'degree_' + $index" placeholder="e.g., Bachelor of Computer Science">
-                            <mat-icon matSuffix>military_tech</mat-icon>
-                          </mat-form-field>
-                        </div>
-                        
-                        <div class="form-row">
-                          <mat-form-field appearance="outline">
-                            <mat-label>Graduation Year</mat-label>
-                            <input matInput [formControlName]="'year_' + $index" placeholder="e.g., 2019" type="number">
-                            <mat-icon matSuffix>event</mat-icon>
-                          </mat-form-field>
-                          <mat-form-field appearance="outline">
-                            <mat-label>GPA (Optional)</mat-label>
-                            <input matInput [formControlName]="'gpa_' + $index" placeholder="e.g., 3.8/4.0">
-                            <mat-icon matSuffix>grade</mat-icon>
-                            <mat-hint>Include if 3.5 or higher</mat-hint>
-                          </mat-form-field>
-                        </div>
-                      </mat-card-content>
-                    </mat-card>
-                  }
-                  
-                  <button mat-stroked-button class="add-item-button" (click)="addEducation()" type="button">
-                    <mat-icon>add_circle_outline</mat-icon>
-                    Add Education
-                  </button>
-                </div>
-                
-
-              </form>
+              <app-dynamic-form
+                [config]="educationConfig"
+                [initialValues]="educationForm.value"
+                (formSubmit)="saveEducation()"
+                (formChange)="updateEducation($event)">
+              </app-dynamic-form>
             </div>
           }
 
           <!-- Projects Section -->
           @if (activeSection() === 'projects') {
             <div class="resume-form">
-              <div class="form-header">
-                <h3>
-                  <mat-icon>code</mat-icon>
-                  Projects
-                </h3>
-                <p>Showcase your key projects and achievements</p>
-              </div>
-              
-              <form [formGroup]="projectsForm">
-                <div class="dynamic-section">
-                  @for (proj of getProjectControls(); track $index) {
-                    <mat-card class="project-item" appearance="outlined">
-                      <mat-card-content>
-                        <div class="item-header">
-                          <div class="section-title">
-                            <div class="item-number">{{ $index + 1 }}</div>
-                            <span>Project {{ $index + 1 }}</span>
-                          </div>
-                          <button mat-icon-button class="delete-button" (click)="removeProject($index)" type="button" matTooltip="Remove this project">
-                            <mat-icon>delete_outline</mat-icon>
-                          </button>
-                        </div>
-                        
-                        <div class="form-row">
-                          <mat-form-field appearance="outline">
-                            <mat-label>Project Name</mat-label>
-                            <input matInput [formControlName]="'name_' + $index" placeholder="e.g., E-commerce Platform">
-                            <mat-icon matSuffix>code</mat-icon>
-                          </mat-form-field>
-                          <mat-form-field appearance="outline">
-                            <mat-label>Project URL</mat-label>
-                            <input matInput [formControlName]="'url_' + $index" placeholder="e.g., github.com/user/project" type="url">
-                            <mat-icon matSuffix>link</mat-icon>
-                            <mat-hint>GitHub, live demo, or portfolio link</mat-hint>
-                          </mat-form-field>
-                        </div>
-                        
-                        <mat-form-field appearance="outline" class="full-width">
-                          <mat-label>Project Description</mat-label>
-                          <textarea matInput [formControlName]="'description_' + $index" rows="4" 
-                                    placeholder="• Built a full-stack e-commerce platform&#10;• Implemented secure payment processing&#10;• Achieved 99.9% uptime with 1000+ users"></textarea>
-                          <mat-icon matSuffix>description</mat-icon>
-                          <mat-hint>Highlight your role, technologies used, and impact</mat-hint>
-                        </mat-form-field>
-                        
-                        <mat-form-field appearance="outline" class="full-width">
-                          <mat-label>Technologies Used</mat-label>
-                          <input matInput [formControlName]="'technologies_' + $index" placeholder="e.g., React, Node.js, MongoDB, AWS">
-                          <mat-icon matSuffix>build</mat-icon>
-                          <mat-hint>Separate technologies with commas</mat-hint>
-                        </mat-form-field>
-                      </mat-card-content>
-                    </mat-card>
-                  }
-                  
-                  <button mat-stroked-button class="add-item-button" (click)="addProject()" type="button">
-                    <mat-icon>add_circle_outline</mat-icon>
-                    Add Project
-                  </button>
-                </div>
-                
-
-              </form>
+              <app-dynamic-form
+                [config]="projectsConfig"
+                [initialValues]="projectsForm.value"
+                (formSubmit)="saveProjects()"
+                (formChange)="updateProjects($event)">
+              </app-dynamic-form>
             </div>
           }
 
           <!-- Certifications Section -->
           @if (activeSection() === 'certifications') {
             <div class="resume-form">
-              <div class="form-header">
-                <h3>
-                  <mat-icon>verified</mat-icon>
-                  Certifications
-                </h3>
-                <p>Add your professional certifications and licenses</p>
-              </div>
-              
-              <form [formGroup]="certificationsForm">
-                <div class="dynamic-section">
-                  @for (cert of getCertificationControls(); track $index) {
-                    <mat-card class="certification-item" appearance="outlined">
-                      <mat-card-content>
-                        <div class="item-header">
-                          <div class="section-title">
-                            <div class="item-number">{{ $index + 1 }}</div>
-                            <span>Certification {{ $index + 1 }}</span>
-                          </div>
-                          <button mat-icon-button class="delete-button" (click)="removeCertification($index)" type="button" matTooltip="Remove this certification">
-                            <mat-icon>delete_outline</mat-icon>
-                          </button>
-                        </div>
-                        
-                        <div class="form-row">
-                          <mat-form-field appearance="outline">
-                            <mat-label>Certification Name</mat-label>
-                            <input matInput [formControlName]="'name_' + $index" placeholder="e.g., AWS Solutions Architect">
-                            <mat-icon matSuffix>verified</mat-icon>
-                          </mat-form-field>
-                          <mat-form-field appearance="outline">
-                            <mat-label>Issuing Organization</mat-label>
-                            <input matInput [formControlName]="'issuer_' + $index" placeholder="e.g., Amazon Web Services">
-                            <mat-icon matSuffix>business</mat-icon>
-                          </mat-form-field>
-                        </div>
-                        
-                        <div class="form-row">
-                          <mat-form-field appearance="outline">
-                            <mat-label>Issue Date</mat-label>
-                            <input matInput [formControlName]="'date_' + $index" placeholder="e.g., March 2023">
-                            <mat-icon matSuffix>event</mat-icon>
-                          </mat-form-field>
-                          <mat-form-field appearance="outline">
-                            <mat-label>Credential ID</mat-label>
-                            <input matInput [formControlName]="'credential_id_' + $index" placeholder="e.g., ABC123XYZ">
-                            <mat-icon matSuffix>fingerprint</mat-icon>
-                            <mat-hint>Optional verification ID</mat-hint>
-                          </mat-form-field>
-                        </div>
-                      </mat-card-content>
-                    </mat-card>
-                  }
-                  
-                  <button mat-stroked-button class="add-item-button" (click)="addCertification()" type="button">
-                    <mat-icon>add_circle_outline</mat-icon>
-                    Add Certification
-                  </button>
-                </div>
-                
-
-              </form>
+              <app-dynamic-form
+                [config]="certificationsConfig"
+                [initialValues]="certificationsForm.value"
+                (formSubmit)="saveCertifications()"
+                (formChange)="updateCertifications($event)">
+              </app-dynamic-form>
             </div>
           }
         }

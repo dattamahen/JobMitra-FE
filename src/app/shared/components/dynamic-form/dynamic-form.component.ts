@@ -12,7 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 export interface FormFieldConfig {
   name: string;
   label: string;
-  type: 'text' | 'email' | 'password' | 'number' | 'select' | 'checkbox' | 'textarea';
+  type: 'text' | 'email' | 'password' | 'number' | 'select' | 'checkbox' | 'textarea' | 'dynamic-array' | 'chip-list' | 'url';
   placeholder?: string;
   required?: boolean;
   validators?: {
@@ -29,6 +29,7 @@ export interface FormFieldConfig {
   cssClass?: string;
   width?: 'full' | 'half' | 'quarter' | 'three-quarter';
   readonly?: boolean;
+  fields?: FormFieldConfig[]; // For dynamic-array and nested field types
 }
 
 export interface FormConfig {
