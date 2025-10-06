@@ -15,8 +15,19 @@ import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { Subject, takeUntil, finalize } from 'rxjs';
 import { UserService, UserProfile, UpdateUserRequest } from '../../services';
 import { AuthService } from '../../services/auth.service';
+import { ResumeIntegrationService } from '../../services/resume-integration.service';
+import { TestProfileService } from '../../test-profile.service';
 import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
-import { PROFILE_BASIC_INFO_CONFIG, PROFILE_PROFESSIONAL_CONFIG, PROFILE_JOB_PREFERENCES_CONFIG } from '../../shared/components/dynamic-form/form-configs';
+import { 
+  PROFILE_BASIC_INFO_CONFIG, 
+  PROFILE_PROFESSIONAL_CONFIG, 
+  PROFILE_SKILLS_CONFIG,
+  PROFILE_EXPERIENCE_CONFIG,
+  PROFILE_EDUCATION_CONFIG,
+  PROFILE_PROJECTS_CONFIG,
+  PROFILE_CERTIFICATIONS_CONFIG,
+  PROFILE_JOB_PREFERENCES_CONFIG 
+} from '../../shared/components/dynamic-form/form-configs';
 
 @Component({
   selector: 'app-profile',
@@ -43,6 +54,11 @@ import { PROFILE_BASIC_INFO_CONFIG, PROFILE_PROFESSIONAL_CONFIG, PROFILE_JOB_PRE
 export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('basicForm') basicForm!: DynamicFormComponent;
   @ViewChild('professionalForm') professionalForm!: DynamicFormComponent;
+  @ViewChild('skillsForm') skillsForm!: DynamicFormComponent;
+  @ViewChild('experienceForm') experienceForm!: DynamicFormComponent;
+  @ViewChild('educationForm') educationForm!: DynamicFormComponent;
+  @ViewChild('projectsForm') projectsForm!: DynamicFormComponent;
+  @ViewChild('certificationsForm') certificationsForm!: DynamicFormComponent;
   @ViewChild('jobPreferencesForm') jobPreferencesForm!: DynamicFormComponent;
   profileForm!: FormGroup;
   currentUser: UserProfile | null = null;
@@ -53,12 +69,25 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
   // Form configurations
   basicInfoConfig = PROFILE_BASIC_INFO_CONFIG;
   professionalConfig = PROFILE_PROFESSIONAL_CONFIG;
+  skillsConfig = PROFILE_SKILLS_CONFIG;
+  experienceConfig = PROFILE_EXPERIENCE_CONFIG;
+  educationConfig = PROFILE_EDUCATION_CONFIG;
+  projectsConfig = PROFILE_PROJECTS_CONFIG;
+  certificationsConfig = PROFILE_CERTIFICATIONS_CONFIG;
   jobPreferencesConfig = PROFILE_JOB_PREFERENCES_CONFIG;
   
   // Edit mode states
   isBasicInfoEditing = false;
   isProfessionalEditing = false;
+  isSkillsEditing = false;
+  isExperienceEditing = false;
+  isEducationEditing = false;
+  isProjectsEditing = false;
+  isCertificationsEditing = false;
   isJobPreferencesEditing = false;
+  
+  // Flag to prevent multiple form updates
+  private formsInitialized = false;
 
   // Dynamic form handlers
   onBasicInfoSubmit(formData: any): void {
@@ -97,10 +126,11 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
   onProfessionalSubmit(formData: any): void {
     const updateData: any = {};
     
-    // Legacy compatibility fields - strings
+    // Professional Information - strings
+    if (formData.professional_summary?.trim()) updateData.professional_summary = formData.professional_summary.trim();
     if (formData.current_role?.trim()) updateData.current_role = formData.current_role.trim();
     if (formData.current_company?.trim()) updateData.current_company = formData.current_company.trim();
-    if (formData.professional_summary?.trim()) updateData.professional_summary = formData.professional_summary.trim();
+    if (formData.portfolio_link?.trim()) updateData.portfolio_link = formData.portfolio_link.trim();
     
     // Professional Information - int (must be >= 0)
     if (formData.overall_experience_years !== undefined && formData.overall_experience_years !== null && formData.overall_experience_years !== '') {
@@ -128,6 +158,9 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
   onJobPreferencesSubmit(formData: any): void {
     const updateData: any = {};
     
+    // Career preferences
+    if (formData.desired_job_title?.trim()) updateData.desired_job_title = formData.desired_job_title.trim();
+    
     // Preferences - List[Literal] (arrays of specific string values)
     if (formData.job_preferences?.trim()) {
       const validPrefs = ['remote', 'hybrid', 'on-site'];
@@ -143,7 +176,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
       }
     }
     
-    // Legacy compatibility - expected_salary as float
+    // Expected salary with currency
     if (formData.expected_salary !== undefined && formData.expected_salary !== null && formData.expected_salary !== '') {
       const salary = Number(formData.expected_salary);
       if (!isNaN(salary) && salary >= 0) {
@@ -151,10 +184,11 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
       }
     }
     
-    // Legacy compatibility - desired_job_title as string
-    if (formData.desired_job_title?.trim()) updateData.desired_job_title = formData.desired_job_title.trim();
+    if (formData.currency?.trim()) {
+      updateData.currency = formData.currency.trim();
+    }
     
-    this.updateProfile(updateData, 'Job preferences updated successfully!');
+    this.updateProfile(updateData, 'Career preferences updated successfully!');
     this.isJobPreferencesEditing = false;
   }
 
@@ -162,24 +196,335 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
     this.isJobPreferencesEditing = !this.isJobPreferencesEditing;
   }
 
+  // Skills handlers
+  onSkillsSubmit(formData: any): void {
+    console.log('Skills form data received:', formData);
+    const updateData: any = {};
+    
+    // Process technical skills array and map to simple skills array
+    const skillsArray = this.processDynamicArrayData(formData, 'technical_skills');
+    console.log('Processed skills array:', skillsArray);
+    
+    if (skillsArray.length > 0) {
+      updateData.skills = skillsArray.map((skill: any) => skill.name).filter(Boolean);
+      updateData.technical_skills = skillsArray; // Store detailed skills separately
+    }
+    
+    console.log('Skills update data:', updateData);
+    this.updateProfile(updateData, 'Skills updated successfully!');
+    this.isSkillsEditing = false;
+  }
+
+  onSkillsToggleEdit(): void {
+    this.isSkillsEditing = !this.isSkillsEditing;
+  }
+
+  // Experience handlers
+  onExperienceSubmit(formData: any): void {
+    console.log('Experience form data received:', formData);
+    const updateData: any = {};
+    
+    // Process work experience array
+    const experienceArray = this.processDynamicArrayData(formData, 'experiences');
+    console.log('Processed experience array:', experienceArray);
+    
+    if (experienceArray.length > 0) {
+      updateData.work_experience = experienceArray;
+    }
+    
+    console.log('Experience update data:', updateData);
+    this.updateProfile(updateData, 'Experience updated successfully!');
+    this.isExperienceEditing = false;
+  }
+
+  onExperienceToggleEdit(): void {
+    this.isExperienceEditing = !this.isExperienceEditing;
+  }
+
+  // Education handlers
+  onEducationSubmit(formData: any): void {
+    console.log('Education form data received:', formData);
+    const updateData: any = {};
+    
+    const educationArray = this.processDynamicArrayData(formData, 'education');
+    console.log('Processed education array:', educationArray);
+    
+    if (educationArray.length > 0) {
+      updateData.education = educationArray;
+    }
+    
+    console.log('Education update data:', updateData);
+    this.updateProfile(updateData, 'Education updated successfully!');
+    this.isEducationEditing = false;
+  }
+
+  onEducationToggleEdit(): void {
+    this.isEducationEditing = !this.isEducationEditing;
+  }
+
+  // Projects handlers
+  onProjectsSubmit(formData: any): void {
+    console.log('Projects form data received:', formData);
+    const updateData: any = {};
+    
+    const projectsArray = this.processDynamicArrayData(formData, 'projects');
+    console.log('Processed projects array:', projectsArray);
+    
+    if (projectsArray.length > 0) {
+      updateData.projects = projectsArray;
+    }
+    
+    console.log('Projects update data:', updateData);
+    this.updateProfile(updateData, 'Projects updated successfully!');
+    this.isProjectsEditing = false;
+  }
+
+  onProjectsToggleEdit(): void {
+    this.isProjectsEditing = !this.isProjectsEditing;
+  }
+
+  // Certifications handlers
+  onCertificationsSubmit(formData: any): void {
+    console.log('Certifications form data received:', formData);
+    const updateData: any = {};
+    
+    const certificationsArray = this.processDynamicArrayData(formData, 'certifications');
+    console.log('Processed certifications array:', certificationsArray);
+    
+    if (certificationsArray.length > 0) {
+      updateData.certifications = certificationsArray;
+    }
+    
+    console.log('Certifications update data:', updateData);
+    this.updateProfile(updateData, 'Certifications updated successfully!');
+    this.isCertificationsEditing = false;
+  }
+
+  onCertificationsToggleEdit(): void {
+    this.isCertificationsEditing = !this.isCertificationsEditing;
+  }
+
+  // Helper method to process dynamic array data
+  private processDynamicArrayData(formData: any, arrayName: string): any[] {
+    const result: any[] = [];
+    const keys = Object.keys(formData).filter(key => key.startsWith(arrayName + '_item_'));
+    
+    console.log(`Processing ${arrayName} with keys:`, keys);
+    
+    // Group by item ID
+    const itemGroups: { [itemId: string]: any } = {};
+    keys.forEach(key => {
+      // For experiences_item_0_company, extract item_0 and company
+      const match = key.match(new RegExp(`^${arrayName}_(item_\\d+)_(.+)$`));
+      if (match) {
+        const itemId = match[1]; // item_0, item_1, etc.
+        const fieldName = match[2]; // company, position, etc.
+        if (!itemGroups[itemId]) itemGroups[itemId] = {};
+        itemGroups[itemId][fieldName] = formData[key];
+        console.log(`Grouped ${key} -> ${itemId}.${fieldName} = ${formData[key]}`);
+      }
+    });
+    
+    console.log(`Item groups for ${arrayName}:`, itemGroups);
+    
+    // Convert to array and filter out empty items
+    Object.values(itemGroups).forEach(item => {
+      // Check if item has at least one non-empty required field
+      const hasRequiredData = Object.values(item).some(value => 
+        value && value.toString().trim() !== ''
+      );
+      if (hasRequiredData) {
+        result.push(item);
+        console.log(`Added valid item:`, item);
+      }
+    });
+    
+    console.log(`Final result for ${arrayName}:`, result);
+    return result;
+  }
+
+  // Methods to populate dynamic array values
+  private populateSkillsValues(user: any): any {
+    const values: any = {};
+    
+    if (user?.technical_skills && Array.isArray(user.technical_skills)) {
+      const validSkills = user.technical_skills.filter((skill: any) => skill && skill.name);
+      if (validSkills.length > 0) {
+        validSkills.forEach((skill: any, index: number) => {
+          const itemId = `item_${index}`;
+          values[`technical_skills_${itemId}_name`] = skill.name || '';
+          values[`technical_skills_${itemId}_version`] = skill.version || '';
+          values[`technical_skills_${itemId}_experience`] = skill.experience || '';
+        });
+      }
+    } else if (user?.skills && Array.isArray(user.skills)) {
+      const validSkills = user.skills.filter((skill: string) => skill && skill.trim());
+      if (validSkills.length > 0) {
+        validSkills.forEach((skillName: string, index: number) => {
+          const itemId = `item_${index}`;
+          values[`technical_skills_${itemId}_name`] = skillName;
+          values[`technical_skills_${itemId}_version`] = '';
+          values[`technical_skills_${itemId}_experience`] = 'Beginner (0-6 months)';
+        });
+      }
+    }
+    
+    return values;
+  }
+
+  private populateExperienceValues(user: any): any {
+    const values: any = {};
+    
+    if (user?.work_experience && Array.isArray(user.work_experience)) {
+      // Handle malformed data from database (array of separate objects)
+      if (user.work_experience.length > 0 && typeof user.work_experience[0] === 'object') {
+        // Check if it's malformed data (separate objects with empty keys)
+        const hasEmptyKeys = user.work_experience.some((item: any) => item.hasOwnProperty(''));
+        
+        if (hasEmptyKeys) {
+          console.log('Detected malformed work experience data, skipping population');
+          // Don't populate malformed data - let user re-enter
+          return values;
+        }
+        
+        // Handle properly formatted data
+        const validExperiences = user.work_experience.filter((exp: any) => 
+          exp && (exp.company || exp.position || exp.description)
+        );
+        
+        if (validExperiences.length > 0) {
+          validExperiences.forEach((exp: any, index: number) => {
+            const itemId = `item_${index}`;
+            values[`experiences_${itemId}_company`] = exp.company || '';
+            values[`experiences_${itemId}_position`] = exp.position || '';
+            values[`experiences_${itemId}_start_date`] = exp.start_date || '';
+            values[`experiences_${itemId}_end_date`] = exp.end_date || '';
+            values[`experiences_${itemId}_description`] = exp.description || '';
+          });
+        }
+      }
+    }
+    
+    return values;
+  }
+
+  private populateEducationValues(user: any): any {
+    const values: any = {};
+    if (user?.education && Array.isArray(user.education) && user.education.length > 0) {
+      // Check for malformed data
+      const hasEmptyKeys = user.education.some((item: any) => item.hasOwnProperty(''));
+      
+      if (hasEmptyKeys) {
+        console.log('Detected malformed education data, skipping population');
+        return values;
+      }
+      
+      const validEducation = user.education.filter((edu: any) => 
+        edu && (edu.institution || edu.education_type)
+      );
+      
+      if (validEducation.length > 0) {
+        validEducation.forEach((edu: any, index: number) => {
+          const itemId = `item_${index}`;
+          values[`education_${itemId}_institution`] = edu.institution || '';
+          values[`education_${itemId}_education_type`] = edu.education_type || '';
+          values[`education_${itemId}_start_date`] = edu.start_date || '';
+          values[`education_${itemId}_end_date`] = edu.end_date || '';
+        });
+      }
+    }
+    return values;
+  }
+
+  private populateProjectsValues(user: any): any {
+    const values: any = {};
+    if (user?.projects && Array.isArray(user.projects) && user.projects.length > 0) {
+      user.projects.forEach((project: any, index: number) => {
+        const itemId = `item_${index}`;
+        values[`projects_${itemId}_name`] = project.name || '';
+        values[`projects_${itemId}_url`] = project.url || '';
+        values[`projects_${itemId}_description`] = project.description || '';
+        values[`projects_${itemId}_technologies`] = project.technologies || '';
+      });
+    } else {
+      console.log('No projects data found, not creating default values');
+    }
+    return values;
+  }
+
+  private populateCertificationsValues(user: any): any {
+    const values: any = {};
+    if (user?.certifications && Array.isArray(user.certifications) && user.certifications.length > 0) {
+      const validCertifications = user.certifications.filter((cert: any) => {
+        if (typeof cert === 'object' && cert.name) {
+          return true;
+        } else if (typeof cert === 'string' && cert.trim()) {
+          return true;
+        }
+        return false;
+      });
+      
+      if (validCertifications.length > 0) {
+        validCertifications.forEach((cert: any, index: number) => {
+          const itemId = `item_${index}`;
+          if (typeof cert === 'object' && cert.name) {
+            // Handle object format
+            values[`certifications_${itemId}_name`] = cert.name || '';
+            values[`certifications_${itemId}_issuer`] = cert.issuer || '';
+            values[`certifications_${itemId}_date`] = cert.date || cert.issue_date || '';
+            values[`certifications_${itemId}_credential_id`] = cert.credential_id || '';
+          } else if (typeof cert === 'string') {
+            // Handle string format
+            values[`certifications_${itemId}_name`] = cert;
+            values[`certifications_${itemId}_issuer`] = '';
+            values[`certifications_${itemId}_date`] = '';
+            values[`certifications_${itemId}_credential_id`] = '';
+          }
+        });
+      }
+    }
+    return values;
+  }
+
   private updateProfile(updateData: any, successMessage: string): void {
+    console.log('Starting profile update with data:', updateData);
+    
+    // Check if there's actually data to update
+    if (!updateData || Object.keys(updateData).length === 0) {
+      console.warn('No data to update, skipping profile update');
+      this.snackBar.open('No changes to save', 'Close', {
+        duration: 2000,
+        panelClass: ['info-snackbar']
+      });
+      return;
+    }
+    
     this.isSaving = true;
     
     this.userService.updateCurrentUser(updateData)
       .pipe(
         takeUntil(this.destroy$),
-        finalize(() => this.isSaving = false)
+        finalize(() => {
+          console.log('Profile update completed, setting isSaving to false');
+          this.isSaving = false;
+        })
       )
       .subscribe({
-        next: () => {
+        next: (response) => {
+          console.log('Profile update successful:', response);
           this.snackBar.open(successMessage, 'Close', {
             duration: 3000,
             panelClass: ['success-snackbar']
           });
+          // Reset forms initialized flag to allow refresh
+          this.formsInitialized = false;
           // Refresh user data after successful update
           this.loadUserProfile();
+          // Sync with resume builder
+          this.syncWithResumeBuilder();
         },
         error: (error) => {
+          console.error('Profile update error:', error);
           this.snackBar.open('Error updating profile. Please try again.', 'Close', {
             duration: 3000,
             panelClass: ['error-snackbar']
@@ -188,27 +533,49 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
       });
   }
 
+  private syncWithResumeBuilder(): void {
+    // Sync updated profile data with resume builder
+    this.resumeIntegrationService.getResumeData().subscribe({
+      next: (resumeData) => {
+        console.log('Profile synced with resume builder:', resumeData);
+      },
+      error: (error) => {
+        console.error('Resume sync error:', error);
+      }
+    });
+  }
+
   basicInfoValues: any = {};
   professionalValues: any = {};
+  skillsValues: any = {};
+  experienceValues: any = {};
+  educationValues: any = {};
+  projectsValues: any = {};
+  certificationsValues: any = {};
   jobPreferencesValues: any = {};
 
   private updateFormValues(): void {
     const user = this.currentUser as any;
-    console.log('Updating form values with user:', user);
+    console.log('\n=== UPDATING FORM VALUES ===');
+    console.log('User data:', {
+      technical_skills: user?.technical_skills,
+      work_experience: user?.work_experience,
+      education: user?.education,
+      projects: user?.projects,
+      certifications: user?.certifications
+    });
     
+    // Update all form values
     this.basicInfoValues = {
       first_name: user?.first_name || '',
       last_name: user?.last_name || '',
+      email: user?.email || '',
       phone: user?.phone || '',
-      // Check both direct fields and nested personal_info structure
-      city: user?.city || user?.personal_info?.location?.city || '',
-      state: user?.state || user?.personal_info?.location?.state || '',
+      location: [user?.city, user?.state].filter(Boolean).join(', ') || '',
       date_of_birth: user?.date_of_birth ? new Date(user.date_of_birth).toISOString().split('T')[0] : ''
     };
-    console.log('Basic info values:', this.basicInfoValues);
 
     this.professionalValues = {
-      // Check both direct fields and nested professional_info structure
       current_role: user?.current_role || user?.professional_info?.current_role || '',
       current_company: user?.current_company || user?.professional_info?.current_company || '',
       overall_experience_years: user?.overall_experience_years || 0,
@@ -217,27 +584,43 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
       linkedin_link: user?.linkedin_link || user?.social_links?.linkedin || '',
       github_link: user?.github_link || user?.social_links?.github || ''
     };
-    console.log('Professional values:', this.professionalValues);
+
+    this.skillsValues = this.populateSkillsValues(user);
+    this.experienceValues = this.populateExperienceValues(user);
+    this.educationValues = this.populateEducationValues(user);
+    this.projectsValues = this.populateProjectsValues(user);
+    this.certificationsValues = this.populateCertificationsValues(user);
 
     this.jobPreferencesValues = {
+      desired_job_title: user?.desired_job_title || user?.professional_info?.desired_job_title || '',
       job_preferences: user?.job_preferences?.[0] || '',
       employment_type: user?.employment_type?.[0] || '',
       expected_salary: user?.expected_salary || user?.professional_info?.expected_salary || 0,
-      desired_job_title: user?.desired_job_title || user?.professional_info?.desired_job_title || ''
+      currency: 'INR'
     };
-    console.log('Job preferences values:', this.jobPreferencesValues);
+    
+    console.log('Form values updated:');
+    console.log('- Experience values keys:', Object.keys(this.experienceValues).length);
+    console.log('- Skills values keys:', Object.keys(this.skillsValues).length);
+    console.log('- Education values keys:', Object.keys(this.educationValues).length);
+    console.log('- Projects values keys:', Object.keys(this.projectsValues).length);
+    console.log('- Certifications values keys:', Object.keys(this.certificationsValues).length);
+    console.log('=== FORM VALUES UPDATE COMPLETE ===\n');
   }
 
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
     private authService: AuthService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private resumeIntegrationService: ResumeIntegrationService,
+    private testProfileService: TestProfileService
   ) {
     this.createForm();
   }
 
   ngOnInit(): void {
+    console.log('Profile component initializing...');
     this.loadUserProfile();
   }
 
@@ -246,17 +629,36 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private updateDynamicForms(): void {
+    if (this.formsInitialized) return;
+    
     setTimeout(() => {
-      if (this.basicForm) {
+      if (this.basicForm && Object.keys(this.basicInfoValues).length > 0) {
         this.basicForm.patchValue(this.basicInfoValues);
       }
-      if (this.professionalForm) {
+      if (this.professionalForm && Object.keys(this.professionalValues).length > 0) {
         this.professionalForm.patchValue(this.professionalValues);
       }
-      if (this.jobPreferencesForm) {
+      if (this.skillsForm && Object.keys(this.skillsValues).length > 0) {
+        this.skillsForm.patchValue(this.skillsValues);
+      }
+      if (this.experienceForm && Object.keys(this.experienceValues).length > 0) {
+        this.experienceForm.patchValue(this.experienceValues);
+      }
+      if (this.educationForm && Object.keys(this.educationValues).length > 0) {
+        this.educationForm.patchValue(this.educationValues);
+      }
+      if (this.projectsForm && Object.keys(this.projectsValues).length > 0) {
+        this.projectsForm.patchValue(this.projectsValues);
+      }
+      if (this.certificationsForm && Object.keys(this.certificationsValues).length > 0) {
+        this.certificationsForm.patchValue(this.certificationsValues);
+      }
+      if (this.jobPreferencesForm && Object.keys(this.jobPreferencesValues).length > 0) {
         this.jobPreferencesForm.patchValue(this.jobPreferencesValues);
       }
-    }, 100);
+      
+      this.formsInitialized = true;
+    }, 500);
   }
 
   // Helper function to convert salary range string to expected_salary object
@@ -287,7 +689,9 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private loadUserProfile(): void {
+    console.log('Loading user profile...');
     if (!this.authService.isAuthenticated()) {
+      console.log('User not authenticated');
       return;
     }
     
@@ -295,15 +699,30 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
     this.authService.getCurrentUser()
       .pipe(
         takeUntil(this.destroy$),
-        finalize(() => this.isLoading = false)
+        finalize(() => {
+          console.log('Profile loading finished');
+          this.isLoading = false;
+        })
       )
       .subscribe({
         next: (user: any) => {
+          console.log('\n=== USER DATA RECEIVED ===');
+          console.log('User work_experience:', user?.work_experience);
+          console.log('User technical_skills:', user?.technical_skills);
+          console.log('User education:', user?.education);
+          console.log('User projects:', user?.projects);
+          console.log('User certifications:', user?.certifications);
+          
           this.currentUser = user as any;
           this.updateFormValues();
+          
+          // Only update forms once after all values are set
           this.updateDynamicForms();
+          
+          console.log('=== USER DATA PROCESSING COMPLETE ===\n');
         },
         error: (error: any) => {
+          console.error('Error loading profile:', error);
           if (error.status === 401) {
             this.authService.clearAllAuthData();
           }
@@ -582,6 +1001,16 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 
   getSkills(): string[] {
     const user = this.currentUser as any;
+    // Get skills from technical skills with version info
+    if (user?.technical_skills && Array.isArray(user.technical_skills) && user.technical_skills.length > 0) {
+      return user.technical_skills.map((skill: any) => {
+        const name = skill.name || '';
+        const version = skill.version || '';
+        return version ? `${name} (${version})` : name;
+      }).filter(Boolean);
+    }
+    
+    // Fallback to simple skills array
     return user?.skills || [];
   }
 
@@ -742,5 +1171,102 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
       'employmentType': 'Employment Type'
     };
     return fieldNames[fieldName] || fieldName;
+  }
+
+  // Self-testing methods
+  runSelfTest(): void {
+    console.log('🧪 Running Profile Self Test...');
+    
+    this.testProfileService.testProfileFlow().subscribe({
+      next: (result) => {
+        console.log('✅ Self Test Results:', result);
+        
+        const passedTests = result.tests.filter((test: any) => test.status === 'PASS').length;
+        const totalTests = result.tests.length;
+        
+        this.snackBar.open(
+          `Self Test Complete: ${passedTests}/${totalTests} tests passed`,
+          'View Details',
+          { duration: 5000, panelClass: ['success-snackbar'] }
+        );
+        
+        // Log detailed results
+        result.tests.forEach((test: any) => {
+          console.log(`${test.status === 'PASS' ? '✅' : '❌'} ${test.name}: ${test.status}`);
+        });
+      },
+      error: (error) => {
+        console.error('❌ Self Test Failed:', error);
+        this.snackBar.open('Self test failed. Check console for details.', 'Close', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
+
+  exportToResume(): void {
+    console.log('📄 Exporting profile to resume builder...');
+    
+    this.resumeIntegrationService.getResumeData().subscribe({
+      next: (resumeData) => {
+        console.log('✅ Resume data exported:', resumeData);
+        
+        this.snackBar.open(
+          'Profile data exported to resume builder successfully!',
+          'Close',
+          { duration: 3000, panelClass: ['success-snackbar'] }
+        );
+        
+        // Here you would typically navigate to resume builder or open it in a new tab
+        // For now, just log the data
+        console.log('Resume Builder Data:', JSON.stringify(resumeData, null, 2));
+      },
+      error: (error) => {
+        console.error('❌ Resume export failed:', error);
+        this.snackBar.open('Failed to export to resume builder.', 'Close', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
+
+  // Test individual form sections
+  testFormSection(sectionName: string): void {
+    console.log(`🧪 Testing ${sectionName} section...`);
+    
+    // Get current form values for the section
+    let formValues: any = {};
+    
+    switch (sectionName) {
+      case 'skills':
+        formValues = this.skillsValues;
+        break;
+      case 'experience':
+        formValues = this.experienceValues;
+        break;
+      case 'education':
+        formValues = this.educationValues;
+        break;
+      case 'projects':
+        formValues = this.projectsValues;
+        break;
+      case 'certifications':
+        formValues = this.certificationsValues;
+        break;
+      default:
+        console.warn(`Unknown section: ${sectionName}`);
+        return;
+    }
+    
+    // Validate form data
+    const validation = this.testProfileService.validateFormData({ [sectionName]: formValues });
+    
+    if (validation.isValid) {
+      console.log(`✅ ${sectionName} section validation passed`);
+    } else {
+      console.error(`❌ ${sectionName} section validation failed:`, validation.errors);
+    }
   }
 }

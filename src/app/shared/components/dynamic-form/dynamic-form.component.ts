@@ -45,16 +45,33 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   constructor(private fb: FormBuilder, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
-    this.buildForm();
-    if (this.initialValues && Object.keys(this.initialValues).length > 0) {
+    console.log(`\n🔥 ngOnInit called for form: ${this.config?.title}`);
+    console.log('Initial values on init:', this.initialValues);
+    
+    if (!this.form) {
+      this.buildForm();
+    }
+    
+
+    
+    // Only patch values if form was built and we have values
+    if (this.form && this.initialValues && Object.keys(this.initialValues).length > 0) {
       setTimeout(() => {
+        console.log('Patching initial values in ngOnInit');
         this.form.patchValue(this.initialValues);
-      }, 0);
+        this.cdr.detectChanges();
+      }, 100);
     }
   }
 
   ngOnChanges() {
+    console.log(`\n🔄 ngOnChanges called for form: ${this.config?.title}`);
+    console.log('Has form:', !!this.form);
+    console.log('Initial values:', this.initialValues);
+    
+    // Only build form if config exists and no form is built yet
     if (this.config && this.config.fields && !this.form) {
+      console.log('Building form in ngOnChanges');
       this.buildForm();
     }
   }
@@ -62,26 +79,63 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   private buildForm() {
     if (!this.config?.fields) return;
     
+    console.log(`Building form: ${this.config.title}`);
+    
+    // Clear previous state
+    this.arrayItems = {};
     const formControls: { [key: string]: [any, any[]] } = {};
     
     this.config.fields.forEach(field => {
       if (field.type === 'dynamic-array') {
-        const itemId = this.generateId();
-        this.arrayItems[field.name] = [itemId];
-        this.createArrayItemControls(field, itemId, formControls);
+        this.initializeArrayField(field, formControls);
       } else {
         const validators = this.getValidators(field);
-        const initialValue = this.initialValues?.[field.name] ||
-          (field.type === 'checkbox' ? false : '');
+        const initialValue = this.initialValues?.[field.name] || (field.type === 'checkbox' ? false : '');
         formControls[field.name] = [initialValue, validators];
       }
     });
     
     this.form = this.fb.group(formControls);
+    this.form.valueChanges.subscribe(value => this.formChange.emit(value));
     
-    this.form.valueChanges.subscribe(value => {
-      this.formChange.emit(value);
+    console.log(`Form built with ${Object.keys(formControls).length} controls`);
+  }
+
+  private initializeArrayField(field: any, formControls: { [key: string]: [any, any[]] }) {
+    console.log(`\n=== INITIALIZING ARRAY FIELD: ${field.name} ===`);
+    
+    // Extract item IDs from initial values
+    const itemIds = new Set<string>();
+    Object.keys(this.initialValues || {}).forEach(key => {
+      const match = key.match(new RegExp(`^${field.name}_(item_\\d+)_`));
+      if (match) {
+        itemIds.add(match[1]);
+      }
     });
+    
+    if (itemIds.size > 0) {
+      // Sort item IDs numerically
+      const sortedIds = Array.from(itemIds).sort((a, b) => {
+        const aNum = parseInt(a.split('_')[1]);
+        const bNum = parseInt(b.split('_')[1]);
+        return aNum - bNum;
+      });
+      
+      this.arrayItems[field.name] = sortedIds;
+      console.log(`${field.name}: Found ${sortedIds.length} items:`, sortedIds);
+      
+      // Create controls for each item
+      sortedIds.forEach(itemId => {
+        this.createArrayItemControls(field, itemId, formControls);
+      });
+    } else {
+      // No data - create single empty item
+      this.arrayItems[field.name] = ['item_0'];
+      this.createArrayItemControls(field, 'item_0', formControls);
+      console.log(`${field.name}: No data, created 1 empty item`);
+    }
+    
+    console.log(`=== END INIT ${field.name} ===\n`);
   }
 
   private createArrayItemControls(field: FormFieldConfig, itemId: string, formControls: { [key: string]: [any, any[]] }) {
@@ -89,13 +143,16 @@ export class DynamicFormComponent implements OnInit, OnChanges {
       field.fields.forEach(subField => {
         const controlName = `${field.name}_${itemId}_${subField.name}`;
         const validators = this.getValidators(subField);
-        formControls[controlName] = ['', validators];
+        const initialValue = this.initialValues?.[controlName] || '';
+        console.log(`Creating control ${controlName} with value:`, initialValue);
+        formControls[controlName] = [initialValue, validators];
       });
     }
   }
 
   private generateId(): string {
-    return Math.random().toString(36).substr(2, 9);
+    const timestamp = Date.now().toString().slice(-6);
+    return `item_${timestamp}`;
   }
 
   private getValidators(field: FormFieldConfig) {
@@ -202,9 +259,22 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   }
 
   onSubmit() {
+    console.log('Dynamic form onSubmit called');
+    console.log('Form valid:', this.form.valid);
+    console.log('Form value:', this.form.value);
+    
     if (this.form.valid) {
+      console.log('Emitting form submit with value:', this.form.value);
       this.formSubmit.emit(this.form.value);
     } else {
+      console.log('Form invalid, marking fields as touched');
+      console.log('Form errors:', this.form.errors);
+      Object.keys(this.form.controls).forEach(key => {
+        const control = this.form.get(key);
+        if (control?.errors) {
+          console.log(`Field ${key} errors:`, control.errors);
+        }
+      });
       this.markAllFieldsAsTouched();
     }
   }
@@ -228,8 +298,26 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   }
 
   patchValue(values: any) {
-    this.form.patchValue(values);
+    console.log('\n>>> PATCH VALUE CALLED <<<');
+    console.log('Values received:', values);
+    
+    if (!values || Object.keys(values).length === 0) {
+      return;
+    }
+    
+    // Store values and rebuild form to ensure correct structure
+    this.initialValues = { ...values };
+    
+    if (this.form) {
+      console.log('Rebuilding form with new values');
+      this.buildForm();
+    }
+    
+    this.cdr.detectChanges();
+    console.log('>>> PATCH VALUE COMPLETE <<<\n');
   }
+  
+
 
   getArrayItems(fieldName: string): string[] {
     return this.arrayItems[fieldName] || [];
@@ -262,6 +350,8 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   }
 
   private arrayItems: {[key: string]: string[]} = {};
+  
+
 
   hasFormControl(controlName: string): boolean {
     return this.form.contains(controlName);
@@ -282,4 +372,6 @@ export class DynamicFormComponent implements OnInit, OnChanges {
       return control?.value?.toString().trim();
     });
   }
+  
+
 }

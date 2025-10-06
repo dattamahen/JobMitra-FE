@@ -4,6 +4,41 @@ import { map, catchError, switchMap } from 'rxjs/operators';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
 
+export interface TechnicalSkill {
+  name: string;
+  version?: string;
+  experience: string;
+}
+
+export interface WorkExperience {
+  company: string;
+  position: string;
+  start_date: string;
+  end_date?: string;
+  description: string;
+}
+
+export interface Education {
+  institution: string;
+  education_type: string;
+  start_date: string;
+  end_date?: string;
+}
+
+export interface Project {
+  name: string;
+  url?: string;
+  description: string;
+  technologies: string;
+}
+
+export interface Certification {
+  name: string;
+  issuer: string;
+  date: string;
+  credential_id?: string;
+}
+
 export interface UserProfile {
   user_id: string;
   email: string;
@@ -21,7 +56,11 @@ export interface UserProfile {
   desired_job_title?: string;
   experience_years?: string;
   skills: string[];
-  certifications: string[];
+  technical_skills?: TechnicalSkill[];
+  work_experience?: WorkExperience[];
+  education?: Education[];
+  projects?: Project[];
+  certifications: string[] | Certification[];
   area_of_expertise: string[];
   professional_summary?: string;
   key_contributions?: string;
@@ -67,9 +106,13 @@ export interface UpdateUserRequest {
   current_job_title?: string;
   desired_job_title?: string;
   skills?: string[];
+  technical_skills?: TechnicalSkill[];
+  work_experience?: WorkExperience[];
+  education?: Education[];
+  projects?: Project[];
   professional_summary?: string;
   experience_years?: string;
-  certifications?: string[];
+  certifications?: string[] | Certification[];
   area_of_expertise?: string[];
   key_contributions?: string;
   expected_salary?: {
@@ -299,8 +342,12 @@ export class UserService {
       throw new Error('No user data provided');
     }
 
-    console.log('UserService: convertUserToProfile - Social links structure:', user.social_links);
-    console.log('UserService: convertUserToProfile - Salary data:', user.professional_info?.expected_salary);
+    console.log('UserService: convertUserToProfile - Full user data:', user);
+    console.log('UserService: convertUserToProfile - work_experience:', user.work_experience);
+    console.log('UserService: convertUserToProfile - education:', user.education);
+    console.log('UserService: convertUserToProfile - certifications:', user.certifications);
+    console.log('UserService: convertUserToProfile - technical_skills:', user.technical_skills);
+    console.log('UserService: convertUserToProfile - projects:', user.projects);
 
     // Map User fields to UserProfile format - handling both flat and nested structures
     const personalInfo = user.personal_info || {};
@@ -329,6 +376,10 @@ export class UserService {
       desired_job_title: professionalInfo.desired_job_title || professionalInfo.desired_role || user.desired_job_title,
       experience_years: professionalInfo.total_experience || user.experience_years,
       skills: professionalInfo.skills || user.skills || ['JavaScript', 'Angular', 'Node.js'],
+      technical_skills: user.technical_skills || [],
+      work_experience: user.work_experience || [],
+      education: user.education || [],
+      projects: user.projects || [],
       certifications: professionalInfo.certifications || user.certifications || [],
       area_of_expertise: professionalInfo.area_of_expertise || professionalInfo.expertise_areas || user.area_of_expertise || [professionalInfo.current_role || 'Software Development'],
       professional_summary: professionalInfo.professional_summary || professionalInfo.summary || user.professional_summary,
@@ -432,7 +483,13 @@ export class UserService {
    */
   getCurrentUserId(): string | null {
     const user = this.currentUserSubject.value;
-    return user ? user.user_id : null;
+    if (user?.user_id) {
+      return user.user_id;
+    }
+    
+    // Fallback to auth service
+    const authUser = this.authService.getCurrentUserValue();
+    return authUser?.user_id || authUser?.email || null;
   }
 
   /**

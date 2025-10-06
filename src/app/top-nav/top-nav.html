@@ -15,6 +15,13 @@
             <span>Logout</span>
           </button>
         </mat-menu>
+      } @else {
+        <button mat-button (click)="navigateToLogin()" class="auth-btn">
+          Sign In
+        </button>
+        <button mat-raised-button color="primary" (click)="navigateToSignup()" class="auth-btn">
+          Sign Up
+        </button>
       }
     </div>
   </mat-toolbar>
