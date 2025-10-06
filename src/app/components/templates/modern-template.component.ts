@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Resume } from '../../services/resume.service';
+import { Resume } from '../../shared/interfaces/resume.interfaces';
 
 @Component({
   selector: 'app-modern-template',

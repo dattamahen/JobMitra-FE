@@ -33,6 +33,81 @@
           </mat-card-content>
         </mat-card>
 
+        <!-- Skills Card -->
+        <mat-card class="form-card">
+          <mat-card-content>
+            <app-dynamic-form 
+              #skillsForm
+              [config]="skillsConfig" 
+              [initialValues]="skillsValues"
+              [readonly]="!isSkillsEditing"
+              (formSubmit)="onSkillsSubmit($event)"
+              (toggleEdit)="onSkillsToggleEdit()"
+              submitButtonText="Update Skills">
+            </app-dynamic-form>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Experience Card -->
+        <mat-card class="form-card">
+          <mat-card-content>
+            <app-dynamic-form 
+              #experienceForm
+              [config]="experienceConfig" 
+              [initialValues]="experienceValues"
+              [readonly]="!isExperienceEditing"
+              (formSubmit)="onExperienceSubmit($event)"
+              (toggleEdit)="onExperienceToggleEdit()"
+              submitButtonText="Update Experience">
+            </app-dynamic-form>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Education Card -->
+        <mat-card class="form-card">
+          <mat-card-content>
+            <app-dynamic-form 
+              #educationForm
+              [config]="educationConfig" 
+              [initialValues]="educationValues"
+              [readonly]="!isEducationEditing"
+              (formSubmit)="onEducationSubmit($event)"
+              (toggleEdit)="onEducationToggleEdit()"
+              submitButtonText="Update Education">
+            </app-dynamic-form>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Projects Card -->
+        <mat-card class="form-card">
+          <mat-card-content>
+            <app-dynamic-form 
+              #projectsForm
+              [config]="projectsConfig" 
+              [initialValues]="projectsValues"
+              [readonly]="!isProjectsEditing"
+              (formSubmit)="onProjectsSubmit($event)"
+              (toggleEdit)="onProjectsToggleEdit()"
+              submitButtonText="Update Projects">
+            </app-dynamic-form>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Certifications Card -->
+        <mat-card class="form-card">
+          <mat-card-content>
+            <app-dynamic-form 
+              #certificationsForm
+              [config]="certificationsConfig" 
+              [initialValues]="certificationsValues"
+              [readonly]="!isCertificationsEditing"
+              (formSubmit)="onCertificationsSubmit($event)"
+              (toggleEdit)="onCertificationsToggleEdit()"
+              submitButtonText="Update Certifications">
+            </app-dynamic-form>
+          </mat-card-content>
+        </mat-card>
+
         <!-- Job Preferences Card -->
         <mat-card class="form-card">
           <mat-card-content>

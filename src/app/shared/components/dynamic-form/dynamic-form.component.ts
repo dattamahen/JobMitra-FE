@@ -8,37 +8,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
-export interface FormFieldConfig {
-  name: string;
-  label: string;
-  type: 'text' | 'email' | 'password' | 'number' | 'select' | 'checkbox' | 'textarea' | 'dynamic-array' | 'chip-list' | 'url';
-  placeholder?: string;
-  required?: boolean;
-  validators?: {
-    minLength?: number;
-    maxLength?: number;
-    pattern?: string;
-    min?: number;
-    max?: number;
-  };
-  options?: { value: any; label: string }[];
-  icon?: string;
-  hint?: string;
-  rows?: number;
-  cssClass?: string;
-  width?: 'full' | 'half' | 'quarter' | 'three-quarter';
-  readonly?: boolean;
-  fields?: FormFieldConfig[]; // For dynamic-array and nested field types
-}
-
-export interface FormConfig {
-  title?: string;
-  fields: FormFieldConfig[];
-  submitLabel?: string;
-  loading?: boolean;
-  readonly?: boolean;
-}
+import { FormFieldConfig, FormConfig } from '../../interfaces/form.interfaces';
 
 @Component({
   selector: 'app-dynamic-form',
@@ -54,193 +24,8 @@ export interface FormConfig {
     MatIconModule,
     MatProgressSpinnerModule
   ],
-  template: `
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dynamic-form">
-      @if (config.title) {
-        <h3>{{ config.title }}</h3>
-      }
-      
-      <div class="form-row">
-        @for (field of config.fields; track field.name) {
-          <div [class]="getFieldClass(field)">
-          @switch (field.type) {
-            @case ('checkbox') {
-              <mat-checkbox [formControlName]="field.name">
-                {{ field.label }}
-              </mat-checkbox>
-            }
-            @default {
-              <mat-form-field appearance="outline" class="full-width" [class.readonly]="readonly || !!field.readonly">
-                <mat-label>{{ field.label }}{{ field.required ? ' *' : '' }}</mat-label>
-                
-                @switch (field.type) {
-                  @case ('select') {
-                    <mat-select [formControlName]="field.name" [disabled]="readonly || !!field.readonly">
-                      @for (option of field.options; track option.value) {
-                        <mat-option [value]="option.value">
-                          {{ option.label }}
-                        </mat-option>
-                      }
-                    </mat-select>
-                  }
-                  @case ('textarea') {
-                    <textarea 
-                      matInput 
-                      [formControlName]="field.name" 
-                      [placeholder]="field.placeholder || ''"
-                      [rows]="field.rows || 3"
-                      [readonly]="readonly || !!field.readonly">
-                    </textarea>
-                  }
-                  @case ('number') {
-                    <input 
-                      matInput 
-                      type="number" 
-                      [formControlName]="field.name" 
-                      [placeholder]="field.placeholder || ''"
-                      [readonly]="readonly || !!field.readonly">
-                  }
-                  @default {
-                    <input 
-                      matInput 
-                      [type]="getInputType(field)" 
-                      [formControlName]="field.name" 
-                      [placeholder]="field.placeholder || ''"
-                      [readonly]="readonly || !!field.readonly">
-                  }
-                }
-                
-                @if (field.icon) {
-                  <mat-icon matSuffix [class.password-toggle]="field.type === 'password'" 
-                           (click)="field.type === 'password' ? togglePasswordVisibility() : null">
-                    {{ field.type === 'password' ? (showPassword() ? 'visibility_off' : 'visibility') : field.icon }}
-                  </mat-icon>
-                }
-                
-                @if (field.hint) {
-                  <mat-hint>{{ field.hint }}</mat-hint>
-                }
-                
-                @if (form.get(field.name)?.errors && form.get(field.name)?.touched) {
-                  <mat-error>{{ getFieldError(field.name) }}</mat-error>
-                }
-              </mat-form-field>
-            }
-          }
-          </div>
-        }
-      </div>
-      
-      <div class="form-actions">
-        @if (showBackButton) {
-          <button 
-            mat-button 
-            type="button" 
-            (click)="onBack()">
-            Back
-          </button>
-        }
-        
-        @if (readonly) {
-          <button 
-            mat-raised-button 
-            color="primary" 
-            type="button" 
-            class="submit-btn"
-            (click)="onToggleEdit()">
-            <mat-icon>edit</mat-icon>
-            <span>Edit {{ config.title || 'Info' }}</span>
-          </button>
-        } @else {
-          <button 
-            mat-raised-button 
-            color="primary" 
-            type="submit" 
-            class="submit-btn"
-            [disabled]="form.invalid || isSubmitting">
-            @if (isSubmitting) {
-              <mat-spinner diameter="20"></mat-spinner>
-            }
-            @if (!isSubmitting) {
-              <span>{{ submitButtonText }}</span>
-            }
-          </button>
-        }
-      </div>
-    </form>
-  `,
-  styles: [`
-    .dynamic-form {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    
-    .form-field {
-      width: 100%;
-    }
-    
-    .form-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-    
-    .half-width {
-      flex: 1;
-    }
-    
-    .full-width {
-      width: 100%;
-    }
-    
-    .form-actions {
-      display: flex;
-      gap: 16px;
-      justify-content: flex-end;
-      margin-top: 16px;
-    }
-    
-    .submit-btn {
-      min-width: 120px;
-    }
-    
-    .half-width {
-      width: 48%;
-    }
-    
-    .quarter-width {
-      width: 23%;
-    }
-    
-    .three-quarter-width {
-      width: 73%;
-    }
-    
-    mat-spinner {
-      margin-right: 8px;
-    }
-    
-    .password-toggle {
-      cursor: pointer;
-    }
-    
-    .mat-mdc-form-field.readonly {
-      opacity: 0.6;
-      pointer-events: none;
-    }
-    
-    .mat-mdc-form-field.readonly .mat-mdc-text-field-wrapper {
-      background-color: #f5f5f5;
-    }
-    
-    .mat-mdc-form-field.readonly input,
-    .mat-mdc-form-field.readonly textarea {
-      color: #666;
-      cursor: default;
-    }
-  `]
+  templateUrl: './dynamic-form.component.html',
+  styleUrls: ['./dynamic-form.component.scss']
 })
 export class DynamicFormComponent implements OnInit, OnChanges {
   @Input() config!: FormConfig;
@@ -260,60 +45,146 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   constructor(private fb: FormBuilder, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
-    this.buildForm();
+    console.log(`\n🔥 ngOnInit called for form: ${this.config?.title}`);
+    console.log('Initial values on init:', this.initialValues);
+    
+    if (!this.form) {
+      this.buildForm();
+    }
+    
+
+    
+    // Only patch values if form was built and we have values
+    if (this.form && this.initialValues && Object.keys(this.initialValues).length > 0) {
+      setTimeout(() => {
+        console.log('Patching initial values in ngOnInit');
+        this.form.patchValue(this.initialValues);
+        this.cdr.detectChanges();
+      }, 100);
+    }
   }
 
   ngOnChanges() {
-    if (this.form && this.initialValues && Object.keys(this.initialValues).length > 0) {
-      console.log('Dynamic form patching values:', this.initialValues);
-      this.form.patchValue(this.initialValues);
-      this.cdr.detectChanges();
+    console.log(`\n🔄 ngOnChanges called for form: ${this.config?.title}`);
+    console.log('Has form:', !!this.form);
+    console.log('Initial values:', this.initialValues);
+    
+    // Only build form if config exists and no form is built yet
+    if (this.config && this.config.fields && !this.form) {
+      console.log('Building form in ngOnChanges');
+      this.buildForm();
     }
   }
 
   private buildForm() {
-    const formControls: any = {};
+    if (!this.config?.fields) return;
+    
+    console.log(`Building form: ${this.config.title}`);
+    
+    // Clear previous state
+    this.arrayItems = {};
+    const formControls: { [key: string]: [any, any[]] } = {};
     
     this.config.fields.forEach(field => {
-      const validators = [];
-      
-      if (field.required) {
-        validators.push(Validators.required);
+      if (field.type === 'dynamic-array') {
+        this.initializeArrayField(field, formControls);
+      } else {
+        const validators = this.getValidators(field);
+        const initialValue = this.initialValues?.[field.name] || (field.type === 'checkbox' ? false : '');
+        formControls[field.name] = [initialValue, validators];
       }
-      
-      if (field.type === 'email') {
-        validators.push(Validators.email);
-      }
-      
-      if (field.validators) {
-        if (field.validators.minLength) {
-          validators.push(Validators.minLength(field.validators.minLength));
-        }
-        if (field.validators.maxLength) {
-          validators.push(Validators.maxLength(field.validators.maxLength));
-        }
-        if (field.validators.min !== undefined) {
-          validators.push(Validators.min(field.validators.min));
-        }
-        if (field.validators.max !== undefined) {
-          validators.push(Validators.max(field.validators.max));
-        }
-        if (field.validators.pattern) {
-          validators.push(Validators.pattern(field.validators.pattern));
-        }
-      }
-      
-      const initialValue = this.initialValues?.[field.name] || 
-        (field.type === 'checkbox' ? false : '');
-      
-      formControls[field.name] = [initialValue, validators];
     });
     
     this.form = this.fb.group(formControls);
+    this.form.valueChanges.subscribe(value => this.formChange.emit(value));
     
-    this.form.valueChanges.subscribe(value => {
-      this.formChange.emit(value);
+    console.log(`Form built with ${Object.keys(formControls).length} controls`);
+  }
+
+  private initializeArrayField(field: any, formControls: { [key: string]: [any, any[]] }) {
+    console.log(`\n=== INITIALIZING ARRAY FIELD: ${field.name} ===`);
+    
+    // Extract item IDs from initial values
+    const itemIds = new Set<string>();
+    Object.keys(this.initialValues || {}).forEach(key => {
+      const match = key.match(new RegExp(`^${field.name}_(item_\\d+)_`));
+      if (match) {
+        itemIds.add(match[1]);
+      }
     });
+    
+    if (itemIds.size > 0) {
+      // Sort item IDs numerically
+      const sortedIds = Array.from(itemIds).sort((a, b) => {
+        const aNum = parseInt(a.split('_')[1]);
+        const bNum = parseInt(b.split('_')[1]);
+        return aNum - bNum;
+      });
+      
+      this.arrayItems[field.name] = sortedIds;
+      console.log(`${field.name}: Found ${sortedIds.length} items:`, sortedIds);
+      
+      // Create controls for each item
+      sortedIds.forEach(itemId => {
+        this.createArrayItemControls(field, itemId, formControls);
+      });
+    } else {
+      // No data - create single empty item
+      this.arrayItems[field.name] = ['item_0'];
+      this.createArrayItemControls(field, 'item_0', formControls);
+      console.log(`${field.name}: No data, created 1 empty item`);
+    }
+    
+    console.log(`=== END INIT ${field.name} ===\n`);
+  }
+
+  private createArrayItemControls(field: FormFieldConfig, itemId: string, formControls: { [key: string]: [any, any[]] }) {
+    if (field.fields) {
+      field.fields.forEach(subField => {
+        const controlName = `${field.name}_${itemId}_${subField.name}`;
+        const validators = this.getValidators(subField);
+        const initialValue = this.initialValues?.[controlName] || '';
+        console.log(`Creating control ${controlName} with value:`, initialValue);
+        formControls[controlName] = [initialValue, validators];
+      });
+    }
+  }
+
+  private generateId(): string {
+    const timestamp = Date.now().toString().slice(-6);
+    return `item_${timestamp}`;
+  }
+
+  private getValidators(field: FormFieldConfig) {
+    const validators = [];
+    
+    if (field.required) {
+      validators.push(Validators.required);
+    }
+    
+    if (field.type === 'email') {
+      validators.push(Validators.email);
+    }
+    
+    if (field.validators) {
+      if (field.validators.minLength) {
+        validators.push(Validators.minLength(field.validators.minLength));
+      }
+      if (field.validators.maxLength) {
+        validators.push(Validators.maxLength(field.validators.maxLength));
+      }
+      if (field.validators.min !== undefined) {
+        validators.push(Validators.min(field.validators.min));
+      }
+      if (field.validators.max !== undefined) {
+        validators.push(Validators.max(field.validators.max));
+      }
+      if (field.validators.pattern) {
+        validators.push(Validators.pattern(field.validators.pattern));
+      }
+    }
+    
+    return validators;
   }
 
   getInputType(field: FormFieldConfig): string {
@@ -388,9 +259,22 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   }
 
   onSubmit() {
+    console.log('Dynamic form onSubmit called');
+    console.log('Form valid:', this.form.valid);
+    console.log('Form value:', this.form.value);
+    
     if (this.form.valid) {
+      console.log('Emitting form submit with value:', this.form.value);
       this.formSubmit.emit(this.form.value);
     } else {
+      console.log('Form invalid, marking fields as touched');
+      console.log('Form errors:', this.form.errors);
+      Object.keys(this.form.controls).forEach(key => {
+        const control = this.form.get(key);
+        if (control?.errors) {
+          console.log(`Field ${key} errors:`, control.errors);
+        }
+      });
       this.markAllFieldsAsTouched();
     }
   }
@@ -414,6 +298,80 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   }
 
   patchValue(values: any) {
-    this.form.patchValue(values);
+    console.log('\n>>> PATCH VALUE CALLED <<<');
+    console.log('Values received:', values);
+    
+    if (!values || Object.keys(values).length === 0) {
+      return;
+    }
+    
+    // Store values and rebuild form to ensure correct structure
+    this.initialValues = { ...values };
+    
+    if (this.form) {
+      console.log('Rebuilding form with new values');
+      this.buildForm();
+    }
+    
+    this.cdr.detectChanges();
+    console.log('>>> PATCH VALUE COMPLETE <<<\n');
   }
+  
+
+
+  getArrayItems(fieldName: string): string[] {
+    return this.arrayItems[fieldName] || [];
+  }
+
+  addArrayItem(fieldName: string): void {
+    const field = this.config.fields.find(f => f.name === fieldName);
+    if (!field?.fields) return;
+    
+    const itemId = this.generateId();
+    
+    field.fields.forEach(subField => {
+      const controlName = `${fieldName}_${itemId}_${subField.name}`;
+      const validators = this.getValidators(subField);
+      this.form.addControl(controlName, this.fb.control('', validators));
+    });
+    
+    this.arrayItems[fieldName].push(itemId);
+  }
+
+  removeArrayItem(fieldName: string, itemId: string): void {
+    const field = this.config.fields.find(f => f.name === fieldName);
+    if (!field?.fields || this.arrayItems[fieldName].length <= 1) return;
+    
+    field.fields.forEach(subField => {
+      this.form.removeControl(`${fieldName}_${itemId}_${subField.name}`);
+    });
+    
+    this.arrayItems[fieldName] = this.arrayItems[fieldName].filter(id => id !== itemId);
+  }
+
+  private arrayItems: {[key: string]: string[]} = {};
+  
+
+
+  hasFormControl(controlName: string): boolean {
+    return this.form.contains(controlName);
+  }
+
+  canAddArrayItem(fieldName: string): boolean {
+    const field = this.config.fields.find(f => f.name === fieldName);
+    if (!field?.fields) return false;
+    
+    const lastItemId = this.arrayItems[fieldName]?.slice(-1)[0];
+    if (!lastItemId) return true;
+    
+    // Check if all required fields in the last item are filled
+    return field.fields.every(subField => {
+      if (!subField.required) return true;
+      const controlName = `${fieldName}_${lastItemId}_${subField.name}`;
+      const control = this.form.get(controlName);
+      return control?.value?.toString().trim();
+    });
+  }
+  
+
 }

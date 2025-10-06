@@ -1,4 +1,4 @@
-import { FormConfig } from './dynamic-form.component';
+import { FormConfig } from '../../interfaces/form.interfaces';
 
 export const LOGIN_FORM_CONFIG: FormConfig = {
   fields: [
@@ -446,7 +446,7 @@ export const RESUME_SKILLS_CONFIG: FormConfig = {
     {
       name: 'technical_skills',
       type: 'dynamic-array',
-      label: 'Technical Skills',
+      label: '',
       fields: [
         {
           name: 'name',
@@ -495,7 +495,7 @@ export const RESUME_EXPERIENCE_CONFIG: FormConfig = {
     {
       name: 'experiences',
       type: 'dynamic-array',
-      label: 'Work Experience',
+      label: '',
       fields: [
         {
           name: 'company',
@@ -504,7 +504,7 @@ export const RESUME_EXPERIENCE_CONFIG: FormConfig = {
           placeholder: 'e.g., Google, Microsoft',
           required: true,
           icon: 'business',
-          width: 'half'
+          width: 'quarter'
         },
         {
           name: 'position',
@@ -513,16 +513,23 @@ export const RESUME_EXPERIENCE_CONFIG: FormConfig = {
           placeholder: 'e.g., Senior Software Engineer',
           required: true,
           icon: 'work',
-          width: 'half'
+          width: 'quarter'
         },
         {
-          name: 'duration',
-          type: 'text',
-          label: 'Employment Duration',
-          placeholder: 'e.g., Jan 2021 - Present',
+          name: 'start_date',
+          type: 'date',
+          label: 'Start Date',
           required: true,
-          icon: 'schedule',
-          hint: 'Include start and end dates'
+          icon: 'event',
+          width: 'quarter'
+        },
+        {
+          name: 'end_date',
+          type: 'date',
+          label: 'End Date',
+          icon: 'event',
+          width: 'quarter',
+          hint: 'Leave empty if current position'
         },
         {
           name: 'description',
@@ -545,7 +552,7 @@ export const RESUME_EDUCATION_CONFIG: FormConfig = {
     {
       name: 'education',
       type: 'dynamic-array',
-      label: 'Educational Background',
+      label: '',
       fields: [
         {
           name: 'institution',
@@ -557,31 +564,36 @@ export const RESUME_EDUCATION_CONFIG: FormConfig = {
           width: 'half'
         },
         {
-          name: 'degree',
-          type: 'text',
-          label: 'Degree & Major',
-          placeholder: 'e.g., Bachelor of Computer Science',
+          name: 'education_type',
+          type: 'select',
+          label: 'Education Type',
           required: true,
           icon: 'military_tech',
-          width: 'half'
+          width: 'half',
+          options: [
+            { value: 'school', label: 'School' },
+            { value: 'pu', label: 'PU/Higher Secondary' },
+            { value: 'graduate', label: 'Graduate' },
+            { value: 'post_graduate', label: 'Post Graduate' },
+            { value: 'phd', label: 'PhD' },
+            { value: 'diploma', label: 'Diploma' }
+          ]
         },
         {
-          name: 'year',
-          type: 'number',
-          label: 'Graduation Year',
-          placeholder: 'e.g., 2019',
+          name: 'start_date',
+          type: 'date',
+          label: 'Start Date',
           required: true,
           icon: 'event',
           width: 'half'
         },
         {
-          name: 'gpa',
-          type: 'text',
-          label: 'GPA (Optional)',
-          placeholder: 'e.g., 3.8/4.0',
-          icon: 'grade',
+          name: 'end_date',
+          type: 'date',
+          label: 'End Date',
+          icon: 'event',
           width: 'half',
-          hint: 'Include if 3.5 or higher'
+          hint: 'Leave empty if currently studying'
         }
       ]
     }
@@ -594,7 +606,7 @@ export const RESUME_PROJECTS_CONFIG: FormConfig = {
     {
       name: 'projects',
       type: 'dynamic-array',
-      label: 'Key Projects',
+      label: '',
       fields: [
         {
           name: 'name',
@@ -644,7 +656,7 @@ export const RESUME_CERTIFICATIONS_CONFIG: FormConfig = {
     {
       name: 'certifications',
       type: 'dynamic-array',
-      label: 'Professional Certifications',
+      label: '',
       fields: [
         {
           name: 'name',
@@ -687,51 +699,61 @@ export const RESUME_CERTIFICATIONS_CONFIG: FormConfig = {
   ]
 };
 
-// Profile Form Configurations
+// Profile Form Configurations - Based on Resume Builder
 export const PROFILE_BASIC_INFO_CONFIG: FormConfig = {
-  title: 'Basic Information',
+  title: 'Personal Information',
   fields: [
     {
       name: 'first_name',
       type: 'text',
       label: 'First Name',
+      placeholder: 'e.g., John',
       required: true,
+      icon: 'person',
       width: 'half'
     },
     {
       name: 'last_name',
       type: 'text',
       label: 'Last Name',
+      placeholder: 'e.g., Doe',
       required: true,
+      icon: 'person',
       width: 'half'
+    },
+    {
+      name: 'email',
+      type: 'email',
+      label: 'Email Address',
+      placeholder: 'e.g., john@example.com',
+      required: true,
+      icon: 'email',
+      readonly: true
     },
     {
       name: 'phone',
       type: 'text',
       label: 'Phone Number',
-      placeholder: '+91 98765 43210',
-      width: 'half'
+      placeholder: 'e.g., +1 (555) 123-4567',
+      required: true,
+      width: 'half',
+      icon: 'phone'
     },
     {
       name: 'date_of_birth',
-      type: 'text',
+      type: 'date',
       label: 'Date of Birth',
-      placeholder: 'YYYY-MM-DD',
-      width: 'half'
+      width: 'half',
+      icon: 'event'
     },
     {
-      name: 'city',
+      name: 'location',
       type: 'text',
-      label: 'City',
-      placeholder: 'City',
-      width: 'half'
-    },
-    {
-      name: 'state',
-      type: 'text',
-      label: 'State',
-      placeholder: 'State',
-      width: 'half'
+      label: 'Location',
+      placeholder: 'e.g., San Francisco, CA',
+      required: true,
+      icon: 'location_on',
+      hint: 'City, State/Country'
     }
   ]
 };
@@ -740,17 +762,30 @@ export const PROFILE_PROFESSIONAL_CONFIG: FormConfig = {
   title: 'Professional Information',
   fields: [
     {
+      name: 'professional_summary',
+      type: 'textarea',
+      label: 'Professional Summary',
+      placeholder: 'Write a compelling summary of your professional experience, key skills, and career objectives. Aim for 3-4 sentences that highlight your unique value proposition.',
+      required: true,
+      rows: 6,
+      validators: { minLength: 50 }
+    },
+    {
       name: 'current_role',
       type: 'text',
-      label: 'Current Role',
-      placeholder: 'e.g. Senior Software Engineer',
+      label: 'Current Job Title',
+      placeholder: 'e.g., Senior Software Engineer',
+      required: true,
+      icon: 'work',
       width: 'half'
     },
     {
       name: 'current_company',
       type: 'text',
       label: 'Current Company',
-      placeholder: 'Company name',
+      placeholder: 'e.g., Google, Microsoft',
+      required: true,
+      icon: 'business',
       width: 'half'
     },
     {
@@ -758,12 +793,14 @@ export const PROFILE_PROFESSIONAL_CONFIG: FormConfig = {
       type: 'number',
       label: 'Years of Experience',
       placeholder: '0',
+      required: true,
       width: 'quarter'
     },
     {
       name: 'highest_qualification',
       type: 'select',
       label: 'Highest Qualification',
+      required: true,
       width: 'three-quarter',
       options: [
         { value: 'high_school', label: 'High School' },
@@ -774,47 +811,322 @@ export const PROFILE_PROFESSIONAL_CONFIG: FormConfig = {
       ]
     },
     {
-      name: 'professional_summary',
-      type: 'textarea',
-      label: 'Professional Summary',
-      placeholder: 'Brief description of your professional background...',
-      rows: 3
-    },
-    {
       name: 'linkedin_link',
       type: 'text',
       label: 'LinkedIn Profile',
-      placeholder: 'https://linkedin.com/in/username',
-      width: 'half'
+      placeholder: 'e.g., linkedin.com/in/johndoe',
+      width: 'half',
+      icon: 'link',
+      hint: 'Professional networking profile'
     },
     {
       name: 'github_link',
       type: 'text',
       label: 'GitHub Profile',
-      placeholder: 'https://github.com/username',
-      width: 'half'
+      placeholder: 'e.g., github.com/johndoe',
+      width: 'half',
+      icon: 'code',
+      hint: 'Code repository and projects'
+    },
+    {
+      name: 'portfolio_link',
+      type: 'text',
+      label: 'Portfolio Website',
+      placeholder: 'e.g., johndoe.dev',
+      icon: 'web',
+      hint: 'Personal website or portfolio'
+    }
+  ]
+};
+
+export const PROFILE_SKILLS_CONFIG: FormConfig = {
+  title: 'Skills & Expertise',
+  fields: [
+    {
+      name: 'technical_skills',
+      type: 'dynamic-array',
+      label: 'Technical Skills',
+      fields: [
+        {
+          name: 'name',
+          type: 'text',
+          label: 'Skill Name',
+          placeholder: 'e.g., JavaScript',
+          required: true,
+          icon: 'code',
+          width: 'quarter'
+        },
+        {
+          name: 'version',
+          type: 'text',
+          label: 'Version',
+          placeholder: 'e.g., ES6, v3.9',
+          icon: 'tag',
+          width: 'quarter'
+        },
+        {
+          name: 'experience',
+          type: 'select',
+          label: 'Experience',
+          required: true,
+          icon: 'star',
+          width: 'quarter',
+          options: [
+            { value: 'Beginner (0-6 months)', label: 'Beginner (0-6 months)' },
+            { value: '6 months - 1 year', label: '6 months - 1 year' },
+            { value: '1-2 years', label: '1-2 years' },
+            { value: '2-3 years', label: '2-3 years' },
+            { value: '3-4 years', label: '3-4 years' },
+            { value: '4-5 years', label: '4-5 years' },
+            { value: '5-7 years', label: '5-7 years' },
+            { value: '7-10 years', label: '7-10 years' },
+            { value: '10+ years', label: '10+ years' },
+            { value: 'Expert (15+ years)', label: 'Expert (15+ years)' }
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+export const PROFILE_EXPERIENCE_CONFIG: FormConfig = {
+  title: 'Work Experience',
+  fields: [
+    {
+      name: 'experiences',
+      type: 'dynamic-array',
+      label: 'Work Experience',
+      fields: [
+        {
+          name: 'company',
+          type: 'text',
+          label: 'Company Name',
+          placeholder: 'e.g., Google, Microsoft',
+          required: true,
+          icon: 'business',
+          width: 'half'
+        },
+        {
+          name: 'position',
+          type: 'text',
+          label: 'Job Title',
+          placeholder: 'e.g., Senior Software Engineer',
+          required: true,
+          icon: 'work',
+          width: 'half'
+        },
+        {
+          name: 'start_date',
+          type: 'date',
+          label: 'Start Date',
+          required: true,
+          icon: 'event',
+          width: 'half'
+        },
+        {
+          name: 'end_date',
+          type: 'date',
+          label: 'End Date',
+          icon: 'event',
+          width: 'half',
+          hint: 'Leave empty if current position'
+        },
+        {
+          name: 'description',
+          type: 'textarea',
+          label: 'Job Description & Achievements',
+          placeholder: '• Led development of microservices architecture\n• Improved system performance by 40%\n• Mentored junior developers',
+          required: true,
+          rows: 4,
+          icon: 'description',
+          hint: 'Use bullet points to highlight key achievements and responsibilities'
+        }
+      ]
+    }
+  ]
+};
+
+export const PROFILE_EDUCATION_CONFIG: FormConfig = {
+  title: 'Education',
+  fields: [
+    {
+      name: 'education',
+      type: 'dynamic-array',
+      label: 'Education',
+      fields: [
+        {
+          name: 'institution',
+          type: 'text',
+          label: 'Institution Name',
+          placeholder: 'e.g., Stanford University',
+          required: true,
+          icon: 'school',
+          width: 'half'
+        },
+        {
+          name: 'education_type',
+          type: 'select',
+          label: 'Education Type',
+          required: true,
+          icon: 'military_tech',
+          width: 'half',
+          options: [
+            { value: 'school', label: 'School' },
+            { value: 'pu', label: 'PU/Higher Secondary' },
+            { value: 'graduate', label: 'Graduate' },
+            { value: 'post_graduate', label: 'Post Graduate' },
+            { value: 'phd', label: 'PhD' },
+            { value: 'diploma', label: 'Diploma' }
+          ]
+        },
+        {
+          name: 'start_date',
+          type: 'date',
+          label: 'Start Date',
+          required: true,
+          icon: 'event',
+          width: 'half'
+        },
+        {
+          name: 'end_date',
+          type: 'date',
+          label: 'End Date',
+          icon: 'event',
+          width: 'half',
+          hint: 'Leave empty if currently studying'
+        }
+      ]
+    }
+  ]
+};
+
+export const PROFILE_PROJECTS_CONFIG: FormConfig = {
+  title: 'Projects',
+  fields: [
+    {
+      name: 'projects',
+      type: 'dynamic-array',
+      label: 'Projects',
+      fields: [
+        {
+          name: 'name',
+          type: 'text',
+          label: 'Project Name',
+          placeholder: 'e.g., E-commerce Platform',
+          required: true,
+          icon: 'code',
+          width: 'half'
+        },
+        {
+          name: 'url',
+          type: 'url',
+          label: 'Project URL',
+          placeholder: 'e.g., github.com/user/project',
+          icon: 'link',
+          width: 'half',
+          hint: 'GitHub, live demo, or portfolio link'
+        },
+        {
+          name: 'description',
+          type: 'textarea',
+          label: 'Project Description',
+          placeholder: '• Built a full-stack e-commerce platform\n• Implemented secure payment processing\n• Achieved 99.9% uptime with 1000+ users',
+          required: true,
+          rows: 4,
+          icon: 'description',
+          hint: 'Highlight your role, technologies used, and impact'
+        },
+        {
+          name: 'technologies',
+          type: 'text',
+          label: 'Technologies Used',
+          placeholder: 'e.g., React, Node.js, MongoDB, AWS',
+          required: true,
+          icon: 'build',
+          hint: 'Separate technologies with commas'
+        }
+      ]
+    }
+  ]
+};
+
+export const PROFILE_CERTIFICATIONS_CONFIG: FormConfig = {
+  title: 'Certifications',
+  fields: [
+    {
+      name: 'certifications',
+      type: 'dynamic-array',
+      label: 'Certifications',
+      fields: [
+        {
+          name: 'name',
+          type: 'text',
+          label: 'Certification Name',
+          placeholder: 'e.g., AWS Solutions Architect',
+          required: true,
+          icon: 'verified',
+          width: 'half'
+        },
+        {
+          name: 'issuer',
+          type: 'text',
+          label: 'Issuing Organization',
+          placeholder: 'e.g., Amazon Web Services',
+          required: true,
+          icon: 'business',
+          width: 'half'
+        },
+        {
+          name: 'date',
+          type: 'text',
+          label: 'Issue Date',
+          placeholder: 'e.g., March 2023',
+          required: true,
+          icon: 'event',
+          width: 'half'
+        },
+        {
+          name: 'credential_id',
+          type: 'text',
+          label: 'Credential ID',
+          placeholder: 'e.g., ABC123XYZ',
+          icon: 'fingerprint',
+          width: 'half',
+          hint: 'Optional verification ID'
+        }
+      ]
     }
   ]
 };
 
 export const PROFILE_JOB_PREFERENCES_CONFIG: FormConfig = {
-  title: 'Job Preferences',
+  title: 'Career Preferences',
   fields: [
+    {
+      name: 'desired_job_title',
+      type: 'text',
+      label: 'Desired Job Title',
+      placeholder: 'e.g., Senior Software Engineer',
+      required: true,
+      icon: 'work'
+    },
     {
       name: 'job_preferences',
       type: 'select',
       label: 'Preferred Work Type',
+      required: true,
       width: 'half',
       options: [
         { value: 'remote', label: 'Remote' },
-        { value: 'on-site', label: 'On-site' },
-        { value: 'hybrid', label: 'Hybrid' }
+        { value: 'hybrid', label: 'Hybrid' },
+        { value: 'on-site', label: 'On-site' }
       ]
     },
     {
       name: 'employment_type',
       type: 'select',
       label: 'Employment Type',
+      required: true,
       width: 'half',
       options: [
         { value: 'full-time', label: 'Full-time' },
@@ -826,16 +1138,22 @@ export const PROFILE_JOB_PREFERENCES_CONFIG: FormConfig = {
     {
       name: 'expected_salary',
       type: 'number',
-      label: 'Expected Salary',
+      label: 'Expected Salary (Annual)',
       placeholder: '0',
-      width: 'half'
+      width: 'half',
+      icon: 'attach_money'
     },
     {
-      name: 'desired_job_title',
-      type: 'text',
-      label: 'Desired Job Title',
-      placeholder: 'e.g. Senior Software Engineer',
-      width: 'half'
+      name: 'currency',
+      type: 'select',
+      label: 'Currency',
+      width: 'half',
+      options: [
+        { value: 'INR', label: 'INR (₹)' },
+        { value: 'USD', label: 'USD ($)' },
+        { value: 'EUR', label: 'EUR (€)' },
+        { value: 'GBP', label: 'GBP (£)' }
+      ]
     }
   ]
 };

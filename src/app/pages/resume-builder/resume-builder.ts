@@ -20,7 +20,8 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { ResumeService, Resume, ResumeTemplate } from '../../services/resume.service';
+import { ResumeService } from '../../services/resume.service';
+import { Resume, ResumeTemplate, Experience, Education, Project, Certification } from '../../shared/interfaces/resume.interfaces';
 import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 import { 
@@ -500,7 +501,7 @@ export class ResumeBuilderPage implements OnInit {
     // Populate experience forms
     if (resume.sections.experience?.length > 0) {
       this.experienceCount.set(resume.sections.experience.length);
-      resume.sections.experience.forEach((exp, index) => {
+      resume.sections.experience.forEach((exp: Experience, index: number) => {
         this.experienceForm.patchValue({
           [`company_${index}`]: exp.company,
           [`position_${index}`]: exp.position,
@@ -513,7 +514,7 @@ export class ResumeBuilderPage implements OnInit {
     // Populate education forms
     if (resume.sections.education?.length > 0) {
       this.educationCount.set(resume.sections.education.length);
-      resume.sections.education.forEach((edu, index) => {
+      resume.sections.education.forEach((edu: Education, index: number) => {
         this.educationForm.patchValue({
           [`institution_${index}`]: edu.institution,
           [`degree_${index}`]: edu.degree,
@@ -526,7 +527,7 @@ export class ResumeBuilderPage implements OnInit {
     // Populate projects forms
     if (resume.sections.projects?.length > 0) {
       this.projectCount.set(resume.sections.projects.length);
-      resume.sections.projects.forEach((proj, index) => {
+      resume.sections.projects.forEach((proj: Project, index: number) => {
         this.projectsForm.patchValue({
           [`name_${index}`]: proj.name,
           [`description_${index}`]: proj.description,
@@ -539,7 +540,7 @@ export class ResumeBuilderPage implements OnInit {
     // Populate certifications forms
     if (resume.sections.certifications?.length > 0) {
       this.certificationCount.set(resume.sections.certifications.length);
-      resume.sections.certifications.forEach((cert, index) => {
+      resume.sections.certifications.forEach((cert: Certification, index: number) => {
         this.certificationsForm.patchValue({
           [`name_${index}`]: cert.name,
           [`issuer_${index}`]: cert.issuer,
@@ -1130,7 +1131,7 @@ export class ResumeBuilderPage implements OnInit {
         ${experience.length ? `
           <div style="margin-bottom: 15px;">
             <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 2px; margin: 0 0 8px 0; font-size: 14px;">Experience</h2>
-            ${experience.map(exp => `
+            ${experience.map((exp: any) => `
               <div style="margin-bottom: 12px;">
                 <h3 style="margin: 0; color: #333; font-size: 13px;">${exp.position}</h3>
                 <p style="margin: 2px 0; font-weight: bold; color: #666; font-size: 11px;">${exp.company} | ${exp.duration}</p>
@@ -1143,7 +1144,7 @@ export class ResumeBuilderPage implements OnInit {
         ${education.length ? `
           <div style="margin-bottom: 15px;">
             <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 2px; margin: 0 0 8px 0; font-size: 14px;">Education</h2>
-            ${education.map(edu => `
+            ${education.map((edu: any) => `
               <div style="margin-bottom: 10px;">
                 <h3 style="margin: 0; color: #333; font-size: 13px;">${edu.degree}</h3>
                 <p style="margin: 2px 0; color: #666; font-size: 11px;">${edu.institution} | ${edu.year}</p>
@@ -1164,7 +1165,7 @@ export class ResumeBuilderPage implements OnInit {
         ${projects.length ? `
           <div style="margin-bottom: 15px;">
             <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 2px; margin: 0 0 8px 0; font-size: 14px;">Projects</h2>
-            ${projects.map(proj => `
+            ${projects.map((proj: any) => `
               <div style="margin-bottom: 10px;">
                 <h3 style="margin: 0; color: #333; font-size: 13px;">${proj.name}</h3>
                 ${proj.url ? `<p style="margin: 2px 0; color: #666; font-size: 11px;">${proj.url}</p>` : ''}
@@ -1178,7 +1179,7 @@ export class ResumeBuilderPage implements OnInit {
         ${certifications.length ? `
           <div style="margin-bottom: 15px;">
             <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 2px; margin: 0 0 8px 0; font-size: 14px;">Certifications</h2>
-            ${certifications.map(cert => `
+            ${certifications.map((cert: any) => `
               <div style="margin-bottom: 10px;">
                 <h3 style="margin: 0; color: #333; font-size: 13px;">${cert.name}</h3>
                 <p style="margin: 2px 0; color: #666; font-size: 11px;">${cert.issuer} | ${cert.date}</p>

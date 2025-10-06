@@ -55,6 +55,10 @@ export class TopNav implements OnInit {
     this.router.navigate(['/login']);
   }
 
+  navigateToSignup() {
+    this.router.navigate(['/signup']);
+  }
+
   navigateToDashboard() {
     this.router.navigate(['/dashboard']);
   }

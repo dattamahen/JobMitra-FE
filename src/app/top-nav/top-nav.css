@@ -30,6 +30,12 @@
   border-color: #22252f;
 }
 
+.auth-btn {
+  min-width: 80px;
+  height: 36px;
+  font-weight: 500;
+}
+
 .logout-btn {
   background-color: #dc3545 !important;
   color: white !important;

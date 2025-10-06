@@ -13,6 +13,7 @@ import { takeUntil } from 'rxjs/operators';
 
 import { DashboardService } from '../../services/dashboard.service';
 import { DashboardData, DashboardStats, ActivityItem } from '../../types/dashboard.types';
+import { LoadingComponent } from '../../shared/components/loading/loading.component';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -26,7 +27,8 @@ import { DashboardData, DashboardStats, ActivityItem } from '../../types/dashboa
     MatProgressBarModule,
     MatButtonModule,
     MatBadgeModule,
-    MatDividerModule
+    MatDividerModule,
+    LoadingComponent
   ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']

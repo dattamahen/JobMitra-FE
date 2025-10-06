@@ -47,12 +47,5 @@ export type {
   HRDashboardStats
 } from './hr.service';
 export type {
-  Resume,
-  ResumeSection,
-  ResumeTemplate,
-  PersonalInfo,
-  Experience,
-  Education,
-  Project,
-  Certification
+
 } from './resume.service';
