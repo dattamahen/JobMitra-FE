@@ -124,6 +124,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onProfessionalSubmit(formData: any): void {
+    console.log('🔧 Professional form data received:', formData);
     const updateData: any = {};
     
     // Professional Information - strings
@@ -147,6 +148,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
     if (formData.linkedin_link?.trim()) updateData.linkedin_link = formData.linkedin_link.trim();
     if (formData.github_link?.trim()) updateData.github_link = formData.github_link.trim();
     
+    console.log('🔧 Professional update data:', updateData);
     this.updateProfile(updateData, 'Professional information updated successfully!');
     this.isProfessionalEditing = false;
   }
@@ -582,8 +584,16 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
       highest_qualification: user?.highest_qualification || '',
       professional_summary: user?.professional_summary || user?.professional_info?.professional_summary || '',
       linkedin_link: user?.linkedin_link || user?.social_links?.linkedin || '',
-      github_link: user?.github_link || user?.social_links?.github || ''
+      github_link: user?.github_link || user?.social_links?.github || '',
+      portfolio_link: user?.portfolio_link || user?.social_links?.portfolio || ''
     };
+    
+    console.log('🔍 Professional values populated:', {
+      highest_qualification: user?.highest_qualification,
+      portfolio_link: user?.portfolio_link,
+      social_links_portfolio: user?.social_links?.portfolio,
+      final_values: this.professionalValues
+    });
 
     this.skillsValues = this.populateSkillsValues(user);
     this.experienceValues = this.populateExperienceValues(user);
@@ -1034,6 +1044,27 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
     return user?.linkedin_link || user?.social_links?.linkedin || '';
   }
 
+  getPortfolioLink(): string {
+    const user = this.currentUser as any;
+    return user?.portfolio_link || user?.social_links?.portfolio || '';
+  }
+
+  getHighestQualification(): string {
+    const user = this.currentUser as any;
+    const qualification = user?.highest_qualification || '';
+    
+    // Convert backend values to display labels
+    const qualificationMap: { [key: string]: string } = {
+      'high_school': 'High School',
+      'diploma': 'Diploma',
+      'bachelors': 'Bachelor\'s Degree',
+      'masters': 'Master\'s Degree',
+      'phd': 'PhD'
+    };
+    
+    return qualificationMap[qualification] || qualification;
+  }
+
   getJobPreferences(): string {
     const user = this.currentUser as any;
     return user?.job_preferences?.[0] || '';
@@ -1178,7 +1209,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
     console.log('🧪 Running Profile Self Test...');
     
     this.testProfileService.testProfileFlow().subscribe({
-      next: (result) => {
+      next: (result: any) => {
         console.log('✅ Self Test Results:', result);
         
         const passedTests = result.tests.filter((test: any) => test.status === 'PASS').length;
@@ -1195,7 +1226,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
           console.log(`${test.status === 'PASS' ? '✅' : '❌'} ${test.name}: ${test.status}`);
         });
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('❌ Self Test Failed:', error);
         this.snackBar.open('Self test failed. Check console for details.', 'Close', {
           duration: 3000,
