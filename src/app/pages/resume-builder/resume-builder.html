@@ -69,7 +69,7 @@
             <div class="resume-form">
               <app-dynamic-form
                 [config]="personalInfoConfig"
-                [initialValues]="personalInfoForm.value"
+                [initialValues]="personalInfoValues"
                 (formSubmit)="savePersonalInfo()"
                 (formChange)="updatePersonalInfo($event)">
               </app-dynamic-form>
@@ -81,7 +81,7 @@
             <div class="resume-form">
               <app-dynamic-form
                 [config]="summaryConfig"
-                [initialValues]="summaryForm.value"
+                [initialValues]="summaryValues"
                 (formSubmit)="saveSummary()"
                 (formChange)="updateSummary($event)">
               </app-dynamic-form>
@@ -100,7 +100,7 @@
             <div class="resume-form">
               <app-dynamic-form
                 [config]="skillsConfig"
-                [initialValues]="skillsForm.value"
+                [initialValues]="skillsValues"
                 (formSubmit)="saveSkills()"
                 (formChange)="updateSkills($event)">
               </app-dynamic-form>
@@ -112,7 +112,7 @@
             <div class="resume-form">
               <app-dynamic-form
                 [config]="experienceConfig"
-                [initialValues]="experienceForm.value"
+                [initialValues]="experienceValues"
                 (formSubmit)="saveExperience()"
                 (formChange)="updateExperience($event)">
               </app-dynamic-form>
@@ -124,7 +124,7 @@
             <div class="resume-form">
               <app-dynamic-form
                 [config]="educationConfig"
-                [initialValues]="educationForm.value"
+                [initialValues]="educationValues"
                 (formSubmit)="saveEducation()"
                 (formChange)="updateEducation($event)">
               </app-dynamic-form>
@@ -136,7 +136,7 @@
             <div class="resume-form">
               <app-dynamic-form
                 [config]="projectsConfig"
-                [initialValues]="projectsForm.value"
+                [initialValues]="projectsValues"
                 (formSubmit)="saveProjects()"
                 (formChange)="updateProjects($event)">
               </app-dynamic-form>
@@ -148,7 +148,7 @@
             <div class="resume-form">
               <app-dynamic-form
                 [config]="certificationsConfig"
-                [initialValues]="certificationsForm.value"
+                [initialValues]="certificationsValues"
                 (formSubmit)="saveCertifications()"
                 (formChange)="updateCertifications($event)">
               </app-dynamic-form>

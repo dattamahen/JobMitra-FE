@@ -1077,7 +1077,7 @@ export const PROFILE_CERTIFICATIONS_CONFIG: FormConfig = {
           width: 'half'
         },
         {
-          name: 'date',
+          name: 'issue_date',
           type: 'text',
           label: 'Issue Date',
           placeholder: 'e.g., March 2023',

@@ -10,6 +10,7 @@ import { NavigationService, NavItem } from '../services/navigation.service';
 
 @Component({
   selector: 'app-side-nav',
+  standalone: true,
   imports: [
     CommonModule,
     MatSidenavModule,

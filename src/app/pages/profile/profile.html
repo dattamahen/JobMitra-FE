@@ -164,18 +164,6 @@
               <span class="stat-label">% Complete</span>
             </div>
           </div>
-          
-          <!-- Action Buttons -->
-          <!-- <div class="profile-actions">
-            <button mat-raised-button color="primary" class="primary-btn">
-              <mat-icon>visibility</mat-icon>
-              View Public Profile
-            </button>
-            <button mat-stroked-button class="secondary-btn">
-              <mat-icon>share</mat-icon>
-              Share Profile
-            </button>
-          </div> -->
         </mat-card-content>
       </mat-card>
       
@@ -259,6 +247,23 @@
         </mat-card-content>
       </mat-card>
       
+      <!-- Education & Qualification -->
+      @if (getHighestQualification()) {
+        <mat-card class="section-card">
+          <div class="section-header">
+            <h3>Education</h3>
+          </div>
+          <mat-card-content>
+            <div class="qualification-info">
+              <div class="qualification-row">
+                <mat-icon class="qualification-icon">school</mat-icon>
+                <span class="qualification-text">{{getHighestQualification()}}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+      
       <!-- Contact Info -->
       <mat-card class="section-card">
         <div class="section-header">
@@ -286,6 +291,12 @@
               <div class="contact-row">
                 <mat-icon class="contact-icon">business</mat-icon>
                 <a [href]="getLinkedinLink()" target="_blank" class="contact-link">LinkedIn Profile</a>
+              </div>
+            }
+            @if (getPortfolioLink()) {
+              <div class="contact-row">
+                <mat-icon class="contact-icon">web</mat-icon>
+                <a [href]="getPortfolioLink()" target="_blank" class="contact-link">Portfolio Website</a>
               </div>
             }
           </div>

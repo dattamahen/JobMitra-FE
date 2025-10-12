@@ -12,12 +12,13 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatListModule } from '@angular/material/list';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
-import { Subject, takeUntil, finalize } from 'rxjs';
+import { Subject, takeUntil, finalize, map } from 'rxjs';
 import { UserService, UserProfile, UpdateUserRequest } from '../../services';
 import { AuthService } from '../../services/auth.service';
 import { ResumeIntegrationService } from '../../services/resume-integration.service';
 import { TestProfileService } from '../../test-profile.service';
 import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
+
 import { 
   PROFILE_BASIC_INFO_CONFIG, 
   PROFILE_PROFESSIONAL_CONFIG, 
@@ -46,7 +47,8 @@ import {
     MatListModule,
     MatExpansionModule,
     MatSnackBarModule,
-    DynamicFormComponent
+    DynamicFormComponent,
+
   ],
   templateUrl: './profile.html',
   styleUrls: ['./profile.css']
@@ -98,6 +100,13 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
     if (formData.last_name?.trim()) updateData.last_name = formData.last_name.trim();
     if (formData.phone?.trim()) updateData.phone = formData.phone.trim();
     
+    // Process location field - split into city and state
+    if (formData.location?.trim()) {
+      const locationParts = formData.location.trim().split(',').map((part: string) => part.trim());
+      if (locationParts.length >= 1) updateData.city = locationParts[0];
+      if (locationParts.length >= 2) updateData.state = locationParts[1];
+    }
+    
     // Direct city/state fields (backend supports both direct and nested)
     if (formData.city?.trim()) updateData.city = formData.city.trim();
     if (formData.state?.trim()) updateData.state = formData.state.trim();
@@ -124,6 +133,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onProfessionalSubmit(formData: any): void {
+    console.log('🔧 Professional form data received:', formData);
     const updateData: any = {};
     
     // Professional Information - strings
@@ -147,6 +157,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
     if (formData.linkedin_link?.trim()) updateData.linkedin_link = formData.linkedin_link.trim();
     if (formData.github_link?.trim()) updateData.github_link = formData.github_link.trim();
     
+    console.log('🔧 Professional update data:', updateData);
     this.updateProfile(updateData, 'Professional information updated successfully!');
     this.isProfessionalEditing = false;
   }
@@ -468,16 +479,16 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
         validCertifications.forEach((cert: any, index: number) => {
           const itemId = `item_${index}`;
           if (typeof cert === 'object' && cert.name) {
-            // Handle object format
+            // Handle object format - use correct field mapping
             values[`certifications_${itemId}_name`] = cert.name || '';
-            values[`certifications_${itemId}_issuer`] = cert.issuer || '';
-            values[`certifications_${itemId}_date`] = cert.date || cert.issue_date || '';
+            values[`certifications_${itemId}_issuer`] = cert.issuer || cert.issuing_organization || '';
+            values[`certifications_${itemId}_issue_date`] = cert.issue_date || cert.date || '';
             values[`certifications_${itemId}_credential_id`] = cert.credential_id || '';
           } else if (typeof cert === 'string') {
             // Handle string format
             values[`certifications_${itemId}_name`] = cert;
             values[`certifications_${itemId}_issuer`] = '';
-            values[`certifications_${itemId}_date`] = '';
+            values[`certifications_${itemId}_issue_date`] = '';
             values[`certifications_${itemId}_credential_id`] = '';
           }
         });
@@ -582,8 +593,16 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
       highest_qualification: user?.highest_qualification || '',
       professional_summary: user?.professional_summary || user?.professional_info?.professional_summary || '',
       linkedin_link: user?.linkedin_link || user?.social_links?.linkedin || '',
-      github_link: user?.github_link || user?.social_links?.github || ''
+      github_link: user?.github_link || user?.social_links?.github || '',
+      portfolio_link: user?.portfolio_link || user?.social_links?.portfolio || ''
     };
+    
+    console.log('🔍 Professional values populated:', {
+      highest_qualification: user?.highest_qualification,
+      portfolio_link: user?.portfolio_link,
+      social_links_portfolio: user?.social_links?.portfolio,
+      final_values: this.professionalValues
+    });
 
     this.skillsValues = this.populateSkillsValues(user);
     this.experienceValues = this.populateExperienceValues(user);
@@ -1034,6 +1053,27 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
     return user?.linkedin_link || user?.social_links?.linkedin || '';
   }
 
+  getPortfolioLink(): string {
+    const user = this.currentUser as any;
+    return user?.portfolio_link || user?.social_links?.portfolio || '';
+  }
+
+  getHighestQualification(): string {
+    const user = this.currentUser as any;
+    const qualification = user?.highest_qualification || '';
+    
+    // Convert backend values to display labels
+    const qualificationMap: { [key: string]: string } = {
+      'high_school': 'High School',
+      'diploma': 'Diploma',
+      'bachelors': 'Bachelor\'s Degree',
+      'masters': 'Master\'s Degree',
+      'phd': 'PhD'
+    };
+    
+    return qualificationMap[qualification] || qualification;
+  }
+
   getJobPreferences(): string {
     const user = this.currentUser as any;
     return user?.job_preferences?.[0] || '';
@@ -1178,7 +1218,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
     console.log('🧪 Running Profile Self Test...');
     
     this.testProfileService.testProfileFlow().subscribe({
-      next: (result) => {
+      next: (result: any) => {
         console.log('✅ Self Test Results:', result);
         
         const passedTests = result.tests.filter((test: any) => test.status === 'PASS').length;
@@ -1195,7 +1235,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
           console.log(`${test.status === 'PASS' ? '✅' : '❌'} ${test.name}: ${test.status}`);
         });
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('❌ Self Test Failed:', error);
         this.snackBar.open('Self test failed. Check console for details.', 'Close', {
           duration: 3000,
@@ -1268,5 +1308,61 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
     } else {
       console.error(`❌ ${sectionName} section validation failed:`, validation.errors);
     }
+  }
+
+  // Pull user details and map to resume sections
+  pullUserDetailsForResume(): void {
+    console.log('📄 Pulling user details for resume sections...');
+    console.log('Current user:', this.currentUser);
+    console.log('Basic info values:', this.basicInfoValues);
+    console.log('Professional values:', this.professionalValues);
+    console.log('Skills values:', this.skillsValues);
+    console.log('Experience values:', this.experienceValues);
+    console.log('Education values:', this.educationValues);
+    console.log('Projects values:', this.projectsValues);
+    console.log('Certifications values:', this.certificationsValues);
+    console.log('Job preferences values:', this.jobPreferencesValues);
+    
+    if (!this.currentUser) {
+      this.snackBar.open('No user data available', 'Close', { duration: 3000 });
+      return;
+    }
+    
+    const resumeData = {
+      personal_info: this.basicInfoValues,
+      professional_info: this.professionalValues,
+      skills: this.skillsValues,
+      experience: this.experienceValues,
+      education: this.educationValues,
+      projects: this.projectsValues,
+      certifications: this.certificationsValues,
+      job_preferences: this.jobPreferencesValues
+    };
+    
+    console.log('✅ User details mapped to resume format:', resumeData);
+    
+    this.snackBar.open(
+      'User details successfully mapped to resume format!',
+      'Close',
+      { duration: 3000, panelClass: ['success-snackbar'] }
+    );
+  }
+
+  // Debug helper methods
+  debugLocationSave(testLocation: string = 'Test City, Test State') {
+    console.log('🐛 Debug: Testing location save with:', testLocation);
+    const formData = { location: testLocation };
+    this.onBasicInfoSubmit(formData);
+  }
+
+  debugCertificationSave() {
+    console.log('🐛 Debug: Testing certification save');
+    const formData = {
+      'certifications_item_0_name': 'Debug Certification',
+      'certifications_item_0_issuer': 'Debug Organization',
+      'certifications_item_0_issue_date': 'December 2023',
+      'certifications_item_0_credential_id': 'DEBUG123'
+    };
+    this.onCertificationsSubmit(formData);
   }
 }

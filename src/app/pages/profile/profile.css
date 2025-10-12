@@ -358,7 +358,7 @@ mat-card-title {
 
 .profile-layout {
   display: grid;
-  grid-template-columns: 1fr 400px;
+  grid-template-columns: 1fr 350px;
   gap: 40px;
   align-items: start;
   min-height: 100vh;
@@ -809,4 +809,298 @@ h3 {
   padding: 8px;
   background: #f5f5f5;
   border-radius: 4px;
+}
+
+/* Qualification Section Styles */
+.qualification-info {
+  padding: 8px 0;
+}
+
+.qualification-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0;
+}
+
+.qualification-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: #1976d2;
+}
+
+.qualification-text {
+  color: #333;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* LinkedIn-style Profile Card Styles */
+.linkedin-profile-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.profile-cover {
+  height: 120px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+}
+
+.cover-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+}
+
+.profile-avatar-section {
+  position: absolute;
+  bottom: -40px;
+  left: 24px;
+}
+
+.avatar-wrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.profile-avatar {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #1976d2;
+}
+
+.profile-content {
+  padding: 50px 24px 24px 24px !important;
+}
+
+.profile-header {
+  margin-bottom: 20px;
+}
+
+.profile-name {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 4px 0;
+}
+
+.profile-headline {
+  font-size: 16px;
+  color: #666;
+  margin: 0 0 8px 0;
+  font-weight: 400;
+}
+
+.profile-location {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.contact-info {
+  color: #1976d2;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.contact-info:hover {
+  text-decoration: underline;
+}
+
+.profile-stats {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+  margin: 20px 0;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1;
+}
+
+.stat-label {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 40px;
+  background: #e0e0e0;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.primary-btn {
+  flex: 1;
+}
+
+.secondary-btn {
+  flex: 1;
+}
+
+/* Section Cards */
+.section-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.section-header {
+  padding: 20px 20px 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-header h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.skills-count {
+  font-size: 14px;
+  color: #666;
+  font-weight: 400;
+}
+
+.section-card mat-card-content {
+  padding: 0 20px 20px 20px !important;
+}
+
+.about-text {
+  color: #333;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.empty-section {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.empty-text {
+  color: #666;
+  margin: 0 0 16px 0;
+  font-size: 14px;
+}
+
+.add-btn {
+  color: #1976d2;
+  font-weight: 500;
+}
+
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skill-item {
+  background: #f0f2f5;
+  padding: 8px 12px;
+  border-radius: 16px;
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.show-more-btn {
+  color: #1976d2;
+  font-weight: 500;
+  margin-top: 8px;
+}
+
+.preferences-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.preference-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pref-label {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.pref-value {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.contact-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: #666;
+}
+
+.contact-text {
+  color: #333;
+  font-size: 14px;
+}
+
+.contact-link {
+  color: #1976d2;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.contact-link:hover {
+  text-decoration: underline;
 }

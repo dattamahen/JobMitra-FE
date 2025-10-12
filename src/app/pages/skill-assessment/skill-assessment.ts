@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 import { 
   LearningResource, 
   JobSearchDataService, 
@@ -10,6 +11,7 @@ import {
   UserSubscription,
   SubscriptionLimits
 } from '../../data/job-search-data';
+import { SkillAssessmentService, SkillLevel, AssessmentResult, UsageStatus, RecommendedSkill } from '../../services/skill-assessment.service';
 
 export interface SkillAssessment {
   readonly id: string;
@@ -36,7 +38,7 @@ export interface AssessmentHistory {
 @Component({
   selector: 'app-skill-assessment-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule],
   templateUrl: './skill-assessment.html',
   styleUrls: ['./skill-assessment.css']
 })
@@ -67,11 +69,25 @@ export class SkillAssessmentPage implements OnInit {
   subscriptionPlans: readonly SubscriptionPlan[] = JobSearchDataService.getSubscriptionPlans();
   showSubscriptionModal: boolean = false;
 
-  constructor() {}
+  constructor(
+    private skillAssessmentService: SkillAssessmentService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-    this.initializeSkillAssessments();
-    this.initializeAssessmentHistory();
+    console.log('SkillAssessmentPage ngOnInit called');
+    console.log('Service instance:', this.skillAssessmentService);
+    
+    // Test API connectivity
+    console.log('Testing API connectivity...');
+    this.skillAssessmentService.getTechnicalSkills().subscribe({
+      next: (data) => console.log('API test successful:', data),
+      error: (error) => console.error('API test failed:', error)
+    });
+    
+    this.loadSkillAssessments();
+    this.loadAssessmentHistory();
+    this.loadUsageStatus();
     this.loadMockInterviewData();
   }
 
@@ -123,128 +139,124 @@ export class SkillAssessmentPage implements OnInit {
     };
   }
 
-  private initializeSkillAssessments(): void {
-    this.skillAssessments = [
-      {
-        id: 'javascript',
-        name: 'JavaScript',
-        category: 'technical',
-        currentLevel: 85,
-        levelText: 'Advanced',
-        lastAssessed: new Date('2025-03-19'),
-        lastScore: 85,
-        hasCertificate: true
+  private loadSkillAssessments(): void {
+    console.log('Loading skill assessments...');
+    
+    // Reset skills array
+    this.skillAssessments = [];
+    
+    // Load technical skills from API
+    this.skillAssessmentService.getTechnicalSkills().subscribe({
+      next: (skills) => {
+        console.log('Technical skills received:', skills);
+        const technicalSkills = skills.map(skill => ({
+          id: skill.skill_id,
+          name: skill.skill_name,
+          category: 'technical' as const,
+          currentLevel: skill.current_level,
+          levelText: skill.level_text as any
+        }));
+        this.skillAssessments = [...this.skillAssessments.filter(s => s.category !== 'technical' && !s.isRecommended), ...technicalSkills];
+        console.log('Updated skillAssessments after technical:', this.skillAssessments);
+        this.cdr.detectChanges();
       },
-      {
-        id: 'react',
-        name: 'React',
-        category: 'technical',
-        currentLevel: 75,
-        levelText: 'Intermediate',
-        lastAssessed: new Date('2025-03-15'),
-        lastScore: 75,
-        hasCertificate: false
-      },
-      {
-        id: 'python',
-        name: 'Python',
-        category: 'technical',
-        currentLevel: 60,
-        levelText: 'Intermediate',
-        lastAssessed: new Date('2025-03-10'),
-        lastScore: 60,
-        hasCertificate: false
-      },
-      {
-        id: 'nodejs',
-        name: 'Node.js',
-        category: 'technical',
-        currentLevel: 0,
-        levelText: 'Beginner',
-        isRecommended: true,
-        relevanceReason: 'High relevance for your target roles'
-      },
-      {
-        id: 'typescript',
-        name: 'TypeScript',
-        category: 'technical',
-        currentLevel: 0,
-        levelText: 'Beginner',
-        isRecommended: true,
-        relevanceReason: 'Popular in 85% of job postings you viewed'
-      },
-      {
-        id: 'communication',
-        name: 'Communication',
-        category: 'soft-skills',
-        currentLevel: 90,
-        levelText: 'Expert',
-        lastAssessed: new Date('2025-03-17'),
-        lastScore: 92,
-        hasCertificate: true
-      },
-      {
-        id: 'leadership',
-        name: 'Leadership',
-        category: 'soft-skills',
-        currentLevel: 70,
-        levelText: 'Intermediate',
-        lastAssessed: new Date('2025-03-12'),
-        lastScore: 70,
-        hasCertificate: false
-      },
-      {
-        id: 'problem-solving',
-        name: 'Problem Solving',
-        category: 'soft-skills',
-        currentLevel: 80,
-        levelText: 'Advanced',
-        lastAssessed: new Date('2025-03-08'),
-        lastScore: 80,
-        hasCertificate: false
+      error: (error) => {
+        console.error('Error loading technical skills:', error);
+        this.cdr.detectChanges();
       }
-    ];
-  }
+    });
 
-  private initializeAssessmentHistory(): void {
-    this.assessmentHistory = [
-      {
-        id: 'hist-1',
-        skillName: 'JavaScript Advanced Test',
-        completedDate: new Date('2025-03-19'),
-        score: 85,
-        level: 'Advanced',
-        hasCertificate: true
+    // Load soft skills from API
+    this.skillAssessmentService.getSoftSkills().subscribe({
+      next: (skills) => {
+        console.log('Soft skills received:', skills);
+        const softSkills = skills.map(skill => ({
+          id: skill.skill_id,
+          name: skill.skill_name,
+          category: 'soft-skills' as const,
+          currentLevel: skill.current_level,
+          levelText: skill.level_text as any
+        }));
+        this.skillAssessments = [...this.skillAssessments.filter(s => s.category !== 'soft-skills'), ...softSkills];
+        console.log('Updated skillAssessments after soft skills:', this.skillAssessments);
+        this.cdr.detectChanges();
       },
-      {
-        id: 'hist-2',
-        skillName: 'Communication Skills',
-        completedDate: new Date('2025-03-17'),
-        score: 92,
-        level: 'Expert',
-        hasCertificate: true
-      },
-      {
-        id: 'hist-3',
-        skillName: 'React Fundamentals',
-        completedDate: new Date('2025-03-15'),
-        score: 75,
-        level: 'Intermediate',
-        hasCertificate: false
+      error: (error) => {
+        console.error('Error loading soft skills:', error);
+        this.cdr.detectChanges();
       }
-    ];
+    });
+    
+    // Load recommended skills from API
+    this.skillAssessmentService.getRecommendedSkills().subscribe({
+      next: (skills) => {
+        console.log('Recommended skills received:', skills);
+        const recommendedSkills = skills.map(skill => ({
+          id: skill.id,
+          name: skill.name,
+          category: 'technical' as const,
+          currentLevel: 0,
+          levelText: 'Beginner' as const,
+          isRecommended: true,
+          relevanceReason: skill.relevance_reason
+        }));
+        this.skillAssessments = [...this.skillAssessments.filter(s => !s.isRecommended), ...recommendedSkills];
+        console.log('Final skillAssessments after recommended:', this.skillAssessments);
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error loading recommended skills:', error);
+        this.cdr.detectChanges();
+      }
+    });
+  }
+  
+
+
+  private loadAssessmentHistory(): void {
+    console.log('Loading assessment history...');
+    this.skillAssessmentService.getAssessmentHistory().subscribe({
+      next: (history) => {
+        console.log('Assessment history received:', history);
+        this.assessmentHistory = history.map(item => ({
+          id: item.id,
+          skillName: item.skill_name,
+          completedDate: new Date(item.completed_date),
+          score: item.score,
+          level: item.level,
+          hasCertificate: item.has_certificate
+        }));
+        console.log('Mapped assessment history:', this.assessmentHistory);
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error loading assessment history:', error);
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   getTechnicalSkills(): SkillAssessment[] {
-    return this.skillAssessments.filter(skill => skill.category === 'technical');
+    return this.skillAssessments.filter(skill => skill.category === 'technical' && !skill.isRecommended);
   }
 
   getSoftSkills(): SkillAssessment[] {
     return this.skillAssessments.filter(skill => skill.category === 'soft-skills');
   }
+  
+  hasSkills(): boolean {
+    return this.getTechnicalSkills().length > 0 || this.getSoftSkills().length > 0;
+  }
 
   getRecommendedSkills(): SkillAssessment[] {
     return this.skillAssessments.filter(skill => skill.isRecommended);
+  }
+  
+  navigateToProfile(): void {
+    // This would typically use Router to navigate to profile page
+    console.log('Navigate to profile page');
+    // For now, just show an alert
+    alert('Please update your profile to add skills. Navigate to Profile section.');
   }
 
   getProgressColor(level: number): string {
@@ -264,20 +276,56 @@ export class SkillAssessmentPage implements OnInit {
   }
 
   takeTest(skill: SkillAssessment): void {
-    console.log(`Taking test for ${skill.name}`);
-    // Implement test functionality
+    this.skillAssessmentService.takeSkillTest(skill.id).subscribe({
+      next: (response) => {
+        console.log('Test started:', response);
+        alert(`Assessment for ${skill.name} started! Test ID: ${response.test_id}`);
+      },
+      error: (error) => {
+        console.error('Error starting test:', error);
+        alert('Failed to start test. Please try again.');
+      }
+    });
   }
 
   getCertificate(historyItem: AssessmentHistory): void {
-    console.log(`Getting certificate for ${historyItem.skillName}`);
-    // Implement certificate download
+    this.skillAssessmentService.getCertificate(historyItem.id).subscribe({
+      next: (response) => {
+        console.log('Certificate info:', response);
+        window.open(response.certificate_url, '_blank');
+      },
+      error: (error) => {
+        console.error('Error getting certificate:', error);
+        alert('Failed to get certificate. Please try again.');
+      }
+    });
   }
 
   startLearning(skill: SkillAssessment): void {
     this.selectedSkill = skill.name;
-    this.selectedSkillResources = JobSearchDataService.getLearningResourcesBySkill(skill.name);
-    this.showLearningModal = true;
-    this.showContributeForm = false;
+    this.skillAssessmentService.getLearningResources(skill.name).subscribe({
+      next: (resources) => {
+        this.selectedSkillResources = resources.map(resource => ({
+          id: resource.id,
+          title: resource.title,
+          description: resource.description,
+          youtubeUrl: resource.youtubeUrl,
+          channel: resource.channel,
+          duration: resource.duration,
+          level: resource.level as 'beginner' | 'intermediate' | 'advanced',
+          skill: resource.skill,
+          rating: resource.rating
+        }));
+        this.showLearningModal = true;
+        this.showContributeForm = false;
+      },
+      error: (error) => {
+        console.error('Error loading learning resources:', error);
+        this.selectedSkillResources = [];
+        this.showLearningModal = true;
+        this.showContributeForm = false;
+      }
+    });
   }
 
   hideLearningModal(): void {
@@ -304,19 +352,23 @@ export class SkillAssessmentPage implements OnInit {
       skill: this.selectedSkill,
       title: formData.get('title') as string,
       description: formData.get('description') as string,
-      youtubeUrl: formData.get('youtubeUrl') as string,
+      youtube_url: formData.get('youtubeUrl') as string,
       level: formData.get('level') as string,
-      submittedBy: formData.get('submitterName') as string,
-      submittedAt: new Date()
+      submitter_name: formData.get('submitterName') as string
     };
 
-    console.log('Knowledge contribution submitted:', contribution);
-    // Here you would typically send this to a backend service
-    
-    // Show success message and close form
-    alert('Thank you for your contribution! It will be reviewed and added to our learning resources.');
-    this.hideContributeForm();
-    form.reset();
+    this.skillAssessmentService.contributeResource(contribution).subscribe({
+      next: (response) => {
+        console.log('Contribution submitted:', response);
+        alert(`Thank you for your contribution! ${response.message}`);
+        this.hideContributeForm();
+        form.reset();
+      },
+      error: (error) => {
+        console.error('Error submitting contribution:', error);
+        alert('Failed to submit contribution. Please try again.');
+      }
+    });
   }
 
   getYouTubeVideoId(url: string): string | null {
@@ -403,13 +455,18 @@ export class SkillAssessmentPage implements OnInit {
       return;
     }
 
-    this.selectedSkill = skill.name;
-    this.currentInterviewQuestions = JobSearchDataService.generateInterviewQuestions(
-      skill.name, 
-      this.mockInterviewConfig.questionsPerSession
-    );
-    this.showMockInterviewModal = true;
-    this.mockInterviewInProgress = false;
+    this.skillAssessmentService.startMockInterview(skill.name, 'current-user').subscribe({
+      next: (response) => {
+        this.selectedSkill = skill.name;
+        this.currentInterviewQuestions = response.questions;
+        this.showMockInterviewModal = true;
+        this.mockInterviewInProgress = false;
+      },
+      error: (error) => {
+        console.error('Error starting mock interview:', error);
+        alert('Failed to start mock interview. Please try again.');
+      }
+    });
   }
 
   closeMockInterviewModal(): void {
@@ -460,6 +517,19 @@ export class SkillAssessmentPage implements OnInit {
     this.mockInterviewInProgress = false;
     alert(`Mock interview completed! Score: ${newSession.score}%`);
     this.closeMockInterviewModal();
+  }
+
+  private loadUsageStatus(): void {
+    this.skillAssessmentService.getUsageStatus().subscribe({
+      next: (status) => {
+        // Update usage status from API
+        this.subscriptionLimits = {
+          ...this.subscriptionLimits,
+          mockInterviewsPerWeek: status.weekly_limit
+        };
+      },
+      error: (error) => console.error('Error loading usage status:', error)
+    });
   }
 
   getUsageStatus(): string {
