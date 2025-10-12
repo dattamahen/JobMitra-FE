@@ -160,6 +160,8 @@ export class ResumeBuilderPage implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: (profile) => {
+        console.log('Resume Builder: User profile loaded:', profile);
+        this.mapUserDataToForms(profile);
         this.populateFormsFromProfile(profile);
         this.createResumeFromProfile(profile);
         this.resumeService.setLoading(false);
@@ -169,6 +171,273 @@ export class ResumeBuilderPage implements OnInit {
         this.resumeService.setLoading(false);
       }
     });
+  }
+
+  // Pull user details and map to resume forms
+  pullUserDetailsToResumeForms(): void {
+    console.log('📄 Pulling user details to resume forms...');
+    
+    this.resumeService.getUserProfileData().pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
+      next: (profile) => {
+        console.log('✅ User profile data received:', profile);
+        this.mapUserDataToForms(profile);
+        this.snackBar.open(
+          'User details successfully mapped to resume forms!',
+          'Close',
+          { duration: 3000, panelClass: ['success-snackbar'] }
+        );
+      },
+      error: (error) => {
+        console.error('❌ Failed to pull user details:', error);
+        this.snackBar.open('Failed to pull user details.', 'Close', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
+
+  // Form value objects like profile page
+  personalInfoValues: any = {};
+  summaryValues: any = {};
+  skillsValues: any = {};
+  experienceValues: any = {};
+  educationValues: any = {};
+  projectsValues: any = {};
+  certificationsValues: any = {};
+
+  private mapUserDataToForms(user: any): void {
+    console.log('Mapping user data to resume forms:', user);
+    
+    // Map personal info
+    this.personalInfoValues = {
+      full_name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
+      email: user.email || '',
+      phone: user.phone || '',
+      location: [user.city, user.state].filter(Boolean).join(', ') || '',
+      linkedin: user.linkedin_link || '',
+      portfolio: user.portfolio_link || '',
+      github: user.github_link || ''
+    };
+
+    // Map summary
+    this.summaryValues = {
+      summary: user.professional_summary || ''
+    };
+
+    // Map skills using same approach as profile
+    this.skillsValues = this.populateSkillsValues(user);
+    
+    // Map experience using same approach as profile
+    this.experienceValues = this.populateExperienceValues(user);
+    
+    // Map education using same approach as profile
+    this.educationValues = this.populateEducationValues(user);
+    
+    // Map projects using same approach as profile
+    this.projectsValues = this.populateProjectsValues(user);
+    
+    // Map certifications using same approach as profile
+    this.certificationsValues = this.populateCertificationsValues(user);
+
+    console.log('User data mapping completed');
+    console.log('Skills values:', this.skillsValues);
+    console.log('Experience values:', this.experienceValues);
+    console.log('Education values:', this.educationValues);
+    console.log('Projects values:', this.projectsValues);
+    console.log('Certifications values:', this.certificationsValues);
+  }
+
+  private populateSkillsValues(user: any): any {
+    const values: any = {};
+    if (user?.technical_skills && Array.isArray(user.technical_skills)) {
+      user.technical_skills.forEach((skill: any, index: number) => {
+        const itemId = `item_${index}`;
+        values[`technical_skills_${itemId}_name`] = skill.name || '';
+        values[`technical_skills_${itemId}_version`] = skill.version || '';
+        values[`technical_skills_${itemId}_experience`] = skill.experience || '';
+      });
+    }
+    return values;
+  }
+
+  private populateExperienceValues(user: any): any {
+    const values: any = {};
+    if (user?.work_experience && Array.isArray(user.work_experience)) {
+      user.work_experience.forEach((exp: any, index: number) => {
+        const itemId = `item_${index}`;
+        values[`experiences_${itemId}_company`] = exp.company || '';
+        values[`experiences_${itemId}_position`] = exp.position || '';
+        values[`experiences_${itemId}_start_date`] = exp.start_date || '';
+        values[`experiences_${itemId}_end_date`] = exp.end_date || '';
+        values[`experiences_${itemId}_description`] = exp.description || '';
+      });
+    }
+    return values;
+  }
+
+  private populateEducationValues(user: any): any {
+    const values: any = {};
+    if (user?.education && Array.isArray(user.education)) {
+      user.education.forEach((edu: any, index: number) => {
+        const itemId = `item_${index}`;
+        values[`education_${itemId}_institution`] = edu.institution || '';
+        values[`education_${itemId}_education_type`] = edu.education_type || '';
+        values[`education_${itemId}_start_date`] = edu.start_date || '';
+        values[`education_${itemId}_end_date`] = edu.end_date || '';
+      });
+    }
+    return values;
+  }
+
+  private populateProjectsValues(user: any): any {
+    const values: any = {};
+    if (user?.projects && Array.isArray(user.projects)) {
+      user.projects.forEach((project: any, index: number) => {
+        const itemId = `item_${index}`;
+        values[`projects_${itemId}_name`] = project.name || '';
+        values[`projects_${itemId}_url`] = project.url || '';
+        values[`projects_${itemId}_description`] = project.description || '';
+        values[`projects_${itemId}_technologies`] = project.technologies || '';
+      });
+    }
+    return values;
+  }
+
+  private populateCertificationsValues(user: any): any {
+    const values: any = {};
+    if (user?.certifications && Array.isArray(user.certifications)) {
+      user.certifications.forEach((cert: any, index: number) => {
+        const itemId = `item_${index}`;
+        const certName = typeof cert === 'string' ? cert : cert.name;
+        const certIssuer = typeof cert === 'object' ? cert.issuer : '';
+        const certDate = typeof cert === 'object' ? cert.date : '';
+        const credentialId = typeof cert === 'object' ? cert.credential_id : '';
+        
+        values[`certifications_${itemId}_name`] = certName || '';
+        values[`certifications_${itemId}_issuer`] = certIssuer || '';
+        values[`certifications_${itemId}_date`] = certDate || '';
+        values[`certifications_${itemId}_credential_id`] = credentialId || '';
+      });
+    }
+    return values;
+  }
+
+  private convertExperienceValues(): any[] {
+    const experiences = [];
+    const keys = Object.keys(this.experienceValues).filter(key => key.includes('_company'));
+    
+    for (const key of keys) {
+      const match = key.match(/experiences_item_(\d+)_company/);
+      if (match) {
+        const index = match[1];
+        const company = this.experienceValues[`experiences_item_${index}_company`];
+        if (company) {
+          experiences.push({
+            company: company,
+            position: this.experienceValues[`experiences_item_${index}_position`] || '',
+            start_date: this.experienceValues[`experiences_item_${index}_start_date`] || '',
+            end_date: this.experienceValues[`experiences_item_${index}_end_date`] || '',
+            description: this.experienceValues[`experiences_item_${index}_description`] || ''
+          });
+        }
+      }
+    }
+    return experiences;
+  }
+
+  private convertEducationValues(): any[] {
+    const education = [];
+    const keys = Object.keys(this.educationValues).filter(key => key.includes('_institution'));
+    
+    for (const key of keys) {
+      const match = key.match(/education_item_(\d+)_institution/);
+      if (match) {
+        const index = match[1];
+        const institution = this.educationValues[`education_item_${index}_institution`];
+        if (institution) {
+          education.push({
+            institution: institution,
+            education_type: this.educationValues[`education_item_${index}_education_type`] || '',
+            start_date: this.educationValues[`education_item_${index}_start_date`] || '',
+            end_date: this.educationValues[`education_item_${index}_end_date`] || ''
+          });
+        }
+      }
+    }
+    return education;
+  }
+
+  private convertSkillsValues(): any {
+    const technical = [];
+    const keys = Object.keys(this.skillsValues).filter(key => key.includes('_name'));
+    
+    for (const key of keys) {
+      const match = key.match(/technical_skills_item_(\d+)_name/);
+      if (match) {
+        const index = match[1];
+        const name = this.skillsValues[`technical_skills_item_${index}_name`];
+        if (name) {
+          technical.push({
+            name: name,
+            version: this.skillsValues[`technical_skills_item_${index}_version`] || '',
+            experience: this.skillsValues[`technical_skills_item_${index}_experience`] || ''
+          });
+        }
+      }
+    }
+    
+    return { technical, soft: [] };
+  }
+
+  private convertProjectsValues(): any[] {
+    const projects = [];
+    console.log('Converting projects values:', this.projectsValues);
+    const keys = Object.keys(this.projectsValues).filter(key => key.includes('_name'));
+    console.log('Project keys found:', keys);
+    
+    for (const key of keys) {
+      const match = key.match(/projects_item_(\d+)_name/);
+      if (match) {
+        const index = match[1];
+        const name = this.projectsValues[`projects_item_${index}_name`];
+        console.log(`Project ${index} name:`, name);
+        if (name) {
+          projects.push({
+            name: name,
+            url: this.projectsValues[`projects_item_${index}_url`] || '',
+            description: this.projectsValues[`projects_item_${index}_description`] || '',
+            technologies: this.projectsValues[`projects_item_${index}_technologies`] || ''
+          });
+        }
+      }
+    }
+    console.log('Converted projects:', projects);
+    return projects;
+  }
+
+  private convertCertificationsValues(): any[] {
+    const certifications = [];
+    const keys = Object.keys(this.certificationsValues).filter(key => key.includes('_name'));
+    
+    for (const key of keys) {
+      const match = key.match(/certifications_item_(\d+)_name/);
+      if (match) {
+        const index = match[1];
+        const name = this.certificationsValues[`certifications_item_${index}_name`];
+        if (name) {
+          certifications.push({
+            name: name,
+            issuer: this.certificationsValues[`certifications_item_${index}_issuer`] || '',
+            date: this.certificationsValues[`certifications_item_${index}_date`] || '',
+            credential_id: this.certificationsValues[`certifications_item_${index}_credential_id`] || ''
+          });
+        }
+      }
+    }
+    return certifications;
   }
 
   private loadTemplates(): void {
@@ -1053,6 +1322,15 @@ export class ResumeBuilderPage implements OnInit {
     const resume = this.currentResume();
     if (!resume) return;
 
+    console.log('Resume data for PDF:', resume);
+    console.log('Personal info values:', this.personalInfoValues);
+    console.log('Summary values:', this.summaryValues);
+    console.log('Skills values:', this.skillsValues);
+    console.log('Experience values:', this.experienceValues);
+    console.log('Education values:', this.educationValues);
+    console.log('Projects values:', this.projectsValues);
+    console.log('Certifications values:', this.certificationsValues);
+
     const tempElement = document.createElement('div');
     tempElement.style.position = 'absolute';
     tempElement.style.left = '-9999px';
@@ -1103,92 +1381,198 @@ export class ResumeBuilderPage implements OnInit {
   }
 
   private generateResumeHTML(resume: Resume): string {
-    const personalInfo = resume.sections.personal_info;
-    const summary = resume.sections.summary;
-    const experience = resume.sections.experience || [];
-    const education = resume.sections.education || [];
-    const skills = resume.sections.skills;
-    const projects = resume.sections.projects || [];
-    const certifications = resume.sections.certifications || [];
+    // Use form values instead of resume sections for actual data
+    const personalInfo = this.personalInfoValues;
+    const summary = this.summaryValues?.summary || '';
+    const experience = this.convertExperienceValues();
+    const education = this.convertEducationValues();
+    const skills = this.convertSkillsValues();
+    const projects = this.convertProjectsValues();
+    const certifications = this.convertCertificationsValues();
+    
+    console.log('Data for PDF generation:');
+    console.log('Personal info:', personalInfo);
+    console.log('Summary:', summary);
+    console.log('Experience:', experience);
+    console.log('Education:', education);
+    console.log('Skills:', skills);
+    console.log('Projects:', projects);
+    console.log('Certifications:', certifications);
 
     return `
-      <div style="width: 100%; margin: 0; padding: 5px 15px 15px 15px; font-family: Arial, sans-serif; font-size: 12px;">
-        <div style="text-align: center; margin-bottom: 15px;">
-          <h1 style="margin: 0 0 5px 0; color: #333; font-size: 18px;">${personalInfo?.full_name || ''}</h1>
-          <p style="margin: 0; color: #666; font-size: 11px;">
-            ${personalInfo?.email || ''} | ${personalInfo?.phone || ''} | ${personalInfo?.location || ''}
-          </p>
-          ${personalInfo?.linkedin ? `<p style="margin: 2px 0 0 0; color: #666; font-size: 11px;">LinkedIn: ${personalInfo.linkedin}</p>` : ''}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Template</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 1in;
+            line-height: 1.4;
+            color: #333;
+            max-width: 8.5in;
+        }
+        header {
+            text-align: center;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            margin: 0;
+            font-size: 24pt;
+        }
+        header p {
+            margin: 5px 0 0;
+            font-size: 12pt;
+        }
+        h2 {
+            font-size: 14pt;
+            text-transform: uppercase;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+            margin-top: 20px;
+        }
+        .section-content {
+            margin-top: 10px;
+        }
+        .entry {
+            margin-bottom: 15px;
+        }
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+        }
+        .entry-subheader {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+        }
+        .entry-location-date {
+            text-align: right;
+        }
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin: 5px 0;
+        }
+        .skills-category {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .skills-list {
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>${personalInfo?.full_name || 'Your Name'}</h1>
+        <p>${personalInfo?.phone || ''} | ${personalInfo?.email || ''} | ${personalInfo?.linkedin ? 'LinkedIn' : ''}</p>
+    </header>
+
+    ${summary ? `
+    <section id="summary">
+        <h2>Summary</h2>
+        <div class="section-content">
+            <p>${summary}</p>
         </div>
+    </section>
+    ` : ''}
 
-        ${summary ? `
-          <div style="margin-bottom: 15px;">
-            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 2px; margin: 0 0 8px 0; font-size: 14px;">Summary</h2>
-            <p style="font-size: 12px; margin: 0;">${summary}</p>
-          </div>
-        ` : ''}
-
-        ${experience.length ? `
-          <div style="margin-bottom: 15px;">
-            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 2px; margin: 0 0 8px 0; font-size: 14px;">Experience</h2>
-            ${experience.map((exp: any) => `
-              <div style="margin-bottom: 12px;">
-                <h3 style="margin: 0; color: #333; font-size: 13px;">${exp.position}</h3>
-                <p style="margin: 2px 0; font-weight: bold; color: #666; font-size: 11px;">${exp.company} | ${exp.duration}</p>
-                <p style="margin: 5px 0 0 0; font-size: 12px;">${exp.description}</p>
-              </div>
-            `).join('')}
-          </div>
-        ` : ''}
-
-        ${education.length ? `
-          <div style="margin-bottom: 15px;">
-            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 2px; margin: 0 0 8px 0; font-size: 14px;">Education</h2>
+    ${education.length ? `
+    <section id="education">
+        <h2>Education</h2>
+        <div class="section-content">
             ${education.map((edu: any) => `
-              <div style="margin-bottom: 10px;">
-                <h3 style="margin: 0; color: #333; font-size: 13px;">${edu.degree}</h3>
-                <p style="margin: 2px 0; color: #666; font-size: 11px;">${edu.institution} | ${edu.year}</p>
-                ${edu.gpa ? `<p style="margin: 2px 0; color: #666; font-size: 11px;">GPA: ${edu.gpa}</p>` : ''}
-              </div>
+            <div class="entry">
+                <div class="entry-header">
+                    <span>${edu.institution || ''}</span>
+                    <span class="entry-location-date">${edu.location || ''}</span>
+                </div>
+                <div class="entry-subheader">
+                    <span>${edu.degree || edu.education_type || ''}</span>
+                    <span class="entry-location-date">${edu.year || (edu.start_date && edu.end_date ? `${edu.start_date} – ${edu.end_date}` : '')}</span>
+                </div>
+                ${edu.gpa ? `<p>CGPA: ${edu.gpa}</p>` : ''}
+            </div>
             `).join('')}
-          </div>
-        ` : ''}
+        </div>
+    </section>
+    ` : ''}
 
-        ${skills?.technical?.length || skills?.soft?.length ? `
-          <div style="margin-bottom: 15px;">
-            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 2px; margin: 0 0 8px 0; font-size: 14px;">Skills</h2>
-            ${skills.technical?.length ? `<p style="font-size: 12px; margin: 0 0 5px 0;"><strong>Technical:</strong> ${skills.technical.map((skill: any) => typeof skill === 'string' ? skill : skill.name).join(', ')}</p>` : ''}
-            ${skills.soft?.length ? `<p style="font-size: 12px; margin: 0;"><strong>Soft Skills:</strong> ${skills.soft.join(', ')}</p>` : ''}
-          </div>
-        ` : ''}
+    ${experience.length ? `
+    <section id="experience">
+        <h2>Experience</h2>
+        <div class="section-content">
+            ${experience.map((exp: any) => `
+            <div class="entry">
+                <div class="entry-header">
+                    <span>${exp.position || ''}</span>
+                    <span class="entry-location-date">${exp.location || ''}</span>
+                </div>
+                <div class="entry-subheader">
+                    <span>${exp.company || ''}</span>
+                    <span class="entry-location-date">${exp.duration || (exp.start_date && exp.end_date ? `${exp.start_date} - ${exp.end_date}` : '')}</span>
+                </div>
+                ${exp.description ? `<ul><li>${exp.description.split('\n').filter((line: string) => line.trim()).join('</li><li>')}</li></ul>` : ''}
+            </div>
+            `).join('')}
+        </div>
+    </section>
+    ` : ''}
 
-        ${projects.length ? `
-          <div style="margin-bottom: 15px;">
-            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 2px; margin: 0 0 8px 0; font-size: 14px;">Projects</h2>
+    ${projects.length ? `
+    <section id="projects">
+        <h2>Projects</h2>
+        <div class="section-content">
             ${projects.map((proj: any) => `
-              <div style="margin-bottom: 10px;">
-                <h3 style="margin: 0; color: #333; font-size: 13px;">${proj.name}</h3>
-                ${proj.url ? `<p style="margin: 2px 0; color: #666; font-size: 11px;">${proj.url}</p>` : ''}
-                <p style="margin: 5px 0 0 0; font-size: 12px;">${proj.description}</p>
-                ${proj.technologies?.length ? `<p style="margin: 2px 0; color: #666; font-size: 11px;"><strong>Technologies:</strong> ${proj.technologies.join(', ')}</p>` : ''}
-              </div>
+            <div class="entry">
+                <div class="entry-header">
+                    <span>${proj.name || ''}</span>
+                </div>
+                ${proj.description ? `<ul><li>${proj.description.split('\n').filter((line: string) => line.trim()).join('</li><li>')}</li></ul>` : ''}
+            </div>
             `).join('')}
-          </div>
-        ` : ''}
+        </div>
+    </section>
+    ` : ''}
 
-        ${certifications.length ? `
-          <div style="margin-bottom: 15px;">
-            <h2 style="color: #333; border-bottom: 1px solid #333; padding-bottom: 2px; margin: 0 0 8px 0; font-size: 14px;">Certifications</h2>
-            ${certifications.map((cert: any) => `
-              <div style="margin-bottom: 10px;">
-                <h3 style="margin: 0; color: #333; font-size: 13px;">${cert.name}</h3>
-                <p style="margin: 2px 0; color: #666; font-size: 11px;">${cert.issuer} | ${cert.date}</p>
-                ${cert.credential_id ? `<p style="margin: 2px 0; color: #666; font-size: 11px;">ID: ${cert.credential_id}</p>` : ''}
-              </div>
-            `).join('')}
-          </div>
-        ` : ''}
-      </div>
+    ${certifications.length ? `
+    <section id="certifications">
+        <h2>Certifications</h2>
+        <div class="section-content">
+            <ul>
+                ${certifications.map((cert: any) => `
+                <li>${cert.name || cert} ${cert.issuer ? `(${cert.issuer})` : ''} ${cert.date ? `- ${cert.date}` : ''}</li>
+                `).join('')}
+            </ul>
+        </div>
+    </section>
+    ` : ''}
+
+    ${skills?.technical?.length || skills?.soft?.length ? `
+    <section id="skills">
+        <h2>Skills</h2>
+        <div class="section-content">
+            ${skills.technical?.length ? `
+            <div class="skills-category">Programming:</div>
+            <div class="skills-list">${skills.technical.map((skill: any) => typeof skill === 'string' ? skill : skill.name).join(', ')}</div>
+            ` : ''}
+            ${skills.soft?.length ? `
+            <div class="skills-category">Soft Skills:</div>
+            <div class="skills-list">${skills.soft.join(', ')}</div>
+            ` : ''}
+        </div>
+    </section>
+    ` : ''}
+
+</body>
+</html>
     `;
   }
 

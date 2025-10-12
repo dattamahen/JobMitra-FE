@@ -358,7 +358,7 @@ mat-card-title {
 
 .profile-layout {
   display: grid;
-  grid-template-columns: 1fr 400px;
+  grid-template-columns: 1fr 350px;
   gap: 40px;
   align-items: start;
   min-height: 100vh;

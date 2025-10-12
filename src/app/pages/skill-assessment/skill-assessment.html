@@ -3,7 +3,7 @@
     <!-- Mock Interview Usage Status -->
     <div class="usage-status-card">
       <div class="usage-info">
-        <h3>🤖 AI Mock Interview Status</h3>
+        <h3><mat-icon>smart_toy</mat-icon> AI Mock Interview Status</h3>
         <div class="usage-details">
           <span class="usage-count">{{ getUsageStatus() }}</span>
           @if (!canTakeMockInterview()) {
@@ -13,7 +13,7 @@
           }
           @if (canTakeMockInterview()) {
             <span class="available-now">
-              ✅ Available now!
+              <mat-icon>check_circle</mat-icon> Available now!
             </span>
           }
         </div>
@@ -23,57 +23,74 @@
       </div>
     </div>
 
-    <div class="skill-categories">
-      <div class="category-card">
-        <h3>💻 Technical Skills</h3>
-        <div class="skills-list">
-          @for (skill of getTechnicalSkills(); track skill.id) {
-            <div class="skill-item">
-              <span class="skill-name">{{ skill.name }}</span>
-              <div class="skill-level">
-                <div class="progress-bar">
-                  <div class="progress" [style.width.%]="skill.currentLevel" [style.background]="getProgressColor(skill.currentLevel)"></div>
+    @if (hasSkills()) {
+      <div class="skill-categories">
+        <div class="category-card">
+          <h3><mat-icon>computer</mat-icon> Technical Skills</h3>
+          <div class="skills-list">
+            @for (skill of getTechnicalSkills(); track skill.id) {
+              <div class="skill-item">
+                <span class="skill-name">{{ skill.name }}</span>
+                <div class="skill-level">
+                  <div class="progress-bar">
+                    <div class="progress" [style.width.%]="skill.currentLevel" [style.background]="getProgressColor(skill.currentLevel)"></div>
+                  </div>
+                  <span class="level-text">{{ skill.levelText }}</span>
                 </div>
-                <span class="level-text">{{ skill.levelText }}</span>
+                <div class="skill-actions">
+                  <button class="test-btn" (click)="takeTest(skill)">Take Test</button>
+                  <button class="learn-btn" (click)="startLearning(skill)">Learn</button>
+                  <button class="interview-btn" 
+                          (click)="startMockInterview(skill)"
+                          [disabled]="!canTakeMockInterview()"
+                          [title]="canTakeMockInterview() ? 'Take Free AI Mock Interview' : 'Mock interview not available: ' + getNextInterviewAvailableTime()">
+                    <mat-icon>smart_toy</mat-icon> AI Interview
+                  </button>
+                </div>
               </div>
-              <button class="test-btn" (click)="takeTest(skill)">Take Test</button>
-              <button class="learn-btn" (click)="startLearning(skill)">Learn</button>
-              <button class="interview-btn" 
-                      (click)="startMockInterview(skill)"
-                      [disabled]="!canTakeMockInterview()"
-                      [title]="canTakeMockInterview() ? 'Take Free AI Mock Interview' : 'Mock interview not available: ' + getNextInterviewAvailableTime()">
-                🤖 AI Interview
-              </button>
-            </div>
-          }
+            }
+          </div>
+        </div>
+        
+        <div class="category-card">
+          <h3><mat-icon>psychology</mat-icon> Soft Skills</h3>
+          <div class="skills-list">
+            @for (skill of getSoftSkills(); track skill.id) {
+              <div class="skill-item">
+                <span class="skill-name">{{ skill.name }}</span>
+                <div class="skill-level">
+                  <div class="progress-bar">
+                    <div class="progress" [style.width.%]="skill.currentLevel" [style.background]="getProgressColor(skill.currentLevel)"></div>
+                  </div>
+                  <span class="level-text">{{ skill.levelText }}</span>
+                </div>
+                <div class="skill-actions">
+                  <button class="test-btn" (click)="takeTest(skill)">Take Test</button>
+                  <button class="learn-btn" (click)="startLearning(skill)">Learn</button>
+                  <button class="interview-btn" 
+                          (click)="startMockInterview(skill)"
+                          [disabled]="!canTakeMockInterview()"
+                          [title]="canTakeMockInterview() ? 'Take Free AI Mock Interview' : 'Mock interview not available: ' + getNextInterviewAvailableTime()">
+                    <mat-icon>smart_toy</mat-icon> AI Interview
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
         </div>
       </div>
-      
-      <div class="category-card">
-        <h3>🎯 Soft Skills</h3>
-        <div class="skills-list">
-          @for (skill of getSoftSkills(); track skill.id) {
-            <div class="skill-item">
-              <span class="skill-name">{{ skill.name }}</span>
-              <div class="skill-level">
-                <div class="progress-bar">
-                  <div class="progress" [style.width.%]="skill.currentLevel" [style.background]="getProgressColor(skill.currentLevel)"></div>
-                </div>
-                <span class="level-text">{{ skill.levelText }}</span>
-              </div>
-              <button class="test-btn" (click)="takeTest(skill)">Take Test</button>
-              <button class="learn-btn" (click)="startLearning(skill)">Learn</button>
-              <button class="interview-btn" 
-                      (click)="startMockInterview(skill)"
-                      [disabled]="!canTakeMockInterview()"
-                      [title]="canTakeMockInterview() ? 'Take Free AI Mock Interview' : 'Mock interview not available: ' + getNextInterviewAvailableTime()">
-                🤖 AI Interview
-              </button>
-            </div>
-          }
+    } @else {
+      <div class="no-skills-message">
+        <div class="no-skills-content">
+          <mat-icon class="no-skills-icon">psychology</mat-icon>
+          <h3>No Skills Found</h3>
+          <p>Update your profile to see your skills here and start taking assessments.</p>
+          <button class="update-profile-btn" (click)="navigateToProfile()">
+            <mat-icon>person</mat-icon> Update Profile
+          </button>
         </div>
       </div>
-    </div>
+    }
     
     <div class="assessment-history">
       <h2>Recent Assessments</h2>
@@ -96,28 +113,30 @@
       </div>
     </div>
     
-    <div class="recommended-skills">
-      <h2>🤖 AI Recommended Skills</h2>
-      <p>Based on your profile and target roles, we recommend improving these skills:</p>
-      <div class="recommendation-list">
-        @for (skill of getRecommendedSkills(); track skill.id) {
-          <div class="recommendation-item">
-            <div class="recommendation-info">
-              <span class="skill-name">{{ skill.name }}</span>
-              <span class="relevance">{{ skill.relevanceReason }}</span>
+    @if (getRecommendedSkills().length > 0) {
+      <div class="recommended-skills">
+        <h2><mat-icon>auto_awesome</mat-icon> AI Recommended Skills</h2>
+        <p>Based on your profile and target roles, we recommend improving these skills:</p>
+        <div class="recommendation-list">
+          @for (skill of getRecommendedSkills(); track skill.id) {
+            <div class="recommendation-item">
+              <div class="recommendation-info">
+                <span class="skill-name">{{ skill.name }}</span>
+                <span class="relevance">{{ skill.relevanceReason }}</span>
+              </div>
+              <button class="learn-btn" (click)="startLearning(skill)">Start Learning</button>
             </div>
-            <button class="learn-btn" (click)="startLearning(skill)">Start Learning</button>
-          </div>
-        }
+          }
+        </div>
       </div>
-    </div>
+    }
 
     <!-- Learning Resources Modal -->
     @if (showLearningModal) {
       <div class="modal-overlay" (click)="hideLearningModal()">
         <div class="modal-content" (click)="$event.stopPropagation()">
           <div class="modal-header">
-            <h2>📚 Learning Resources for {{ selectedSkill }}</h2>
+            <h2><mat-icon>school</mat-icon> Learning Resources for {{ selectedSkill }}</h2>
             <button class="close-btn" (click)="hideLearningModal()">×</button>
           </div>
           
@@ -132,7 +151,7 @@
                            [alt]="resource.title"
                            loading="lazy">
                       <div class="play-overlay">
-                        <div class="play-button">▶</div>
+                        <div class="play-button"><mat-icon>play_arrow</mat-icon></div>
                       </div>
                       <div class="duration-badge">{{ resource.duration }}</div>
                     </div>
@@ -173,7 +192,7 @@
             @if (selectedSkillResources.length === 0 && !showContributeForm) {
               <div class="no-resources">
                 <div class="no-resources-content">
-                  <div class="no-resources-icon">📚</div>
+                  <div class="no-resources-icon"><mat-icon>school</mat-icon></div>
                   <h3>No Learning Resources Found</h3>
                   <p>We don't have learning resources for <strong>{{ selectedSkill }}</strong> yet.</p>
                   <p>Help the community by sharing your knowledge!</p>
@@ -188,7 +207,7 @@
             @if (showContributeForm) {
               <div class="contribute-form">
                 <div class="form-header">
-                  <h3>🎯 Share Your Knowledge for {{ selectedSkill }}</h3>
+                  <h3><mat-icon>share</mat-icon> Share Your Knowledge for {{ selectedSkill }}</h3>
                   <p>Help others learn by sharing valuable learning resources!</p>
                 </div>
                 
@@ -245,7 +264,7 @@
             @if (selectedSkillResources.length > 0 && !showContributeForm) {
               <div class="modal-footer">
                 <button class="add-resource-btn" (click)="showContributeKnowledge()">
-                  ➕ Add More Resources
+                  <mat-icon>add</mat-icon> Add More Resources
                 </button>
               </div>
             }
@@ -259,7 +278,7 @@
       <div class="modal-overlay" (click)="closeMockInterviewModal()">
         <div class="modal-content interview-modal" (click)="$event.stopPropagation()">
           <div class="modal-header">
-            <h2>🤖 AI Mock Interview - {{ selectedSkill }}</h2>
+            <h2><mat-icon>smart_toy</mat-icon> AI Mock Interview - {{ selectedSkill }}</h2>
             <button class="close-btn" (click)="closeMockInterviewModal()">×</button>
           </div>
           
@@ -279,7 +298,7 @@
                   </div>
                   
                   <div class="interview-tips">
-                    <h3>💡 Tips for Success</h3>
+                    <h3><mat-icon>lightbulb</mat-icon> Tips for Success</h3>
                     <ul>
                       <li>Find a quiet environment</li>
                       <li>Speak clearly and think out loud</li>
@@ -310,7 +329,7 @@
                     Cancel
                   </button>
                   <button class="start-interview-btn" (click)="beginInterview()">
-                    🚀 Start Interview
+                    <mat-icon>play_arrow</mat-icon> Start Interview
                   </button>
                 </div>
               </div>
@@ -371,7 +390,7 @@
               <div class="plan-features">
                 @for (feature of getPlanFeatures(plan.id); track $index) {
                   <div class="feature">
-                    <i class="check-icon">✓</i>
+                    <mat-icon class="check-icon">check</mat-icon>
                     <span>{{ feature }}</span>
                   </div>
                 }
