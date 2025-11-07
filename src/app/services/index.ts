@@ -27,13 +27,7 @@ export type {
   ApplicationsResponse,
   ApplicationStats
 } from './application.service';
-export type { 
-  MockInterviewSession, 
-  CreateInterviewRequest,
-  InterviewQuestion,
-  SubmitAnswerRequest,
-  InterviewAnalytics
-} from './mock-interview.service';
+// Mock interview types will be added when needed
 export type { 
   LearningResource, 
   UserProgress, 

@@ -1,0 +1,101 @@
+.voice-ai-container {
+display: flex;
+justify-content: center;
+align-items: center;
+min-height: 100vh;
+padding: 1rem;
+background-color: #f7fafc;
+}
+
+.voice-card {
+width: 100%;
+max-width: 600px;
+box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+
+.title-icon {
+color: #4c51bf;
+}
+
+.mic-section {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 1rem;
+margin: 2rem 0;
+}
+
+.mic-button {
+background-color: #4c51bf !important;
+transition: all 0.2s ease;
+}
+
+.mic-button:hover:not(:disabled) {
+background-color: #5a67d8 !important;
+transform: translateY(-2px);
+}
+
+.mic-button.listening {
+background-color: #e53e3e !important;
+animation: pulse 1s infinite alternate;
+}
+
+.mic-button.processing {
+background-color: #718096 !important;
+}
+
+@keyframes pulse {
+from {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.7);
+}
+to {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(229, 62, 62, 0);
+}
+}
+
+.mic-status {
+font-size: 1.1rem;
+font-weight: 600;
+color: #4a5568;
+margin: 0;
+}
+
+.input-section, .response-section {
+margin: 1.5rem 0;
+}
+
+.input-section h4, .response-section h4 {
+font-size: 0.875rem;
+font-weight: 700;
+text-transform: uppercase;
+color: #4c51bf;
+margin-bottom: 0.5rem;
+}
+
+.input-display {
+padding: 1rem;
+background-color: #f7fafc;
+border: 1px solid #e2e8f0;
+border-radius: 0.5rem;
+color: #4a5568;
+font-style: italic;
+min-height: 40px;
+}
+
+.response-display {
+padding: 1rem;
+background-color: white;
+border: 1px solid #cbd5e0;
+border-radius: 0.5rem;
+color: #2d3748;
+min-height: 100px;
+overflow-y: auto;
+}

@@ -1,0 +1,47 @@
+<div class="voice-ai-container">
+      <mat-card class="voice-card">
+        <mat-card-header>
+          <mat-card-title class="title">
+            <mat-icon class="title-icon">mic</mat-icon>
+            Voice AI Assistant
+          </mat-card-title>
+          <mat-card-subtitle>Speak your question, and let the AI answer!</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <!-- Microphone Button -->
+          <div class="mic-section">
+            <button 
+              mat-fab 
+              [class.listening]="voiceService.isListening()"
+              [class.processing]="voiceService.isProcessing()"
+              [disabled]="voiceService.isProcessing()"
+              (click)="toggleListening()"
+              class="mic-button">
+              @if (voiceService.isProcessing()) {
+                <mat-spinner diameter="24"></mat-spinner>
+              } @else {
+                <mat-icon>{{micIcon()}}</mat-icon>
+              }
+            </button>
+            <p class="mic-status">{{statusText()}}</p>
+          </div>
+
+          <!-- User Input Display -->
+          <div class="input-section">
+            <h4>Your Query:</h4>
+            <div class="input-display">
+              {{voiceService.currentTranscript() || '(Speak into the microphone to start...)'}}
+            </div>
+          </div>
+
+          <!-- AI Response Display -->
+          <div class="response-section">
+            <h4>AI Response:</h4>
+            <div class="response-display">
+              {{voiceService.currentResponse() || 'Waiting for input...'}}
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
