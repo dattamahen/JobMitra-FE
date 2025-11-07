@@ -1,51 +1,121 @@
-<div class="voice-ai-container">
-  <div class="voice-card">
-    <div class="header">
-      <div class="title">
-        <mat-icon class="title-icon">mic</mat-icon>
-        Voice AI Assistant
-      </div>
-      <p class="subtitle">Speak your question, and let the AI answer and talk back!</p>
+<div class="interview-container">
+  <!-- Loading State -->
+  @if (phase() === 'loading') {
+    <div class="loading-section">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Starting your mock interview...</p>
     </div>
+  }
 
-    <div class="content">
-      <!-- Microphone Button -->
-      <div class="mic-section">
+  <!-- Interview Phase -->
+  @if (phase() === 'interview' && interviewSession()) {
+    <div class="interview-content">
+      <!-- Progress Bar -->
+      <div class="progress-section">
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="progress()"></div>
+        </div>
+        <p class="progress-text">Question {{currentQuestionIndex() + 1}} of {{interviewSession()!.questions.length}}</p>
+      </div>
+
+      <!-- Current Question -->
+      <mat-card class="question-card">
+        <mat-card-header>
+          <mat-card-title>Interview Question</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="question-text">{{currentQuestion()?.question}}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Recording Section -->
+      <div class="recording-section">
         <button 
           mat-fab 
-          [class.listening]="voiceService.isListening()"
-          [class.processing]="voiceService.isProcessing()"
-          [disabled]="voiceService.isProcessing()"
-          (click)="toggleListening()"
-          class="mic-button">
-          @if (voiceService.isProcessing()) {
-            <mat-spinner diameter="24"></mat-spinner>
+          [class.recording]="isRecording()"
+          [disabled]="isLoading()"
+          (click)="isRecording() ? stopRecording() : startRecording()"
+          class="record-button">
+          @if (isRecording()) {
+            <mat-icon>stop</mat-icon>
           } @else {
-            <mat-icon>{{micIcon()}}</mat-icon>
+            <mat-icon>mic</mat-icon>
           }
         </button>
-        <p class="mic-status">{{statusText()}}</p>
+        <p class="record-status">
+          @if (isRecording()) {
+            Recording... Speak your answer
+          } @else {
+            Click to record your answer
+          }
+        </p>
       </div>
 
-      <!-- User Input Display -->
-      <div class="input-section">
-        <h4>Your Query:</h4>
-        <div class="input-display">
-          {{voiceService.currentTranscript() || '(Speak into the microphone to start...)'}}
-        </div>
-      </div>
+      <!-- Answer Display -->
+      @if (currentAnswer()) {
+        <mat-card class="answer-card">
+          <mat-card-header>
+            <mat-card-title>Your Answer</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>{{currentAnswer()}}</p>
+          </mat-card-content>
+        </mat-card>
+      }
 
-      <!-- AI Response Display -->
-      <div class="response-section">
-        <h4>AI Response:</h4>
-        <div class="response-display">
-          {{voiceService.currentResponse() || 'Waiting for input...'}}
-        </div>
+      <!-- Navigation -->
+      <div class="navigation">
+        <button 
+          mat-raised-button 
+          color="primary"
+          [disabled]="!canGoNext() || isLoading()"
+          (click)="nextQuestion()">
+          @if (isLastQuestion()) {
+            Submit Interview
+          } @else {
+            Next Question
+          }
+        </button>
       </div>
     </div>
+  }
 
-    <div class="actions">
-      <button mat-button (click)="closeModal()">Close</button>
+  <!-- Evaluation Phase -->
+  @if (phase() === 'evaluation' && evaluation()) {
+    <div class="evaluation-content">
+      <mat-card class="evaluation-card">
+        <mat-card-header>
+          <mat-card-title>Interview Results</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="score-section">
+            <div class="overall-score">
+              <h2>{{evaluation()!.overall_score}}%</h2>
+              <p>Overall Score</p>
+            </div>
+          </div>
+          
+          <div class="feedback-section">
+            <h3>Feedback</h3>
+            <p>{{evaluation()!.feedback}}</p>
+          </div>
+
+          <div class="question-scores">
+            <h3>Question Breakdown</h3>
+            @for (score of evaluation()!.question_scores; track score.question_id) {
+              <div class="question-score">
+                <span class="score">{{score.score}}%</span>
+                <span class="feedback">{{score.feedback}}</span>
+              </div>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
+  }
+
+  <!-- Close Button -->
+  <div class="actions">
+    <button mat-button (click)="closeModal()">Close</button>
   </div>
 </div>

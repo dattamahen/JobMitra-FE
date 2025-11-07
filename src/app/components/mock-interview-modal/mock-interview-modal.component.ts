@@ -1,11 +1,13 @@
-import { Component, computed, effect, Inject } from '@angular/core';
+import { Component, computed, effect, Inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
 import { VoiceAiService } from '../../services/voice-ai.service';
+import { MockInterviewService, InterviewSession, InterviewQuestion, InterviewEvaluation } from '../../services/mock-interview.service';
 
 @Component({
   selector: 'app-mock-interview-modal',
@@ -16,18 +18,32 @@ import { VoiceAiService } from '../../services/voice-ai.service';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatCardModule
   ],
   templateUrl: './mock-interview-modal.html',
   styleUrl: './mock-interview-modal.css'
 })
 export class MockInterviewModalComponent {
+  // Signals for state management
+  currentQuestionIndex = signal(0);
+  isRecording = signal(false);
+  isLoading = signal(false);
+  interviewSession = signal<InterviewSession | null>(null);
+  currentAnswer = signal('');
+  answers = signal<Array<{question_id: string, answer: string}>>([]);
+  evaluation = signal<InterviewEvaluation | null>(null);
+  phase = signal<'loading' | 'interview' | 'evaluation'>('loading');
+
   constructor(
     public voiceService: VoiceAiService,
+    private mockInterviewService: MockInterviewService,
     private snackBar: MatSnackBar,
     private dialogRef: MatDialogRef<MockInterviewModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
+    this.startInterview();
+    
     effect(() => {
       const error = this.voiceService.error();
       if (error) {
@@ -35,25 +51,120 @@ export class MockInterviewModalComponent {
         this.voiceService.clearError();
       }
     });
+
+    effect(() => {
+      const transcript = this.voiceService.currentTranscript();
+      if (transcript && this.isRecording()) {
+        this.currentAnswer.set(transcript);
+      }
+    });
   }
 
-  micIcon = computed(() => {
-    if (this.voiceService.isListening()) return 'stop';
-    return 'mic';
+  currentQuestion = computed(() => {
+    const session = this.interviewSession();
+    const index = this.currentQuestionIndex();
+    return session?.questions[index] || null;
   });
 
-  statusText = computed(() => {
-    if (this.voiceService.isProcessing()) return 'Processing...';
-    if (this.voiceService.isListening()) return 'Listening... Speak now.';
-    return 'Click to Speak';
+  progress = computed(() => {
+    const session = this.interviewSession();
+    const index = this.currentQuestionIndex();
+    if (!session) return 0;
+    return ((index + 1) / session.questions.length) * 100;
   });
 
-  toggleListening(): void {
-    if (this.voiceService.isListening()) {
-      this.voiceService.stopListening();
-    } else {
-      this.voiceService.startListening();
+  canGoNext = computed(() => {
+    return this.currentAnswer().trim().length > 0;
+  });
+
+  isLastQuestion = computed(() => {
+    const session = this.interviewSession();
+    const index = this.currentQuestionIndex();
+    return session ? index >= session.questions.length - 1 : false;
+  });
+
+  startInterview(): void {
+    this.isLoading.set(true);
+    const type = this.data?.interviewType || 'technical';
+    
+    this.mockInterviewService.startInterviewSession(type).subscribe({
+      next: (session) => {
+        this.interviewSession.set(session);
+        this.phase.set('interview');
+        this.isLoading.set(false);
+        this.readCurrentQuestion();
+      },
+      error: (error) => {
+        this.snackBar.open('Failed to start interview', 'Close', { duration: 3000 });
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+  readCurrentQuestion(): void {
+    const question = this.currentQuestion();
+    if (question) {
+      this.voiceService.speak(question.question);
     }
+  }
+
+  startRecording(): void {
+    this.isRecording.set(true);
+    this.currentAnswer.set('');
+    this.voiceService.startListening();
+  }
+
+  stopRecording(): void {
+    this.isRecording.set(false);
+    this.voiceService.stopListening();
+  }
+
+  nextQuestion(): void {
+    const session = this.interviewSession();
+    const question = this.currentQuestion();
+    const answer = this.currentAnswer();
+    
+    if (!session || !question || !answer.trim()) return;
+
+    // Save current answer
+    const currentAnswers = this.answers();
+    currentAnswers.push({
+      question_id: question.id,
+      answer: answer.trim()
+    });
+    this.answers.set([...currentAnswers]);
+
+    // Submit answer to backend
+    this.mockInterviewService.submitAnswer(session.session_id, question.id, answer.trim()).subscribe();
+
+    if (this.isLastQuestion()) {
+      this.submitInterview();
+    } else {
+      this.currentQuestionIndex.update(i => i + 1);
+      this.currentAnswer.set('');
+      setTimeout(() => this.readCurrentQuestion(), 500);
+    }
+  }
+
+  submitInterview(): void {
+    const session = this.interviewSession();
+    const answers = this.answers();
+    
+    if (!session) return;
+
+    this.isLoading.set(true);
+    this.mockInterviewService.evaluateInterview(session.session_id, answers).subscribe({
+      next: (evaluation) => {
+        this.evaluation.set(evaluation);
+        this.phase.set('evaluation');
+        this.isLoading.set(false);
+        this.voiceService.speak(`Interview completed! Your overall score is ${evaluation.overall_score} percent. ${evaluation.feedback}`);
+      },
+      error: (error) => {
+        this.snackBar.open('Failed to evaluate interview', 'Close', { duration: 3000 });
+        this.isLoading.set(false);
+      }
+    });
   }
 
   closeModal(): void {
