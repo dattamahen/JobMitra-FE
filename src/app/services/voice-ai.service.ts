@@ -173,7 +173,7 @@ export class VoiceAiService {
     return { text, sources };
   }
 
-  private speak(text: string): void {
+  speak(text: string): void {
     if (!this.synthesis) return;
 
     this.synthesis.cancel();
