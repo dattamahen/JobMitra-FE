@@ -154,7 +154,7 @@ export class UserService {
     private apiService: ApiService,
     private authService: AuthService
   ) {
-    console.log('UserService: Constructor called');
+
     this.loadCurrentUser();
   }
 
@@ -162,7 +162,7 @@ export class UserService {
    * Force refresh current user from API (bypass localStorage)
    */
   refreshCurrentUser(): Observable<UserProfile | null> {
-    console.log('UserService: Force refreshing current user from API');
+
     
     if (this.authService.isAuthenticated()) {
       this.fetchCurrentUserFromAPI();
@@ -178,7 +178,7 @@ export class UserService {
     return this.apiService.post<{ message: string; user_id: string }>('/users', userData)
       .pipe(
         catchError(error => {
-          console.warn('🔥 API unavailable - User creation failed, using mock response:', error.message);
+
           // Return mock success response
           return of({
             message: 'User created successfully (mock data)',
@@ -202,7 +202,7 @@ export class UserService {
     return this.apiService.put<{ message: string }>(`/users/${userId}`, updateData)
       .pipe(
         catchError(error => {
-          console.warn('🔥 API unavailable - Profile update failed, using mock response:', error.message);
+
           // Update local user if it exists
           const currentUser = this.currentUserSubject.value;
           if (currentUser) {
@@ -225,13 +225,13 @@ export class UserService {
    * Set current user
    */
   setCurrentUser(user: UserProfile): void {
-    console.log('UserService: Setting current user:', user.full_name);
+
     this.currentUserSubject.next(user);
     
     // Only use localStorage if available (browser environment)
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem('currentUser', JSON.stringify(user));
-      console.log('UserService: User data saved to localStorage');
+
     }
   }
 
@@ -239,15 +239,13 @@ export class UserService {
    * Load current user from localStorage or API
    */
   private loadCurrentUser(): void {
-    console.log('UserService: Loading current user...');
-    console.log('UserService: Auth service authenticated?', this.authService.isAuthenticated());
-    console.log('UserService: Auth service user:', this.authService.getCurrentUserValue());
+
 
     // Check if user is authenticated and get from auth service first
     if (this.authService.isAuthenticated()) {
       const authUser = this.authService.getCurrentUserValue();
       if (authUser) {
-        console.log('UserService: Found user in auth service:', authUser.full_name || authUser.first_name);
+
         const userProfile = this.convertUserToProfile(authUser);
         this.setCurrentUser(userProfile);
         return;
@@ -261,11 +259,11 @@ export class UserService {
       if (storedUser) {
         try {
           const user = JSON.parse(storedUser);
-          console.log('UserService: Found user in localStorage:', user.full_name);
+
           this.currentUserSubject.next(user);
           return;
         } catch (error) {
-          console.error('UserService: Error parsing stored user:', error);
+
           if (typeof localStorage !== 'undefined') {
             localStorage.removeItem('currentUser');
           }
@@ -273,14 +271,14 @@ export class UserService {
       }
     }
 
-    console.log('UserService: No user found');
+
   }
 
   /**
    * Fetch current user from API
    */
   private fetchCurrentUserFromAPI(): void {
-    console.log('UserService: Making authenticated API call to /auth/me');
+
     
     if (!this.authService.isAuthenticated()) {
       return;
@@ -289,9 +287,7 @@ export class UserService {
     this.authService.getCurrentUser()
       .pipe(
         catchError(error => {
-          console.warn('UserService: API call failed:', error.message);
           if (error.status === 401) {
-            console.log('UserService: Authentication failed, clearing auth data');
             this.authService.clearAllAuthData();
           }
           throw error;
@@ -299,12 +295,12 @@ export class UserService {
       )
       .subscribe({
         next: (user: any) => {
-          console.log('UserService: Successfully received user data:', user);
+
           const userProfile = this.convertUserToProfile(user);
           this.setCurrentUser(userProfile);
         },
         error: (error: any) => {
-          console.error('UserService: Error loading current user:', error);
+
         }
       });
   }
@@ -342,19 +338,14 @@ export class UserService {
       throw new Error('No user data provided');
     }
 
-    console.log('UserService: convertUserToProfile - Full user data:', user);
-    console.log('UserService: convertUserToProfile - work_experience:', user.work_experience);
-    console.log('UserService: convertUserToProfile - education:', user.education);
-    console.log('UserService: convertUserToProfile - certifications:', user.certifications);
-    console.log('UserService: convertUserToProfile - technical_skills:', user.technical_skills);
-    console.log('UserService: convertUserToProfile - projects:', user.projects);
+
 
     // Map User fields to UserProfile format - handling both flat and nested structures
     const personalInfo = user.personal_info || {};
     const professionalInfo = user.professional_info || {};
     const preferences = user.preferences || {};
 
-    console.log('UserService: convertUserToProfile - Professional info:', professionalInfo);
+
 
     // Handle backward compatibility with flat structure
     const firstName = personalInfo.first_name || user.first_name || '';
@@ -391,7 +382,7 @@ export class UserService {
         // Backend now returns expected_salary as a plain number (e.g., 2800000)
         const salaryValue = professionalInfo.expected_salary || professionalInfo.current_salary || 1200000;
         const salaryLPA = Math.floor(salaryValue / 100000);
-        console.log(`UserService: Salary conversion - Raw: ${salaryValue}, LPA: ${salaryLPA}`);
+
         return {
           min: salaryLPA,
           max: salaryLPA + 3,
@@ -534,41 +525,39 @@ export class UserService {
    * Update user and refresh current user
    */
   updateCurrentUser(updateData: UpdateUserRequest): Observable<{ message: string }> {
-    console.log('UserService: updateCurrentUser called with data:', updateData);
+
 
     const userId = this.getCurrentUserId();
     if (!userId) {
       throw new Error('No current user found');
     }
 
-    console.log('UserService: Current user ID:', userId);
+
 
     // Convert UpdateUserRequest to format expected by AuthService
     const authProfileData = this.convertUpdateRequestToAuthFormat(updateData);
 
-    console.log('UserService: Calling AuthService.updateProfile with:', authProfileData);
+
 
     return this.authService.updateProfile(authProfileData).pipe(
       switchMap(updateResult => {
-        console.log('UserService: Profile update successful, now fetching latest data via /auth/me');
+
         // After successful update, fetch the complete user data from /auth/me
         return this.authService.getCurrentUser().pipe(
           map(freshUserData => {
-            console.log('UserService: Received fresh user data from /auth/me:', freshUserData);
             // Convert fresh user data to UserProfile format and update current user
             const userProfile = this.convertUserToProfile(freshUserData);
-            console.log('UserService: Converted fresh data to UserProfile:', userProfile);
             this.setCurrentUser(userProfile);
             return { message: 'Profile updated successfully' };
           })
         );
       }),
       catchError(error => {
-        console.error('UserService: Error updating profile via AuthService:', error);
+
         // Fallback to local update if API fails
         const currentUser = this.currentUserSubject.value;
         if (currentUser) {
-          console.log('UserService: Falling back to local update');
+
           const updatedUser = { ...currentUser, ...updateData };
           this.setCurrentUser(updatedUser as UserProfile);
           return of({ message: 'Profile updated successfully (offline mode)' });

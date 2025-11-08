@@ -41,7 +41,7 @@ export class ApplicationsPage implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('🎯 ApplicationsPage ngOnInit called');
+
     this.loadApplications();
   }
 
@@ -66,28 +66,26 @@ export class ApplicationsPage implements OnInit {
         const payload = JSON.parse(atob(token.split('.')[1]));
         const actualUserId = payload.user_id;
         
-        console.log('🎯 loadApplications called with actual user ID:', actualUserId);
+
         this.isLoading = true;
         this.error = '';
         
         this.jobService.getUserAppliedJobs(actualUserId)
           .subscribe({
             next: (response) => {
-              console.log('✅ Applied jobs loaded successfully:', response);
               this.applications = response.applications || [];
               this.isLoading = false;
               this.cdr.detectChanges();
-              console.log('✅ Updated applications:', this.applications);
             },
             error: (error) => {
-              console.error('❌ Error loading applied jobs:', error);
+
               this.error = error.error?.detail || 'Failed to load applications';
               this.isLoading = false;
               this.cdr.detectChanges();
             }
           });
       } catch (e) {
-        console.error('❌ Error decoding token:', e);
+
         this.error = 'Invalid authentication. Please login again.';
         this.isLoading = false;
       }
@@ -212,17 +210,17 @@ export class ApplicationsPage implements OnInit {
   }
 
   prepareForInterview(applicationId: string): void {
-    console.log('Preparing for interview:', applicationId);
+
     // Navigate to interview preparation or show modal
   }
 
   viewApplicationDetails(applicationId: string): void {
-    console.log('Viewing application details:', applicationId);
+
     // Navigate to application details page
   }
 
   withdrawApplication(applicationId: string): void {
-    console.log('Withdrawing application:', applicationId);
+
     // Show confirmation dialog and withdraw
   }
 }

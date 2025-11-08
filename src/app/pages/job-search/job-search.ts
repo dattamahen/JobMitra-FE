@@ -97,25 +97,19 @@ export class JobSearchPage implements OnInit {
       salary_ranges: []
     };
     
-    console.log('🏗️ JobSearchPage constructor - initialized filterOptions:', this.filterOptions);
+
   }
 
   ngOnInit(): void {
-    console.log('🎯 JobSearchPage ngOnInit called');
+
     this.loadJobs();
   }
 
   private loadJobs(): void {
-    console.log('🎯 loadJobs called, setting isLoading to true');
-    console.log('🔍 Current filter values:', {
-      searchQuery: this.searchQuery,
-      selectedLocation: this.selectedLocation,
-      selectedExperience: this.selectedExperience,
-      selectedEmploymentType: this.selectedEmploymentType
-    });
+
     
     this.isLoading = true;
-    console.log('🔍 Loading jobs from API...');
+
     
     // Build filters from current selections
     const filters: JobSearchFilters = {};
@@ -133,15 +127,12 @@ export class JobSearchPage implements OnInit {
       filters.employment_type = [this.selectedEmploymentType];
     }
 
-    console.log('📤 Sending filters to API:', filters);
+
 
     this.jobService.searchJobs(filters, this.currentPage, this.jobsPerPage)
       .subscribe({
         next: (response) => {
-          console.log('✅ Jobs loaded successfully:', response);
-          console.log('✅ Response jobs array:', response.jobs);
-          console.log('✅ Response type:', typeof response);
-          console.log('✅ Response keys:', Object.keys(response));
+
           
           // Update data first
           this.jobListings = response.jobs || [];
@@ -154,26 +145,22 @@ export class JobSearchPage implements OnInit {
           
           // Set loading to false immediately
           this.isLoading = false;
-          console.log('✅ Setting isLoading to false immediately');
+
           
           // Mark for check to trigger change detection
           this.cdr.markForCheck();
           this.cdr.detectChanges();
           
-          console.log('✅ Updated jobListings:', this.jobListings);
-          console.log('✅ isLoading set to:', this.isLoading);
-          console.log('✅ Change detection triggered');
+
         },
         error: (error) => {
-          console.error('❌ Error loading jobs:', error);
           this.isLoading = false;
-          console.log('❌ Setting isLoading to false on error');
           
           // Mark for check to trigger change detection
           this.cdr.markForCheck();
           this.cdr.detectChanges();
           
-          console.log('❌ Error: Change detection triggered');
+
         }
       });
   }
@@ -304,7 +291,7 @@ export class JobSearchPage implements OnInit {
       return;
     }
     
-    console.log(`Analyzing profile match for job: ${job?.title}`);
+
     
     this.jobService.performMatchAnalysis(jobId).subscribe({
       next: (response) => {
@@ -317,7 +304,7 @@ export class JobSearchPage implements OnInit {
       error: (error) => {
         const errorMessage = error.error?.detail || 'Failed to perform match analysis';
         this.snackBar.open(errorMessage, 'Close', { duration: 3000 });
-        console.error('Match analysis error:', error);
+
       }
     });
   }
@@ -332,7 +319,7 @@ export class JobSearchPage implements OnInit {
       return;
     }
     
-    console.log(`Tailoring resume for job: ${job?.title}`);
+
     
     this.jobService.tailorResume(jobId).subscribe({
       next: (response) => {
@@ -345,7 +332,7 @@ export class JobSearchPage implements OnInit {
       error: (error) => {
         const errorMessage = error.error?.detail || 'Failed to tailor resume';
         this.snackBar.open(errorMessage, 'Close', { duration: 3000 });
-        console.error('Tailor resume error:', error);
+
       }
     });
   }
@@ -364,7 +351,7 @@ export class JobSearchPage implements OnInit {
 
   takeMockInterview(jobId: string): void {
     const job = this.getJobById(jobId);
-    console.log(`Starting mock interview for job: ${job?.title}`);
+
     
     const dialogRef = this.dialog.open(MockInterviewDialog, {
       width: '400px',
@@ -403,7 +390,7 @@ export class JobSearchPage implements OnInit {
         error: (error) => {
           const errorMessage = error.error?.detail || 'Failed to apply for job';
           this.snackBar.open(errorMessage, 'Close', { duration: 3000 });
-          console.error('Apply error:', error);
+  
         }
       });
     });
@@ -441,7 +428,7 @@ export class JobSearchPage implements OnInit {
       error: (error) => {
         const errorMessage = error.error?.detail || 'Failed to apply for job';
         this.snackBar.open(errorMessage, 'Close', { duration: 3000 });
-        console.error('Force apply error:', error);
+
       }
     });
   }
@@ -449,7 +436,7 @@ export class JobSearchPage implements OnInit {
   // Save job for later
   saveJob(jobId: string): void {
     const job = this.getJobById(jobId);
-    console.log(`Saving job: ${job?.title}`);
+
     
     const dialogRef = this.dialog.open(SaveJobDialog, {
       width: '400px',

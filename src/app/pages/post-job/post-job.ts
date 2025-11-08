@@ -411,7 +411,7 @@ export class PostJobPage implements OnInit {
     this.isSubmitting = true;
 
     try {
-      console.log('Form submitted:', this.jobForm.value);
+
       
       this.snackBar.open('Job posted successfully!', 'Close', {
         duration: 3000
@@ -420,7 +420,7 @@ export class PostJobPage implements OnInit {
       this.router.navigate(['/dashboard']);
       
     } catch (error: any) {
-      console.error('Error posting job:', error);
+
       this.isSubmitting = false;
       this.snackBar.open('Failed to post job. Please try again.', 'Close', {
         duration: 5000

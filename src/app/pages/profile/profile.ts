@@ -119,11 +119,11 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
           updateData.date_of_birth = date.toISOString();
         }
       } catch (e) {
-        console.warn('Invalid date format:', formData.date_of_birth);
+
       }
     }
     
-    console.log('Basic Info Update Data:', updateData);
+
     this.updateProfile(updateData, 'Basic information updated successfully!');
     this.isBasicInfoEditing = false;
   }
@@ -133,7 +133,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onProfessionalSubmit(formData: any): void {
-    console.log('🔧 Professional form data received:', formData);
+
     const updateData: any = {};
     
     // Professional Information - strings
@@ -157,7 +157,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
     if (formData.linkedin_link?.trim()) updateData.linkedin_link = formData.linkedin_link.trim();
     if (formData.github_link?.trim()) updateData.github_link = formData.github_link.trim();
     
-    console.log('🔧 Professional update data:', updateData);
+
     this.updateProfile(updateData, 'Professional information updated successfully!');
     this.isProfessionalEditing = false;
   }
@@ -209,19 +209,19 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 
   // Skills handlers
   onSkillsSubmit(formData: any): void {
-    console.log('Skills form data received:', formData);
+
     const updateData: any = {};
     
     // Process technical skills array and map to simple skills array
     const skillsArray = this.processDynamicArrayData(formData, 'technical_skills');
-    console.log('Processed skills array:', skillsArray);
+
     
     if (skillsArray.length > 0) {
       updateData.skills = skillsArray.map((skill: any) => skill.name).filter(Boolean);
       updateData.technical_skills = skillsArray; // Store detailed skills separately
     }
     
-    console.log('Skills update data:', updateData);
+
     this.updateProfile(updateData, 'Skills updated successfully!');
     this.isSkillsEditing = false;
   }
@@ -232,18 +232,18 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 
   // Experience handlers
   onExperienceSubmit(formData: any): void {
-    console.log('Experience form data received:', formData);
+
     const updateData: any = {};
     
     // Process work experience array
     const experienceArray = this.processDynamicArrayData(formData, 'experiences');
-    console.log('Processed experience array:', experienceArray);
+
     
     if (experienceArray.length > 0) {
       updateData.work_experience = experienceArray;
     }
     
-    console.log('Experience update data:', updateData);
+
     this.updateProfile(updateData, 'Experience updated successfully!');
     this.isExperienceEditing = false;
   }
@@ -254,17 +254,17 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 
   // Education handlers
   onEducationSubmit(formData: any): void {
-    console.log('Education form data received:', formData);
+
     const updateData: any = {};
     
     const educationArray = this.processDynamicArrayData(formData, 'education');
-    console.log('Processed education array:', educationArray);
+
     
     if (educationArray.length > 0) {
       updateData.education = educationArray;
     }
     
-    console.log('Education update data:', updateData);
+
     this.updateProfile(updateData, 'Education updated successfully!');
     this.isEducationEditing = false;
   }
@@ -275,17 +275,17 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 
   // Projects handlers
   onProjectsSubmit(formData: any): void {
-    console.log('Projects form data received:', formData);
+
     const updateData: any = {};
     
     const projectsArray = this.processDynamicArrayData(formData, 'projects');
-    console.log('Processed projects array:', projectsArray);
+
     
     if (projectsArray.length > 0) {
       updateData.projects = projectsArray;
     }
     
-    console.log('Projects update data:', updateData);
+
     this.updateProfile(updateData, 'Projects updated successfully!');
     this.isProjectsEditing = false;
   }
@@ -296,17 +296,17 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 
   // Certifications handlers
   onCertificationsSubmit(formData: any): void {
-    console.log('Certifications form data received:', formData);
+
     const updateData: any = {};
     
     const certificationsArray = this.processDynamicArrayData(formData, 'certifications');
-    console.log('Processed certifications array:', certificationsArray);
+
     
     if (certificationsArray.length > 0) {
       updateData.certifications = certificationsArray;
     }
     
-    console.log('Certifications update data:', updateData);
+
     this.updateProfile(updateData, 'Certifications updated successfully!');
     this.isCertificationsEditing = false;
   }
@@ -320,7 +320,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
     const result: any[] = [];
     const keys = Object.keys(formData).filter(key => key.startsWith(arrayName + '_item_'));
     
-    console.log(`Processing ${arrayName} with keys:`, keys);
+
     
     // Group by item ID
     const itemGroups: { [itemId: string]: any } = {};
@@ -332,11 +332,11 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
         const fieldName = match[2]; // company, position, etc.
         if (!itemGroups[itemId]) itemGroups[itemId] = {};
         itemGroups[itemId][fieldName] = formData[key];
-        console.log(`Grouped ${key} -> ${itemId}.${fieldName} = ${formData[key]}`);
+
       }
     });
     
-    console.log(`Item groups for ${arrayName}:`, itemGroups);
+
     
     // Convert to array and filter out empty items
     Object.values(itemGroups).forEach(item => {
@@ -346,11 +346,11 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
       );
       if (hasRequiredData) {
         result.push(item);
-        console.log(`Added valid item:`, item);
+
       }
     });
     
-    console.log(`Final result for ${arrayName}:`, result);
+
     return result;
   }
 
@@ -393,7 +393,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
         const hasEmptyKeys = user.work_experience.some((item: any) => item.hasOwnProperty(''));
         
         if (hasEmptyKeys) {
-          console.log('Detected malformed work experience data, skipping population');
+  
           // Don't populate malformed data - let user re-enter
           return values;
         }
@@ -426,7 +426,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
       const hasEmptyKeys = user.education.some((item: any) => item.hasOwnProperty(''));
       
       if (hasEmptyKeys) {
-        console.log('Detected malformed education data, skipping population');
+
         return values;
       }
       
@@ -458,7 +458,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
         values[`projects_${itemId}_technologies`] = project.technologies || '';
       });
     } else {
-      console.log('No projects data found, not creating default values');
+
     }
     return values;
   }
@@ -498,11 +498,11 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private updateProfile(updateData: any, successMessage: string): void {
-    console.log('Starting profile update with data:', updateData);
+
     
     // Check if there's actually data to update
     if (!updateData || Object.keys(updateData).length === 0) {
-      console.warn('No data to update, skipping profile update');
+
       this.snackBar.open('No changes to save', 'Close', {
         duration: 2000,
         panelClass: ['info-snackbar']
@@ -516,13 +516,13 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
       .pipe(
         takeUntil(this.destroy$),
         finalize(() => {
-          console.log('Profile update completed, setting isSaving to false');
+
           this.isSaving = false;
         })
       )
       .subscribe({
         next: (response) => {
-          console.log('Profile update successful:', response);
+
           this.snackBar.open(successMessage, 'Close', {
             duration: 3000,
             panelClass: ['success-snackbar']
@@ -535,7 +535,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
           this.syncWithResumeBuilder();
         },
         error: (error) => {
-          console.error('Profile update error:', error);
+
           this.snackBar.open('Error updating profile. Please try again.', 'Close', {
             duration: 3000,
             panelClass: ['error-snackbar']
@@ -548,10 +548,10 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
     // Sync updated profile data with resume builder
     this.resumeIntegrationService.getResumeData().subscribe({
       next: (resumeData) => {
-        console.log('Profile synced with resume builder:', resumeData);
+
       },
       error: (error) => {
-        console.error('Resume sync error:', error);
+
       }
     });
   }
@@ -567,14 +567,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 
   private updateFormValues(): void {
     const user = this.currentUser as any;
-    console.log('\n=== UPDATING FORM VALUES ===');
-    console.log('User data:', {
-      technical_skills: user?.technical_skills,
-      work_experience: user?.work_experience,
-      education: user?.education,
-      projects: user?.projects,
-      certifications: user?.certifications
-    });
+
     
     // Update all form values
     this.basicInfoValues = {
@@ -597,12 +590,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
       portfolio_link: user?.portfolio_link || user?.social_links?.portfolio || ''
     };
     
-    console.log('🔍 Professional values populated:', {
-      highest_qualification: user?.highest_qualification,
-      portfolio_link: user?.portfolio_link,
-      social_links_portfolio: user?.social_links?.portfolio,
-      final_values: this.professionalValues
-    });
+
 
     this.skillsValues = this.populateSkillsValues(user);
     this.experienceValues = this.populateExperienceValues(user);
@@ -618,13 +606,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
       currency: 'INR'
     };
     
-    console.log('Form values updated:');
-    console.log('- Experience values keys:', Object.keys(this.experienceValues).length);
-    console.log('- Skills values keys:', Object.keys(this.skillsValues).length);
-    console.log('- Education values keys:', Object.keys(this.educationValues).length);
-    console.log('- Projects values keys:', Object.keys(this.projectsValues).length);
-    console.log('- Certifications values keys:', Object.keys(this.certificationsValues).length);
-    console.log('=== FORM VALUES UPDATE COMPLETE ===\n');
+
   }
 
   constructor(
@@ -639,7 +621,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    console.log('Profile component initializing...');
+
     this.loadUserProfile();
   }
 
@@ -719,18 +701,13 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
       .pipe(
         takeUntil(this.destroy$),
         finalize(() => {
-          console.log('Profile loading finished');
+
           this.isLoading = false;
         })
       )
       .subscribe({
         next: (user: any) => {
-          console.log('\n=== USER DATA RECEIVED ===');
-          console.log('User work_experience:', user?.work_experience);
-          console.log('User technical_skills:', user?.technical_skills);
-          console.log('User education:', user?.education);
-          console.log('User projects:', user?.projects);
-          console.log('User certifications:', user?.certifications);
+
           
           this.currentUser = user as any;
           this.updateFormValues();
@@ -738,10 +715,10 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
           // Only update forms once after all values are set
           this.updateDynamicForms();
           
-          console.log('=== USER DATA PROCESSING COMPLETE ===\n');
+
         },
         error: (error: any) => {
-          console.error('Error loading profile:', error);
+
           if (error.status === 401) {
             this.authService.clearAllAuthData();
           }
@@ -796,28 +773,28 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private loadCurrentUser(): void {
-    console.log('Profile component: Loading current user...');
+
     this.isLoading = true;
     this.userService.getCurrentUser()
       .pipe(
         takeUntil(this.destroy$),
         finalize(() => {
-          console.log('Profile component: Finished loading user');
+  
           this.isLoading = false;
         })
       )
       .subscribe({
         next: (user) => {
-          console.log('Profile component: Received user data:', user);
+
           if (user) {
             this.currentUser = user;
             this.populateForm(user);
           } else {
-            console.log('Profile component: No user data received');
+
           }
         },
         error: (error) => {
-          console.error('Profile component: Error loading user profile:', error);
+
           this.snackBar.open('Error loading profile data', 'Close', { duration: 3000 });
         }
       });
@@ -890,7 +867,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
         } : undefined
       };
 
-      console.log('Sending update data:', updateData);
+
       
       this.userService.updateCurrentUser(updateData)
         .pipe(
@@ -899,14 +876,14 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
         )
         .subscribe({
           next: (response) => {
-            console.log('Profile update response:', response);
+
             this.snackBar.open('Profile updated successfully!', 'Close', { 
               duration: 3000,
               panelClass: ['success-snackbar']
             });
           },
           error: (error) => {
-            console.error('Error saving profile:', error);
+
             this.snackBar.open('Error saving profile. Please try again.', 'Close', { 
               duration: 3000,
               panelClass: ['error-snackbar']
@@ -1215,11 +1192,11 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 
   // Self-testing methods
   runSelfTest(): void {
-    console.log('🧪 Running Profile Self Test...');
+
     
     this.testProfileService.testProfileFlow().subscribe({
       next: (result: any) => {
-        console.log('✅ Self Test Results:', result);
+
         
         const passedTests = result.tests.filter((test: any) => test.status === 'PASS').length;
         const totalTests = result.tests.length;
@@ -1231,12 +1208,10 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
         );
         
         // Log detailed results
-        result.tests.forEach((test: any) => {
-          console.log(`${test.status === 'PASS' ? '✅' : '❌'} ${test.name}: ${test.status}`);
-        });
+
       },
       error: (error: any) => {
-        console.error('❌ Self Test Failed:', error);
+
         this.snackBar.open('Self test failed. Check console for details.', 'Close', {
           duration: 3000,
           panelClass: ['error-snackbar']
@@ -1246,11 +1221,11 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   exportToResume(): void {
-    console.log('📄 Exporting profile to resume builder...');
+
     
     this.resumeIntegrationService.getResumeData().subscribe({
       next: (resumeData) => {
-        console.log('✅ Resume data exported:', resumeData);
+
         
         this.snackBar.open(
           'Profile data exported to resume builder successfully!',
@@ -1260,10 +1235,10 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
         
         // Here you would typically navigate to resume builder or open it in a new tab
         // For now, just log the data
-        console.log('Resume Builder Data:', JSON.stringify(resumeData, null, 2));
+
       },
       error: (error) => {
-        console.error('❌ Resume export failed:', error);
+
         this.snackBar.open('Failed to export to resume builder.', 'Close', {
           duration: 3000,
           panelClass: ['error-snackbar']
@@ -1274,7 +1249,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 
   // Test individual form sections
   testFormSection(sectionName: string): void {
-    console.log(`🧪 Testing ${sectionName} section...`);
+
     
     // Get current form values for the section
     let formValues: any = {};
@@ -1296,7 +1271,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
         formValues = this.certificationsValues;
         break;
       default:
-        console.warn(`Unknown section: ${sectionName}`);
+
         return;
     }
     
@@ -1304,24 +1279,15 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
     const validation = this.testProfileService.validateFormData({ [sectionName]: formValues });
     
     if (validation.isValid) {
-      console.log(`✅ ${sectionName} section validation passed`);
+
     } else {
-      console.error(`❌ ${sectionName} section validation failed:`, validation.errors);
+
     }
   }
 
   // Pull user details and map to resume sections
   pullUserDetailsForResume(): void {
-    console.log('📄 Pulling user details for resume sections...');
-    console.log('Current user:', this.currentUser);
-    console.log('Basic info values:', this.basicInfoValues);
-    console.log('Professional values:', this.professionalValues);
-    console.log('Skills values:', this.skillsValues);
-    console.log('Experience values:', this.experienceValues);
-    console.log('Education values:', this.educationValues);
-    console.log('Projects values:', this.projectsValues);
-    console.log('Certifications values:', this.certificationsValues);
-    console.log('Job preferences values:', this.jobPreferencesValues);
+
     
     if (!this.currentUser) {
       this.snackBar.open('No user data available', 'Close', { duration: 3000 });
@@ -1339,7 +1305,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
       job_preferences: this.jobPreferencesValues
     };
     
-    console.log('✅ User details mapped to resume format:', resumeData);
+
     
     this.snackBar.open(
       'User details successfully mapped to resume format!',
@@ -1350,13 +1316,13 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 
   // Debug helper methods
   debugLocationSave(testLocation: string = 'Test City, Test State') {
-    console.log('🐛 Debug: Testing location save with:', testLocation);
+
     const formData = { location: testLocation };
     this.onBasicInfoSubmit(formData);
   }
 
   debugCertificationSave() {
-    console.log('🐛 Debug: Testing certification save');
+
     const formData = {
       'certifications_item_0_name': 'Debug Certification',
       'certifications_item_0_issuer': 'Debug Organization',

@@ -73,11 +73,10 @@ export class LoginPage implements OnInit {
     const isAuth = this.authService.isAuthenticated();
     const userType = this.authService.getUserType();
     
-    console.log('Login Page - Auth Status:', isAuth);
-    console.log('Login Page - User Type:', userType);
+
     
     if (isAuth && userType) {
-      console.log('User already authenticated, redirecting to:', userType);
+
       this.redirectBasedOnUserType(userType);
     }
   }
@@ -100,7 +99,7 @@ export class LoginPage implements OnInit {
     // Use real authentication API
     this.authService.login(loginRequest).subscribe({
       next: (response: LoginResponse) => {
-        console.log('Login successful:', response);
+
         this.isLoading = false;
         this.loginFormConfig.loading = false;
         
@@ -181,7 +180,7 @@ export class LoginPage implements OnInit {
 
     this.authService.register(signupData).then(
       (response) => {
-        console.log('Signup successful:', response);
+
         this.isLoading = false;
         this.signupFormConfig.loading = false;
         this.isSignupMode.set(false);
@@ -193,7 +192,7 @@ export class LoginPage implements OnInit {
       }
     ).catch(
       (error) => {
-        console.error('Signup failed:', error);
+
         this.isLoading = false;
         this.signupFormConfig.loading = false;
         this.errorMessage = error.error?.detail || 'Signup failed. Please try again.';

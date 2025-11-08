@@ -156,7 +156,7 @@ export class JobService {
     page: number = 1,
     perPage: number = 20
   ): Observable<JobSearchResponse> {
-    console.log('🔍 JobService: Searching jobs with filters:', filters, 'page:', page);
+
     
     // Get current user and their skills
     return this.userService.getCurrentUser().pipe(
@@ -175,22 +175,22 @@ export class JobService {
           user_experience_keywords: this.extractExperienceKeywords(currentUser)
         };
 
-        console.log('🚀 JobService: Making POST request to /jobs with body:', requestBody);
+
 
         return this.apiService.post<JobSearchResponse>('/jobs', requestBody)
           .pipe(
             map(response => {
-              console.log('✅ JobService: Received jobs from POST API:', response);
+
               return response;
             }),
             catchError(error => {
-              console.warn('🔥 POST API unavailable - Using mock job search data:', error.message);
+
               return of(this.getMockJobSearchResponse(filters, page, perPage));
             })
           );
       }),
       catchError(error => {
-        console.warn('🔥 User service unavailable - Using mock job search without user skills:', error.message);
+
         // Fallback to mock data if user service fails
         return of(this.getMockJobSearchResponse(filters, page, perPage));
       })
@@ -272,7 +272,7 @@ export class JobService {
     return this.apiService.get<JobListing>(`/jobs/${jobId}`)
       .pipe(
         catchError(error => {
-          console.warn('🔥 API unavailable - Using mock job details:', error.message);
+  
           const mockJob = this.convertMockJobToApiFormat(
             JOB_LISTINGS_DATA.find(job => job.id === jobId) || JOB_LISTINGS_DATA[0]
           );
@@ -485,7 +485,7 @@ export class JobService {
       description
     }).pipe(
       catchError(error => {
-        console.warn('🔥 API unavailable - Job report failed, using mock response:', error.message);
+
         return of({ message: 'Job reported successfully (mock data)' });
       })
     );

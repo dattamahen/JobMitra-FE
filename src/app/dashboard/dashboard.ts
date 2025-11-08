@@ -49,7 +49,6 @@ export class Dashboard implements OnInit {
   ngOnInit() {
     // Get user type to determine default page
     this.userType = this.authService.getUserType();
-    console.log('Dashboard: User type detected:', this.userType);
     
     // Listen to route parameter changes
     this.route.params.subscribe(params => {
@@ -70,7 +69,6 @@ export class Dashboard implements OnInit {
   }
 
   onPageSelected(pageId: string) {
-    console.log('Dashboard: Page selected:', pageId);
     this.currentPage = pageId;
     // Navigate to the selected page with URL update
     if (pageId === 'dashboard') {
@@ -81,7 +79,6 @@ export class Dashboard implements OnInit {
   }
 
   onNavigateToPage(event: {page: string, params?: any}) {
-    console.log('Dashboard: Navigate to page with params:', event);
     this.currentPage = event.page;
     
     if (event.params) {

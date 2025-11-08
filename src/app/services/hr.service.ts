@@ -109,7 +109,7 @@ export class HrService {
 
   private getAuthHeaders(): HttpHeaders {
     const token = this.authService.getToken();
-    console.log('HrService: Using token from AuthService:', token ? 'Token exists' : 'No token');
+
     
     if (!token) {
       throw new Error('No authentication token available. Please login first.');
@@ -144,14 +144,14 @@ export class HrService {
 
   async getDashboardStats(): Promise<HRDashboardStats> {
     try {
-      console.log('HrService: Making dashboard stats API call');
+
       const response = await firstValueFrom(
         this.http.get<HRDashboardStats>(`${this.baseUrl}/hr/dashboard`, { headers: this.getAuthHeaders() })
       );
-      console.log('HrService: Dashboard stats response:', response);
+
       return response;
     } catch (error: any) {
-      console.error('HrService: Dashboard stats error:', error);
+
       throw new Error(error.error?.detail || 'Failed to load dashboard stats');
     }
   }
@@ -168,36 +168,28 @@ export class HrService {
 
   async getMyJobs(): Promise<JobListing[]> {
     try {
-      console.log('HrService: Making jobs with applications API call');
+
       const response = await firstValueFrom(
         this.http.get<any>(`${this.baseUrl}/hr/jobs-with-applications`, { headers: this.getAuthHeaders() })
       );
-      console.log('HrService: Jobs with applications response:', response);
-      console.log('First job applications_count:', response?.jobs?.[0]?.applications_count);
+
       
       // Handle response format from /hr/jobs-with-applications
       if (response && response.jobs && Array.isArray(response.jobs)) {
-        console.log('HrService: Response has jobs property:', response.jobs.length, 'jobs');
+
         return response.jobs;
       } else if (Array.isArray(response)) {
-        console.log('HrService: Response is array format');
+
         return response;
       } else if (response.data && Array.isArray(response.data)) {
-        console.log('HrService: Response has data property:', response.data.length, 'jobs');
+
         return response.data;
       } else {
-        console.warn('HrService: Unexpected response format, returning empty array');
-        console.warn('HrService: Response structure:', typeof response, Object.keys(response));
+
         return [];
       }
     } catch (error: any) {
-      console.error('HrService: Jobs API error:', error);
-      console.error('HrService: Error details:', {
-        status: error.status,
-        statusText: error.statusText,
-        message: error.message,
-        error: error.error
-      });
+
       throw new Error(error.error?.detail || 'Failed to load job postings');
     }
   }
@@ -246,7 +238,7 @@ export class HrService {
     try {
       const params = jobId && jobId !== 'all' ? `?job_id=${jobId}` : '';
       const url = `${this.baseUrl}/hr/applications${params}`;
-      console.log('HrService: Calling URL:', url);
+
       return await firstValueFrom(
         this.http.get(url, { headers: this.getAuthHeaders() })
       );
