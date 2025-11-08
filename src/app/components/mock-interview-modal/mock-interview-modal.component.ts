@@ -33,7 +33,7 @@ export class MockInterviewModalComponent {
   currentAnswer = signal('');
   answers = signal<Array<{question_id: string, answer: string}>>([]);
   evaluation = signal<InterviewEvaluation | null>(null);
-  phase = signal<'loading' | 'interview' | 'evaluation'>('loading');
+  phase = signal<'instructions' | 'loading' | 'interview' | 'completed' | 'evaluation'>('instructions');
 
   constructor(
     public voiceService: VoiceAiService,
@@ -42,8 +42,6 @@ export class MockInterviewModalComponent {
     private dialogRef: MatDialogRef<MockInterviewModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.startInterview();
-    
     effect(() => {
       const error = this.voiceService.error();
       if (error) {
@@ -84,21 +82,26 @@ export class MockInterviewModalComponent {
   });
 
   startInterview(): void {
+    this.phase.set('loading');
     this.isLoading.set(true);
     const type = this.data?.interviewType || 'technical';
     
-    this.mockInterviewService.startInterviewSession(type).subscribe({
-      next: (session) => {
-        this.interviewSession.set(session);
-        this.phase.set('interview');
-        this.isLoading.set(false);
-        this.readCurrentQuestion();
-      },
-      error: (error) => {
-        this.snackBar.open('Failed to start interview', 'Close', { duration: 3000 });
-        this.isLoading.set(false);
-      }
-    });
+    // Add delay for loading effect
+    setTimeout(() => {
+      this.mockInterviewService.startInterviewSession(type).subscribe({
+        next: (session) => {
+          this.interviewSession.set(session);
+          this.phase.set('interview');
+          this.isLoading.set(false);
+          this.readCurrentQuestion();
+        },
+        error: (error) => {
+          this.snackBar.open('Failed to start interview', 'Close', { duration: 3000 });
+          this.isLoading.set(false);
+          this.phase.set('instructions');
+        }
+      });
+    }, 2000);
   }
 
   readCurrentQuestion(): void {
@@ -152,13 +155,21 @@ export class MockInterviewModalComponent {
     
     if (!session) return;
 
+    this.phase.set('completed');
+  }
+
+  viewResults(): void {
+    const session = this.interviewSession();
+    const answers = this.answers();
+    
+    if (!session) return;
+
     this.isLoading.set(true);
     this.mockInterviewService.evaluateInterview(session.session_id, answers).subscribe({
       next: (evaluation) => {
         this.evaluation.set(evaluation);
         this.phase.set('evaluation');
         this.isLoading.set(false);
-        this.voiceService.speak(`Interview completed! Your overall score is ${evaluation.overall_score} percent. ${evaluation.feedback}`);
       },
       error: (error) => {
         this.snackBar.open('Failed to evaluate interview', 'Close', { duration: 3000 });
