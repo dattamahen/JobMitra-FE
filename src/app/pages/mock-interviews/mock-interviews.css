@@ -67,18 +67,13 @@ h1, h2 {
   border-radius: 4px;
 }
 
-.start-btn, .review-btn {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
+.start-btn {
   width: 100%;
-}
-
-.start-btn:hover, .review-btn:hover { 
-  background: #0056b3; 
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .history-item {

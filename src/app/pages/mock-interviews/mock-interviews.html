@@ -8,7 +8,10 @@
         <span class="badge medium">Medium</span>
         <span class="badge hard">Hard</span>
       </div>
-      <button class="start-btn" (click)="onStartInterview()">Start Interview</button>
+      <button mat-raised-button color="primary" class="start-btn" (click)="onStartInterview('technical')">
+        <mat-icon>play_arrow</mat-icon>
+        Start Interview
+      </button>
     </div>
     
     <div class="interview-card">
@@ -19,7 +22,10 @@
         <span class="topic">Teamwork</span>
         <span class="topic">Problem Solving</span>
       </div>
-      <button class="start-btn" (click)="onStartInterview()">Start Interview</button>
+      <button mat-raised-button color="primary" class="start-btn" (click)="onStartInterview('behavioral')">
+        <mat-icon>play_arrow</mat-icon>
+        Start Interview
+      </button>
     </div>
     
     <div class="interview-card">
@@ -32,7 +38,10 @@
         <option>Amazon</option>
         <option>Meta</option>
       </select>
-      <button class="start-btn" (click)="onStartInterview()">Start Interview</button>
+      <button mat-raised-button color="primary" class="start-btn" (click)="onStartInterview('company')">
+        <mat-icon>play_arrow</mat-icon>
+        Start Interview
+      </button>
     </div>
   </div>
   
@@ -46,7 +55,7 @@
         </div>
         <div class="session-score">
           <span class="score">85%</span>
-          <button class="review-btn">View Feedback</button>
+          <button mat-button class="review-btn">View Feedback</button>
         </div>
       </div>
       
@@ -57,7 +66,7 @@
         </div>
         <div class="session-score">
           <span class="score">92%</span>
-          <button class="review-btn">View Feedback</button>
+          <button mat-button class="review-btn">View Feedback</button>
         </div>
       </div>
     </div>
