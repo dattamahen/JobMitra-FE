@@ -283,7 +283,7 @@ export class AuthService {
           token: token
         });
       } catch (error) {
-        console.error('Error parsing stored user data:', error);
+
         this.clearAuthData();
       }
     }
@@ -305,11 +305,11 @@ export class AuthService {
    * Login user with email and password
    */
   login(credentials: LoginRequest): Observable<LoginResponse> {
-    console.log('🔍 AuthService: Attempting real API login with:', credentials.email);
+
     return this.http.post<LoginResponse>(`${this.API_URL}/login`, credentials)
       .pipe(
         map(response => {
-          console.log('✅ AuthService: Login successful, response:', response);
+
           // Store token and user data only in browser
           if (this.isBrowser()) {
             localStorage.setItem(this.TOKEN_KEY, response.access_token);
@@ -326,7 +326,7 @@ export class AuthService {
           return response;
         }),
         catchError(error => {
-          console.error('❌ AuthService: Login failed with error:', error);
+
           return this.handleError(error);
         })
       );
@@ -336,9 +336,7 @@ export class AuthService {
    * Logout current user
    */
   logout(): Observable<any> {
-    console.log('🔍 Logout attempt started');
-    console.log('Auth state:', this.authStateSubject.value);
-    console.log('Token from localStorage:', this.isBrowser() ? localStorage.getItem(this.TOKEN_KEY) : 'N/A');
+
     
     // Call backend logout endpoint
     return this.http.post(`${this.API_URL}/logout`, {}, {
@@ -356,7 +354,7 @@ export class AuthService {
         }),
         catchError(error => {
           // Even if backend call fails, still clear local data
-          console.error('Logout error:', error);
+
           this.clearAuthData();
           this.authStateSubject.next({
             isAuthenticated: false,
@@ -479,7 +477,7 @@ export class AuthService {
    * Handle HTTP errors
    */
   private handleError(error: any) {
-    console.error('Auth service error:', error);
+
     
     // If unauthorized, clear auth data
     if (error.status === 401) {

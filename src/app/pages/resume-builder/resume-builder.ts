@@ -160,14 +160,14 @@ export class ResumeBuilderPage implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: (profile) => {
-        console.log('Resume Builder: User profile loaded:', profile);
+
         this.mapUserDataToForms(profile);
         this.populateFormsFromProfile(profile);
         this.createResumeFromProfile(profile);
         this.resumeService.setLoading(false);
       },
       error: (error) => {
-        console.error('Error loading user data:', error);
+
         this.resumeService.setLoading(false);
       }
     });
@@ -175,13 +175,13 @@ export class ResumeBuilderPage implements OnInit {
 
   // Pull user details and map to resume forms
   pullUserDetailsToResumeForms(): void {
-    console.log('📄 Pulling user details to resume forms...');
+
     
     this.resumeService.getUserProfileData().pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: (profile) => {
-        console.log('✅ User profile data received:', profile);
+
         this.mapUserDataToForms(profile);
         this.snackBar.open(
           'User details successfully mapped to resume forms!',
@@ -190,7 +190,7 @@ export class ResumeBuilderPage implements OnInit {
         );
       },
       error: (error) => {
-        console.error('❌ Failed to pull user details:', error);
+
         this.snackBar.open('Failed to pull user details.', 'Close', {
           duration: 3000,
           panelClass: ['error-snackbar']
@@ -209,7 +209,7 @@ export class ResumeBuilderPage implements OnInit {
   certificationsValues: any = {};
 
   private mapUserDataToForms(user: any): void {
-    console.log('Mapping user data to resume forms:', user);
+
     
     // Map personal info
     this.personalInfoValues = {
@@ -242,12 +242,7 @@ export class ResumeBuilderPage implements OnInit {
     // Map certifications using same approach as profile
     this.certificationsValues = this.populateCertificationsValues(user);
 
-    console.log('User data mapping completed');
-    console.log('Skills values:', this.skillsValues);
-    console.log('Experience values:', this.experienceValues);
-    console.log('Education values:', this.educationValues);
-    console.log('Projects values:', this.projectsValues);
-    console.log('Certifications values:', this.certificationsValues);
+
   }
 
   private populateSkillsValues(user: any): any {
@@ -394,16 +389,14 @@ export class ResumeBuilderPage implements OnInit {
 
   private convertProjectsValues(): any[] {
     const projects = [];
-    console.log('Converting projects values:', this.projectsValues);
     const keys = Object.keys(this.projectsValues).filter(key => key.includes('_name'));
-    console.log('Project keys found:', keys);
     
     for (const key of keys) {
       const match = key.match(/projects_item_(\d+)_name/);
       if (match) {
         const index = match[1];
         const name = this.projectsValues[`projects_item_${index}_name`];
-        console.log(`Project ${index} name:`, name);
+
         if (name) {
           projects.push({
             name: name,
@@ -414,7 +407,7 @@ export class ResumeBuilderPage implements OnInit {
         }
       }
     }
-    console.log('Converted projects:', projects);
+
     return projects;
   }
 
@@ -448,7 +441,7 @@ export class ResumeBuilderPage implements OnInit {
         // Templates are already loaded in service
       },
       error: (error) => {
-        console.error('Error loading templates:', error);
+
       }
     });
   }
@@ -908,7 +901,7 @@ export class ResumeBuilderPage implements OnInit {
       },
       error: (error) => {
         this.isOptimizing.set(false);
-        console.error('Error optimizing resume:', error);
+
         this.snackBar.open('Error optimizing resume', 'Close', { duration: 3000 });
       }
     });
@@ -1322,14 +1315,7 @@ export class ResumeBuilderPage implements OnInit {
     const resume = this.currentResume();
     if (!resume) return;
 
-    console.log('Resume data for PDF:', resume);
-    console.log('Personal info values:', this.personalInfoValues);
-    console.log('Summary values:', this.summaryValues);
-    console.log('Skills values:', this.skillsValues);
-    console.log('Experience values:', this.experienceValues);
-    console.log('Education values:', this.educationValues);
-    console.log('Projects values:', this.projectsValues);
-    console.log('Certifications values:', this.certificationsValues);
+
 
     const tempElement = document.createElement('div');
     tempElement.style.position = 'absolute';
@@ -1373,7 +1359,7 @@ export class ResumeBuilderPage implements OnInit {
 
       pdf.save(`${resume.sections.personal_info?.full_name || 'Resume'}.pdf`);
     } catch (error) {
-      console.error('Error generating PDF:', error);
+
       this.snackBar.open('Error generating PDF', 'Close', { duration: 3000 });
     } finally {
       document.body.removeChild(tempElement);
@@ -1390,14 +1376,7 @@ export class ResumeBuilderPage implements OnInit {
     const projects = this.convertProjectsValues();
     const certifications = this.convertCertificationsValues();
     
-    console.log('Data for PDF generation:');
-    console.log('Personal info:', personalInfo);
-    console.log('Summary:', summary);
-    console.log('Experience:', experience);
-    console.log('Education:', education);
-    console.log('Skills:', skills);
-    console.log('Projects:', projects);
-    console.log('Certifications:', certifications);
+
 
     return `
 <!DOCTYPE html>

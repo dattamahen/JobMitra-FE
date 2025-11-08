@@ -37,9 +37,7 @@ export class SideNav implements OnInit {
     // Get navigation items based on current user
     this.navItems = this.navigationService.getNavigationItems();
     
-    console.log('SideNav: Navigation items received:', this.navItems);
-    console.log('SideNav: Current user authenticated:', this.authService.isAuthenticated());
-    console.log('SideNav: Current user type:', this.authService.getUserType());
+
     
     // Initialize with dashboard as default
     this.activeItem = 'dashboard';

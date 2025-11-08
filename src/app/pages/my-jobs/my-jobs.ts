@@ -149,54 +149,45 @@ export class MyJobsPage implements OnInit, OnDestroy {
   }
 
   async loadMyJobs() {
-    console.log('🚀 Starting to load jobs, setting isLoading = true');
+
     this.isLoading = true;
     try {
-      console.log('Loading HR jobs...');
       const response = await this.hrService.getMyJobs();
-      console.log('HR jobs response:', response);
       
       // The HR service already handles the response format and returns the jobs array
       if (Array.isArray(response)) {
         this.jobListings = this.transformJobsToHRFormat(response);
         this.totalJobs = response.length;
-        console.log('Successfully loaded', this.totalJobs, 'jobs');
+
       } else {
-        console.warn('Unexpected response format - expected array:', response);
+
         this.jobListings = [];
         this.totalJobs = 0;
       }
       
       this.filteredJobs = [...this.jobListings];
       this.buildFilterOptions();
-      console.log('Transformed jobs:', this.jobListings);
-      console.log('First job applications_count after transform:', this.jobListings[0]?.applications_count);
-      console.log('✅ Jobs loading completed successfully');
+
     } catch (error: any) {
-      console.error('Error loading jobs:', error);
+
       this.snackBar.open(error.message || 'Failed to load your job postings', 'Close', { duration: 5000 });
       this.jobListings = [];
       this.filteredJobs = [];
     } finally {
-      console.log('🏁 Setting isLoading = false in finally block');
+
       this.isLoading = false;
       
       // Force change detection to ensure UI updates
       this.cdr.detectChanges();
       
-      console.log('🔍 Current component state:', {
-        isLoading: this.isLoading,
-        jobListingsCount: this.jobListings.length,
-        filteredJobsCount: this.filteredJobs.length,
-        totalJobs: this.totalJobs
-      });
+
     }
   }
 
   // Transform backend job format to frontend HR format
   private transformJobsToHRFormat(jobs: any[]): HRJobListing[] {
     return jobs.map((job, index) => {
-      console.log(`Transforming job ${index + 1}:`, job);
+
       
       // Handle location transformation
       let locationObj;
@@ -274,7 +265,7 @@ export class MyJobsPage implements OnInit, OnDestroy {
         applications_count: job.applications_received ? job.applications_received.length : (job.applications_count || 0)
       };
 
-      console.log(`Transformed job ${index + 1}:`, transformedJob);
+
       return transformedJob;
     });
   }
@@ -404,7 +395,7 @@ export class MyJobsPage implements OnInit, OnDestroy {
         return 'Location not specified';
       }
     } catch (error) {
-      console.error('Error formatting location:', error, job);
+
       return 'Location error';
     }
   }

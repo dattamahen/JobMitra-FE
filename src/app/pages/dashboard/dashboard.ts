@@ -61,12 +61,12 @@ export class DashboardPage implements OnInit, OnDestroy {
   }
 
   onStatCardClick(stat: DashboardStats): void {
-    console.log('Stat card clicked:', stat);
+
     // Navigate to relevant page based on stat type
   }
 
   onActivityClick(activity: ActivityItem): void {
-    console.log('Activity clicked:', activity);
+
     // Navigate to relevant page or show details
   }
 
