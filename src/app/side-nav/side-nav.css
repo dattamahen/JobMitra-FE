@@ -1,15 +1,13 @@
 .side-nav-container {
   width: 250px;
-  height: calc(100vh - 64px);
-  background-color: #ffffff;
-  color: #22252f;
+  height: 100vh;
+  background-color: #4831af;
+  color: #fff;
   position: fixed;
   left: 0;
-  top: 64px;
-  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.15);
+  top: 0;
   z-index: 500;
   border-right: 1px solid #e0e0e0;
-  overflow-y: auto;
 }
 
 .nav-item {
@@ -19,23 +17,25 @@
   margin: 0 !important;
   position: relative !important;
   border-left: 4px solid transparent !important;
+  color: #fff !important;
 }
 
 .nav-item:hover {
-  background-color: #f5f5f5 !important;
-  color: #1976d2 !important;
-  border-left: 4px solid #1976d2 !important;
+  background-color: #e3f2fd !important;
+  color: #4831af !important;
+  border-left: 4px solid #4831af !important;
+  font-weight: 600 !important;
 }
 
 .nav-item.active {
   background-color: #e3f2fd !important;
-  color: #1976d2 !important;
-  border-left: 4px solid #1976d2 !important;
+  color: #4831af !important;
+  border-left: 4px solid #4831af !important;
   font-weight: 600 !important;
 }
 
 .nav-item.active .nav-icon {
-  color: #1976d2 !important;
+  color: #4831af !important;
 }
 
 .nav-item:hover .nav-icon {
@@ -43,7 +43,7 @@
 }
 
 .nav-icon {
-  font-size: 18px !important;
+  font-size: 1rem !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -51,7 +51,7 @@
   height: 24px !important;
   margin-right: 16px !important;
   transition: color 0.3s ease !important;
-  color: #666 !important;
+  color: #fff !important;
 }
 
 mat-nav-list {
@@ -60,12 +60,22 @@ mat-nav-list {
 
 mat-list-item {
   font-family: 'Inter', sans-serif !important;
+  color: #fff !important;
+}
+
+.mat-mdc-list-item-content {
+  color: #fff !important;
+}
+
+.mdc-list-item__primary-text {
+  color: #fff !important;
 }
 
 /* Ensure proper spacing */
 .mat-mdc-list-item {
   padding-left: 16px !important;
   padding-right: 16px !important;
+  color: #fff !important;
 }
 
 .nav-menu li:hover {
@@ -76,8 +86,8 @@ mat-list-item {
 
 .nav-menu li.active {
   background-color: #e3f2fd;
-  border-left: 4px solid #1976d2;
-  color: #1976d2;
+  border-left: 4px solid #4831af;
+  color: #4831af;
 }
 
 .nav-menu li.active:hover {
@@ -89,12 +99,14 @@ mat-list-item {
   margin-right: 12px;
   width: 20px;
   text-align: center;
+  color: #fff;
 }
 
 .nav-label {
   font-size: 1em;
   font-weight: 500;
   letter-spacing: 0.025em;
+  color: #fff;
 }
 
 .nav-menu li.active .nav-label {
@@ -102,7 +114,7 @@ mat-list-item {
 }
 
 .nav-menu li.active .nav-icon {
-  color: #1976d2;
+  color: #4831af;
 }
 
 .nav-menu li:hover .nav-icon {
