@@ -19,7 +19,8 @@ export const LOGIN_FORM_CONFIG: FormConfig = {
       icon: 'visibility'
     }
   ],
-  submitLabel: 'Sign In'
+  submitLabel: 'Sign In',
+  showCancel: false
 };
 
 export const SIGNUP_FORM_CONFIG: FormConfig = {
@@ -55,10 +56,19 @@ export const SIGNUP_FORM_CONFIG: FormConfig = {
       icon: 'visibility'
     },
     {
+      name: 'confirmPassword',
+      label: 'Confirm Password',
+      type: 'password',
+      placeholder: 'Confirm your password',
+      required: true,
+      icon: 'visibility'
+    },
+    {
       name: 'user_type',
       label: 'Account Type',
       type: 'select',
       required: true,
+      defaultValue: 'candidate',
       options: [
         { value: 'candidate', label: 'Job Seeker' },
         { value: 'hire', label: 'HR / Recruiter' }
@@ -728,7 +738,8 @@ export const PROFILE_BASIC_INFO_CONFIG: FormConfig = {
       placeholder: 'e.g., john@example.com',
       required: true,
       icon: 'email',
-      readonly: true
+      readonly: true,
+      width: 'full'
     },
     {
       name: 'phone',
@@ -753,7 +764,8 @@ export const PROFILE_BASIC_INFO_CONFIG: FormConfig = {
       placeholder: 'e.g., San Francisco, CA',
       required: true,
       icon: 'location_on',
-      hint: 'City, State/Country'
+      hint: 'City, State/Country',
+      width: 'full'
     }
   ]
 };
@@ -845,7 +857,7 @@ export const PROFILE_SKILLS_CONFIG: FormConfig = {
     {
       name: 'technical_skills',
       type: 'dynamic-array',
-      label: 'Technical Skills',
+      label: 'Skills',
       fields: [
         {
           name: 'name',
@@ -854,7 +866,7 @@ export const PROFILE_SKILLS_CONFIG: FormConfig = {
           placeholder: 'e.g., JavaScript',
           required: true,
           icon: 'code',
-          width: 'quarter'
+          width: 'half'
         },
         {
           name: 'version',
@@ -862,7 +874,7 @@ export const PROFILE_SKILLS_CONFIG: FormConfig = {
           label: 'Version',
           placeholder: 'e.g., ES6, v3.9',
           icon: 'tag',
-          width: 'quarter'
+          width: 'half'
         },
         {
           name: 'experience',
@@ -870,7 +882,7 @@ export const PROFILE_SKILLS_CONFIG: FormConfig = {
           label: 'Experience',
           required: true,
           icon: 'star',
-          width: 'quarter',
+          width: 'full',
           options: [
             { value: 'Beginner (0-6 months)', label: 'Beginner (0-6 months)' },
             { value: '6 months - 1 year', label: '6 months - 1 year' },

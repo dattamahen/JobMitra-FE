@@ -54,7 +54,14 @@ export class SideNav implements OnInit {
   }
 
   logout() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+    this.authService.logout().subscribe({
+      next: (response) => {
+        console.log('Logout successful:', response);
+      },
+      error: (error) => {
+        console.error('Logout error:', error);
+        // Navigation is handled in the auth service
+      }
+    });
   }
 }

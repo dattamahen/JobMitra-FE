@@ -38,13 +38,9 @@
                   <span class="level-text">{{ skill.levelText }}</span>
                 </div>
                 <div class="skill-actions">
-                  <button class="test-btn" (click)="takeTest(skill)">Take Test</button>
-                  <button class="learn-btn" (click)="startLearning(skill)">Learn</button>
                   <button class="interview-btn" 
-                          (click)="startMockInterview(skill)"
-                          [disabled]="!canTakeMockInterview()"
-                          [title]="canTakeMockInterview() ? 'Take Free AI Mock Interview' : 'Mock interview not available: ' + getNextInterviewAvailableTime()">
-                    <mat-icon>smart_toy</mat-icon> AI Interview
+                          (click)="startMockInterview(skill)">
+                    <mat-icon>mic</mat-icon> Mock Interview
                   </button>
                 </div>
               </div>
@@ -65,13 +61,9 @@
                   <span class="level-text">{{ skill.levelText }}</span>
                 </div>
                 <div class="skill-actions">
-                  <button class="test-btn" (click)="takeTest(skill)">Take Test</button>
-                  <button class="learn-btn" (click)="startLearning(skill)">Learn</button>
                   <button class="interview-btn" 
-                          (click)="startMockInterview(skill)"
-                          [disabled]="!canTakeMockInterview()"
-                          [title]="canTakeMockInterview() ? 'Take Free AI Mock Interview' : 'Mock interview not available: ' + getNextInterviewAvailableTime()">
-                    <mat-icon>smart_toy</mat-icon> AI Interview
+                          (click)="startMockInterview(skill)">
+                    <mat-icon>mic</mat-icon> Mock Interview
                   </button>
                 </div>
               </div>

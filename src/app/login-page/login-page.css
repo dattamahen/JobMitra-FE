@@ -9,7 +9,7 @@
   flex: 0 0 66%;
   background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
   color: white;
-  padding: 60px;
+  padding: 40px;
   display: flex;
   align-items: center;
   position: relative;
@@ -95,12 +95,16 @@
 .app-info-content {
   position: relative;
   z-index: 2;
-  max-width: 700px;
+  max-width: 90%;
   width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .logo-section {
-  margin-bottom: 50px;
+  margin-bottom: 3vh;
 }
 
 .ai-badge {
@@ -123,9 +127,9 @@
 
 .app-title {
   font-family: 'Poppins', sans-serif;
-  font-size: 4rem;
+  font-size: clamp(2.5rem, 5vw, 4rem);
   font-weight: 800;
-  margin: 0 0 16px 0;
+  margin: 0 0 1vh 0;
   background: linear-gradient(135deg, #ffffff 0%, #78dbff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -134,14 +138,14 @@
 }
 
 .app-subtitle {
-  font-size: 1.5rem;
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
   font-weight: 600;
-  margin: 0 0 20px 0;
+  margin: 0 0 1.5vh 0;
   color: rgba(255, 255, 255, 0.9);
 }
 
 .app-description {
-  font-size: 1.1rem;
+  font-size: clamp(0.9rem, 1.8vw, 1.1rem);
   font-weight: 400;
   margin: 0;
   color: rgba(255, 255, 255, 0.8);
@@ -149,20 +153,20 @@
 }
 
 .features-section {
-  margin-bottom: 50px;
+  margin-bottom: 3vh;
 }
 
 .feature-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(8px, 1.5vh, 12px);
 }
 
 .feature-card {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 24px;
+  border-radius: 12px;
+  padding: clamp(8px, 1.5vh, 12px);
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
 }
@@ -174,51 +178,51 @@
 }
 
 .feature-icon-wrapper {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   background: rgba(120, 219, 255, 0.15);
   border: 1px solid rgba(120, 219, 255, 0.3);
 }
 
 .feature-icon {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
 }
 
 .feature-card h3 {
   font-family: 'Poppins', sans-serif;
-  font-size: 1.1rem;
+  font-size: clamp(0.8rem, 1.2vw, 0.9rem);
   font-weight: 600;
-  margin: 0 0 8px 0;
+  margin: 0 0 4px 0;
   color: white;
 }
 
 .feature-card p {
   margin: 0;
-  font-size: 0.95rem;
-  line-height: 1.5;
+  font-size: clamp(0.65rem, 1vw, 0.75rem);
+  line-height: 1.3;
   color: rgba(255, 255, 255, 0.8);
 }
 
 .enterprise-stats {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 2vh;
 }
 
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
+  gap: clamp(12px, 2vh, 16px);
 }
 
 .stat-item {
   text-align: center;
-  padding: 20px;
+  padding: clamp(12px, 2vh, 20px);
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
@@ -228,7 +232,7 @@
 .stat-number {
   display: block;
   font-family: 'Poppins', sans-serif;
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: 700;
   line-height: 1;
   background: linear-gradient(135deg, #78dbff 0%, #ffffff 100%);
@@ -271,65 +275,116 @@
   flex: 0 0 34%;
   background: white;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding: 60px 40px 40px 40px;
-  padding-top: 80px;
+  padding: 20px;
 }
 
-.login-form {
+.auth-container {
   width: 100%;
   max-width: 400px;
+  padding: 32px 24px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
 }
 
-.login-form h1 {
+.auth-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.auth-title {
   font-family: 'Poppins', sans-serif;
   font-size: 2rem;
-  font-weight: 600;
-  color: #22252f;
-  margin: 0 0 8px 0;
-  text-align: center;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.02em;
 }
 
-.login-subtitle {
-  text-align: center;
-  color: #666;
-  margin: 0 0 40px 0;
+.auth-subtitle {
   font-size: 1rem;
+  color: #6b7280;
+  margin: 0;
+  font-weight: 400;
+  line-height: 1.5;
 }
 
-.gmail-login-btn {
+.google-signin-btn {
   width: 100%;
-  padding: 12px;
+  padding: 12px 16px;
   background: white;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 1rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 0.95rem;
   font-weight: 500;
-  color: #22252f;
+  color: #374151;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  margin-bottom: 25px;
+  gap: 12px;
+  margin-bottom: 20px;
+  font-family: 'Inter', sans-serif;
 }
 
-.gmail-login-btn:hover {
-  border-color: #4285f4;
-  background-color: #f8f9ff;
+.google-signin-btn:hover {
+  border-color: #d1d5db;
+  background-color: #f9fafb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.gmail-icon {
-  font-size: 1.2rem;
+.google-icon {
+  width: 20px;
+  height: 20px;
 }
+
+.auth-form {
+  margin-bottom: 16px;
+}
+
+.auth-toggle {
+  text-align: center;
+  padding-top: 16px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.auth-toggle p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #6b7280;
+}
+
+.toggle-link {
+  color: #4831af;
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.toggle-link:hover {
+  color: #3730a3;
+  text-decoration: underline;
+}
+
+
+
+
+
+
+
+
 
 .divider {
   text-align: center;
-  margin: 25px 0;
+  margin: 16px 0;
   position: relative;
-  color: #666;
+  color: #9ca3af;
+  font-size: 0.85rem;
 }
 
 .divider::before {
@@ -339,15 +394,16 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: #e0e0e0;
+  background: #e5e7eb;
   z-index: 1;
 }
 
 .divider span {
   background: white;
-  padding: 0 20px;
+  padding: 0 16px;
   position: relative;
   z-index: 2;
+  font-weight: 500;
 }
 
 .form-group {
@@ -381,10 +437,29 @@
 
 .form-options {
   display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 16px;
+  margin-bottom: 24px;
+  font-size: 0.9rem;
+}
+
+.form-actions-row {
+  display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
-  font-size: 0.9rem;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.form-actions-row .login-btn {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.form-actions-row .forgot-password {
+  white-space: nowrap;
+  margin: 0;
 }
 
 .remember-me {
@@ -401,12 +476,15 @@
 }
 
 .forgot-password {
-  color: #667eea;
+  color: #4831af;
   text-decoration: none;
   font-weight: 500;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
 }
 
 .forgot-password:hover {
+  color: #3730a3;
   text-decoration: underline;
 }
 
@@ -433,32 +511,84 @@
 
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+  .app-info-section {
+    padding: 30px;
+  }
+  
+  .login-form-section {
+    padding: 15px;
+  }
+  
+  .feature-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
+
 @media (max-width: 768px) {
   .login-container {
     flex-direction: column;
+    max-height: none;
+    overflow: visible;
   }
   
   .app-info-section {
     flex: none;
-    min-height: 40vh;
-    padding: 40px 20px;
+    min-height: 50vh;
+    padding: 30px 20px;
+    overflow: visible;
   }
   
   .login-form-section {
     flex: none;
-    padding: 30px 20px;
+    padding: 20px;
+    overflow: visible;
   }
   
   .app-title {
     font-size: 2.5rem;
   }
   
-  .stats-section {
-    gap: 20px;
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
   }
   
   .stat-number {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-info-section {
+    padding: 20px 15px;
+  }
+  
+  .login-form-section {
+    padding: 15px;
+  }
+  
+  .app-title {
     font-size: 2rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .certifications {
+    flex-direction: column;
+    align-items: center;
   }
 }
 
@@ -468,6 +598,10 @@
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+  width: 100%;
+  max-width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .login-card .mat-mdc-card-header {
@@ -576,19 +710,21 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(244, 67, 54, 0.1);
-  border: 1px solid rgba(244, 67, 54, 0.3);
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 16px;
-  color: #f44336;
-  font-size: 14px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  color: #dc2626;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .error-message mat-icon {
   font-size: 18px;
   width: 18px;
   height: 18px;
+  color: #dc2626;
 }
 
 /* Demo Login Section */

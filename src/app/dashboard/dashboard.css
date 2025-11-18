@@ -2,7 +2,6 @@
   display: flex;
   min-height: 100vh;
   font-family: 'Inter', sans-serif;
-  padding-top: 64px; /* Account for fixed top nav when present */
 }
 
 .main-content {
@@ -10,14 +9,14 @@
   margin-left: 250px; /* Width of side nav */
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 64px); /* Account for top nav height */
+  min-height: 100vh;
 }
 
 .page-content {
   flex: 1;
   background: #f8f9fa;
   overflow-y: auto;
-  height: calc(100vh - 64px); /* Fixed height to enable scrolling */
+  height: 100vh;
 }
 
 .loading-placeholder {
@@ -78,6 +77,6 @@
   }
   
   .page-content {
-    height: calc(100vh - 64px); /* Maintain scroll container height on mobile */
+    height: 100vh;
   }
 }

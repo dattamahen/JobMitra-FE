@@ -260,14 +260,12 @@ export class JobSearchPage implements OnInit {
     
     const formatAmount = (amount: number) => {
       if (job.salary!.currency === 'INR') {
-        return (amount / 100000).toFixed(0) + ' LPA';
+        return '₹' + (amount / 100000).toFixed(0) + ' LPA';
       }
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: job.salary!.currency,
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-      }).format(amount);
+      if (job.salary!.currency === 'USD') {
+        return '₹' + (amount * 83).toLocaleString() + ' (USD ' + amount.toLocaleString() + ')';
+      }
+      return '₹' + amount.toLocaleString();
     };
 
     if (job.salary.min && job.salary.max) {

@@ -121,6 +121,17 @@ import { AuthService } from '../../services/auth.service';
               </mat-form-field>
 
               <mat-form-field appearance="outline">
+                <mat-label>Confirm Password</mat-label>
+                <input matInput type="password" formControlName="confirmPassword" required>
+                @if (signupForm.get('confirmPassword')?.hasError('required')) {
+                  <mat-error>Confirm password is required</mat-error>
+                }
+                @if (signupForm.get('confirmPassword')?.hasError('passwordMismatch')) {
+                  <mat-error>Passwords do not match</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
                 <mat-label>I am a</mat-label>
                 <mat-select formControlName="user_type">
                   <mat-option value="candidate">Job Seeker</mat-option>
@@ -446,10 +457,11 @@ export class SignupPage {
     this.signupForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
+      confirmPassword: ['', [Validators.required]],
       first_name: ['', Validators.required],
       last_name: ['', Validators.required],
       user_type: ['candidate', Validators.required]
-    });
+    }, { validators: this.passwordMatchValidator });
   }
 
   async onSubmit() {
@@ -457,7 +469,9 @@ export class SignupPage {
       this.isLoading.set(true);
       
       try {
-        const result = await this.authService.register(this.signupForm.value);
+        const formValue = this.signupForm.value;
+        const { confirmPassword, ...signupData } = formValue;
+        const result = await this.authService.register(signupData);
         this.snackBar.open('Account created successfully!', 'Close', { duration: 3000 });
         this.router.navigate(['/login']);
       } catch (error: any) {
@@ -466,5 +480,24 @@ export class SignupPage {
         this.isLoading.set(false);
       }
     }
+  }
+
+  private passwordMatchValidator(form: any) {
+    const password = form.get('password');
+    const confirmPassword = form.get('confirmPassword');
+    
+    if (password && confirmPassword && password.value !== confirmPassword.value) {
+      confirmPassword.setErrors({ passwordMismatch: true });
+      return { passwordMismatch: true };
+    }
+    
+    if (confirmPassword?.errors?.['passwordMismatch']) {
+      delete confirmPassword.errors['passwordMismatch'];
+      if (Object.keys(confirmPassword.errors).length === 0) {
+        confirmPassword.setErrors(null);
+      }
+    }
+    
+    return null;
   }
 }

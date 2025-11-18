@@ -90,7 +90,7 @@ export class DynamicFormComponent implements OnInit, OnChanges {
         this.initializeArrayField(field, formControls);
       } else {
         const validators = this.getValidators(field);
-        const initialValue = this.initialValues?.[field.name] || (field.type === 'checkbox' ? false : '');
+        const initialValue = this.initialValues?.[field.name] || field.defaultValue || (field.type === 'checkbox' ? false : '');
         formControls[field.name] = [initialValue, validators];
       }
     });
@@ -253,6 +253,9 @@ export class DynamicFormComponent implements OnInit, OnChanges {
     }
     if (field.errors['max']) {
       return `${fieldLabel} must be no more than ${field.errors['max'].max}`;
+    }
+    if (field.errors['passwordMismatch']) {
+      return 'Passwords do not match';
     }
     
     return 'Invalid input';

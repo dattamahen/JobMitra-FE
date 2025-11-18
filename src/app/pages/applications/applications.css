@@ -10,6 +10,19 @@
   position: relative;
 }
 
+.header-actions {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+.header-actions button {
+  font-size: 12px;
+  padding: 6px 12px;
+  min-width: auto;
+  height: 32px;
+}
+
 .status-chip {
   position: absolute;
   top: 16px;

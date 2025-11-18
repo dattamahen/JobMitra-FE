@@ -12,6 +12,7 @@ import {
   SubscriptionLimits
 } from '../../data/job-search-data';
 import { SkillAssessmentService, SkillLevel, AssessmentResult, UsageStatus, RecommendedSkill } from '../../services/skill-assessment.service';
+import { MockInterviewService } from '../../services/mock-interview.service';
 
 export interface SkillAssessment {
   readonly id: string;
@@ -71,6 +72,7 @@ export class SkillAssessmentPage implements OnInit {
 
   constructor(
     private skillAssessmentService: SkillAssessmentService,
+    private mockInterviewService: MockInterviewService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -446,27 +448,7 @@ export class SkillAssessmentPage implements OnInit {
   }
 
   startMockInterview(skill: SkillAssessment): void {
-    if (!this.canTakeMockInterview()) {
-      if (this.shouldShowUpgradePrompt()) {
-        this.showSubscriptionModal = true;
-        return;
-      }
-      alert('Mock interview not available. Check your usage limits.');
-      return;
-    }
-
-    this.skillAssessmentService.startMockInterview(skill.name, 'current-user').subscribe({
-      next: (response) => {
-        this.selectedSkill = skill.name;
-        this.currentInterviewQuestions = response.questions;
-        this.showMockInterviewModal = true;
-        this.mockInterviewInProgress = false;
-      },
-      error: (error) => {
-        console.error('Error starting mock interview:', error);
-        alert('Failed to start mock interview. Please try again.');
-      }
-    });
+    this.mockInterviewService.startInterview('technical');
   }
 
   closeMockInterviewModal(): void {
