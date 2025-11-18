@@ -71,7 +71,7 @@
     @for (job of jobListings; track job.job_id) {
     <mat-card class="job-card">
       <mat-card-header>
-        <mat-card-title>{{job.title}}</mat-card-title>
+        <mat-card-title>{{job.title}} <span class="job-type-badge">{{job.employment_type | titlecase}}</span></mat-card-title>
         <mat-card-subtitle class="company">{{job.company}}</mat-card-subtitle>
         <div class="header-badges">
           <div class="action-badges">
@@ -126,7 +126,6 @@
 
           <div class="job-meta">
             <span class="posted-date">Posted {{getFormattedPostedDate(job)}}</span>
-            <span class="department">{{job.employment_type | titlecase}}</span>
           </div>
         </div>
 
@@ -335,10 +334,7 @@
                 (click)="applyForJob(job.job_id)">
           {{job.already_applied ? 'Applied' : 'Apply Now'}}
         </button>
-        <button mat-button (click)="saveJob(job.job_id)">
-          <mat-icon>bookmark_border</mat-icon>
-          Save
-        </button>
+
         @if (job.application_deadline) {
         <span class="deadline-info">
           <mat-icon>schedule</mat-icon>

@@ -176,3 +176,30 @@ mat-spinner {
   color: #ccc;
   cursor: not-allowed;
 }
+
+.form-actions-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.form-actions-row .submit-btn {
+  flex: 1;
+  min-width: 120px;
+}
+
+.form-actions-row .forgot-password {
+  color: #4831af;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.form-actions-row .forgot-password:hover {
+  color: #3730a3;
+  text-decoration: underline;
+}

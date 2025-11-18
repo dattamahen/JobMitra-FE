@@ -29,17 +29,11 @@
       <mat-card-header>
         <mat-card-title>{{application.job_title}}</mat-card-title>
         <mat-card-subtitle>{{application.company}}</mat-card-subtitle>
-        <div class="status-chip">
-          <mat-chip-set>
-            <mat-chip [class]="getStatusClass(application.status)">
-              {{getStatusLabel(application.status)}}
-            </mat-chip>
-            @if (application.status === 'applied') {
-            <button mat-raised-button color="primary" class="badge-button" (click)="prepareForInterview(application.application_id)">
-              Prepare for Interview
-            </button>
-            }
-          </mat-chip-set>
+        <div class="header-actions">
+          <button mat-raised-button color="primary" (click)="prepareForInterview(application.application_id)">
+            <mat-icon>mic</mat-icon>
+            Prepare Interview
+          </button>
         </div>
       </mat-card-header>
       <mat-card-content>
@@ -76,28 +70,7 @@
         </div>
         }
 
-        <!-- Application progress -->
-        <div class="progress-section">
-          <div class="progress-label">Application Progress</div>
-          <mat-progress-bar 
-            mode="determinate" 
-            [value]="getProgressPercentage(application)"
-            [color]="application.status === 'rejected' ? 'warn' : application.status === 'offer_received' ? 'accent' : 'primary'">
-          </mat-progress-bar>
-          <div class="progress-steps">
-            <mat-chip-set>
-              @for (step of getProgressSteps(application); track step.name) {
-              <mat-chip 
-                [class.step-completed]="step.completed" 
-                [class.step-active]="step.active"
-                [disabled]="!step.completed && !step.active">
-                <mat-icon matChipIcon>{{step.icon}}</mat-icon>
-                {{step.name}}
-              </mat-chip>
-              }
-            </mat-chip-set>
-          </div>
-        </div>
+
 
         <!-- Notes -->
         @if (application.notes) {
@@ -117,8 +90,6 @@
         </div>
         }
       </mat-card-content>
-
-
     </mat-card>
     }
     }

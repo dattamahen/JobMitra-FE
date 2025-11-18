@@ -62,10 +62,11 @@ export class LoginPage implements OnInit {
     this.signupForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
+      confirmPassword: ['', [Validators.required]],
       first_name: ['', [Validators.required]],
       last_name: ['', [Validators.required]],
       user_type: ['candidate', [Validators.required]]
-    });
+    }, { validators: this.passwordMatchValidator });
   }
 
   ngOnInit(): void {
@@ -166,19 +167,25 @@ export class LoginPage implements OnInit {
   }
 
   onSignup(formData: any): void {
+    if (formData.password !== formData.confirmPassword) {
+      this.errorMessage = 'Passwords do not match';
+      return;
+    }
+
     this.isLoading = true;
     this.signupFormConfig.loading = true;
     this.errorMessage = '';
 
-    const signupData: RegisterRequest = {
-      email: formData.email,
-      password: formData.password,
-      first_name: formData.first_name,
-      last_name: formData.last_name,
-      user_type: formData.user_type
+    const { confirmPassword, ...signupData } = formData;
+    const registerData: RegisterRequest = {
+      email: signupData.email,
+      password: signupData.password,
+      first_name: signupData.first_name,
+      last_name: signupData.last_name,
+      user_type: signupData.user_type
     };
 
-    this.authService.register(signupData).then(
+    this.authService.register(registerData).then(
       (response) => {
 
         this.isLoading = false;
@@ -186,8 +193,8 @@ export class LoginPage implements OnInit {
         this.isSignupMode.set(false);
         // Auto-fill login form
         this.loginForm.patchValue({
-          email: signupData.email,
-          password: signupData.password
+          email: registerData.email,
+          password: registerData.password
         });
       }
     ).catch(
@@ -206,5 +213,24 @@ export class LoginPage implements OnInit {
       const control = form.get(key);
       control?.markAsTouched();
     });
+  }
+
+  private passwordMatchValidator(form: any) {
+    const password = form.get('password');
+    const confirmPassword = form.get('confirmPassword');
+    
+    if (password && confirmPassword && password.value !== confirmPassword.value) {
+      confirmPassword.setErrors({ passwordMismatch: true });
+      return { passwordMismatch: true };
+    }
+    
+    if (confirmPassword?.errors?.['passwordMismatch']) {
+      delete confirmPassword.errors['passwordMismatch'];
+      if (Object.keys(confirmPassword.errors).length === 0) {
+        confirmPassword.setErrors(null);
+      }
+    }
+    
+    return null;
   }
 }

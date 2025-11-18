@@ -1,9 +1,7 @@
 .login-container {
   display: flex;
   min-height: 100vh;
-  max-height: 100vh;
   font-family: 'Inter', sans-serif;
-  overflow: hidden;
 }
 
 /* Left side - Application Information (66%) */
@@ -15,8 +13,7 @@
   display: flex;
   align-items: center;
   position: relative;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 .background-pattern {
@@ -98,7 +95,7 @@
 .app-info-content {
   position: relative;
   z-index: 2;
-  max-width: 700px;
+  max-width: 90%;
   width: 100%;
   height: 100%;
   display: flex;
@@ -107,7 +104,7 @@
 }
 
 .logo-section {
-  margin-bottom: 50px;
+  margin-bottom: 3vh;
 }
 
 .ai-badge {
@@ -130,9 +127,9 @@
 
 .app-title {
   font-family: 'Poppins', sans-serif;
-  font-size: 4rem;
+  font-size: clamp(2.5rem, 5vw, 4rem);
   font-weight: 800;
-  margin: 0 0 16px 0;
+  margin: 0 0 1vh 0;
   background: linear-gradient(135deg, #ffffff 0%, #78dbff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -141,14 +138,14 @@
 }
 
 .app-subtitle {
-  font-size: 1.5rem;
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
   font-weight: 600;
-  margin: 0 0 20px 0;
+  margin: 0 0 1.5vh 0;
   color: rgba(255, 255, 255, 0.9);
 }
 
 .app-description {
-  font-size: 1.1rem;
+  font-size: clamp(0.9rem, 1.8vw, 1.1rem);
   font-weight: 400;
   margin: 0;
   color: rgba(255, 255, 255, 0.8);
@@ -156,20 +153,20 @@
 }
 
 .features-section {
-  margin-bottom: 50px;
+  margin-bottom: 3vh;
 }
 
 .feature-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: clamp(8px, 1.5vh, 12px);
 }
 
 .feature-card {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  padding: 12px;
+  padding: clamp(8px, 1.5vh, 12px);
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
 }
@@ -198,7 +195,7 @@
 
 .feature-card h3 {
   font-family: 'Poppins', sans-serif;
-  font-size: 0.9rem;
+  font-size: clamp(0.8rem, 1.2vw, 0.9rem);
   font-weight: 600;
   margin: 0 0 4px 0;
   color: white;
@@ -206,7 +203,7 @@
 
 .feature-card p {
   margin: 0;
-  font-size: 0.75rem;
+  font-size: clamp(0.65rem, 1vw, 0.75rem);
   line-height: 1.3;
   color: rgba(255, 255, 255, 0.8);
 }
@@ -214,18 +211,18 @@
 .enterprise-stats {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 2vh;
 }
 
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: clamp(12px, 2vh, 16px);
 }
 
 .stat-item {
   text-align: center;
-  padding: 20px;
+  padding: clamp(12px, 2vh, 20px);
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
@@ -235,7 +232,7 @@
 .stat-number {
   display: block;
   font-family: 'Poppins', sans-serif;
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: 700;
   line-height: 1;
   background: linear-gradient(135deg, #78dbff 0%, #ffffff 100%);
@@ -281,13 +278,12 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
-  overflow-y: auto;
 }
 
 .auth-container {
   width: 100%;
   max-width: 400px;
-  padding: 40px 32px;
+  padding: 32px 24px;
   background: white;
   border-radius: 16px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
@@ -295,15 +291,15 @@
 
 .auth-header {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .auth-title {
   font-family: 'Poppins', sans-serif;
-  font-size: 2.25rem;
+  font-size: 2rem;
   font-weight: 700;
   color: #1a1a1a;
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
   letter-spacing: -0.02em;
 }
 
@@ -317,11 +313,11 @@
 
 .google-signin-btn {
   width: 100%;
-  padding: 14px 16px;
+  padding: 12px 16px;
   background: white;
   border: 1.5px solid #e5e7eb;
   border-radius: 12px;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 500;
   color: #374151;
   cursor: pointer;
@@ -330,7 +326,7 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   font-family: 'Inter', sans-serif;
 }
 
@@ -347,12 +343,12 @@
 }
 
 .auth-form {
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .auth-toggle {
   text-align: center;
-  padding-top: 24px;
+  padding-top: 16px;
   border-top: 1px solid #f3f4f6;
 }
 
@@ -385,10 +381,10 @@
 
 .divider {
   text-align: center;
-  margin: 24px 0;
+  margin: 16px 0;
   position: relative;
   color: #9ca3af;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .divider::before {
@@ -446,6 +442,24 @@
   margin-top: 16px;
   margin-bottom: 24px;
   font-size: 0.9rem;
+}
+
+.form-actions-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.form-actions-row .login-btn {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.form-actions-row .forgot-password {
+  white-space: nowrap;
+  margin: 0;
 }
 
 .remember-me {

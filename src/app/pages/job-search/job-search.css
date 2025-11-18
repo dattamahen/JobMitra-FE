@@ -34,6 +34,13 @@
 }
 
 .filter-row .search-button {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-row .search-button {
   margin-left: auto;
 }
 
@@ -139,6 +146,18 @@ mat-form-field {
 .company {
   font-weight: bold !important;
   color: #666 !important;
+}
+
+.job-type-badge {
+  display: inline-block;
+  background-color: #e3f2fd;
+  color: #1976d2;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 8px;
+  vertical-align: middle;
 }
 
 .job-details {

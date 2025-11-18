@@ -38,6 +38,14 @@
   color: #4831af !important;
 }
 
+.nav-item.active .mdc-list-item__primary-text {
+  color: #4831af !important;
+}
+
+.nav-item.active .mat-mdc-list-item-content {
+  color: #4831af !important;
+}
+
 .nav-item:hover .nav-icon {
   color: #1976d2 !important;
 }
