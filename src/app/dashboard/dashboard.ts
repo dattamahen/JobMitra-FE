@@ -14,6 +14,8 @@ import { PostJobPage } from '../pages/post-job/post-job';
 import { MyJobsPage } from '../pages/my-jobs/my-jobs';
 import { ApplicationsReceivedPage } from '../pages/applications-received/applications-received';
 import { AuthService } from '../services/auth.service';
+import { FeatureUsageService } from '../services/feature-usage.service';
+import { FeatureUsageComponent } from '../shared/components/feature-usage/feature-usage.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -31,7 +33,8 @@ import { AuthService } from '../services/auth.service';
     SettingsPage,
     PostJobPage,
     MyJobsPage,
-    ApplicationsReceivedPage
+    ApplicationsReceivedPage,
+    FeatureUsageComponent
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
@@ -43,7 +46,8 @@ export class Dashboard implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
+    public featureUsageService: FeatureUsageService
   ) {}
 
   ngOnInit() {

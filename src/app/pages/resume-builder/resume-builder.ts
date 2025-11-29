@@ -24,6 +24,8 @@ import { ResumeService } from '../../services/resume.service';
 import { Resume, ResumeTemplate, Experience, Education, Project, Certification } from '../../shared/interfaces/resume.interfaces';
 import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
+import { FeatureUsageService } from '../../services/feature-usage.service';
+import { FeatureGuardDirective } from '../../shared/directives/feature-guard.directive';
 import { 
   RESUME_PERSONAL_INFO_CONFIG, 
   RESUME_SUMMARY_CONFIG,
@@ -60,7 +62,8 @@ import html2canvas from 'html2canvas';
     MatTooltipModule,
     MatProgressSpinnerModule,
     DynamicFormComponent,
-    LoadingComponent
+    LoadingComponent,
+    FeatureGuardDirective
   ],
   templateUrl: './resume-builder.html',
   styleUrls: ['./resume-builder.css']
@@ -134,7 +137,8 @@ export class ResumeBuilderPage implements OnInit {
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
-    private http: HttpClient
+    private http: HttpClient,
+    private featureUsageService: FeatureUsageService
   ) {
     this.initializeForms();
     
@@ -1309,6 +1313,28 @@ export class ResumeBuilderPage implements OnInit {
   }
 
   async downloadPDF(): Promise<void> {
+    // Check feature usage before proceeding
+    if (!this.featureUsageService.canUsePaidFeatures()) {
+      this.snackBar.open('You have reached your limit for resume downloads. Please upgrade your plan.', 'Close', { duration: 5000 });
+      return;
+    }
+
+    // Use the feature
+    this.featureUsageService.useFeature('resume_download').subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.generatePDF();
+        } else {
+          this.snackBar.open(response.message || 'Unable to download resume', 'Close', { duration: 3000 });
+        }
+      },
+      error: () => {
+        this.snackBar.open('Error downloading resume. Please try again.', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
+  private async generatePDF(): Promise<void> {
     // Save all current form data to resume before generating PDF
     this.saveAllSections();
     
