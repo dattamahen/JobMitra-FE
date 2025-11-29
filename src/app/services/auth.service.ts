@@ -425,6 +425,31 @@ export class AuthService {
   }
 
   /**
+   * Google Sign-In
+   */
+  googleSignIn(credential: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.API_URL}/google-signin`, {
+      credential: credential
+    }).pipe(
+      map(response => {
+        if (this.isBrowser()) {
+          localStorage.setItem(this.TOKEN_KEY, response.access_token);
+          localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
+        }
+        
+        this.authStateSubject.next({
+          isAuthenticated: true,
+          user: response.user,
+          token: response.access_token
+        });
+        
+        return response;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
    * Seed users (development only)
    */
   seedUsers(): Observable<any> {
