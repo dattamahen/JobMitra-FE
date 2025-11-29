@@ -3,7 +3,7 @@ import { Observable, BehaviorSubject, of } from 'rxjs';
 import { map, catchError, switchMap } from 'rxjs/operators';
 import { ApiService } from './api.service';
 import { UserService } from './user.service';
-import { JOB_LISTINGS_DATA, JobListing as MockJobListing } from '../data/job-search-data';
+import { JobListing as MockJobListing } from '../data/job-search-data';
 
 export interface JobListing {
   _id: string;
@@ -273,9 +273,31 @@ export class JobService {
       .pipe(
         catchError(error => {
   
-          const mockJob = this.convertMockJobToApiFormat(
-            JOB_LISTINGS_DATA.find(job => job.id === jobId) || JOB_LISTINGS_DATA[0]
-          );
+          // Return empty job object when API fails
+          const mockJob: JobListing = {
+            _id: jobId,
+            job_id: jobId,
+            title: 'Job Not Found',
+            company: 'Unknown Company',
+            location: { country: 'Unknown', is_remote: false },
+            employment_type: 'full-time',
+            experience_level: 'mid',
+            description: 'Job details not available',
+            requirements: [],
+            responsibilities: [],
+            skills_required: [],
+            skills_preferred: [],
+            benefits: [],
+            company_info: { company_size: '1-10', industry: 'Unknown' },
+            job_type: 'onsite',
+            posted_date: new Date().toISOString(),
+            updated_date: new Date().toISOString(),
+            is_active: false,
+            tags: [],
+            views_count: 0,
+            applications_count: 0,
+            source: 'internal'
+          };
           return of(mockJob);
         })
       );
@@ -548,59 +570,19 @@ export class JobService {
    * Get mock job search response
    */
   private getMockJobSearchResponse(filters: JobSearchFilters, page: number, perPage: number): JobSearchResponse {
-    let filteredJobs = [...JOB_LISTINGS_DATA];
+    let filteredJobs: any[] = [];
 
-    // Apply filters
-    if (filters.keywords) {
-      const searchTerm = filters.keywords.toLowerCase();
-      filteredJobs = filteredJobs.filter(job =>
-        job.title.toLowerCase().includes(searchTerm) ||
-        job.company.name.toLowerCase().includes(searchTerm) ||
-        job.skills.some(skill => skill.toLowerCase().includes(searchTerm))
-      );
-    }
-
-    if (filters.location) {
-      filteredJobs = filteredJobs.filter(job =>
-        job.location.city?.toLowerCase().includes(filters.location!.toLowerCase()) ||
-        job.location.country.toLowerCase().includes(filters.location!.toLowerCase())
-      );
-    }
-
-    if (filters.employment_type?.length) {
-      filteredJobs = filteredJobs.filter(job =>
-        filters.employment_type!.includes(job.employmentType)
-      );
-    }
-
-    if (filters.experience_level?.length) {
-      filteredJobs = filteredJobs.filter(job =>
-        filters.experience_level!.includes(job.experienceLevel)
-      );
-    }
-
-    if (filters.is_remote !== undefined) {
-      filteredJobs = filteredJobs.filter(job =>
-        filters.is_remote ? job.location.type === 'remote' : job.location.type !== 'remote'
-      );
-    }
-
-    // Convert to API format
-    const convertedJobs = filteredJobs.map(job => this.convertMockJobToApiFormat(job));
-
-    // Pagination
-    const startIndex = (page - 1) * perPage;
-    const endIndex = startIndex + perPage;
-    const paginatedJobs = convertedJobs.slice(startIndex, endIndex);
+    // Return empty results when no mock data available
+    const paginatedJobs: JobListing[] = [];
 
     return {
       jobs: paginatedJobs,
-      total_count: filteredJobs.length,
+      total_count: 0,
       page,
       per_page: perPage,
-      total_pages: Math.ceil(filteredJobs.length / perPage),
-      has_next: endIndex < filteredJobs.length,
-      has_prev: page > 1
+      total_pages: 0,
+      has_next: false,
+      has_prev: false
     };
   }
 }

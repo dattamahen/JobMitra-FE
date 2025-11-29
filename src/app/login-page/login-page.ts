@@ -97,14 +97,10 @@ export class LoginPage implements OnInit {
       password: credentials.password
     };
 
-    // Use real authentication API
     this.authService.login(loginRequest).subscribe({
       next: (response: LoginResponse) => {
-
         this.isLoading = false;
         this.loginFormConfig.loading = false;
-        
-        // Redirect based on user type
         this.redirectBasedOnUserType(response.user.user_type);
       },
       error: (error: any) => {

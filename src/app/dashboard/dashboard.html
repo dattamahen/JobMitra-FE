@@ -2,9 +2,7 @@
   <app-side-nav (pageSelected)="onPageSelected($event)"></app-side-nav>
   
   <div class="main-content">
-    <div class="feature-usage-header">
-      <app-feature-usage></app-feature-usage>
-    </div>
+
     <div class="page-content">
       @switch (currentPage) {
         @case ('dashboard') {
