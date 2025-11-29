@@ -12,6 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
 import { AuthService, LoginRequest, LoginResponse, RegisterRequest } from '../services/auth.service';
+import { GoogleAuthService } from '../services/google-auth.service';
 import { NavigationService } from '../services/navigation.service';
 import { DynamicFormComponent } from '../shared/components/dynamic-form/dynamic-form.component';
 import { FormConfig } from '../shared/interfaces/form.interfaces';
@@ -52,6 +53,7 @@ export class LoginPage implements OnInit {
     private router: Router,
     private formBuilder: FormBuilder,
     private authService: AuthService,
+    private googleAuthService: GoogleAuthService,
     private navigationService: NavigationService
   ) {
     this.loginForm = this.formBuilder.group({
@@ -74,11 +76,26 @@ export class LoginPage implements OnInit {
     const isAuth = this.authService.isAuthenticated();
     const userType = this.authService.getUserType();
     
-
-    
     if (isAuth && userType) {
-
       this.redirectBasedOnUserType(userType);
+    }
+    
+    // Initialize Google Sign-In
+    this.initializeGoogleSignIn();
+  }
+  
+  private async initializeGoogleSignIn(): Promise<void> {
+    try {
+      await this.googleAuthService.initializeGoogleSignIn();
+      
+      // Render Google Sign-In button only in login mode
+      if (!this.isSignupMode()) {
+        setTimeout(() => {
+          this.googleAuthService.renderSignInButton('google-signin-button');
+        }, 100);
+      }
+    } catch (error) {
+      console.error('Failed to initialize Google Sign-In:', error);
     }
   }
 
@@ -97,14 +114,10 @@ export class LoginPage implements OnInit {
       password: credentials.password
     };
 
-    // Use real authentication API
     this.authService.login(loginRequest).subscribe({
       next: (response: LoginResponse) => {
-
         this.isLoading = false;
         this.loginFormConfig.loading = false;
-        
-        // Redirect based on user type
         this.redirectBasedOnUserType(response.user.user_type);
       },
       error: (error: any) => {
@@ -143,27 +156,16 @@ export class LoginPage implements OnInit {
     this.router.navigate(['/dashboard']);
   }
 
-  // Demo login with test user
-  loginWithTestUser(): void {
-    this.loginForm.patchValue({
-      email: 'arjun.sharma@email.com',
-      password: 'JobSeeker@123'
-    });
-    this.onLogin();
-  }
-
-  // Demo HR login
-  loginWithHRUser(): void {
-    this.loginForm.patchValue({
-      email: 'hr001@test.com',
-      password: 'test1234'
-    });
-    this.onLogin();
-  }
-
   toggleSignupMode(): void {
     this.isSignupMode.set(!this.isSignupMode());
     this.errorMessage = '';
+    
+    // Re-render Google Sign-In button when switching to login mode
+    if (!this.isSignupMode()) {
+      setTimeout(() => {
+        this.googleAuthService.renderSignInButton('google-signin-button');
+      }, 100);
+    }
   }
 
   onSignup(formData: any): void {

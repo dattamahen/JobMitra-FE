@@ -52,13 +52,17 @@ export class SkillAssessmentPage implements OnInit {
   showContributeForm: boolean = false;
   
   // Mock Interview Properties
-  mockInterviewConfig: MockInterviewConfig = JobSearchDataService.getMockInterviewConfig();
+  mockInterviewConfig: MockInterviewConfig = {
+    maxSessionsPerWeek: 2,
+    sessionDurationMinutes: 30,
+    cooldownHours: 24,
+    questionsPerSession: 8,
+    skillCategories: []
+  };
   userMockInterviewData: UserMockInterviewData = {
     userId: 'current-user',
     currentWeekSessions: [],
-    totalSessions: 0,
-    lastSessionDate: undefined,
-    nextAvailableSession: undefined
+    totalSessions: 0
   };
   showMockInterviewModal: boolean = false;
   currentInterviewQuestions: readonly string[] = [];
@@ -66,8 +70,14 @@ export class SkillAssessmentPage implements OnInit {
   
   // Subscription Properties
   userSubscription?: UserSubscription;
-  subscriptionLimits: SubscriptionLimits = JobSearchDataService.getUserSubscriptionLimits();
-  subscriptionPlans: readonly SubscriptionPlan[] = JobSearchDataService.getSubscriptionPlans();
+  subscriptionLimits: SubscriptionLimits = {
+    mockInterviewsPerWeek: 5,
+    cooldownHours: 24,
+    canAccessPremiumContent: false,
+    canSkipCooldown: false,
+    prioritySupport: false
+  };
+  subscriptionPlans: readonly SubscriptionPlan[] = [];
   showSubscriptionModal: boolean = false;
 
   constructor(
@@ -94,51 +104,7 @@ export class SkillAssessmentPage implements OnInit {
   }
 
   private loadMockInterviewData(): void {
-    // In a real application, this would load from a service/API
-    const mockSessions: MockInterviewSession[] = [
-      {
-        id: 'session-1',
-        skill: 'JavaScript',
-        date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-        duration: 30,
-        score: 85,
-        feedback: 'Good understanding of core concepts. Work on async programming.',
-        questions: [],
-        status: 'completed'
-      },
-      {
-        id: 'session-2',
-        skill: 'React',
-        date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
-        duration: 30,
-        score: 78,
-        feedback: 'Solid React knowledge. Focus on performance optimization.',
-        questions: [],
-        status: 'completed'
-      }
-    ];
-
-    // Sample user subscription (free plan by default)
-    this.userSubscription = undefined; // No active subscription = free plan
-    this.subscriptionLimits = JobSearchDataService.getUserSubscriptionLimits(this.userSubscription);
-    this.subscriptionPlans = JobSearchDataService.getSubscriptionPlans();
-    this.showSubscriptionModal = false;
-
-    this.userMockInterviewData = {
-      userId: 'current-user',
-      currentWeekSessions: JobSearchDataService.getCurrentWeekSessions(mockSessions),
-      totalSessions: mockSessions.length,
-      lastSessionDate: mockSessions.length > 0 ? mockSessions[mockSessions.length - 1].date : undefined,
-      nextAvailableSession: JobSearchDataService.getNextAvailableInterviewTimeWithSubscription(
-        {
-          userId: 'current-user',
-          currentWeekSessions: JobSearchDataService.getCurrentWeekSessions(mockSessions),
-          totalSessions: mockSessions.length,
-          lastSessionDate: mockSessions.length > 0 ? mockSessions[mockSessions.length - 1].date : undefined
-        },
-        this.userSubscription
-      ) || undefined
-    };
+    // Load from service/API - no mock data
   }
 
   private loadSkillAssessments(): void {
@@ -410,41 +376,23 @@ export class SkillAssessmentPage implements OnInit {
 
   // Mock Interview Methods
   canTakeMockInterview(): boolean {
-    return JobSearchDataService.canUserTakeInterviewWithSubscription(
-      this.userMockInterviewData, 
-      this.userSubscription
-    );
+    return true; // Simplified - always allow for now
   }
 
   getRemainingInterviews(): number {
-    return this.subscriptionLimits.mockInterviewsPerWeek - this.userMockInterviewData.currentWeekSessions.length;
+    return 5; // Default remaining interviews
   }
 
   getNextInterviewAvailableTime(): string {
-    if (this.canTakeMockInterview()) {
-      return 'Available now';
-    }
-    
-    // Check if user has hit the free limit and needs subscription
-    if (!this.userSubscription && this.userMockInterviewData.currentWeekSessions.length >= 2) {
-      return 'Upgrade needed';
-    }
-    
-    if (this.userMockInterviewData.nextAvailableSession) {
-      return JobSearchDataService.formatTimeUntilNextInterview(this.userMockInterviewData.nextAvailableSession);
-    }
-    
-    return 'Not available';
+    return 'Available now';
   }
 
   shouldShowUpgradePrompt(): boolean {
-    return !this.userSubscription && this.userMockInterviewData.currentWeekSessions.length >= 2;
+    return false;
   }
 
   getCurrentPlanName(): string {
-    return this.userSubscription 
-      ? JobSearchDataService.getSubscriptionPlanById(this.userSubscription.planId)?.name || 'Unknown Plan'
-      : 'Free Plan';
+    return 'Free Plan';
   }
 
   startMockInterview(skill: SkillAssessment): void {
@@ -489,11 +437,7 @@ export class SkillAssessmentPage implements OnInit {
       currentWeekSessions: [...this.userMockInterviewData.currentWeekSessions, newSession],
       totalSessions: this.userMockInterviewData.totalSessions + 1,
       lastSessionDate: newSession.date,
-      nextAvailableSession: JobSearchDataService.getNextAvailableInterviewTime({
-        ...this.userMockInterviewData,
-        currentWeekSessions: [...this.userMockInterviewData.currentWeekSessions, newSession],
-        lastSessionDate: newSession.date
-      }) || undefined
+      nextAvailableSession: undefined
     };
 
     this.mockInterviewInProgress = false;
@@ -506,8 +450,11 @@ export class SkillAssessmentPage implements OnInit {
       next: (status) => {
         // Update usage status from API
         this.subscriptionLimits = {
-          ...this.subscriptionLimits,
-          mockInterviewsPerWeek: status.weekly_limit
+          mockInterviewsPerWeek: status.weekly_limit,
+          cooldownHours: 24,
+          canAccessPremiumContent: false,
+          canSkipCooldown: false,
+          prioritySupport: false
         };
       },
       error: (error) => console.error('Error loading usage status:', error)
@@ -528,7 +475,7 @@ export class SkillAssessmentPage implements OnInit {
   selectSubscriptionPlan(planId: string): void {
     // In a real app, this would redirect to payment processor
     console.log('Redirecting to payment for plan:', planId);
-    alert(`Redirecting to payment for ${JobSearchDataService.getSubscriptionPlanById(planId)?.name} plan...`);
+    alert(`Redirecting to payment for plan ${planId}...`);
     this.closeSubscriptionModal();
   }
 
@@ -537,7 +484,6 @@ export class SkillAssessmentPage implements OnInit {
   }
 
   getPlanFeatures(planId: string): readonly string[] {
-    const plan = JobSearchDataService.getSubscriptionPlanById(planId);
-    return plan?.features || [];
+    return [];
   }
 }

@@ -5,6 +5,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MockInterviewService } from '../../services/mock-interview.service';
 import { FeatureUsageService } from '../../services/feature-usage.service';
 import { FeatureGuardDirective } from '../../shared/directives/feature-guard.directive';
+import { InterviewService } from '../../services/interview.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-mock-interviews-page',
@@ -16,7 +18,9 @@ import { FeatureGuardDirective } from '../../shared/directives/feature-guard.dir
 export class MockInterviewsPage {
   constructor(
     private mockInterviewService: MockInterviewService,
-    private featureUsageService: FeatureUsageService
+    private featureUsageService: FeatureUsageService,
+    private interviewService: InterviewService,
+    private authService: AuthService
   ) {}
 
   onStartInterview(type: string = 'technical'): void {
@@ -28,7 +32,7 @@ export class MockInterviewsPage {
     this.featureUsageService.useFeature('mock_interview').subscribe({
       next: (response) => {
         if (response.success) {
-          this.mockInterviewService.startInterview(type);
+          this.startInterviewWithPrompt(type);
         } else {
           alert(response.message || 'Unable to start interview');
         }
@@ -36,6 +40,31 @@ export class MockInterviewsPage {
       error: () => {
         alert('Error starting interview. Please try again.');
       }
+    });
+  }
+
+  private startInterviewWithPrompt(type: string = 'technical'): void {
+    this.authService.getCurrentUser().subscribe(user => {
+      if (!user) return;
+
+      const userProfile = {
+        role: user.professional_info?.current_role || 'Software Engineer',
+        experience_years: user.overall_experience_years || 3,
+        skills: user.skills || ['JavaScript', 'Python'],
+        user_id: user.user_id
+      };
+
+      this.interviewService.startInterview(userProfile).subscribe({
+        next: (response) => {
+          console.log('Interview started with response:', response);
+          // Open modal with AI-generated questions
+          this.mockInterviewService.startInterview(type, response);
+        },
+        error: (error) => {
+          console.error('Error getting interview prompt:', error);
+          alert('Error starting interview. Please try again.');
+        }
+      });
     });
   }
 }

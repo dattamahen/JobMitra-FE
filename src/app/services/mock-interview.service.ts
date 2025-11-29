@@ -38,14 +38,19 @@ export class MockInterviewService {
     private http: HttpClient
   ) {}
 
-  startInterview(type: string = 'technical'): void {
+  startInterview(type: string = 'technical', aiResponse?: any): void {
     this.dialog.open(MockInterviewModalComponent, {
       width: '800px',
       maxWidth: '95vw',
       maxHeight: '95vh',
       disableClose: true,
       panelClass: 'mock-interview-dialog',
-      data: { interviewType: type }
+      data: { 
+        interviewType: type,
+        aiQuestions: aiResponse?.questions,
+        sessionId: aiResponse?.session_id,
+        difficulty: aiResponse?.difficulty
+      }
     });
   }
 

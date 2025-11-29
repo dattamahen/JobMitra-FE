@@ -1,0 +1,129 @@
+<div class="applications-container">
+      <mat-card class="header-card">
+        <mat-card-header>
+          <mat-card-title>Job Applications</mat-card-title>
+          <mat-card-subtitle *ngIf="applicationsData">
+            {{applicationsData.job_title}} - {{applicationsData.total_applications}} Applications
+          </mat-card-subtitle>
+        </mat-card-header>
+      </mat-card>
+
+      <div *ngIf="isLoading" class="loading-container">
+        <mat-spinner></mat-spinner>
+        <p>Loading applications...</p>
+      </div>
+
+      <div *ngIf="!isLoading && applicationsData" class="applications-list">
+        <mat-card *ngFor="let applicant of applicationsData.applications" class="applicant-card">
+          <mat-card-header>
+            <mat-card-title>{{applicant.full_name}}</mat-card-title>
+            <mat-card-subtitle>{{applicant.email}}</mat-card-subtitle>
+            <div class="header-actions">
+              <mat-chip [color]="getStatusColor(applicant.status)">
+                {{applicant.status | titlecase}}
+              </mat-chip>
+              <span class="match-score" *ngIf="applicant.profile_match">
+                {{applicant.profile_match.overall_match_percentage}}% Match
+              </span>
+            </div>
+          </mat-card-header>
+
+          <mat-card-content>
+            <div class="applicant-info">
+              <div class="basic-info">
+                <p><strong>Experience:</strong> {{applicant.overall_experience_years || 'Not specified'}} years</p>
+                <p><strong>Current Role:</strong> {{applicant.current_role || 'Not specified'}}</p>
+                <p><strong>Education:</strong> {{applicant.highest_qualification || 'Not specified'}}</p>
+                <p><strong>Applied:</strong> {{applicant.applied_date | date:'medium'}}</p>
+              </div>
+
+              <div class="skills-section" *ngIf="applicant.skills.length > 0">
+                <h4>Skills</h4>
+                <mat-chip-set>
+                  <mat-chip *ngFor="let skill of applicant.skills">{{skill}}</mat-chip>
+                </mat-chip-set>
+              </div>
+
+              <mat-expansion-panel *ngIf="applicant.profile_match" class="match-analysis">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>Profile Match Analysis</mat-panel-title>
+                  <mat-panel-description>
+                    {{applicant.profile_match.overall_match_percentage}}% Overall Match
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <div class="match-details">
+                  <div class="match-scores">
+                    <div class="score-item">
+                      <span class="score-label">Skills Match:</span>
+                      <span class="score-value">{{applicant.profile_match.skills_match_percentage}}%</span>
+                    </div>
+                    <div class="score-item">
+                      <span class="score-label">Experience Match:</span>
+                      <span class="score-value">{{applicant.profile_match.experience_match_percentage}}%</span>
+                    </div>
+                    <div class="score-item">
+                      <span class="score-label">Education Match:</span>
+                      <span class="score-value">{{applicant.profile_match.education_match_percentage}}%</span>
+                    </div>
+                  </div>
+
+                  <div class="matched-skills" *ngIf="applicant.profile_match.matched_skills.length > 0">
+                    <h5>Matched Skills</h5>
+                    <mat-chip-set>
+                      <mat-chip *ngFor="let skill of applicant.profile_match.matched_skills" color="primary">
+                        {{skill}}
+                      </mat-chip>
+                    </mat-chip-set>
+                  </div>
+
+                  <div class="missing-skills" *ngIf="applicant.profile_match.missing_skills.length > 0">
+                    <h5>Missing Skills</h5>
+                    <mat-chip-set>
+                      <mat-chip *ngFor="let skill of applicant.profile_match.missing_skills" color="warn">
+                        {{skill}}
+                      </mat-chip>
+                    </mat-chip-set>
+                  </div>
+
+                  <div class="recommendation">
+                    <h5>Recommendation</h5>
+                    <p>{{applicant.profile_match.recommendation}}</p>
+                  </div>
+                </div>
+              </mat-expansion-panel>
+            </div>
+          </mat-card-content>
+
+          <mat-card-actions>
+            <mat-form-field appearance="outline">
+              <mat-label>Update Status</mat-label>
+              <mat-select [value]="applicant.status" (selectionChange)="updateStatus(applicant.application_id, $event.value)">
+                <mat-option value="applied">Applied</mat-option>
+                <mat-option value="under_review">Under Review</mat-option>
+                <mat-option value="shortlisted">Shortlisted</mat-option>
+                <mat-option value="interview_scheduled">Interview Scheduled</mat-option>
+                <mat-option value="interview_completed">Interview Completed</mat-option>
+                <mat-option value="offer_extended">Offer Extended</mat-option>
+                <mat-option value="hired">Hired</mat-option>
+                <mat-option value="rejected">Rejected</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <button mat-raised-button color="primary" (click)="contactApplicant(applicant)">
+              Contact
+            </button>
+          </mat-card-actions>
+        </mat-card>
+
+        <div *ngIf="applicationsData.applications.length === 0" class="no-applications">
+          <mat-icon>inbox</mat-icon>
+          <h3>No Applications Yet</h3>
+          <p>No one has applied for this job yet.</p>
+        </div>
+      </div>
+
+      <div *ngIf="error" class="error-message">
+        <mat-icon>error</mat-icon>
+        <p>{{error}}</p>
+      </div>
+    </div>

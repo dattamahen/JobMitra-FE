@@ -1,6 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.jobmitra.com', // Update with production API URL
-  appName: 'JobMitra',
-  version: '1.0.0'
+  apiUrl: 'https://your-production-api.com',
+  googleClientId: 'YOUR_PRODUCTION_GOOGLE_CLIENT_ID_HERE'
 };

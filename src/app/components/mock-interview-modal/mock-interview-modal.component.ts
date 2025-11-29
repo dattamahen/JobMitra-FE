@@ -84,10 +84,22 @@ export class MockInterviewModalComponent {
   startInterview(): void {
     this.phase.set('loading');
     this.isLoading.set(true);
-    const type = this.data?.interviewType || 'technical';
     
-    // Add delay for loading effect
-    setTimeout(() => {
+    // Use AI-generated questions if available
+    if (this.data?.aiQuestions && this.data?.sessionId) {
+      const mockSession: InterviewSession = {
+        session_id: this.data.sessionId,
+        questions: this.parseAIQuestions(this.data.aiQuestions),
+        created_at: new Date().toISOString()
+      };
+      
+      this.interviewSession.set(mockSession);
+      this.phase.set('interview');
+      this.isLoading.set(false);
+      this.readCurrentQuestion();
+    } else {
+      // Fallback to original API call
+      const type = this.data?.interviewType || 'technical';
       this.mockInterviewService.startInterviewSession(type).subscribe({
         next: (session) => {
           this.interviewSession.set(session);
@@ -101,7 +113,7 @@ export class MockInterviewModalComponent {
           this.phase.set('instructions');
         }
       });
-    }, 2000);
+    }
   }
 
   readCurrentQuestion(): void {
@@ -176,6 +188,15 @@ export class MockInterviewModalComponent {
         this.isLoading.set(false);
       }
     });
+  }
+
+  parseAIQuestions(questionsText: string): InterviewQuestion[] {
+    const lines = questionsText.split('\n').filter(line => line.trim());
+    return lines.map((line, index) => ({
+      id: `q_${index + 1}`,
+      question: line.replace(/^\d+\.\s*/, '').trim(),
+      type: 'technical'
+    }));
   }
 
   closeModal(): void {

@@ -15,7 +15,7 @@ import { MyJobsPage } from '../pages/my-jobs/my-jobs';
 import { ApplicationsReceivedPage } from '../pages/applications-received/applications-received';
 import { AuthService } from '../services/auth.service';
 import { FeatureUsageService } from '../services/feature-usage.service';
-import { FeatureUsageComponent } from '../shared/components/feature-usage/feature-usage.component';
+
 
 @Component({
   selector: 'app-dashboard',
@@ -34,7 +34,7 @@ import { FeatureUsageComponent } from '../shared/components/feature-usage/featur
     PostJobPage,
     MyJobsPage,
     ApplicationsReceivedPage,
-    FeatureUsageComponent
+
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'

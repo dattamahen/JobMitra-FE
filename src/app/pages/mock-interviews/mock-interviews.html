@@ -10,7 +10,7 @@
       </div>
       <div *appFeatureGuard="'mock_interview'; showWhenDisabled: true; let canUse = canUseFeature">
         <button mat-raised-button [color]="canUse ? 'primary' : 'warn'" class="start-btn" 
-                (click)="onStartInterview('technical')" [disabled]="!canUse">
+                (click)="canUse ? onStartInterview('technical') : null" [class.disabled]="!canUse">
           <mat-icon>play_arrow</mat-icon>
           {{ canUse ? 'Start Interview' : 'Upgrade Required' }}
         </button>
@@ -27,7 +27,7 @@
       </div>
       <div *appFeatureGuard="'mock_interview'; showWhenDisabled: true; let canUse = canUseFeature">
         <button mat-raised-button [color]="canUse ? 'primary' : 'warn'" class="start-btn" 
-                (click)="onStartInterview('behavioral')" [disabled]="!canUse">
+                (click)="canUse ? onStartInterview('behavioral') : null" [class.disabled]="!canUse">
           <mat-icon>play_arrow</mat-icon>
           {{ canUse ? 'Start Interview' : 'Upgrade Required' }}
         </button>
@@ -46,7 +46,7 @@
       </select>
       <div *appFeatureGuard="'mock_interview'; showWhenDisabled: true; let canUse = canUseFeature">
         <button mat-raised-button [color]="canUse ? 'primary' : 'warn'" class="start-btn" 
-                (click)="onStartInterview('company')" [disabled]="!canUse">
+                (click)="canUse ? onStartInterview('company') : null" [class.disabled]="!canUse">
           <mat-icon>play_arrow</mat-icon>
           {{ canUse ? 'Start Interview' : 'Upgrade Required' }}
         </button>

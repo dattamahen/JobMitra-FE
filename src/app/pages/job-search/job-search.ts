@@ -11,12 +11,6 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { 
-  JobListing, 
-  FilterOptions,
-  JobSearchDataService,
-  LearningResource 
-} from '../../data/job-search-data';
 import { JobService, JobListing as ApiJobListing, JobSearchFilters } from '../../services/job.service';
 import { UserService } from '../../services/user.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';

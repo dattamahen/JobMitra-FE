@@ -425,6 +425,31 @@ export class AuthService {
   }
 
   /**
+   * Google Sign-In
+   */
+  googleSignIn(credential: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.API_URL}/google-signin`, {
+      credential: credential
+    }).pipe(
+      map(response => {
+        if (this.isBrowser()) {
+          localStorage.setItem(this.TOKEN_KEY, response.access_token);
+          localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
+        }
+        
+        this.authStateSubject.next({
+          isAuthenticated: true,
+          user: response.user,
+          token: response.access_token
+        });
+        
+        return response;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
    * Seed users (development only)
    */
   seedUsers(): Observable<any> {
@@ -559,132 +584,5 @@ export class AuthService {
     return this.getCurrentUserValue()?.user_type || null;
   }
 
-  /**
-   * Mock login for testing - determines user type based on email
-   */
-  async mockLogin(email: string, password: string): Promise<User> {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
 
-    let mockUser: User;
-    
-    // Determine user type based on email domain or specific emails
-    if (email.includes('hr@') || email.includes('@hr.') || email === 'hr@example.com') {
-      mockUser = {
-        user_id: 'hr_001',
-        email: email,
-        username: email.split('@')[0],
-        user_type: 'hr',
-        first_name: 'HR',
-        last_name: 'Manager',
-        full_name: 'HR Manager',
-        company_name: 'Tech Solutions Inc.',
-        user_status: 'active',
-        user_plan: 'pro',
-        feature_usage_count: 35,
-        feature_usage_status: 'A',
-        profile_created_on: new Date(),
-        last_active: new Date(),
-        match_analysis_count: 0,
-        match_tailored_count: 0,
-        mock_interview_count: 0,
-        profile_completion_count: 85,
-        profile_visits: 25,
-        is_active: true,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
-    } else if (email.includes('admin@') || email === 'admin@example.com') {
-      mockUser = {
-        user_id: 'admin_001',
-        email: email,
-        username: email.split('@')[0],
-        user_type: 'admin',
-        first_name: 'System',
-        last_name: 'Admin',
-        full_name: 'System Admin',
-        user_status: 'active',
-        user_plan: 'pro',
-        feature_usage_count: 35,
-        feature_usage_status: 'A',
-        profile_created_on: new Date(),
-        last_active: new Date(),
-        match_analysis_count: 0,
-        match_tailored_count: 0,
-        mock_interview_count: 0,
-        profile_completion_count: 100,
-        profile_visits: 50,
-        is_active: true,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
-    } else {
-      mockUser = {
-        user_id: 'user_001',
-        email: email,
-        username: email.split('@')[0],
-        user_type: 'job_seeker',
-        first_name: 'John',
-        last_name: 'Doe',
-        full_name: 'John Doe',
-        date_of_birth: new Date('1990-01-15'),
-        phone: '+1234567890',
-        overall_experience_years: 5,
-        highest_qualification: 'Bachelor of Computer Science',
-        skills: ['JavaScript', 'TypeScript', 'Angular', 'Node.js', 'MongoDB'],
-        user_status: 'active',
-        user_plan: 'free',
-        feature_usage_count: 5,
-        feature_usage_status: 'A',
-        job_preferences: ['remote', 'hybrid'],
-        employment_type: ['full-time'],
-        profile_created_on: new Date(),
-        last_active: new Date(),
-        match_analysis_count: 15,
-        match_tailored_count: 8,
-        mock_interview_count: 3,
-        profile_completion_count: 85,
-        profile_visits: 42,
-        profile_completion: 85,
-        is_active: true,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        personal_info: {
-          first_name: 'John',
-          last_name: 'Doe',
-          phone: '+1234567890',
-          location: {
-            city: 'San Francisco',
-            state: 'CA',
-            country: 'USA'
-          }
-        },
-        professional_info: {
-          current_role: 'Frontend Developer',
-          current_company: 'TechCorp',
-          total_experience: '5 years',
-          industry: 'Technology',
-          skills: ['JavaScript', 'TypeScript', 'Angular'],
-          current_salary: 75000,
-          expected_salary: 85000
-        }
-      };
-    }
-
-    // Store mock token and user
-    const mockToken = 'mock_token_' + Date.now();
-    
-    if (this.isBrowser()) {
-      localStorage.setItem(this.TOKEN_KEY, mockToken);
-      localStorage.setItem(this.USER_KEY, JSON.stringify(mockUser));
-    }
-    
-    this.authStateSubject.next({
-      isAuthenticated: true,
-      user: mockUser,
-      token: mockToken
-    });
-    
-    return mockUser;
-  }
 }
