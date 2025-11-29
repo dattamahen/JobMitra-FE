@@ -8,10 +8,13 @@
         <span class="badge medium">Medium</span>
         <span class="badge hard">Hard</span>
       </div>
-      <button mat-raised-button color="primary" class="start-btn" (click)="onStartInterview('technical')">
-        <mat-icon>play_arrow</mat-icon>
-        Start Interview
-      </button>
+      <div *appFeatureGuard="'mock_interview'; showWhenDisabled: true; let canUse = canUseFeature">
+        <button mat-raised-button [color]="canUse ? 'primary' : 'warn'" class="start-btn" 
+                (click)="onStartInterview('technical')" [disabled]="!canUse">
+          <mat-icon>play_arrow</mat-icon>
+          {{ canUse ? 'Start Interview' : 'Upgrade Required' }}
+        </button>
+      </div>
     </div>
     
     <div class="interview-card">
@@ -22,10 +25,13 @@
         <span class="topic">Teamwork</span>
         <span class="topic">Problem Solving</span>
       </div>
-      <button mat-raised-button color="primary" class="start-btn" (click)="onStartInterview('behavioral')">
-        <mat-icon>play_arrow</mat-icon>
-        Start Interview
-      </button>
+      <div *appFeatureGuard="'mock_interview'; showWhenDisabled: true; let canUse = canUseFeature">
+        <button mat-raised-button [color]="canUse ? 'primary' : 'warn'" class="start-btn" 
+                (click)="onStartInterview('behavioral')" [disabled]="!canUse">
+          <mat-icon>play_arrow</mat-icon>
+          {{ canUse ? 'Start Interview' : 'Upgrade Required' }}
+        </button>
+      </div>
     </div>
     
     <div class="interview-card">
@@ -38,10 +44,13 @@
         <option>Amazon</option>
         <option>Meta</option>
       </select>
-      <button mat-raised-button color="primary" class="start-btn" (click)="onStartInterview('company')">
-        <mat-icon>play_arrow</mat-icon>
-        Start Interview
-      </button>
+      <div *appFeatureGuard="'mock_interview'; showWhenDisabled: true; let canUse = canUseFeature">
+        <button mat-raised-button [color]="canUse ? 'primary' : 'warn'" class="start-btn" 
+                (click)="onStartInterview('company')" [disabled]="!canUse">
+          <mat-icon>play_arrow</mat-icon>
+          {{ canUse ? 'Start Interview' : 'Upgrade Required' }}
+        </button>
+      </div>
     </div>
   </div>
   

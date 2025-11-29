@@ -73,6 +73,10 @@ export interface User {
   user_status: 'active' | 'inactive';
   user_plan: 'free' | 'subscribed' | 'pro';
   
+  // Feature Usage Tracking
+  feature_usage_count?: number;
+  feature_usage_status?: 'A' | 'X'; // A = Available, X = eXhausted
+  
   // Preferences
   job_preferences?: ('remote' | 'hybrid' | 'on-site')[];
   employment_type?: ('full-time' | 'part-time' | 'freelancing' | 'contract')[];
@@ -577,6 +581,8 @@ export class AuthService {
         company_name: 'Tech Solutions Inc.',
         user_status: 'active',
         user_plan: 'pro',
+        feature_usage_count: 35,
+        feature_usage_status: 'A',
         profile_created_on: new Date(),
         last_active: new Date(),
         match_analysis_count: 0,
@@ -599,6 +605,8 @@ export class AuthService {
         full_name: 'System Admin',
         user_status: 'active',
         user_plan: 'pro',
+        feature_usage_count: 35,
+        feature_usage_status: 'A',
         profile_created_on: new Date(),
         last_active: new Date(),
         match_analysis_count: 0,
@@ -626,6 +634,8 @@ export class AuthService {
         skills: ['JavaScript', 'TypeScript', 'Angular', 'Node.js', 'MongoDB'],
         user_status: 'active',
         user_plan: 'free',
+        feature_usage_count: 5,
+        feature_usage_status: 'A',
         job_preferences: ['remote', 'hybrid'],
         employment_type: ['full-time'],
         profile_created_on: new Date(),

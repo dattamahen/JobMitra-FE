@@ -158,10 +158,13 @@
         
         <!-- Action buttons -->
         <div class="resume-actions">
-          <button mat-raised-button color="primary" (click)="downloadPDF()">
-            <mat-icon>download</mat-icon>
-            Download PDF
-          </button>
+          <div *appFeatureGuard="'resume_download'; showWhenDisabled: true; let canUse = canUseFeature">
+            <button mat-raised-button [color]="canUse ? 'primary' : 'warn'" 
+                    (click)="downloadPDF()" [disabled]="!canUse">
+              <mat-icon>download</mat-icon>
+              {{ canUse ? 'Download PDF' : 'Upgrade Required' }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
