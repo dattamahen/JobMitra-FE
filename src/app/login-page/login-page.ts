@@ -143,24 +143,6 @@ export class LoginPage implements OnInit {
     this.router.navigate(['/dashboard']);
   }
 
-  // Demo login with test user
-  loginWithTestUser(): void {
-    this.loginForm.patchValue({
-      email: 'arjun.sharma@email.com',
-      password: 'JobSeeker@123'
-    });
-    this.onLogin();
-  }
-
-  // Demo HR login
-  loginWithHRUser(): void {
-    this.loginForm.patchValue({
-      email: 'hr001@test.com',
-      password: 'test1234'
-    });
-    this.onLogin();
-  }
-
   toggleSignupMode(): void {
     this.isSignupMode.set(!this.isSignupMode());
     this.errorMessage = '';

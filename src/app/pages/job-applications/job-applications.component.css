@@ -1,0 +1,115 @@
+.applications-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header-card {
+      margin-bottom: 20px;
+    }
+
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+    }
+
+    .applicant-card {
+      margin-bottom: 20px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: auto;
+    }
+
+    .match-score {
+      background: #e3f2fd;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .applicant-info {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .basic-info p {
+      margin: 4px 0;
+    }
+
+    .skills-section h4 {
+      margin-bottom: 8px;
+    }
+
+    .match-analysis {
+      margin-top: 16px;
+    }
+
+    .match-details {
+      padding: 16px 0;
+    }
+
+    .match-scores {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .score-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px;
+      background: #f5f5f5;
+      border-radius: 4px;
+    }
+
+    .score-value {
+      font-weight: 500;
+    }
+
+    .matched-skills, .missing-skills {
+      margin-bottom: 16px;
+    }
+
+    .matched-skills h5, .missing-skills h5, .recommendation h5 {
+      margin-bottom: 8px;
+    }
+
+    .no-applications {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+
+    .no-applications mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 16px;
+    }
+
+    .error-message {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #f44336;
+      padding: 16px;
+    }
+
+    mat-card-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    mat-form-field {
+      min-width: 200px;
+    }
