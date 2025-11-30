@@ -86,7 +86,6 @@ export class DashboardService {
 
     return this.apiService.get<any>(endpoint).pipe(
       map(data => {
-        console.log(`Dashboard API Response for ${userType}:`, data);
         // Both endpoints now return the same unified format
         return this.transformUnifiedApiResponse(data, userType);
       }),
@@ -94,7 +93,6 @@ export class DashboardService {
         console.error('Dashboard API error:', error);
         // Return mock data based on user type
         const fallbackData = this.getMockDataForUserType(userType);
-        console.log(`Using fallback data for ${userType}:`, fallbackData);
         return of(fallbackData);
       })
     );

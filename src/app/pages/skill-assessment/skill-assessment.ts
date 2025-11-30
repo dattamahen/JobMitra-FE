@@ -87,13 +87,7 @@ export class SkillAssessmentPage implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('SkillAssessmentPage ngOnInit called');
-    console.log('Service instance:', this.skillAssessmentService);
-    
-    // Test API connectivity
-    console.log('Testing API connectivity...');
     this.skillAssessmentService.getTechnicalSkills().subscribe({
-      next: (data) => console.log('API test successful:', data),
       error: (error) => console.error('API test failed:', error)
     });
     
@@ -108,7 +102,6 @@ export class SkillAssessmentPage implements OnInit {
   }
 
   private loadSkillAssessments(): void {
-    console.log('Loading skill assessments...');
     
     // Reset skills array
     this.skillAssessments = [];
@@ -116,7 +109,6 @@ export class SkillAssessmentPage implements OnInit {
     // Load technical skills from API
     this.skillAssessmentService.getTechnicalSkills().subscribe({
       next: (skills) => {
-        console.log('Technical skills received:', skills);
         const technicalSkills = skills.map(skill => ({
           id: skill.skill_id,
           name: skill.skill_name,
@@ -125,11 +117,9 @@ export class SkillAssessmentPage implements OnInit {
           levelText: skill.level_text as any
         }));
         this.skillAssessments = [...this.skillAssessments.filter(s => s.category !== 'technical' && !s.isRecommended), ...technicalSkills];
-        console.log('Updated skillAssessments after technical:', this.skillAssessments);
         this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('Error loading technical skills:', error);
         this.cdr.detectChanges();
       }
     });
@@ -137,7 +127,6 @@ export class SkillAssessmentPage implements OnInit {
     // Load soft skills from API
     this.skillAssessmentService.getSoftSkills().subscribe({
       next: (skills) => {
-        console.log('Soft skills received:', skills);
         const softSkills = skills.map(skill => ({
           id: skill.skill_id,
           name: skill.skill_name,
@@ -146,11 +135,9 @@ export class SkillAssessmentPage implements OnInit {
           levelText: skill.level_text as any
         }));
         this.skillAssessments = [...this.skillAssessments.filter(s => s.category !== 'soft-skills'), ...softSkills];
-        console.log('Updated skillAssessments after soft skills:', this.skillAssessments);
         this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('Error loading soft skills:', error);
         this.cdr.detectChanges();
       }
     });
@@ -158,7 +145,6 @@ export class SkillAssessmentPage implements OnInit {
     // Load recommended skills from API
     this.skillAssessmentService.getRecommendedSkills().subscribe({
       next: (skills) => {
-        console.log('Recommended skills received:', skills);
         const recommendedSkills = skills.map(skill => ({
           id: skill.id,
           name: skill.name,
@@ -169,11 +155,9 @@ export class SkillAssessmentPage implements OnInit {
           relevanceReason: skill.relevance_reason
         }));
         this.skillAssessments = [...this.skillAssessments.filter(s => !s.isRecommended), ...recommendedSkills];
-        console.log('Final skillAssessments after recommended:', this.skillAssessments);
         this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('Error loading recommended skills:', error);
         this.cdr.detectChanges();
       }
     });
@@ -182,10 +166,8 @@ export class SkillAssessmentPage implements OnInit {
 
 
   private loadAssessmentHistory(): void {
-    console.log('Loading assessment history...');
     this.skillAssessmentService.getAssessmentHistory().subscribe({
       next: (history) => {
-        console.log('Assessment history received:', history);
         this.assessmentHistory = history.map(item => ({
           id: item.id,
           skillName: item.skill_name,
@@ -194,11 +176,9 @@ export class SkillAssessmentPage implements OnInit {
           level: item.level,
           hasCertificate: item.has_certificate
         }));
-        console.log('Mapped assessment history:', this.assessmentHistory);
         this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('Error loading assessment history:', error);
         this.cdr.detectChanges();
       }
     });
@@ -222,7 +202,6 @@ export class SkillAssessmentPage implements OnInit {
   
   navigateToProfile(): void {
     // This would typically use Router to navigate to profile page
-    console.log('Navigate to profile page');
     // For now, just show an alert
     alert('Please update your profile to add skills. Navigate to Profile section.');
   }
@@ -246,11 +225,9 @@ export class SkillAssessmentPage implements OnInit {
   takeTest(skill: SkillAssessment): void {
     this.skillAssessmentService.takeSkillTest(skill.id).subscribe({
       next: (response) => {
-        console.log('Test started:', response);
         alert(`Assessment for ${skill.name} started! Test ID: ${response.test_id}`);
       },
       error: (error) => {
-        console.error('Error starting test:', error);
         alert('Failed to start test. Please try again.');
       }
     });
@@ -259,11 +236,9 @@ export class SkillAssessmentPage implements OnInit {
   getCertificate(historyItem: AssessmentHistory): void {
     this.skillAssessmentService.getCertificate(historyItem.id).subscribe({
       next: (response) => {
-        console.log('Certificate info:', response);
         window.open(response.certificate_url, '_blank');
       },
       error: (error) => {
-        console.error('Error getting certificate:', error);
         alert('Failed to get certificate. Please try again.');
       }
     });
@@ -288,7 +263,6 @@ export class SkillAssessmentPage implements OnInit {
         this.showContributeForm = false;
       },
       error: (error) => {
-        console.error('Error loading learning resources:', error);
         this.selectedSkillResources = [];
         this.showLearningModal = true;
         this.showContributeForm = false;
@@ -327,13 +301,10 @@ export class SkillAssessmentPage implements OnInit {
 
     this.skillAssessmentService.contributeResource(contribution).subscribe({
       next: (response) => {
-        console.log('Contribution submitted:', response);
-        alert(`Thank you for your contribution! ${response.message}`);
         this.hideContributeForm();
         form.reset();
       },
       error: (error) => {
-        console.error('Error submitting contribution:', error);
         alert('Failed to submit contribution. Please try again.');
       }
     });
@@ -408,8 +379,6 @@ export class SkillAssessmentPage implements OnInit {
 
   beginInterview(): void {
     this.mockInterviewInProgress = true;
-    console.log('Starting mock interview for:', this.selectedSkill);
-    console.log('Questions:', this.currentInterviewQuestions);
     
     // In a real application, this would start the actual interview process
     // For now, we'll simulate completion after a delay
@@ -441,7 +410,6 @@ export class SkillAssessmentPage implements OnInit {
     };
 
     this.mockInterviewInProgress = false;
-    alert(`Mock interview completed! Score: ${newSession.score}%`);
     this.closeMockInterviewModal();
   }
 
@@ -473,9 +441,6 @@ export class SkillAssessmentPage implements OnInit {
   }
 
   selectSubscriptionPlan(planId: string): void {
-    // In a real app, this would redirect to payment processor
-    console.log('Redirecting to payment for plan:', planId);
-    alert(`Redirecting to payment for plan ${planId}...`);
     this.closeSubscriptionModal();
   }
 

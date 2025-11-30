@@ -511,13 +511,11 @@ export class UserService {
    * Convert update data to format expected by AuthService
    */
   private convertUpdateRequestToAuthFormat(updateData: any): Partial<any> {
-    console.log('UserService: Converting update data to auth format:', updateData);
     
     // Since the profile component now sends data with backend field names directly,
     // we can pass it through with minimal transformation
     const authData = { ...updateData };
     
-    console.log('UserService: Final auth data for backend:', authData);
     return authData;
   }
 

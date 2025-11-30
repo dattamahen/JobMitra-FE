@@ -11,7 +11,6 @@ export class GoogleAuthService {
   private clientId = environment.googleClientId;
 
   constructor(private authService: AuthService) {
-    console.log('Google Client ID:', this.clientId);
   }
 
   async initializeGoogleSignIn(): Promise<void> {
@@ -55,13 +54,10 @@ export class GoogleAuthService {
 
   private async handleCredentialResponse(response: any): Promise<void> {
     try {
-      console.log('Google credential received:', response);
       const result = await this.authService.googleSignIn(response.credential).toPromise();
-      console.log('Google Sign-In successful:', result);
       // Redirect to dashboard or handle success
       window.location.href = '/dashboard';
     } catch (error) {
-      console.error('Google Sign-In failed:', error);
       alert('Google Sign-In failed. Please try again.');
     }
   }

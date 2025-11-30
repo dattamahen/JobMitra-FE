@@ -174,11 +174,9 @@ export class ApplicationService {
     return this.apiService.get<ApplicationsResponse>('/applications', params)
       .pipe(
         map(response => {
-          console.log('✅ ApplicationService: Received applications from API:', response);
           return response;
         }),
         catchError(error => {
-          console.warn('🔥 API unavailable - Using mock applications data:', error.message);
           return of(this.getMockApplicationsResponse(filters, page, perPage));
         })
       );
@@ -191,7 +189,6 @@ export class ApplicationService {
     return this.apiService.get<ApplicationStats>('/applications/stats')
       .pipe(
         catchError(error => {
-          console.warn('🔥 API unavailable - Using mock application stats:', error.message);
           return of({
             total_applications: 12,
             status_breakdown: {
@@ -411,7 +408,6 @@ export class ApplicationService {
     }[]>('/applications/upcoming-interviews')
       .pipe(
         catchError(() => {
-          console.warn('🔥 API unavailable - Using mock upcoming interviews');
           return of([
             {
               application_id: 'app_1',

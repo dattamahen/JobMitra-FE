@@ -48,7 +48,6 @@ export class MockInterviewsPage {
 
   onUsePaidVersion(): void {
     if (confirm('Upgrade to Premium to unlock unlimited mock interviews and advanced features. Upgrade now?')) {
-      console.log('Navigate to upgrade page');
     }
   }
 
@@ -65,16 +64,13 @@ export class MockInterviewsPage {
 
       this.interviewService.startInterview(userProfile).subscribe({
         next: (response) => {
-          console.log('Interview started with response:', response);
           // Open modal with AI-generated questions
           this.mockInterviewService.startInterview(type, response);
         },
         error: (error) => {
-          console.error('Error getting interview prompt:', error);
           alert('Error starting interview. Please try again.');
         }
       });
     });
   }
 }
-         
