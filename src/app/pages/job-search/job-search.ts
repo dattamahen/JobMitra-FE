@@ -228,7 +228,6 @@ export class JobSearchPage implements OnInit {
   }
 
   private applyFilters(): void {
-    // Reset to first page when filters change
     this.currentPage = 1;
     this.loadJobs();
   }
@@ -247,7 +246,6 @@ export class JobSearchPage implements OnInit {
 
   // Format salary for API job data
   formatSalary(job: ApiJobListing): string {
-    // Check if salary object exists
     if (!job.salary || (!job.salary.min && !job.salary.max)) {
       return 'Salary not disclosed';
     }
@@ -276,21 +274,14 @@ export class JobSearchPage implements OnInit {
   takeMatchAnalysis(jobId: string): void {
     const job = this.getJobById(jobId);
     if (!job) return;
-    
-    // Check if already done
     if (job.match_analysis_done) {
       this.snackBar.open('Match analysis already completed', 'Close', { duration: 3000 });
       return;
     }
-    
-
-    
     this.jobService.performMatchAnalysis(jobId).subscribe({
       next: (response) => {
-        // Update job object
         job.match_percentage = response.match_percentage;
         job.match_analysis_done = response.analysis_done;
-        
         this.snackBar.open(response.message, 'Close', { duration: 3000 });
       },
       error: (error) => {
@@ -310,12 +301,8 @@ export class JobSearchPage implements OnInit {
       this.snackBar.open('Resume already tailored', 'Close', { duration: 3000 });
       return;
     }
-    
-
-    
     this.jobService.tailorResume(jobId).subscribe({
       next: (response) => {
-        // Update job object
         job.match_percentage = response.match_percentage;
         job.tailor_resume_done = response.tailor_done;
         
@@ -343,8 +330,6 @@ export class JobSearchPage implements OnInit {
 
   takeMockInterview(jobId: string): void {
     const job = this.getJobById(jobId);
-
-    
     const dialogRef = this.dialog.open(MockInterviewDialog, {
       width: '400px',
       data: { jobTitle: job?.title }

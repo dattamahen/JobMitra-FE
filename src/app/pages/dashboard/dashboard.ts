@@ -60,16 +60,6 @@ export class DashboardPage implements OnInit, OnDestroy {
     }, 5000);
   }
 
-  onStatCardClick(stat: DashboardStats): void {
-
-    // Navigate to relevant page based on stat type
-  }
-
-  onActivityClick(activity: ActivityItem): void {
-
-    // Navigate to relevant page or show details
-  }
-
   refreshDashboard(): void {
     this.isLoading = true;
     this.loadDashboardData();

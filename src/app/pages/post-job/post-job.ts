@@ -165,8 +165,6 @@ export class PostJobPage implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    // private hrService: HrService,
-    // private authService: AuthService,
     private router: Router,
     private snackBar: MatSnackBar
   ) {

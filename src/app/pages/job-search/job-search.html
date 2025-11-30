@@ -275,55 +275,6 @@
             </div>
           </div>
           }
-
-          <!-- Learning Resources Section -->
-          @if (job.learning_resources && job.learning_resources.length > 0) {
-          <div class="job-section learning-resources">
-            <h4><mat-icon>school</mat-icon> Skill Up for This Role</h4>
-            <p class="section-description">Enhance your skills with these curated learning resources:</p>
-
-            <div class="learning-resources-grid">
-              @for (resource of job.learning_resources; track resource.id) {
-              <div class="learning-resource-card">
-                <div class="resource-thumbnail" (click)="openLearningResource(resource)">
-                  <img [src]="getYouTubeThumbnail(resource.youtube_url)" [alt]="resource.title" class="thumbnail-image">
-                  <div class="play-overlay">
-                    <div class="play-button">▶</div>
-                  </div>
-                  <div class="duration-badge">{{ resource.duration }}</div>
-                </div>
-
-                <div class="resource-details">
-                  <h5 class="resource-title">{{ resource.title }}</h5>
-                  <p class="resource-description">{{ resource.description }}</p>
-
-                  <div class="resource-meta">
-                    <span class="channel-name">{{ resource.channel }}</span>
-                    <span class="skill-badge">{{ resource.skill }}</span>
-                    <span class="level-badge" [style.background-color]="getLevelColor(resource.level)">
-                      {{ resource.level }}
-                    </span>
-                  </div>
-
-                  @if (resource.rating) {
-                  <div class="rating">
-                    @for (star of getRatingStars(resource.rating); track $index) {
-                    <mat-icon class="star" [class.filled]="star">star</mat-icon>
-                    }
-                    <span class="rating-value">({{ resource.rating }})</span>
-                  </div>
-                  }
-
-                  <button mat-stroked-button class="watch-video-btn" (click)="openLearningResource(resource)">
-                    <mat-icon>play_arrow</mat-icon>
-                    Watch Video
-                  </button>
-                </div>
-              </div>
-              }
-            </div>
-          </div>
-          }
         </div>
         }
       </mat-card-content>
