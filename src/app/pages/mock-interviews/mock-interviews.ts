@@ -2,11 +2,13 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
 import { MockInterviewService } from '../../services/mock-interview.service';
 import { FeatureUsageService } from '../../services/feature-usage.service';
 import { FeatureGuardDirective } from '../../shared/directives/feature-guard.directive';
 import { InterviewService } from '../../services/interview.service';
 import { AuthService } from '../../services/auth.service';
+import { INTERVIEW_TYPES, InterviewType } from '../../data/mock-interview-data';
 
 @Component({
   selector: 'app-mock-interviews-page',
@@ -16,19 +18,20 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./mock-interviews.css']
 })
 export class MockInterviewsPage {
+  interviewTypes = INTERVIEW_TYPES;
+
   constructor(
     private mockInterviewService: MockInterviewService,
     private featureUsageService: FeatureUsageService,
     private interviewService: InterviewService,
-    private authService: AuthService
-  ) {}
+    private authService: AuthService,
+    private dialog: MatDialog
+  ) {
+    // Force refresh feature usage to ensure UI updates
+    this.featureUsageService.refreshFeatureUsage().subscribe();
+  }
 
   onStartInterview(type: string = 'technical'): void {
-    if (!this.featureUsageService.canUsePaidFeatures()) {
-      alert('You have reached your limit for mock interviews. Please upgrade your plan.');
-      return;
-    }
-
     this.featureUsageService.useFeature('mock_interview').subscribe({
       next: (response) => {
         if (response.success) {
@@ -41,6 +44,12 @@ export class MockInterviewsPage {
         alert('Error starting interview. Please try again.');
       }
     });
+  }
+
+  onUsePaidVersion(): void {
+    if (confirm('Upgrade to Premium to unlock unlimited mock interviews and advanced features. Upgrade now?')) {
+      console.log('Navigate to upgrade page');
+    }
   }
 
   private startInterviewWithPrompt(type: string = 'technical'): void {
