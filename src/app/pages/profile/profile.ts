@@ -690,9 +690,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private loadUserProfile(): void {
-    console.log('Loading user profile...');
     if (!this.authService.isAuthenticated()) {
-      console.log('User not authenticated');
       return;
     }
     

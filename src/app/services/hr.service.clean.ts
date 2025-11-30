@@ -104,7 +104,6 @@ export class HrService {
 
   private getAuthHeaders(): HttpHeaders {
     const token = this.authService.getToken();
-    console.log('HrService: Using token from AuthService:', token ? 'Token exists' : 'No token');
     
     if (!token) {
       throw new Error('No authentication token available. Please login first.');
@@ -139,11 +138,9 @@ export class HrService {
 
   async getDashboardStats(): Promise<HRDashboardStats> {
     try {
-      console.log('HrService: Making dashboard stats API call');
       const response = await firstValueFrom(
         this.http.get<HRDashboardStats>(`${this.baseUrl}/hr/dashboard`, { headers: this.getAuthHeaders() })
       );
-      console.log('HrService: Dashboard stats response:', response);
       return response;
     } catch (error: any) {
       console.error('HrService: Dashboard stats error:', error);
@@ -163,11 +160,9 @@ export class HrService {
 
   async getMyJobs(): Promise<JobListing[]> {
     try {
-      console.log('HrService: Making jobs API call');
       const response = await firstValueFrom(
         this.http.get<any>(`${this.baseUrl}/hr/jobs`, { headers: this.getAuthHeaders() })
       );
-      console.log('HrService: Jobs response:', response);
       
       // Handle different response formats
       if (Array.isArray(response)) {
@@ -177,11 +172,9 @@ export class HrService {
       } else if (response.data && Array.isArray(response.data)) {
         return response.data;
       } else {
-        console.warn('HrService: Unexpected response format, returning empty array');
         return [];
       }
     } catch (error: any) {
-      console.error('HrService: Jobs API error:', error);
       throw new Error(error.error?.detail || 'Failed to load job postings');
     }
   }

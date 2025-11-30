@@ -89,7 +89,6 @@ export class ApplicationsReceivedPage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    console.log('ApplicationsReceivedPage: Component initialized');
     
     // Check for specific job ID from route or input
     this.route.queryParams.subscribe(params => {
@@ -121,8 +120,6 @@ export class ApplicationsReceivedPage implements OnInit, OnDestroy {
         title: job.title
       }));
       this.jobOptions.set(jobOptions);
-      console.log('ApplicationsReceivedPage: jobOptions loaded:', jobOptions);
-      
       // If we have a specific job ID, find and set the title
       if (this.specificJobId) {
         const specificJob = jobOptions.find(job => job.job_id === this.specificJobId);
@@ -136,16 +133,12 @@ export class ApplicationsReceivedPage implements OnInit, OnDestroy {
   }
 
   async loadApplications() {
-    console.log('ApplicationsReceivedPage: Loading applications...');
-    console.log('ApplicationsReceivedPage: selectedJobId signal value:', this.selectedJobId());
     this.isLoading.set(true);
     
     try {
       const jobId = this.selectedJobId() === 'all' ? undefined : this.selectedJobId();
-      console.log('ApplicationsReceivedPage: Calling API with jobId:', jobId);
       
       const response = await this.hrService.getAllApplications(jobId);
-      console.log('ApplicationsReceivedPage: API response:', response);
       
       const applications = (response?.applications || []) as ApplicationReceived[];
       
@@ -155,7 +148,6 @@ export class ApplicationsReceivedPage implements OnInit, OnDestroy {
       );
       
       this.applications.set(applications);
-      console.log('ApplicationsReceivedPage: Processed applications:', applications.length);
     } catch (error: any) {
       console.error('Error loading applications:', error);
       this.snackBar.open(error.message || 'Failed to load applications', 'Close', { duration: 5000 });
@@ -164,13 +156,10 @@ export class ApplicationsReceivedPage implements OnInit, OnDestroy {
     
     this.isLoading.set(false);
     this.cdr.markForCheck();
-    console.log('ApplicationsReceivedPage: Loading complete, isLoading:', this.isLoading());
   }
 
   onJobFilterChange(value: string) {
-    console.log('ApplicationsReceivedPage: onJobFilterChange called with value:', value);
     this.selectedJobId.set(value);
-    console.log('ApplicationsReceivedPage: selectedJobId after set:', this.selectedJobId());
     
     // Update page title based on selection
     if (value === 'all') {

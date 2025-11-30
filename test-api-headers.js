@@ -1,7 +1,4 @@
-// Test script to verify API service includes Authorization headers
-// This would normally be run in browser console after HR login
 
-console.log('Testing API Service Authorization Headers...');
 
 // Simulate token in localStorage (this happens after login)
 localStorage.setItem('access_token', 'test-token-12345');
@@ -21,9 +18,6 @@ const createHeaders = () => {
 };
 
 const testHeaders = createHeaders();
-console.log('Generated headers:');
-console.log('Content-Type:', testHeaders.get('Content-Type'));
-console.log('Authorization:', testHeaders.get('Authorization'));
 
 // Expected output:
 // Content-Type: application/json
