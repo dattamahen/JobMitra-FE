@@ -63,15 +63,6 @@
         </div>
         }
 
-        <!-- Rejection feedback -->
-        @if (application.status === 'rejected' && application.rejection_feedback) {
-        <div class="rejection-feedback">
-          <p><strong>Feedback:</strong> {{application.rejection_feedback}}</p>
-        </div>
-        }
-
-
-
         <!-- Notes -->
         @if (application.notes) {
         <div class="application-notes">

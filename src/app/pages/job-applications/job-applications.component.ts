@@ -85,7 +85,6 @@ export class JobApplicationsComponent implements OnInit {
   }
 
   contactApplicant(applicant: ApplicantProfile): void {
-    // Open email client
     const subject = `Regarding your application for ${this.applicationsData?.job_title}`;
     const mailtoLink = `mailto:${applicant.email}?subject=${encodeURIComponent(subject)}`;
     window.open(mailtoLink);

@@ -13,7 +13,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
 import { AuthService, LoginRequest, LoginResponse, RegisterRequest } from '../services/auth.service';
 import { GoogleAuthService } from '../services/google-auth.service';
-import { NavigationService } from '../services/navigation.service';
 import { DynamicFormComponent } from '../shared/components/dynamic-form/dynamic-form.component';
 import { FormConfig } from '../shared/interfaces/form.interfaces';
 import { LOGIN_FORM_CONFIG, SIGNUP_FORM_CONFIG } from '../shared/components/dynamic-form/form-configs';
@@ -54,7 +53,6 @@ export class LoginPage implements OnInit {
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private googleAuthService: GoogleAuthService,
-    private navigationService: NavigationService
   ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
@@ -207,14 +205,6 @@ export class LoginPage implements OnInit {
         this.errorMessage = error.error?.detail || 'Signup failed. Please try again.';
       }
     );
-  }
-
-  private markFormGroupTouched(formType: 'login' | 'signup' = 'login'): void {
-    const form = formType === 'login' ? this.loginForm : this.signupForm;
-    Object.keys(form.controls).forEach(key => {
-      const control = form.get(key);
-      control?.markAsTouched();
-    });
   }
 
   private passwordMatchValidator(form: any) {

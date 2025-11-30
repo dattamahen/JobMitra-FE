@@ -41,7 +41,6 @@ export class ApplicationsPage implements OnInit {
   ) {}
 
   ngOnInit(): void {
-
     this.loadApplications();
   }
 
@@ -217,10 +216,5 @@ export class ApplicationsPage implements OnInit {
   viewApplicationDetails(applicationId: string): void {
 
     // Navigate to application details page
-  }
-
-  withdrawApplication(applicationId: string): void {
-
-    // Show confirmation dialog and withdraw
   }
 }
