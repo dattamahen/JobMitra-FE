@@ -318,14 +318,7 @@ mat-card-title {
 	border: 2px solid #e3f2fd;
 }
 
-.section-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 25px;
-	padding-bottom: 15px;
-	border-bottom: 2px solid #f0f9ff;
-}
+
 
 .section-header h2 {
 	color: #1976d2;
@@ -691,15 +684,9 @@ mat-icon {
 	margin: 0;
 }
 
-.form-group {
-	margin-bottom: 20px;
-}
 
-.form-row {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 20px;
-}
+
+
 
 .form-group label {
 	display: block;
@@ -1220,11 +1207,7 @@ mat-icon {
 		gap: 8px;
 	}
 	
-	.section-header {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 15px;
-	}
+	
 	
 	.close-btn {
 		align-self: flex-end;
@@ -1266,10 +1249,7 @@ mat-icon {
 		height: 180px;
 	}
 
-	.form-row {
-		grid-template-columns: 1fr;
-		gap: 15px;
-	}
+	
 
 	.form-actions {
 		flex-direction: column;

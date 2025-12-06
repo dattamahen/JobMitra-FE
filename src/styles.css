@@ -5,6 +5,7 @@
 
 /* Import Design System */
 @import './styles/design-system.css';
+@import './styles/global-components.css';
 
 /* Global styles with better typography */
 * {

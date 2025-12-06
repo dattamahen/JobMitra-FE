@@ -1,18 +1,7 @@
 /* Resume Builder Styles */
-.page-container {
-	padding: 20px;
-	height: 100vh;
-	overflow: hidden;
-}
 
-.loading-container {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	height: 60vh;
-	text-align: center;
-}
+
+
 
 .loading-content {
 	margin-top: 20px;
@@ -33,9 +22,7 @@
 	transition: grid-template-columns 0.3s ease;
 }
 
-.resume-builder-content.full-width {
-	grid-template-columns: 280px 1fr;
-}
+.resume-builder-content
 
 /* Sidebar Styles */
 .builder-sidebar {
@@ -122,9 +109,7 @@
 	gap: 12px;
 }
 
-.section-icon {
-	font-size: 20px;
-}
+
 
 .section-label {
 	font-weight: 500;
@@ -352,15 +337,9 @@
 	font-size: 14px;
 }
 
-.form-row {
-	display: flex;
-	gap: 16px;
-	margin-bottom: 20px;
-}
 
-.form-row .full-width {
-	flex: 1;
-}
+
+.form-row 
 
 .form-row mat-form-field {
 	flex: 1;
@@ -680,13 +659,7 @@
 	background: #f8f9fa;
 }
 
-.modern-table .section-header {
-	background: #1976d2;
-	color: white;
-	padding: 8px;
-	font-weight: bold;
-	text-transform: uppercase;
-}
+.modern-table 
 
 .modern-table .content-cell {
 	padding: 12px;
@@ -788,10 +761,7 @@
 	}
 }
 
-.placeholder {
-	color: #999;
-	font-style: italic;
-}
+
 
 .preview-ats-score {
 	position: absolute;
@@ -873,10 +843,7 @@
 		grid-template-columns: 1fr;
 	}
 	
-	.form-row {
-		flex-direction: column;
-		gap: 12px;
-	}
+	
 	
 	.resume-actions {
 		flex-direction: column;
@@ -1060,14 +1027,7 @@
 	padding: 24px !important;
 }
 
-.section-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	margin-bottom: 16px;
-	padding: 16px 0;
-	border-bottom: 2px solid #e3f2fd;
-}
+
 
 .section-title {
 	display: flex;
@@ -1162,11 +1122,7 @@
 	margin-bottom: 16px;
 }
 
-.skill-row .form-row {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-}
+.skill-row 
 
 .skill-row .form-row mat-form-field {
 	flex: 1;

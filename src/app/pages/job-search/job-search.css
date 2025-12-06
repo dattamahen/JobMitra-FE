@@ -1,7 +1,3 @@
-.page-container { 
-	padding: 20px; 
-}
-
 .search-filters {
 	margin-bottom: 24px;
 }
@@ -94,40 +90,13 @@ mat-form-field {
 	gap: 4px;
 }
 
-.action-chip {
-	background-color: #f5f5f5 !important;
-	color: #424242 !important;
-	border: 1px solid #e0e0e0 !important;
-	cursor: pointer !important;
-	transition: all 0.2s ease !important;
-	min-height: 28px !important;
-	font-size: 12px !important;
-	font-weight: 500 !important;
-	padding: 4px 8px !important;
-	border-radius: 14px !important;
-}
 
-.action-chip:hover {
-	background-color: #eeeeee !important;
-	border-color: #bdbdbd !important;
-	transform: translateY(-1px);
-	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
 
-.action-chip:focus {
-	background-color: #e3f2fd !important;
-	color: #0d47a1 !important;
-	outline: 2px solid #1976d2 !important;
-	outline-offset: 2px !important;
-}
 
-.action-chip.disabled {
-	background-color: #e0e0e0 !important;
-	color: #9e9e9e !important;
-	border-color: #bdbdbd !important;
-	cursor: not-allowed !important;
-	opacity: 0.6 !important;
-}
+
+
+
+
 
 .action-chip.disabled:hover {
 	background-color: #e0e0e0 !important;
@@ -136,12 +105,7 @@ mat-form-field {
 	box-shadow: none !important;
 }
 
-.action-chip mat-icon {
-	font-size: 16px !important;
-	width: 16px !important;
-	height: 16px !important;
-	color: inherit !important;
-}
+
 
 .company {
 	font-weight: bold !important;
@@ -164,12 +128,7 @@ mat-form-field {
 	margin: 16px 0;
 }
 
-mat-chip {
-	margin-right: 8px !important;
-	display: flex !important;
-	align-items: center !important;
-	gap: 4px !important;
-}
+
 
 mat-chip mat-icon,
 mat-chip [matChipIcon] {
@@ -180,19 +139,9 @@ mat-chip [matChipIcon] {
 	line-height: 1 !important;
 }
 
-.job-details mat-chip-set mat-chip {
-	display: flex !important;
-	align-items: center !important;
-	gap: 4px !important;
-}
+.job-details mat-chip-set 
 
-.job-details mat-chip-set mat-chip mat-icon {
-	font-size: 1rem !important;
-	width: 1rem !important;
-	height: 1rem !important;
-	vertical-align: middle !important;
-	line-height: 1 !important;
-}
+.job-details mat-chip-set 
 
 .description {
 	color: #666;
@@ -288,28 +237,13 @@ mat-chip [matChipIcon] {
 	font-size: 16px;
 }
 
-.contact-detail {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-}
 
-.contact-detail mat-icon {
-	font-size: 18px;
-	width: 18px;
-	height: 18px;
-	color: #666;
-}
 
-.contact-detail a {
-	color: #1976d2;
-	text-decoration: none;
-	font-weight: 500;
-}
 
-.contact-detail a:hover {
-	text-decoration: underline;
-}
+
+
+
+
 
 /* New styles for enhanced data structure */
 .deadline-chip {
@@ -369,12 +303,7 @@ mat-chip [matChipIcon] {
 	margin-top: 8px;
 }
 
-.skill-chip {
-	margin: 4px 8px 4px 0 !important;
-	background-color: #e3f2fd !important;
-	color: #1976d2 !important;
-	font-size: 12px !important;
-}
+
 
 .benefits-list {
 	margin-top: 8px;
@@ -775,16 +704,9 @@ mat-card-actions {
 		gap: 2px;
 	}
 	
-	.action-chip {
-		min-height: 20px !important;
-		font-size: 10px !important;
-	}
 	
-	.action-chip mat-icon {
-		font-size: 12px !important;
-		width: 12px !important;
-		height: 12px !important;
-	}
+	
+	
 }
 
 mat-card-actions {
@@ -828,28 +750,13 @@ mat-card-actions {
 	margin-top: 12px;
 }
 
-.contact-detail {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	margin: 6px 0;
-}
 
-.contact-detail mat-icon {
-	font-size: 18px;
-	width: 18px;
-	height: 18px;
-	color: #2e7d32;
-}
 
-.contact-detail a {
-	color: #1976d2;
-	text-decoration: none;
-}
 
-.contact-detail a:hover {
-	text-decoration: underline;
-}
+
+
+
+
 
 /* Learning Resources Section */
 .learning-resources {
@@ -1051,14 +958,7 @@ mat-card-actions {
 }
 
 /* Loading States */
-.loading-container {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	padding: 40px;
-	color: #666;
-}
+
 
 .loading-container mat-spinner {
 	margin-bottom: 16px;
