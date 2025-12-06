@@ -1,172 +1,172 @@
 <div class="page-container">
-  @if (isLoading()) {
-    <app-loading 
-      title="Loading Resume Builder..."
-      message="Setting up your resume workspace"
-      icon="description">
-    </app-loading>
-  } @else {
-    <div class="resume-builder-content full-width">
-      <!-- Sidebar with sections and AI suggestions -->
-      <div class="builder-sidebar">
+	@if (isLoading()) {
+		<app-loading 
+			title="Loading Resume Builder..."
+			message="Setting up your resume workspace"
+			icon="description">
+		</app-loading>
+	} @else {
+		<div class="resume-builder-content full-width">
+			<!-- Sidebar with sections and AI suggestions -->
+			<div class="builder-sidebar">
 
-        <div class="section-list">
-          <h4>
-            <mat-icon>list</mat-icon>
-            Resume Sections
-          </h4>
-          @for (section of sections; track section.id) {
-            <div class="section-item" 
-                 [class.active]="activeSection() === section.id"
-                 [class.completed]="isSectionComplete(section.id)"
-                 (click)="selectSection(section.id)"
-                 role="button"
-                 tabindex="0">
-              <div class="section-info">
-                <mat-icon class="section-icon">{{ section.icon }}</mat-icon>
-                <span class="section-label">{{ section.label }}</span>
-              </div>
-              <div class="completion-percentage">
-                <span class="percentage-text">{{ getSectionCompletionPercentage(section.id) }}%</span>
-              </div>
-            </div>
-          }
-        </div>
-        
-        @if (currentResume(); as resume) {
+				<div class="section-list">
+					<h4>
+						<mat-icon>list</mat-icon>
+						Resume Sections
+					</h4>
+					@for (section of sections; track section.id) {
+						<div class="section-item" 
+								[class.active]="activeSection() === section.id"
+								[class.completed]="isSectionComplete(section.id)"
+								(click)="selectSection(section.id)"
+								role="button"
+								tabindex="0">
+							<div class="section-info">
+								<mat-icon class="section-icon">{{ section.icon }}</mat-icon>
+								<span class="section-label">{{ section.label }}</span>
+							</div>
+							<div class="completion-percentage">
+								<span class="percentage-text">{{ getSectionCompletionPercentage(section.id) }}%</span>
+							</div>
+						</div>
+					}
+				</div>
+				
+				@if (currentResume(); as resume) {
 
-          <div class="template-section">
-            <h4>
-              <mat-icon>palette</mat-icon>
-              CV Templates
-            </h4>
-            <div class="template-grid">
-              @for (template of cvTemplates; track template.id) {
-                <div class="template-card" 
-                     [class.active]="selectedTemplate() === template.id"
-                     (click)="selectTemplate(template.id)">
-                  <div class="template-preview">
-                    <mat-icon>{{ template.icon }}</mat-icon>
-                  </div>
-                  <span class="template-name">{{ template.name }}</span>
-                </div>
-              }
-            </div>
-          </div>
-        }
-      </div>
-      
-      <!-- Main content area - Full width -->
-      <div class="builder-main full-width">
-        <div class="form-header-actions">
-          <button mat-icon-button (click)="toggleFormExpansion()" matTooltip="{{ isFormExpanded() ? 'Collapse Form' : 'Expand Form' }}">
-            <mat-icon>{{ isFormExpanded() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
-          </button>
-        </div>
-        @if (currentResume(); as resume) {
-          <!-- Personal Information Section -->
-          @if (activeSection() === 'personal_info') {
-            <div class="resume-form">
-              <app-dynamic-form
-                [config]="personalInfoConfig"
-                [initialValues]="personalInfoValues"
-                (formSubmit)="savePersonalInfo()"
-                (formChange)="updatePersonalInfo($event)">
-              </app-dynamic-form>
-            </div>
-          }
+					<div class="template-section">
+						<h4>
+							<mat-icon>palette</mat-icon>
+							CV Templates
+						</h4>
+						<div class="template-grid">
+							@for (template of cvTemplates; track template.id) {
+								<div class="template-card" 
+										[class.active]="selectedTemplate() === template.id"
+										(click)="selectTemplate(template.id)">
+									<div class="template-preview">
+										<mat-icon>{{ template.icon }}</mat-icon>
+									</div>
+									<span class="template-name">{{ template.name }}</span>
+								</div>
+							}
+						</div>
+					</div>
+				}
+			</div>
+			
+			<!-- Main content area - Full width -->
+			<div class="builder-main full-width">
+				<div class="form-header-actions">
+					<button mat-icon-button (click)="toggleFormExpansion()" matTooltip="{{ isFormExpanded() ? 'Collapse Form' : 'Expand Form' }}">
+						<mat-icon>{{ isFormExpanded() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
+					</button>
+				</div>
+				@if (currentResume(); as resume) {
+					<!-- Personal Information Section -->
+					@if (activeSection() === 'personal_info') {
+						<div class="resume-form">
+							<app-dynamic-form
+								[config]="personalInfoConfig"
+								[initialValues]="personalInfoValues"
+								(formSubmit)="savePersonalInfo()"
+								(formChange)="updatePersonalInfo($event)">
+							</app-dynamic-form>
+						</div>
+					}
 
-          <!-- Summary Section -->
-          @if (activeSection() === 'summary') {
-            <div class="resume-form">
-              <app-dynamic-form
-                [config]="summaryConfig"
-                [initialValues]="summaryValues"
-                (formSubmit)="saveSummary()"
-                (formChange)="updateSummary($event)">
-              </app-dynamic-form>
-              
-              <div class="form-actions">
-                <button mat-stroked-button type="button">
-                  <mat-icon>psychology</mat-icon>
-                  AI Enhance
-                </button>
-              </div>
-            </div>
-          }
+					<!-- Summary Section -->
+					@if (activeSection() === 'summary') {
+						<div class="resume-form">
+							<app-dynamic-form
+								[config]="summaryConfig"
+								[initialValues]="summaryValues"
+								(formSubmit)="saveSummary()"
+								(formChange)="updateSummary($event)">
+							</app-dynamic-form>
+							
+							<div class="form-actions">
+								<button mat-stroked-button type="button">
+									<mat-icon>psychology</mat-icon>
+									AI Enhance
+								</button>
+							</div>
+						</div>
+					}
 
-          <!-- Skills Section -->
-          @if (activeSection() === 'skills') {
-            <div class="resume-form">
-              <app-dynamic-form
-                [config]="skillsConfig"
-                [initialValues]="skillsValues"
-                (formSubmit)="saveSkills()"
-                (formChange)="updateSkills($event)">
-              </app-dynamic-form>
-            </div>
-          }
+					<!-- Skills Section -->
+					@if (activeSection() === 'skills') {
+						<div class="resume-form">
+							<app-dynamic-form
+								[config]="skillsConfig"
+								[initialValues]="skillsValues"
+								(formSubmit)="saveSkills()"
+								(formChange)="updateSkills($event)">
+							</app-dynamic-form>
+						</div>
+					}
 
-          <!-- Experience Section -->
-          @if (activeSection() === 'experience') {
-            <div class="resume-form">
-              <app-dynamic-form
-                [config]="experienceConfig"
-                [initialValues]="experienceValues"
-                (formSubmit)="saveExperience()"
-                (formChange)="updateExperience($event)">
-              </app-dynamic-form>
-            </div>
-          }
+					<!-- Experience Section -->
+					@if (activeSection() === 'experience') {
+						<div class="resume-form">
+							<app-dynamic-form
+								[config]="experienceConfig"
+								[initialValues]="experienceValues"
+								(formSubmit)="saveExperience()"
+								(formChange)="updateExperience($event)">
+							</app-dynamic-form>
+						</div>
+					}
 
-          <!-- Education Section -->
-          @if (activeSection() === 'education') {
-            <div class="resume-form">
-              <app-dynamic-form
-                [config]="educationConfig"
-                [initialValues]="educationValues"
-                (formSubmit)="saveEducation()"
-                (formChange)="updateEducation($event)">
-              </app-dynamic-form>
-            </div>
-          }
+					<!-- Education Section -->
+					@if (activeSection() === 'education') {
+						<div class="resume-form">
+							<app-dynamic-form
+								[config]="educationConfig"
+								[initialValues]="educationValues"
+								(formSubmit)="saveEducation()"
+								(formChange)="updateEducation($event)">
+							</app-dynamic-form>
+						</div>
+					}
 
-          <!-- Projects Section -->
-          @if (activeSection() === 'projects') {
-            <div class="resume-form">
-              <app-dynamic-form
-                [config]="projectsConfig"
-                [initialValues]="projectsValues"
-                (formSubmit)="saveProjects()"
-                (formChange)="updateProjects($event)">
-              </app-dynamic-form>
-            </div>
-          }
+					<!-- Projects Section -->
+					@if (activeSection() === 'projects') {
+						<div class="resume-form">
+							<app-dynamic-form
+								[config]="projectsConfig"
+								[initialValues]="projectsValues"
+								(formSubmit)="saveProjects()"
+								(formChange)="updateProjects($event)">
+							</app-dynamic-form>
+						</div>
+					}
 
-          <!-- Certifications Section -->
-          @if (activeSection() === 'certifications') {
-            <div class="resume-form">
-              <app-dynamic-form
-                [config]="certificationsConfig"
-                [initialValues]="certificationsValues"
-                (formSubmit)="saveCertifications()"
-                (formChange)="updateCertifications($event)">
-              </app-dynamic-form>
-            </div>
-          }
-        }
-        
-        <!-- Action buttons -->
-        <div class="resume-actions">
-          <div *appFeatureGuard="'resume_download'; showWhenDisabled: true; let canUse = canUseFeature">
-            <button mat-raised-button [color]="canUse ? 'primary' : 'warn'" 
-                    (click)="downloadPDF()" [disabled]="!canUse">
-              <mat-icon>download</mat-icon>
-              {{ canUse ? 'Download PDF' : 'Upgrade Required' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  }
+					<!-- Certifications Section -->
+					@if (activeSection() === 'certifications') {
+						<div class="resume-form">
+							<app-dynamic-form
+								[config]="certificationsConfig"
+								[initialValues]="certificationsValues"
+								(formSubmit)="saveCertifications()"
+								(formChange)="updateCertifications($event)">
+							</app-dynamic-form>
+						</div>
+					}
+				}
+				
+				<!-- Action buttons -->
+				<div class="resume-actions">
+					<div *appFeatureGuard="'resume_download'; showWhenDisabled: true; let canUse = canUseFeature">
+						<button mat-raised-button [color]="canUse ? 'primary' : 'warn'" 
+										(click)="downloadPDF()" [disabled]="!canUse">
+							<mat-icon>download</mat-icon>
+							{{ canUse ? 'Download PDF' : 'Upgrade Required' }}
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
 </div>

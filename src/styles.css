@@ -8,29 +8,29 @@
 
 /* Global styles with better typography */
 * {
-  box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: var(--font-family-primary);
-  font-size: var(--font-size-body);
-  line-height: 1.6;
-  color: var(--color-on-surface);
-  background-color: var(--color-background);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	font-family: var(--font-family-primary);
+	font-size: var(--font-size-body);
+	line-height: 1.6;
+	color: var(--color-on-surface);
+	background-color: var(--color-background);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	overflow-x: hidden;
 }
 
 /* Headings with Poppins font */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Poppins', 'Inter', sans-serif;
-  font-weight: 600;
-  line-height: 1.3;
-  margin: 0 0 1rem 0;
+	font-family: 'Poppins', 'Inter', sans-serif;
+	font-weight: 600;
+	line-height: 1.3;
+	margin: 0 0 1rem 0;
 }
 
 h1 { font-size: 2.5rem; }
@@ -42,19 +42,19 @@ h6 { font-size: 1rem; }
 
 /* Improved button styles */
 button {
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  letter-spacing: 0.025em;
+	font-family: 'Inter', sans-serif;
+	font-weight: 500;
+	letter-spacing: 0.025em;
 }
 
 /* Form elements */
 input, textarea, select {
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
+	font-family: 'Inter', sans-serif;
+	font-size: 14px;
 }
 
 /* Better text rendering */
 p {
-  margin: 0 0 1rem 0;
-  line-height: 1.6;
+	margin: 0 0 1rem 0;
+	line-height: 1.6;
 }

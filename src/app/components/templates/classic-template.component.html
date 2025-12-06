@@ -1,75 +1,75 @@
 <table style="width: 100%; border-collapse: collapse; border: none; table-layout: fixed; font-family: Arial, sans-serif;">
-  <tr>
-    <!-- LEFT SIDEBAR -->
-    <td style="width: 30%; vertical-align: top; background: #f4f4f4; padding: 20px; font-size: 12px; line-height: 1.4;">
-      
-      <h2 style="font-size: 14px; font-weight: bold; margin: 20px 0 10px 0; text-transform: uppercase;">Experience</h2>
-      @for (exp of cv.sections.experience; track exp.company) {
-        <p style="margin: 0 0 10px 0;"><b>{{ exp.company }}</b><br>{{ exp.position }}<br><span style="font-style: italic;">{{ exp.duration }}</span></p>
-      }
+	<tr>
+		<!-- LEFT SIDEBAR -->
+		<td style="width: 30%; vertical-align: top; background: #f4f4f4; padding: 20px; font-size: 12px; line-height: 1.4;">
+			
+			<h2 style="font-size: 14px; font-weight: bold; margin: 20px 0 10px 0; text-transform: uppercase;">Experience</h2>
+			@for (exp of cv.sections.experience; track exp.company) {
+				<p style="margin: 0 0 10px 0;"><b>{{ exp.company }}</b><br>{{ exp.position }}<br><span style="font-style: italic;">{{ exp.duration }}</span></p>
+			}
 
-      <h2 style="font-size: 14px; font-weight: bold; margin: 20px 0 10px 0; text-transform: uppercase;">Education</h2>
-      @for (edu of cv.sections.education; track edu.degree) {
-        <p style="margin: 0 0 10px 0;"><b>{{ edu.institution }}</b><br>{{ edu.degree }}<br><span style="font-style: italic;">{{ edu.year }}</span></p>
-      }
+			<h2 style="font-size: 14px; font-weight: bold; margin: 20px 0 10px 0; text-transform: uppercase;">Education</h2>
+			@for (edu of cv.sections.education; track edu.degree) {
+				<p style="margin: 0 0 10px 0;"><b>{{ edu.institution }}</b><br>{{ edu.degree }}<br><span style="font-style: italic;">{{ edu.year }}</span></p>
+			}
 
-      <h2 style="font-size: 14px; font-weight: bold; margin: 20px 0 10px 0; text-transform: uppercase;">Projects</h2>
-      @for (project of cv.sections.projects; track project.name) {
-        <p style="margin: 0 0 20px 0;"><b>{{ project.name }}</b> — {{ project.description }}</p>
-      }
+			<h2 style="font-size: 14px; font-weight: bold; margin: 20px 0 10px 0; text-transform: uppercase;">Projects</h2>
+			@for (project of cv.sections.projects; track project.name) {
+				<p style="margin: 0 0 20px 0;"><b>{{ project.name }}</b> — {{ project.description }}</p>
+			}
 
-      <h2 style="font-size: 14px; font-weight: bold; margin: 20px 0 10px 0; text-transform: uppercase;">Skills</h2>
-      <ul style="margin: 0 0 20px 18px; padding: 0;">
-        @for (skill of cv.sections.skills.technical; track skill) {
-          <li>{{ skill }}</li>
-        }
-      </ul>
+			<h2 style="font-size: 14px; font-weight: bold; margin: 20px 0 10px 0; text-transform: uppercase;">Skills</h2>
+			<ul style="margin: 0 0 20px 18px; padding: 0;">
+				@for (skill of cv.sections.skills.technical; track skill) {
+					<li>{{ skill }}</li>
+				}
+			</ul>
 
-      @if (cv.sections.certifications && cv.sections.certifications.length > 0) {
-        <h2 style="font-size: 14px; font-weight: bold; margin: 20px 0 10px 0; text-transform: uppercase;">Certifications</h2>
-        @for (cert of cv.sections.certifications; track cert.name) {
-          <p style="margin: 0 0 10px 0;">{{ cert.name }}<br>{{ cert.issuer }}</p>
-        }
-      }
-    </td>
+			@if (cv.sections.certifications && cv.sections.certifications.length > 0) {
+				<h2 style="font-size: 14px; font-weight: bold; margin: 20px 0 10px 0; text-transform: uppercase;">Certifications</h2>
+				@for (cert of cv.sections.certifications; track cert.name) {
+					<p style="margin: 0 0 10px 0;">{{ cert.name }}<br>{{ cert.issuer }}</p>
+				}
+			}
+		</td>
 
-    <!-- RIGHT MAIN PANEL -->
-    <td style="width: 70%; vertical-align: top; padding: 30px; font-size: 13px; line-height: 1.5;">
-      
-      <!-- Name + Contact -->
-      <h1 style="margin: 0; font-size: 22px; font-weight: bold;">{{ cv.sections.personal_info.full_name }}</h1>
-      <p style="margin: 6px 0 12px 0; font-size: 13px;">{{ cv.sections.summary }}</p>
-      <p style="margin: 0 0 20px 0; font-size: 12px; color: #555;">
-        {{ cv.sections.personal_info.location }} | {{ cv.sections.personal_info.phone }} | {{ cv.sections.personal_info.email }}
-      </p>
+		<!-- RIGHT MAIN PANEL -->
+		<td style="width: 70%; vertical-align: top; padding: 30px; font-size: 13px; line-height: 1.5;">
+			
+			<!-- Name + Contact -->
+			<h1 style="margin: 0; font-size: 22px; font-weight: bold;">{{ cv.sections.personal_info.full_name }}</h1>
+			<p style="margin: 6px 0 12px 0; font-size: 13px;">{{ cv.sections.summary }}</p>
+			<p style="margin: 0 0 20px 0; font-size: 12px; color: #555;">
+				{{ cv.sections.personal_info.location }} | {{ cv.sections.personal_info.phone }} | {{ cv.sections.personal_info.email }}
+			</p>
 
-      <!-- Experience -->
-      <h2 style="font-size: 14px; font-weight: bold; margin: 20px 0 10px 0; text-transform: uppercase;">Experience</h2>
-      @for (exp of cv.sections.experience; track exp.company) {
-        <p style="margin: 0 0 15px 0;">
-          <b>{{ exp.company }} — {{ exp.position }}</b><br>
-          <span style="font-style: italic;">{{ exp.duration }}</span><br>
-          {{ exp.description }}
-        </p>
-      }
+			<!-- Experience -->
+			<h2 style="font-size: 14px; font-weight: bold; margin: 20px 0 10px 0; text-transform: uppercase;">Experience</h2>
+			@for (exp of cv.sections.experience; track exp.company) {
+				<p style="margin: 0 0 15px 0;">
+					<b>{{ exp.company }} — {{ exp.position }}</b><br>
+					<span style="font-style: italic;">{{ exp.duration }}</span><br>
+					{{ exp.description }}
+				</p>
+			}
 
-      <!-- Education -->
-      <h2 style="font-size: 14px; font-weight: bold; margin: 20px 0 10px 0; text-transform: uppercase;">Education</h2>
-      @for (edu of cv.sections.education; track edu.degree) {
-        <p style="margin: 0 0 15px 0;">
-          <b>{{ edu.institution }} — {{ edu.degree }}</b><br>
-          <span style="font-style: italic;">{{ edu.year }}</span>
-        </p>
-      }
+			<!-- Education -->
+			<h2 style="font-size: 14px; font-weight: bold; margin: 20px 0 10px 0; text-transform: uppercase;">Education</h2>
+			@for (edu of cv.sections.education; track edu.degree) {
+				<p style="margin: 0 0 15px 0;">
+					<b>{{ edu.institution }} — {{ edu.degree }}</b><br>
+					<span style="font-style: italic;">{{ edu.year }}</span>
+				</p>
+			}
 
-      <!-- Projects -->
-      <h2 style="font-size: 14px; font-weight: bold; margin: 20px 0 10px 0; text-transform: uppercase;">Projects</h2>
-      @for (project of cv.sections.projects; track project.name) {
-        <p style="margin: 0 0 20px 0;">
-          <b>{{ project.name }}</b><br>
-          {{ project.description }}
-        </p>
-      }
-    </td>
-  </tr>
+			<!-- Projects -->
+			<h2 style="font-size: 14px; font-weight: bold; margin: 20px 0 10px 0; text-transform: uppercase;">Projects</h2>
+			@for (project of cv.sections.projects; track project.name) {
+				<p style="margin: 0 0 20px 0;">
+					<b>{{ project.name }}</b><br>
+					{{ project.description }}
+				</p>
+			}
+		</td>
+	</tr>
 </table>

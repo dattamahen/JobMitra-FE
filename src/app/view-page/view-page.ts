@@ -5,19 +5,19 @@ import { LoginPage } from '../login-page/login-page';
 import { Dashboard } from '../dashboard/dashboard';
 
 @Component({
-  selector: 'app-view-page',
-  imports: [CommonModule, LoginPage, Dashboard],
-  templateUrl: './view-page.html',
-  styleUrl: './view-page.css'
+	selector: 'app-view-page',
+	imports: [CommonModule, LoginPage, Dashboard],
+	templateUrl: './view-page.html',
+	styleUrl: './view-page.css'
 })
 export class ViewPage implements OnInit {
-  currentPage: string = '';
+	currentPage: string = '';
 
-  constructor(private route: ActivatedRoute) {}
+	constructor(private route: ActivatedRoute) {}
 
-  ngOnInit() {
-    this.route.data.subscribe(data => {
-      this.currentPage = data['page'] || '';
-    });
-  }
+	ngOnInit() {
+		this.route.data.subscribe(data => {
+			this.currentPage = data['page'] || '';
+		});
+	}
 }

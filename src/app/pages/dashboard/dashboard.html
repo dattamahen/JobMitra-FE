@@ -1,115 +1,115 @@
 <div class="page-container">
-  <div class="dashboard-content">
-    <!-- Loading State -->
-    @if (!isLoading) {
-      <app-loading 
-        title="Loading Dashboard..."
-        message="Fetching your latest stats and activities"
-        icon="dashboard">
-      </app-loading>
-    } @else {
-      <!-- Dashboard Content -->
-      @if (dashboardData$ | async; as dashboardData) {
+	<div class="dashboard-content">
+		<!-- Loading State -->
+		@if (isLoading) {
+			<app-loading 
+				title="Loading Dashboard..."
+				message="Fetching your latest stats and activities"
+				icon="dashboard">
+			</app-loading>
+		} @else {
+			<!-- Dashboard Content -->
+			@if (dashboardData$ | async; as dashboardData) {
 
-        <mat-grid-list cols="3" rowHeight="140px" gutterSize="20px" class="stats-grid">
-          @for (stat of dashboardData.stats; track stat.id) {
-            <mat-grid-tile>
-              <mat-card class="stat-card" 
-                        [class]="'stat-card-' + stat.color"
-                        role="button"
-                        tabindex="0">
-                <mat-card-content>
-                  <div class="stat-header">
-                    <mat-icon class="stat-icon">{{ stat.icon }}</mat-icon>
-                    @if (stat.trend) {
-                      <div class="trend-indicator" [class]="'trend-' + stat.trend.direction">
-                        <mat-icon class="trend-icon">{{ getTrendIcon(stat.trend.direction) }}</mat-icon>
-                        <span class="trend-text">{{ stat.trend.percentage }}%</span>
-                      </div>
-                    }
-                  </div>
-                  
-                  <div class="stat-content">
-                    <h3 class="stat-value">{{ formatStatValue(stat) }}</h3>
-                    <p class="stat-label">{{ stat.label }}</p>
-                    
-                    @if (stat.trend) {
-                      <small class="trend-period">{{ stat.trend.period }}</small>
-                    }
-                  </div>
-                </mat-card-content>
-              </mat-card>
-            </mat-grid-tile>
-          }
-        </mat-grid-list>
-        
-        <!-- Recent Activity -->
-        <mat-card class="recent-activity">
-          <mat-card-header>
-            <mat-card-title>
-              <mat-icon>timeline</mat-icon>
-              Recent Activity
-            </mat-card-title>
-            <div class="activity-badge">
-              <mat-icon [matBadge]="(dashboardData.recentActivities.length || 0)" matBadgeColor="accent">
-                notifications
-              </mat-icon>
-            </div>
-          </mat-card-header>
-          
-          <mat-card-content>
-            @if (dashboardData.recentActivities && dashboardData.recentActivities.length > 0) {
-              <mat-list class="activity-list">
-                @for (activity of dashboardData.recentActivities; track activity.id) {
-                  <mat-list-item class="activity-item"
-                                 role="button">
-                    <mat-icon matListItemIcon 
-                              [class]="'activity-icon-' + getActivityTypeColor(activity.type)">
-                      {{ activity.icon }}
-                    </mat-icon>
-                    
-                    <div matListItemTitle class="activity-content">
-                      <span class="activity-title">{{ activity.title }}</span>
-                      
-                      @if (activity.status) {
-                        <mat-icon class="activity-status" 
-                                  [class]="'status-' + activity.status">
-                          {{ getActivityStatusIcon(activity.status) }}
-                        </mat-icon>
-                      }
-                    </div>
-                    
-                    <div matListItemMeta class="activity-meta">
-                      <span class="activity-time">{{ getActivityTimeAgo(activity.timestamp) }}</span>
-                      <span class="activity-type-badge" [class]="'type-' + activity.type">
-                        {{ activity.type | titlecase }}
-                      </span>
-                    </div>
-                  </mat-list-item>
-                  
-                  @if (!$last) {
-                    <mat-divider></mat-divider>
-                  }
-                }
-              </mat-list>
-            } @else {
-              <div class="no-activity">
-                <mat-icon class="no-activity-icon">inbox</mat-icon>
-                <p>No recent activity</p>
-                <small>Your activities will appear here as you use the platform</small>
-              </div>
-            }
-          </mat-card-content>
-        </mat-card>
+				<mat-grid-list cols="3" rowHeight="140px" gutterSize="20px" class="stats-grid">
+					@for (stat of dashboardData.stats; track stat.id) {
+						<mat-grid-tile>
+							<mat-card class="stat-card" 
+												[class]="'stat-card-' + stat.color"
+												role="button"
+												tabindex="0">
+								<mat-card-content>
+									<div class="stat-header">
+										<mat-icon class="stat-icon">{{ stat.icon }}</mat-icon>
+										@if (stat.trend) {
+											<div class="trend-indicator" [class]="'trend-' + stat.trend.direction">
+												<mat-icon class="trend-icon">{{ getTrendIcon(stat.trend.direction) }}</mat-icon>
+												<span class="trend-text">{{ stat.trend.percentage }}%</span>
+											</div>
+										}
+									</div>
+									
+									<div class="stat-content">
+										<h3 class="stat-value">{{ formatStatValue(stat) }}</h3>
+										<p class="stat-label">{{ stat.label }}</p>
+										
+										@if (stat.trend) {
+											<small class="trend-period">{{ stat.trend.period }}</small>
+										}
+									</div>
+								</mat-card-content>
+							</mat-card>
+						</mat-grid-tile>
+					}
+				</mat-grid-list>
+				
+				<!-- Recent Activity -->
+				<mat-card class="recent-activity">
+					<mat-card-header>
+						<mat-card-title>
+							<mat-icon>timeline</mat-icon>
+							Recent Activity
+						</mat-card-title>
+						<div class="activity-badge">
+							<mat-icon [matBadge]="(dashboardData.recentActivities.length || 0)" matBadgeColor="accent">
+								notifications
+							</mat-icon>
+						</div>
+					</mat-card-header>
+					
+					<mat-card-content>
+						@if (dashboardData.recentActivities && dashboardData.recentActivities.length > 0) {
+							<mat-list class="activity-list">
+								@for (activity of dashboardData.recentActivities; track activity.id) {
+									<mat-list-item class="activity-item"
+																role="button">
+										<mat-icon matListItemIcon 
+															[class]="'activity-icon-' + getActivityTypeColor(activity.type)">
+											{{ activity.icon }}
+										</mat-icon>
+										
+										<div matListItemTitle class="activity-content">
+											<span class="activity-title">{{ activity.title }}</span>
+											
+											@if (activity.status) {
+												<mat-icon class="activity-status" 
+																	[class]="'status-' + activity.status">
+													{{ getActivityStatusIcon(activity.status) }}
+												</mat-icon>
+											}
+										</div>
+										
+										<div matListItemMeta class="activity-meta">
+											<span class="activity-time">{{ getActivityTimeAgo(activity.timestamp) }}</span>
+											<span class="activity-type-badge" [class]="'type-' + activity.type">
+												{{ activity.type | titlecase }}
+											</span>
+										</div>
+									</mat-list-item>
+									
+									@if (!$last) {
+										<mat-divider></mat-divider>
+									}
+								}
+							</mat-list>
+						} @else {
+							<div class="no-activity">
+								<mat-icon class="no-activity-icon">inbox</mat-icon>
+								<p>No recent activity</p>
+								<small>Your activities will appear here as you use the platform</small>
+							</div>
+						}
+					</mat-card-content>
+				</mat-card>
 
-        <!-- Last Updated Info -->
-        <div class="dashboard-footer">
-          <small class="last-updated">
-            <mat-icon>schedule</mat-icon>
-            Last updated: {{ dashboardData.lastUpdated | date:'medium' }}
-          </small>
-        </div>
-      }
-    }
-  </div>
+				<!-- Last Updated Info -->
+				<div class="dashboard-footer">
+					<small class="last-updated">
+						<mat-icon>schedule</mat-icon>
+						Last updated: {{ dashboardData.lastUpdated | date:'medium' }}
+					</small>
+				</div>
+			}
+		}
+	</div>
 </div>

@@ -9,59 +9,59 @@ import { AuthService } from '../services/auth.service';
 import { NavigationService, NavItem } from '../services/navigation.service';
 
 @Component({
-  selector: 'app-side-nav',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatSidenavModule,
-    MatListModule,
-    MatIconModule,
-    MatButtonModule
-  ],
-  templateUrl: './side-nav.html',
-  styleUrl: './side-nav.css'
+	selector: 'app-side-nav',
+	standalone: true,
+	imports: [
+		CommonModule,
+		MatSidenavModule,
+		MatListModule,
+		MatIconModule,
+		MatButtonModule
+	],
+	templateUrl: './side-nav.html',
+	styleUrl: './side-nav.css'
 })
 export class SideNav implements OnInit {
-  @Output() pageSelected = new EventEmitter<string>();
+	@Output() pageSelected = new EventEmitter<string>();
 
-  activeItem: string = '';
-  navItems: NavItem[] = [];
+	activeItem: string = '';
+	navItems: NavItem[] = [];
 
-  constructor(
-    private router: Router,
-    private authService: AuthService,
-    private navigationService: NavigationService
-  ) {}
+	constructor(
+		private router: Router,
+		private authService: AuthService,
+		private navigationService: NavigationService
+	) {}
 
-  ngOnInit() {
-    // Get navigation items based on current user
-    this.navItems = this.navigationService.getNavigationItems();
-    
+	ngOnInit() {
+		// Get navigation items based on current user
+		this.navItems = this.navigationService.getNavigationItems();
+		
 
-    
-    // Initialize with dashboard as default
-    this.activeItem = 'dashboard';
-  }
+		
+		// Initialize with dashboard as default
+		this.activeItem = 'dashboard';
+	}
 
-  selectItem(itemId: string) {
-    this.activeItem = itemId;
-    this.pageSelected.emit(itemId);
-    
-    // ALL pages should stay within the dashboard layout to keep side navigation visible
-    // The dashboard component will handle switching between different page components
-    // No need to navigate away from dashboard for any page
-    return;
-  }
+	selectItem(itemId: string) {
+		this.activeItem = itemId;
+		this.pageSelected.emit(itemId);
+		
+		// ALL pages should stay within the dashboard layout to keep side navigation visible
+		// The dashboard component will handle switching between different page components
+		// No need to navigate away from dashboard for any page
+		return;
+	}
 
-  logout() {
-    this.authService.logout().subscribe({
-      next: (response) => {
-        console.log('Logout successful:', response);
-      },
-      error: (error) => {
-        console.error('Logout error:', error);
-        // Navigation is handled in the auth service
-      }
-    });
-  }
+	logout() {
+		this.authService.logout().subscribe({
+			next: (response) => {
+				console.log('Logout successful:', response);
+			},
+			error: (error) => {
+				console.error('Logout error:', error);
+				// Navigation is handled in the auth service
+			}
+		});
+	}
 }

@@ -1,77 +1,77 @@
 <div class="page-container">
-  <div class="interview-options">
-    @for (interview of interviewTypes; track interview.id) {
-      <div class="interview-card">
-        <h3>{{ interview.title }}</h3>
-        <p>{{ interview.description }}</p>
-        
-        @if (interview.badges) {
-          <div class="difficulty-badges">
-            @for (badge of interview.badges; track badge) {
-              <span class="badge" [class]="badge.toLowerCase()">{{ badge }}</span>
-            }
-          </div>
-        }
-        
-        @if (interview.topics) {
-          <div class="topics">
-            @for (topic of interview.topics; track topic) {
-              <span class="topic">{{ topic }}</span>
-            }
-          </div>
-        }
-        
-        @if (interview.hasCompanySelect) {
-          <select class="company-select">
-            <option>Select Company</option>
-            @for (company of interview.companies; track company) {
-              <option [value]="company">{{ company }}</option>
-            }
-          </select>
-        }
-        
-        @if (interview.disabled) {
-          <button mat-raised-button color="accent" class="start-btn" disabled>
-            <mat-icon>schedule</mat-icon>
-            {{ interview.disabledMessage || 'Coming Soon' }}
-          </button>
-        } @else {
-          <div *appFeatureGuard="'mock_interview'; showWhenDisabled: true; let canUse = canUseFeature">
-            <button mat-raised-button [color]="canUse ? 'primary' : 'warn'" class="start-btn" 
-                    (click)="canUse ? onStartInterview(interview.id) : onUsePaidVersion()">
-              <mat-icon>{{ canUse ? 'play_arrow' : 'diamond' }}</mat-icon>
-              {{ canUse ? 'Start Interview' : 'Use Paid Version' }}
-            </button>
-          </div>
-        }
-      </div>
-    }
-  </div>
-  
-  <div class="interview-history">
-    <h2>Recent Interview Sessions</h2>
-    <div class="history-list">
-      <div class="history-item">
-        <div class="session-info">
-          <h4>Technical Interview - JavaScript</h4>
-          <p>Completed: March 20, 2025</p>
-        </div>
-        <div class="session-score">
-          <span class="score">85%</span>
-          <button mat-button class="review-btn">View Feedback</button>
-        </div>
-      </div>
-      
-      <div class="history-item">
-        <div class="session-info">
-          <h4>Behavioral Interview - Leadership</h4>
-          <p>Completed: March 18, 2025</p>
-        </div>
-        <div class="session-score">
-          <span class="score">92%</span>
-          <button mat-button class="review-btn">View Feedback</button>
-        </div>
-      </div>
-    </div>
-  </div>
+	<div class="interview-options">
+		@for (interview of interviewTypes; track interview.id) {
+			<div class="interview-card">
+				<h3>{{ interview.title }}</h3>
+				<p>{{ interview.description }}</p>
+				
+				@if (interview.badges) {
+					<div class="difficulty-badges">
+						@for (badge of interview.badges; track badge) {
+							<span class="badge" [class]="badge.toLowerCase()">{{ badge }}</span>
+						}
+					</div>
+				}
+				
+				@if (interview.topics) {
+					<div class="topics">
+						@for (topic of interview.topics; track topic) {
+							<span class="topic">{{ topic }}</span>
+						}
+					</div>
+				}
+				
+				@if (interview.hasCompanySelect) {
+					<select class="company-select">
+						<option>Select Company</option>
+						@for (company of interview.companies; track company) {
+							<option [value]="company">{{ company }}</option>
+						}
+					</select>
+				}
+				
+				@if (interview.disabled) {
+					<button mat-raised-button color="accent" class="start-btn" disabled>
+						<mat-icon>schedule</mat-icon>
+						{{ interview.disabledMessage || 'Coming Soon' }}
+					</button>
+				} @else {
+					<div *appFeatureGuard="'mock_interview'; showWhenDisabled: true; let canUse = canUseFeature">
+						<button mat-raised-button [color]="canUse ? 'primary' : 'warn'" class="start-btn" 
+										(click)="canUse ? onStartInterview(interview.id) : onUsePaidVersion()">
+							<mat-icon>{{ canUse ? 'play_arrow' : 'diamond' }}</mat-icon>
+							{{ canUse ? 'Start Interview' : 'Use Paid Version' }}
+						</button>
+					</div>
+				}
+			</div>
+		}
+	</div>
+	
+	<div class="interview-history">
+		<h2>Recent Interview Sessions</h2>
+		<div class="history-list">
+			<div class="history-item">
+				<div class="session-info">
+					<h4>Technical Interview - JavaScript</h4>
+					<p>Completed: March 20, 2025</p>
+				</div>
+				<div class="session-score">
+					<span class="score">85%</span>
+					<button mat-button class="review-btn">View Feedback</button>
+				</div>
+			</div>
+			
+			<div class="history-item">
+				<div class="session-info">
+					<h4>Behavioral Interview - Leadership</h4>
+					<p>Completed: March 18, 2025</p>
+				</div>
+				<div class="session-score">
+					<span class="score">92%</span>
+					<button mat-button class="review-btn">View Feedback</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

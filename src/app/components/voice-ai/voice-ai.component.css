@@ -52,12 +52,12 @@ background-color: #718096 !important;
 
 @keyframes pulse {
 from {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.7);
+		transform: scale(1);
+		box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.7);
 }
 to {
-    transform: scale(1.05);
-    box-shadow: 0 0 0 10px rgba(229, 62, 62, 0);
+		transform: scale(1.05);
+		box-shadow: 0 0 0 10px rgba(229, 62, 62, 0);
 }
 }
 

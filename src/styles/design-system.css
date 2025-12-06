@@ -1,78 +1,78 @@
 :root {
-  /* Colors */
-  --color-primary: #363694;
-  --color-secondary: #65697b;
-  --color-labels: #65697b;
-  --color-on-surface: #65697b;
-  --color-background: #fdfbf9;
-  --color-surface: #fff;
-  --color-button-primary: #6a46fe;
-  --color-button-secondary: #f1f0fe;
-  --color-button-outlined: #fff;
+	/* Colors */
+	--color-primary: #363694;
+	--color-secondary: #65697b;
+	--color-labels: #65697b;
+	--color-on-surface: #65697b;
+	--color-background: #fdfbf9;
+	--color-surface: #fff;
+	--color-button-primary: #6a46fe;
+	--color-button-secondary: #f1f0fe;
+	--color-button-outlined: #fff;
 
-  /* Typography */
-  --font-family-primary: 'Inter', sans-serif;
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
+	/* Typography */
+	--font-family-primary: 'Inter', sans-serif;
+	--font-weight-regular: 400;
+	--font-weight-medium: 500;
+	--font-weight-semibold: 600;
 
-  /* Font Sizes */
-  --font-size-large-title: 1.75rem;
-  --font-size-title: 1.25rem;
-  --font-size-body: 0.875rem;
-  --font-size-caption: 0.75rem;
-  --font-size-small: 0.688rem;
+	/* Font Sizes */
+	--font-size-large-title: 1.75rem;
+	--font-size-title: 1.25rem;
+	--font-size-body: 0.875rem;
+	--font-size-caption: 0.75rem;
+	--font-size-small: 0.688rem;
 
-  /* Spacing */
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
+	/* Spacing */
+	--spacing-xs: 0.25rem;
+	--spacing-sm: 0.5rem;
+	--spacing-md: 1rem;
+	--spacing-lg: 1.5rem;
+	--spacing-xl: 2rem;
 
-  /* Component Heights */
-  --height-button: 2.5rem;
-  --height-form-field: 2.5rem;
-  --height-table-row: 2.25rem;
-  --height-header: 4rem;
+	/* Component Heights */
+	--height-button: 2.5rem;
+	--height-form-field: 2.5rem;
+	--height-table-row: 2.25rem;
+	--height-header: 4rem;
 
-  /* Border Radius */
-  --border-radius-button: 0.5rem;
-  --border-radius-card: 0.75rem;
+	/* Border Radius */
+	--border-radius-button: 0.5rem;
+	--border-radius-card: 0.75rem;
 
-  /* Button Padding */
-  --padding-button: var(--spacing-md);
+	/* Button Padding */
+	--padding-button: var(--spacing-md);
 }
 
 /* Typography Classes */
 .text-large-title {
-  font-family: var(--font-family-primary);
-  font-size: var(--font-size-large-title);
-  font-weight: var(--font-weight-semibold);
+	font-family: var(--font-family-primary);
+	font-size: var(--font-size-large-title);
+	font-weight: var(--font-weight-semibold);
 }
 
 .text-title {
-  font-family: var(--font-family-primary);
-  font-size: var(--font-size-title);
-  font-weight: var(--font-weight-medium);
+	font-family: var(--font-family-primary);
+	font-size: var(--font-size-title);
+	font-weight: var(--font-weight-medium);
 }
 
 .text-body {
-  font-family: var(--font-family-primary);
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-regular);
+	font-family: var(--font-family-primary);
+	font-size: var(--font-size-body);
+	font-weight: var(--font-weight-regular);
 }
 
 .text-caption {
-  font-family: var(--font-family-primary);
-  font-size: var(--font-size-caption);
-  font-weight: var(--font-weight-regular);
+	font-family: var(--font-family-primary);
+	font-size: var(--font-size-caption);
+	font-weight: var(--font-weight-regular);
 }
 
 .text-small {
-  font-family: var(--font-family-primary);
-  font-size: var(--font-size-small);
-  font-weight: var(--font-weight-regular);
+	font-family: var(--font-family-primary);
+	font-size: var(--font-size-small);
+	font-weight: var(--font-weight-regular);
 }
 
 /* Color Classes */
@@ -99,61 +99,61 @@
 
 /* Component Classes */
 .label {
-  color: var(--color-labels);
-  font-size: var(--font-size-caption);
-  font-weight: var(--font-weight-regular);
-  font-family: var(--font-family-primary);
+	color: var(--color-labels);
+	font-size: var(--font-size-caption);
+	font-weight: var(--font-weight-regular);
+	font-family: var(--font-family-primary);
 }
 
 .btn {
-  height: var(--height-button);
-  border-radius: var(--border-radius-button);
-  padding: 0 var(--padding-button);
-  font-family: var(--font-family-primary);
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-medium);
-  border: none;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+	height: var(--height-button);
+	border-radius: var(--border-radius-button);
+	padding: 0 var(--padding-button);
+	font-family: var(--font-family-primary);
+	font-size: var(--font-size-body);
+	font-weight: var(--font-weight-medium);
+	border: none;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .btn-primary {
-  background-color: var(--color-button-primary);
-  color: white;
+	background-color: var(--color-button-primary);
+	color: white;
 }
 
 .btn-secondary {
-  background-color: var(--color-button-secondary);
-  color: var(--color-primary);
+	background-color: var(--color-button-secondary);
+	color: var(--color-primary);
 }
 
 .btn-outlined {
-  background-color: var(--color-button-outlined);
-  color: var(--color-primary);
-  border: 1px solid var(--color-primary);
+	background-color: var(--color-button-outlined);
+	color: var(--color-primary);
+	border: 1px solid var(--color-primary);
 }
 
 .form-field {
-  height: var(--height-form-field);
-  border-radius: var(--border-radius-button);
-  padding: 0 var(--spacing-md);
-  font-family: var(--font-family-primary);
-  font-size: var(--font-size-body);
-  border: 1px solid var(--color-secondary);
+	height: var(--height-form-field);
+	border-radius: var(--border-radius-button);
+	padding: 0 var(--spacing-md);
+	font-family: var(--font-family-primary);
+	font-size: var(--font-size-body);
+	border: 1px solid var(--color-secondary);
 }
 
 .card {
-  background-color: var(--color-surface);
-  border-radius: var(--border-radius-card);
-  padding: var(--spacing-lg);
+	background-color: var(--color-surface);
+	border-radius: var(--border-radius-card);
+	padding: var(--spacing-lg);
 }
 
 .table-row {
-  height: var(--height-table-row);
+	height: var(--height-table-row);
 }
 
 .header {
-  height: var(--height-header);
+	height: var(--height-header);
 }

@@ -1,136 +1,100 @@
 <div class="login-container">
-  <!-- Left side - Application Information (66%) -->
-  <div class="app-info-section">
-    <div class="background-pattern"></div>
-        
-    <div class="app-info-content">
-      <div class="logo-section">
-        <h1 class="app-title">JobMitra</h1>
-        <p class="app-subtitle">Intelligent Recruitment Platform</p>
-        <p class="app-description">Revolutionize your hiring process with AI-driven recruitment solutions that connect talent with opportunity seamlessly.</p>
-      </div>
-      
-      <div class="features-section">
-        <div class="feature-grid">
-          <div class="feature-card">
-            <div class="feature-icon-wrapper">
-              <div class="feature-icon job-postings">�</div>
-            </div>
-            <h3>Smart Job Postings</h3>
-            <p>Create and manage job listings with AI-powered optimization for maximum reach and qualified candidates.</p>
-          </div>
-          
-          <div class="feature-card">
-            <div class="feature-icon-wrapper">
-              <div class="feature-icon ats-compatible">📄</div>
-            </div>
-            <h3>ATS CV Compatible</h3>
-            <p>AI-enhanced resume parsing and matching ensures compatibility with all major ATS systems.</p>
-          </div>
-          
-          <div class="feature-card">
-            <div class="feature-icon-wrapper">
-              <div class="feature-icon candidate-matching">🎯</div>
-            </div>
-            <h3>Smart Candidate Matching</h3>
-            <p>Find the perfect candidates for HR teams with advanced AI algorithms and skills assessment.</p>
-          </div>
-          
-          <div class="feature-card">
-            <div class="feature-icon-wrapper">
-              <div class="feature-icon mock-interviews">🎤</div>
-            </div>
-            <h3>AI Mock Interviews</h3>
-            <p>Comprehensive interview preparation with AI-powered feedback and performance analytics.</p>
-          </div>
-          
-          <div class="feature-card">
-            <div class="feature-icon-wrapper">
-              <div class="feature-icon profile-enhancement">✨</div>
-            </div>
-            <h3>Profile Enhancement</h3>
-            <p>Shine your professional profile with AI-driven recommendations and optimization tools.</p>
-          </div>
-        </div>
-      </div>
-      
-      <div class="enterprise-stats">
-        <div class="stats-grid">
-          <div class="stat-item">
-            <div class="stat-number">1M+</div>
-            <div class="stat-label">Job Seekers</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number">50K+</div>
-            <div class="stat-label">Companies Hiring</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number">95%</div>
-            <div class="stat-label">Match Success Rate</div>
-          </div>
-        </div>
-        
-        <div class="certifications">
-          <div class="cert-badge">GDPR Compliant</div>
-          <div class="cert-badge">ISO 27001</div>
-          <div class="cert-badge">SOC 2 Type II</div>
-        </div>
-      </div>
-    </div>
-  </div>
+	<!-- Left side - Application Information (66%) -->
+	<div class="app-info-section">
+		<div class="background-pattern"></div>
+				
+		<div class="app-info-content">
+			<div class="logo-section">
+				<h1 class="app-title">JobMitra</h1>
+				<p class="app-subtitle">Intelligent Recruitment Platform</p>
+				<p class="app-description">Revolutionize your hiring process with AI-driven recruitment solutions that connect talent with opportunity seamlessly.</p>
+			</div>
+			
+			<div class="features-section">
+				<div class="feature-grid">
+					@for (feature of features; track feature.title) {
+						<div class="feature-card">
+							<div class="feature-icon-wrapper">
+								<div class="feature-icon">{{ feature.icon }}</div>
+							</div>
+							<h3>{{ feature.title }}</h3>
+							<p>{{ feature.description }}</p>
+						</div>
+					}
+				</div>
+			</div>
+			
+			<div class="enterprise-stats">
+				<div class="stats-grid">
+					@for (stat of stats; track stat.label) {
+						<div class="stat-item">
+							<div class="stat-number">{{ stat.number }}</div>
+							<div class="stat-label">{{ stat.label }}</div>
+						</div>
+					}
+				</div>
+				
+				<div class="certifications">
+					@for (cert of certifications; track cert.badge) {
+						<div class="cert-badge">{{ cert.badge }}</div>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
 
-  <!-- Right side - Login/Signup Form (34%) -->
-  <div class="login-form-section">
-    <div class="auth-container">
-      <div class="auth-header">
-        <h1 class="auth-title">Welcome</h1>
-        <p class="auth-subtitle">{{ isSignupMode() ? 'Create your account to get started' : 'Please sign in to continue' }}</p>
-      </div>
-      
-      <!-- Error Message Display -->
-      @if (errorMessage) {
-        <div class="error-message">
-          <mat-icon>error</mat-icon>
-          {{ errorMessage }}
-        </div>
-      }
+	<!-- Right side - Login/Signup Form (34%) -->
+	<div class="login-form-section">
+		<div class="auth-container">
+			<div class="auth-header">
+				<h1 class="auth-title">Welcome</h1>
+				<p class="auth-subtitle">{{ isSignupMode() ? 'Create your account to get started' : 'Please sign in to continue' }}</p>
+			</div>
+			
+			<!-- Error Message Display -->
+			@if (errorMessage) {
+				<div class="error-message">
+					<mat-icon>error</mat-icon>
+					{{ errorMessage }}
+				</div>
+			}
 
-      <!-- Google Sign-in Button - Only show in login mode -->
-      @if (!isSignupMode()) {
-        <div id="google-signin-button" class="google-signin-container"></div>
+			<!-- Google Sign-in Button - Only show in login mode -->
+			@if (!isSignupMode()) {
+				<div id="google-signin-button" class="google-signin-container"></div>
 
-        <div class="divider">
-          <span>or</span>
-        </div>
-      }
+				<div class="divider">
+					<span>or</span>
+				</div>
+			}
 
-      <!-- Dynamic Forms -->
-      @if (!isSignupMode()) {
-        <div class="auth-form">
-          <app-dynamic-form 
-            [config]="loginFormConfig" 
-            (formSubmit)="onLogin($event)">
-          </app-dynamic-form>
-        </div>
-      }
+			<!-- Dynamic Forms -->
+			@if (!isSignupMode()) {
+				<div class="auth-form">
+					<app-dynamic-form 
+						[config]="loginFormConfig" 
+						(formSubmit)="onLogin($event)">
+					</app-dynamic-form>
+				</div>
+			}
 
-      @if (isSignupMode()) {
-        <div class="auth-form">
-          <app-dynamic-form 
-            [config]="signupFormConfig" 
-            (formSubmit)="onSignup($event)">
-          </app-dynamic-form>
-        </div>
-      }
-      
-      <div class="auth-toggle">
-        @if (!isSignupMode()) {
-          <p>Don't have an account? <a (click)="toggleSignupMode()" class="toggle-link">Create account</a></p>
-        }
-        @if (isSignupMode()) {
-          <p>Already have an account? <a (click)="toggleSignupMode()" class="toggle-link">Sign in</a></p>
-        }
-      </div>
-    </div>
-  </div>
+			@if (isSignupMode()) {
+				<div class="auth-form">
+					<app-dynamic-form 
+						[config]="signupFormConfig" 
+						(formSubmit)="onSignup($event)">
+					</app-dynamic-form>
+				</div>
+			}
+			
+			<div class="auth-toggle">
+				@if (!isSignupMode()) {
+					<p>Don't have an account? <a (click)="toggleSignupMode()" class="toggle-link">Create account</a></p>
+				}
+				@if (isSignupMode()) {
+					<p>Already have an account? <a (click)="toggleSignupMode()" class="toggle-link">Sign in</a></p>
+				}
+			</div>
+		</div>
+	</div>
 </div>

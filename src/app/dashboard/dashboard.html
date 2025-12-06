@@ -1,135 +1,145 @@
 <div class="dashboard-layout">
-  <app-side-nav (pageSelected)="onPageSelected($event)"></app-side-nav>
-  
-  <div class="main-content">
+	<app-side-nav (pageSelected)="onPageSelected($event)"></app-side-nav>
+	
+	<div class="main-content">
 
-    <div class="page-content">
-      @switch (currentPage) {
-        @case ('dashboard') {
-          @defer (on immediate) {
-            <app-dashboard-page />
-          } @placeholder {
-            <div class="loading-placeholder">Loading Dashboard...</div>
-          }
-        }
-        @case ('job-search') {
-          @defer (on immediate) {
-            <app-job-search-page />
-          } @placeholder {
-            <div class="loading-placeholder">Loading Job Search...</div>
-          }
-        }
-        @case ('applications') {
-          @defer (on immediate) {
-            <app-applications-page />
-          } @placeholder {
-            <div class="loading-placeholder">Loading Applications...</div>
-          }
-        }
-        @case ('mock-interviews') {
-          @defer (on immediate) {
-            <app-mock-interviews-page />
-          } @placeholder {
-            <div class="loading-placeholder">Loading Mock Interviews...</div>
-          }
-        }
-        @case ('resume-builder') {
-          @defer (on immediate) {
-            <app-resume-builder-page />
-          } @placeholder {
-            <div class="loading-placeholder">Loading Resume Builder...</div>
-          }
-        }
-        @case ('skill-assessment') {
-          @defer (on immediate) {
-            <app-skill-assessment-page />
-          } @placeholder {
-            <div class="loading-placeholder">Loading Skill Assessment...</div>
-          }
-        }
-        @case ('profile') {
-          @defer (on immediate) {
-            <app-profile />
-          } @placeholder {
-            <div class="loading-placeholder">Loading Profile...</div>
-          }
-        }
-        @case ('settings') {
-          @defer (on immediate) {
-            <app-settings />
-          } @placeholder {
-            <div class="loading-placeholder">Loading Settings...</div>
-          }
-        }
-        @case ('post-job') {
-          @defer (on immediate) {
-            <app-post-job />
-          } @placeholder {
-            <div class="loading-placeholder">Loading Post Job...</div>
-          }
-        }
-        @case ('my-jobs') {
-          @defer (on immediate) {
-            <app-my-jobs (navigateToPage)="onNavigateToPage($event)" />
-          } @placeholder {
-            <div class="loading-placeholder">Loading My Jobs...</div>
-          }
-        }
-        @case ('find-candidates') {
-          @defer (on immediate) {
-            <div class="page-placeholder">
-              <h2>Find Candidates</h2>
-              <p>Search and browse candidate profiles</p>
-            </div>
-          } @placeholder {
-            <div class="loading-placeholder">Loading Find Candidates...</div>
-          }
-        }
-        @case ('applications-received') {
-          @defer (on immediate) {
-            <app-applications-received></app-applications-received>
-          } @placeholder {
-            <div class="loading-placeholder">Loading Applications...</div>
-          }
-        }
-        @case ('user-management') {
-          @defer (on immediate) {
-            <div class="page-placeholder">
-              <h2>User Management</h2>
-              <p>Manage users and permissions</p>
-            </div>
-          } @placeholder {
-            <div class="loading-placeholder">Loading User Management...</div>
-          }
-        }
-        @case ('system-analytics') {
-          @defer (on immediate) {
-            <div class="page-placeholder">
-              <h2>System Analytics</h2>
-              <p>View system-wide analytics and reports</p>
-            </div>
-          } @placeholder {
-            <div class="loading-placeholder">Loading Analytics...</div>
-          }
-        }
-        @case ('content-management') {
-          @defer (on immediate) {
-            <div class="page-placeholder">
-              <h2>Content Management</h2>
-              <p>Manage application content and resources</p>
-            </div>
-          } @placeholder {
-            <div class="loading-placeholder">Loading Content Management...</div>
-          }
-        }
-        @default {
-          @defer (on immediate) {
-            <app-dashboard-page />
-          } @placeholder {
-            <div class="loading-placeholder">Loading Dashboard...</div>
-          }
-        }
-      }
-    </div>
-  </div>
+		<div class="page-content">
+			
+			@switch (currentPage) {
+				@case ('dashboard') {
+					@defer (on immediate) {
+						<app-dashboard-page />
+					} @placeholder {
+						<ng-container *ngTemplateOutlet="pageLoading; context: { $implicit: 'dashboard' }"></ng-container>
+					}
+				}
+				@case ('job-search') {
+					@defer (on immediate) {
+						<app-job-search-page />
+					} @placeholder {
+						<ng-container *ngTemplateOutlet="pageLoading; context: { $implicit: 'job-search' }"></ng-container>
+					}
+				}
+				@case ('applications') {
+					@defer (on immediate) {
+						<app-applications-page />
+					} @placeholder {
+						<ng-container *ngTemplateOutlet="pageLoading; context: { $implicit: 'applications' }"></ng-container>
+					}
+				}
+				@case ('mock-interviews') {
+					@defer (on immediate) {
+						<app-mock-interviews-page />
+					} @placeholder {
+						<ng-container *ngTemplateOutlet="pageLoading; context: { $implicit: 'mock-interviews' }"></ng-container>
+					}
+				}
+				@case ('resume-builder') {
+					@defer (on immediate) {
+						<app-resume-builder-page />
+					} @placeholder {
+						<ng-container *ngTemplateOutlet="pageLoading; context: { $implicit: 'resume-builder' }"></ng-container>
+					}
+				}
+				@case ('skill-assessment') {
+					@defer (on immediate) {
+						<app-skill-assessment-page />
+					} @placeholder {
+						<ng-container *ngTemplateOutlet="pageLoading; context: { $implicit: 'skill-assessment' }"></ng-container>
+					}
+				}
+				@case ('profile') {
+					@defer (on immediate) {
+						<app-profile />
+					} @placeholder {
+						<ng-container *ngTemplateOutlet="pageLoading; context: { $implicit: 'profile' }"></ng-container>
+					}
+				}
+				@case ('settings') {
+					@defer (on immediate) {
+						<app-settings />
+					} @placeholder {
+						<ng-container *ngTemplateOutlet="pageLoading; context: { $implicit: 'settings' }"></ng-container>
+					}
+				}
+				@case ('post-job') {
+					@defer (on immediate) {
+						<app-post-job />
+					} @placeholder {
+						<ng-container *ngTemplateOutlet="pageLoading; context: { $implicit: 'post-job' }"></ng-container>
+					}
+				}
+				@case ('my-jobs') {
+					@defer (on immediate) {
+						<app-my-jobs (navigateToPage)="onNavigateToPage($event)" />
+					} @placeholder {
+						<ng-container *ngTemplateOutlet="pageLoading; context: { $implicit: 'my-jobs' }"></ng-container>
+					}
+				}
+				@case ('find-candidates') {
+					@defer (on immediate) {
+						<div class="page-placeholder">
+							<h2>Find Candidates</h2>
+							<p>Search and browse candidate profiles</p>
+						</div>
+					} @placeholder {
+						<ng-container *ngTemplateOutlet="pageLoading; context: { $implicit: 'find-candidates' }"></ng-container>
+					}
+				}
+				@case ('applications-received') {
+					@defer (on immediate) {
+						<app-applications-received></app-applications-received>
+					} @placeholder {
+						<ng-container *ngTemplateOutlet="pageLoading; context: { $implicit: 'applications-received' }"></ng-container>
+					}
+				}
+				@case ('user-management') {
+					@defer (on immediate) {
+						<div class="page-placeholder">
+							<h2>User Management</h2>
+							<p>Manage users and permissions</p>
+						</div>
+					} @placeholder {
+						<ng-container *ngTemplateOutlet="pageLoading; context: { $implicit: 'user-management' }"></ng-container>
+					}
+				}
+				@case ('system-analytics') {
+					@defer (on immediate) {
+						<div class="page-placeholder">
+							<h2>System Analytics</h2>
+							<p>View system-wide analytics and reports</p>
+						</div>
+					} @placeholder {
+						<ng-container *ngTemplateOutlet="pageLoading; context: { $implicit: 'system-analytics' }"></ng-container>
+					}
+				}
+				@case ('content-management') {
+					@defer (on immediate) {
+						<div class="page-placeholder">
+							<h2>Content Management</h2>
+							<p>Manage application content and resources</p>
+						</div>
+					} @placeholder {
+						<ng-container *ngTemplateOutlet="pageLoading; context: { $implicit: 'content-management' }"></ng-container>
+					}
+				}
+				@default {
+					@defer (on immediate) {
+						<app-dashboard-page />
+					} @placeholder {
+						<ng-container *ngTemplateOutlet="pageLoading; context: { $implicit: 'dashboard' }"></ng-container>
+					}
+				}
+			}
+		</div>
+	</div>
 </div>
+
+<!-- Reusable Loading Template -->
+	<ng-template #pageLoading let-page>
+		<app-loading 
+			[title]="loadingConfigs[page]?.title || 'Loading...'"
+			[message]="loadingConfigs[page]?.message || 'Please wait'"
+			[icon]="loadingConfigs[page]?.icon || 'hourglass_empty'">
+		</app-loading>
+	</ng-template>

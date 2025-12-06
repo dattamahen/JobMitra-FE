@@ -1,108 +1,108 @@
 .page-container {
-  padding: 24px;
-  max-width: 1400px;
-  margin: 0 auto;
+	padding: 24px;
+	max-width: 1400px;
+	margin: 0 auto;
 }
 
 .filter-card {
-  margin-bottom: 24px;
+	margin-bottom: 24px;
 }
 
 .job-filter {
-  min-width: 300px;
-  margin-right: 16px;
+	min-width: 300px;
+	margin-right: 16px;
 }
 
 .summary {
-  color: #666;
-  font-size: 0.9rem;
-  font-weight: 500;
+	color: #666;
+	font-size: 0.9rem;
+	font-weight: 500;
 }
 
 .loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 60px 20px;
+	text-align: center;
 }
 
 .no-applications {
-  text-align: center;
-  padding: 60px 20px;
+	text-align: center;
+	padding: 60px 20px;
 }
 
 .no-data-icon {
-  font-size: 4rem;
-  width: 4rem;
-  height: 4rem;
-  color: #bbb;
-  margin-bottom: 16px;
+	font-size: 4rem;
+	width: 4rem;
+	height: 4rem;
+	color: #bbb;
+	margin-bottom: 16px;
 }
 
 .applications-table {
-  width: 100%;
-  overflow-x: auto;
+	width: 100%;
+	overflow-x: auto;
 }
 
 .applications-table table {
-  width: 100%;
-  min-width: 800px;
+	width: 100%;
+	min-width: 800px;
 }
 
 .candidate-info {
-  display: flex;
-  flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
 .candidate-info strong {
-  font-weight: 600;
-  color: #1976d2;
+	font-weight: 600;
+	color: #1976d2;
 }
 
 .candidate-info small {
-  color: #666;
-  font-size: 0.8rem;
+	color: #666;
+	font-size: 0.8rem;
 }
 
 .contact-info {
-  display: flex;
-  flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
 .contact-info small {
-  color: #666;
-  font-size: 0.8rem;
+	color: #666;
+	font-size: 0.8rem;
 }
 
 .high-match {
-  background: #4caf50 !important;
-  color: white !important;
+	background: #4caf50 !important;
+	color: white !important;
 }
 
 .medium-match {
-  background: #ff9800 !important;
-  color: white !important;
+	background: #ff9800 !important;
+	color: white !important;
 }
 
 .low-match {
-  background: #f44336 !important;
-  color: white !important;
+	background: #f44336 !important;
+	color: white !important;
 }
 
 @media (max-width: 768px) {
-  .page-container {
-    padding: 16px;
-  }
-  
-  .job-filter {
-    width: 100%;
-    margin-right: 0;
-    margin-bottom: 16px;
-  }
-  
-  .applications-table {
-    font-size: 0.8rem;
-  }
+	.page-container {
+		padding: 16px;
+	}
+	
+	.job-filter {
+		width: 100%;
+		margin-right: 0;
+		margin-bottom: 16px;
+	}
+	
+	.applications-table {
+		font-size: 0.8rem;
+	}
 }

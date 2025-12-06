@@ -5,11 +5,11 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
-  providers: [
-    provideBrowserGlobalErrorListeners(),
-    provideZonelessChangeDetection(),
-    provideRouter(routes),
-    provideHttpClient(withInterceptorsFromDi()),
-    provideAnimationsAsync()
-  ]
+	providers: [
+		provideBrowserGlobalErrorListeners(),
+		provideZonelessChangeDetection(),
+		provideRouter(routes),
+		provideHttpClient(withInterceptorsFromDi()),
+		provideAnimationsAsync()
+	]
 };
