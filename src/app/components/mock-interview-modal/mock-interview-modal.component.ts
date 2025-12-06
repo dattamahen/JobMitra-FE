@@ -36,7 +36,8 @@ export class MockInterviewModalComponent {
 	currentAnswer = signal('');
 	answers = signal<Array<{question_id: string, answer: string}>>([]);
 	evaluation = signal<InterviewEvaluation | null>(null);
-	phase = signal<'instructions' | 'loading' | 'interview' | 'completed' | 'evaluation'>('instructions');
+	phase = signal<'instructions' | 'generating' | 'loading' | 'interview' | 'completed' | 'evaluation'>('instructions');
+	isGeneratingQuestions = signal(false);
 	
 	// Instructions data
 	instructions = INTERVIEW_INSTRUCTIONS;
@@ -49,6 +50,12 @@ export class MockInterviewModalComponent {
 		private dialogRef: MatDialogRef<MockInterviewModalComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: any
 	) {
+		// Check if we're in generating mode
+		if (this.data?.isGenerating) {
+			this.phase.set('generating');
+			this.isGeneratingQuestions.set(true);
+		}
+
 		effect(() => {
 			const error = this.voiceService.error();
 			if (error) {
@@ -89,38 +96,14 @@ export class MockInterviewModalComponent {
 	});
 
 	startInterview(): void {
-		this.phase.set('loading');
-		this.isLoading.set(true);
-		
-		// Use AI-generated questions if available
-		if (this.data?.aiQuestions && this.data?.sessionId) {
-			const mockSession: InterviewSession = {
-				session_id: this.data.sessionId,
-				questions: this.parseAIQuestions(this.data.aiQuestions),
-				created_at: new Date().toISOString()
-			};
-			
-			this.interviewSession.set(mockSession);
-			this.phase.set('interview');
-			this.isLoading.set(false);
-			this.readCurrentQuestion();
-		} else {
-			// Fallback to original API call
-			const type = this.data?.interviewType || 'technical';
-			this.mockInterviewService.startInterviewSession(type).subscribe({
-				next: (session) => {
-					this.interviewSession.set(session);
-					this.phase.set('interview');
-					this.isLoading.set(false);
-					this.readCurrentQuestion();
-				},
-				error: (error) => {
-					this.snackBar.open('Failed to start interview', 'Close', { duration: 3000 });
-					this.isLoading.set(false);
-					this.phase.set('instructions');
-				}
-			});
+		const session = this.interviewSession();
+		if (!session) {
+			this.snackBar.open('No questions available', 'Close', { duration: 3000 });
+			return;
 		}
+		
+		this.phase.set('interview');
+		this.readCurrentQuestion();
 	}
 
 	readCurrentQuestion(): void {
@@ -210,6 +193,20 @@ export class MockInterviewModalComponent {
 		if (confirm('Are you sure you want to terminate this interview? Your progress will be lost.')) {
 			this.voiceService.stopListening();
 			this.dialogRef.close({ terminated: true });
+		}
+	}
+
+	loadQuestions(aiResponse: any): void {
+		if (aiResponse?.questions && aiResponse?.session_id) {
+			const mockSession: InterviewSession = {
+				session_id: aiResponse.session_id,
+				questions: this.parseAIQuestions(aiResponse.questions),
+				created_at: new Date().toISOString()
+			};
+			
+			this.interviewSession.set(mockSession);
+			this.isGeneratingQuestions.set(false);
+			this.phase.set('instructions');
 		}
 	}
 

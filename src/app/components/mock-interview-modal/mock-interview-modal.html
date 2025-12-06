@@ -1,13 +1,39 @@
 <!-- Modal Header -->
 <h2 mat-dialog-title>
 	<mat-icon>psychology</mat-icon>
-	{{ phase() === 'instructions' ? 'Mock Interview Instructions' : 
+	{{ phase() === 'generating' ? 'Preparing Your Interview' :
+		phase() === 'instructions' ? 'Mock Interview Instructions' : 
 		phase() === 'interview' ? 'Mock Interview in Progress' : 
 		phase() === 'evaluation' ? 'Interview Results' : 'Interview Completed' }}
 </h2>
 
 <!-- Modal Body -->
 <mat-dialog-content class="interview-container">
+	<!-- Generating Questions Phase -->
+	@if (phase() === 'generating') {
+		<div class="generating-section">
+			<div class="generating-content">
+				<mat-spinner diameter="60"></mat-spinner>
+				<h3>Generating Interview Questions</h3>
+				<p>Our AI is creating personalized questions based on your profile...</p>
+				<div class="generating-info">
+					<div class="info-item">
+						<mat-icon>person</mat-icon>
+						<span>Role: {{ data?.userProfile?.role }}</span>
+					</div>
+					<div class="info-item">
+						<mat-icon>work</mat-icon>
+						<span>Experience: {{ data?.userProfile?.experience_years }} years</span>
+					</div>
+					<div class="info-item">
+						<mat-icon>code</mat-icon>
+						<span>Skills: {{ data?.userProfile?.skills?.join(', ') }}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+
 	<!-- Instructions Phase -->
 	@if (phase() === 'instructions') {
 		<div class="instructions-section">

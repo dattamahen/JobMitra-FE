@@ -54,12 +54,22 @@ export class MockInterviewService {
 		});
 	}
 
-	startInterviewSession(type: string): Observable<InterviewSession> {
-		return this.http.post<InterviewSession>(`${this.baseUrl}/start`, {
-			interview_type: type,
-			difficulty: 'medium'
+	startInterviewWithLoading(type: string = 'technical', userProfile: any): any {
+		return this.dialog.open(MockInterviewModalComponent, {
+			width: '800px',
+			maxWidth: '95vw',
+			maxHeight: '95vh',
+			disableClose: true,
+			panelClass: 'mock-interview-dialog',
+			data: { 
+				interviewType: type,
+				userProfile: userProfile,
+				isGenerating: true
+			}
 		});
 	}
+
+
 
 	submitAnswer(sessionId: string, questionId: string, answer: string): Observable<any> {
 		return this.http.post(`${this.baseUrl}/submit-answer`, {

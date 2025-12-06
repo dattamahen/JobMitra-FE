@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -8,8 +8,6 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatDividerModule } from '@angular/material/divider';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 import { DashboardService } from '../../services/dashboard.service';
 import { DashboardData, DashboardStats, ActivityItem } from '../../types/dashboard.types';
@@ -33,11 +31,9 @@ import { LoadingComponent } from '../../shared/components/loading/loading.compon
 	templateUrl: './dashboard.html',
 	styleUrls: ['./dashboard.css']
 })
-export class DashboardPage implements OnInit, OnDestroy {
-	dashboardData$!: Observable<DashboardData>;
-	isLoading = true;
-	
-	private readonly destroy$ = new Subject<void>();
+export class DashboardPage implements OnInit {
+	dashboardData = signal<DashboardData | null>(null);
+	isLoading = signal(true);
 
 	constructor(private dashboardService: DashboardService) {}
 
@@ -45,29 +41,22 @@ export class DashboardPage implements OnInit, OnDestroy {
 		this.loadDashboardData();
 	}
 
-	ngOnDestroy(): void {
-		this.destroy$.next();
-		this.destroy$.complete();
-	}
-
 	private loadDashboardData(): void {
-		this.isLoading = true;
-		this.dashboardData$ = this.dashboardService.getDashboardData();
+		this.isLoading.set(true);
 		
-		this.dashboardService.getDashboardData()
-			.pipe(takeUntil(this.destroy$))
-			.subscribe({
-				next: () => {
-					this.isLoading = false;
-				},
-				error: () => {
-					this.isLoading = false;
-				}
-			});
+		this.dashboardService.getDashboardData().subscribe({
+			next: (data) => {
+				this.dashboardData.set(data);
+				this.isLoading.set(false);
+			},
+			error: (err) => {
+				console.error('Dashboard load error:', err);
+				this.isLoading.set(false);
+			}
+		});
 	}
 
 	refreshDashboard(): void {
-		this.isLoading = true;
 		this.loadDashboardData();
 	}
 
