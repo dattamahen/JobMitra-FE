@@ -1,46 +1,46 @@
 <table style="width:100%; border-collapse:collapse; table-layout:fixed; font-family: Arial, sans-serif;">
-  <tr>
-    <!-- Sidebar -->
-    <td style="width:30%; vertical-align:top; background:#2c3e50; color:#fff; padding:20px;">
-      <h2 style="margin-top:0; font-size:18px; border-bottom:1px solid #fff; padding-bottom:6px;">Contact</h2>
-      <p style="margin:0;">{{ cv.sections.personal_info.email }}<br>{{ cv.sections.personal_info.phone }}<br>{{ cv.sections.personal_info.location }}</p>
+	<tr>
+		<!-- Sidebar -->
+		<td style="width:30%; vertical-align:top; background:#2c3e50; color:#fff; padding:20px;">
+			<h2 style="margin-top:0; font-size:18px; border-bottom:1px solid #fff; padding-bottom:6px;">Contact</h2>
+			<p style="margin:0;">{{ cv.sections.personal_info.email }}<br>{{ cv.sections.personal_info.phone }}<br>{{ cv.sections.personal_info.location }}</p>
 
-      <h2 style="font-size:18px; margin-top:20px; border-bottom:1px solid #fff; padding-bottom:6px;">Skills</h2>
-      <ul style="margin:0; padding-left:18px;">
-        @for (skill of cv.sections.skills.technical; track skill) {
-          <li>{{ skill }}</li>
-        }
-      </ul>
+			<h2 style="font-size:18px; margin-top:20px; border-bottom:1px solid #fff; padding-bottom:6px;">Skills</h2>
+			<ul style="margin:0; padding-left:18px;">
+				@for (skill of cv.sections.skills.technical; track skill) {
+					<li>{{ skill }}</li>
+				}
+			</ul>
 
-      @if (cv.sections.certifications && cv.sections.certifications.length > 0) {
-        <h2 style="font-size:18px; margin-top:20px; border-bottom:1px solid #fff; padding-bottom:6px;">Certifications</h2>
-        @for (cert of cv.sections.certifications; track cert.name) {
-          <p style="margin:5px 0;">{{ cert.name }}<br>{{ cert.issuer }}</p>
-        }
-      }
-    </td>
+			@if (cv.sections.certifications && cv.sections.certifications.length > 0) {
+				<h2 style="font-size:18px; margin-top:20px; border-bottom:1px solid #fff; padding-bottom:6px;">Certifications</h2>
+				@for (cert of cv.sections.certifications; track cert.name) {
+					<p style="margin:5px 0;">{{ cert.name }}<br>{{ cert.issuer }}</p>
+				}
+			}
+		</td>
 
-    <!-- Main -->
-    <td style="width:70%; vertical-align:top; padding:30px;">
-      <h1 style="margin:0; font-size:28px; color:#2c3e50;">{{ cv.sections.personal_info.full_name }}</h1>
-      <p style="font-size:14px; color:#7f8c8d;">{{ cv.sections.summary }}</p>
+		<!-- Main -->
+		<td style="width:70%; vertical-align:top; padding:30px;">
+			<h1 style="margin:0; font-size:28px; color:#2c3e50;">{{ cv.sections.personal_info.full_name }}</h1>
+			<p style="font-size:14px; color:#7f8c8d;">{{ cv.sections.summary }}</p>
 
-      <h2 style="margin-top:20px; color:#2c3e50;">Experience</h2>
-      @for (exp of cv.sections.experience; track exp.company) {
-        <p><b>{{ exp.company }}</b> — {{ exp.position }}<br><i>{{ exp.duration }}</i><br>{{ exp.description }}</p>
-      }
+			<h2 style="margin-top:20px; color:#2c3e50;">Experience</h2>
+			@for (exp of cv.sections.experience; track exp.company) {
+				<p><b>{{ exp.company }}</b> — {{ exp.position }}<br><i>{{ exp.duration }}</i><br>{{ exp.description }}</p>
+			}
 
-      <h2 style="margin-top:20px; color:#2c3e50;">Education</h2>
-      @for (edu of cv.sections.education; track edu.degree) {
-        <p><b>{{ edu.institution }}</b> — {{ edu.degree }} ({{ edu.year }})</p>
-      }
+			<h2 style="margin-top:20px; color:#2c3e50;">Education</h2>
+			@for (edu of cv.sections.education; track edu.degree) {
+				<p><b>{{ edu.institution }}</b> — {{ edu.degree }} ({{ edu.year }})</p>
+			}
 
-      @if (cv.sections.projects && cv.sections.projects.length > 0) {
-        <h2 style="margin-top:20px; color:#2c3e50;">Projects</h2>
-        @for (project of cv.sections.projects; track project.name) {
-          <p><b>{{ project.name }}</b><br>{{ project.description }}</p>
-        }
-      }
-    </td>
-  </tr>
+			@if (cv.sections.projects && cv.sections.projects.length > 0) {
+				<h2 style="margin-top:20px; color:#2c3e50;">Projects</h2>
+				@for (project of cv.sections.projects; track project.name) {
+					<p><b>{{ project.name }}</b><br>{{ project.description }}</p>
+				}
+			}
+		</td>
+	</tr>
 </table>

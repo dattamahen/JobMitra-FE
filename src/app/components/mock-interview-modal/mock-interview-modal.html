@@ -1,175 +1,163 @@
-<div class="interview-container">
-  <!-- Instructions Phase -->
-  @if (phase() === 'instructions') {
-    <div class="instructions-section">
-      <div class="instructions-header">
-        <mat-icon class="interview-icon">psychology</mat-icon>
-        <h2>Mock Interview Instructions</h2>
-      </div>
-      
-      <div class="instructions-content">
-        <div class="instruction-item">
-          <mat-icon>mic</mat-icon>
-          <p>Speak clearly and at a moderate pace</p>
-        </div>
-        <div class="instruction-item">
-          <mat-icon>timer</mat-icon>
-          <p>Take your time to think before answering</p>
-        </div>
-        <div class="instruction-item">
-          <mat-icon>record_voice_over</mat-icon>
-          <p>Click "Record Answer" to start speaking</p>
-        </div>
-        <div class="instruction-item">
-          <mat-icon>check_circle</mat-icon>
-          <p>Review your answer before proceeding</p>
-        </div>
-      </div>
-      
-      <div class="instructions-actions">
-        <button mat-raised-button color="primary" (click)="startInterview()">
-          Start Interview
-        </button>
-      </div>
-    </div>
-  }
+<!-- Modal Header -->
+<h2 mat-dialog-title>
+	<mat-icon>psychology</mat-icon>
+	{{ phase() === 'instructions' ? 'Mock Interview Instructions' : 
+		phase() === 'interview' ? 'Mock Interview in Progress' : 
+		phase() === 'evaluation' ? 'Interview Results' : 'Interview Completed' }}
+</h2>
 
-  <!-- Loading State -->
-  @if (phase() === 'loading') {
-    <div class="loading-section">
-      <mat-spinner diameter="50"></mat-spinner>
-      <p>Preparing your interview questions...</p>
-      <div class="loading-dots">
-        <span></span><span></span><span></span>
-      </div>
-    </div>
-  }
+<!-- Modal Body -->
+<mat-dialog-content class="interview-container">
+	<!-- Instructions Phase -->
+	@if (phase() === 'instructions') {
+		<div class="instructions-section">
+			<div class="instructions-content">
+				@for (instruction of instructions; track instruction.icon) {
+					<div class="instruction-item">
+						<mat-icon>{{ instruction.icon }}</mat-icon>
+						<p>{{ instruction.text }}</p>
+					</div>
+				}
+			</div>
+		</div>
+	}
 
-  <!-- Interview Phase -->
-  @if (phase() === 'interview' && interviewSession()) {
-    <div class="interview-room">
-      <!-- Interview Header -->
-      <div class="interview-header">
-        <div class="interviewer-info">
-          <div class="interviewer-avatar">
-            <mat-icon>person</mat-icon>
-          </div>
-          <div class="interviewer-details">
-            <h3>AI Interviewer</h3>
-            <p>Technical Interview</p>
-          </div>
-        </div>
-        
-        <div class="interview-progress">
-          <div class="progress-bar">
-            <div class="progress-fill" [style.width.%]="progress()"></div>
-          </div>
-          <span class="progress-text">{{currentQuestionIndex() + 1}}/{{interviewSession()!.questions.length}}</span>
-        </div>
-      </div>
+	<!-- Loading State -->
+	@if (phase() === 'loading') {
+		<app-loading 
+			title="Preparing Interview..."
+			message="Generating personalized questions for you"
+			icon="psychology">
+		</app-loading>
+	}
 
-      <!-- Question Section -->
-      <div class="question-section">
-        <div class="question-bubble">
-          <p class="question-text">{{currentQuestion()?.question}}</p>
-        </div>
-      </div>
+	<!-- Interview Phase -->
+	@if (phase() === 'interview' && interviewSession()) {
+		<div class="interview-room">
+			<!-- Progress Bar -->
+			<div class="interview-progress">
+				<div class="progress-bar">
+					<div class="progress-fill" [style.width.%]="progress()"></div>
+				</div>
+				<span class="progress-text">Question {{currentQuestionIndex() + 1}} of {{interviewSession()!.questions.length}}</span>
+			</div>
 
-      <!-- Answer Section -->
-      <div class="answer-section">
-        @if (currentAnswer()) {
-          <div class="answer-bubble">
-            <p>{{currentAnswer()}}</p>
-          </div>
-        }
-        
-        <div class="recording-controls">
-          <button 
-            mat-raised-button
-            [class.recording]="isRecording()"
-            [disabled]="isLoading()"
-            (click)="isRecording() ? stopRecording() : startRecording()"
-            class="record-answer-btn">
-            <mat-icon>{{isRecording() ? 'stop' : 'mic'}}</mat-icon>
-            {{isRecording() ? 'Stop Recording' : 'Record Answer'}}
-          </button>
-          
-          <button 
-            mat-raised-button 
-            color="primary"
-            [disabled]="!canGoNext() || isLoading()"
-            (click)="nextQuestion()"
-            class="next-btn">
-            {{isLastQuestion() ? 'Submit Interview' : 'Next Question'}}
-            <mat-icon>{{isLastQuestion() ? 'send' : 'arrow_forward'}}</mat-icon>
-          </button>
-        </div>
-      </div>
-    </div>
-  }
+			<!-- Question Section -->
+			<div class="question-section">
+				<div class="question-bubble">
+					<p class="question-text">{{currentQuestion()?.question}}</p>
+				</div>
+			</div>
 
-  <!-- End Screen -->
-  @if (phase() === 'completed') {
-    <div class="completion-section">
-      <div class="completion-header">
-        <mat-icon class="success-icon">check_circle</mat-icon>
-        <h2>Interview Completed!</h2>
-        <p>Thank you for participating in the mock interview.</p>
-      </div>
-      
-      <div class="completion-actions">
-        <button mat-raised-button color="primary" (click)="viewResults()">
-          View Results
-        </button>
-        <button mat-button (click)="closeModal()">
-          Close
-        </button>
-      </div>
-    </div>
-  }
+			<!-- Answer Section -->
+			<div class="answer-section">
+				@if (currentAnswer()) {
+					<div class="answer-bubble">
+						<p>{{currentAnswer()}}</p>
+					</div>
+				}
+				
+				<div class="recording-controls">
+					<button 
+						mat-raised-button
+						[class.recording]="isRecording()"
+						[disabled]="isLoading()"
+						(click)="isRecording() ? stopRecording() : startRecording()"
+						class="record-answer-btn">
+						<mat-icon>{{isRecording() ? 'stop' : 'mic'}}</mat-icon>
+						{{isRecording() ? 'Stop Recording' : 'Record Answer'}}
+					</button>
+					
+					<button 
+						mat-raised-button 
+						color="primary"
+						[disabled]="!canGoNext() || isLoading()"
+						(click)="nextQuestion()"
+						class="next-btn">
+						{{isLastQuestion() ? 'Submit Interview' : 'Next Question'}}
+						<mat-icon>{{isLastQuestion() ? 'send' : 'arrow_forward'}}</mat-icon>
+					</button>
+				</div>
+			</div>
+			
+			<!-- Answers List for Evaluation -->
+			<div class="answers-list">
+				<h4>Your Answers:</h4>
+				<ol>
+					@for (answer of answers(); track answer.question_id) {
+						<li>{{ answer.answer }}</li>
+					}
+				</ol>
+			</div>
+		</div>
+	}
 
-  <!-- Evaluation Phase -->
-  @if (phase() === 'evaluation' && evaluation()) {
-    <div class="evaluation-content">
-      <div class="results-header">
-        <mat-icon class="results-icon">assessment</mat-icon>
-        <h2>Interview Results</h2>
-      </div>
-      
-      <mat-card class="evaluation-card">
-        <mat-card-content>
-          <div class="score-section">
-            <div class="overall-score">
-              <div class="score-circle">
-                <span class="score-number">{{evaluation()!.overall_score}}</span>
-                <span class="score-percent">%</span>
-              </div>
-              <p>Overall Performance</p>
-            </div>
-          </div>
-          
-          <div class="feedback-section">
-            <h3>Detailed Feedback</h3>
-            <p>{{evaluation()!.feedback}}</p>
-          </div>
+	<!-- End Screen -->
+	@if (phase() === 'completed') {
+		<div class="completion-section">
+			<div class="completion-header">
+				<mat-icon class="success-icon">check_circle</mat-icon>
+				<h3>Interview Completed!</h3>
+				<p>Thank you for participating in the mock interview.</p>
+			</div>
+		</div>
+	}
 
-          <div class="question-scores">
-            <h3>Question Analysis</h3>
-            @for (score of evaluation()!.question_scores; track score.question_id) {
-              <div class="question-score">
-                <div class="score-badge">{{score.score}}%</div>
-                <div class="score-feedback">{{score.feedback}}</div>
-              </div>
-            }
-          </div>
-        </mat-card-content>
-      </mat-card>
-      
-      <div class="evaluation-actions">
-        <button mat-raised-button color="primary" (click)="closeModal()">
-          Done
-        </button>
-      </div>
-    </div>
-  }
-</div>
+	<!-- Evaluation Phase -->
+	@if (phase() === 'evaluation' && evaluation()) {
+		<div class="evaluation-content">
+			<mat-card class="evaluation-card">
+				<mat-card-content>
+					<div class="score-section">
+						<div class="overall-score">
+							<div class="score-circle">
+								<span class="score-number">{{evaluation()!.overall_score}}</span>
+								<span class="score-percent">%</span>
+							</div>
+							<p>Overall Performance</p>
+						</div>
+					</div>
+					
+					<div class="feedback-section">
+						<h3>Detailed Feedback</h3>
+						<p>{{evaluation()!.feedback}}</p>
+					</div>
+
+					<div class="question-scores">
+						<h3>Question Analysis</h3>
+						@for (score of evaluation()!.question_scores; track score.question_id) {
+							<div class="question-score">
+								<div class="score-badge">{{score.score}}%</div>
+								<div class="score-feedback">{{score.feedback}}</div>
+							</div>
+						}
+					</div>
+				</mat-card-content>
+			</mat-card>
+		</div>
+	}
+</mat-dialog-content>
+
+<!-- Modal Footer -->
+<mat-dialog-actions align="end">
+	@if (phase() === 'instructions') {
+		<button mat-button (click)="closeModal()">Cancel</button>
+		<button mat-raised-button color="primary" (click)="startInterview()">Start Interview</button>
+	}
+	
+	@if (phase() === 'interview') {
+		<button mat-button color="warn" (click)="terminateInterview()">
+			<mat-icon>close</mat-icon>
+			Terminate Interview
+		</button>
+	}
+	
+	@if (phase() === 'completed') {
+		<button mat-button (click)="closeModal()">Close</button>
+		<button mat-raised-button color="primary" (click)="viewResults()">View Results</button>
+	}
+	
+	@if (phase() === 'evaluation') {
+		<button mat-raised-button color="primary" (click)="closeModal()">Done</button>
+	}
+</mat-dialog-actions>

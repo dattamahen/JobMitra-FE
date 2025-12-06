@@ -1,28 +1,28 @@
 @if (!isLoginPage()) {
-  <mat-toolbar>
-    <span>JobMitra</span>
-    <span class="spacer"></span>
-    <div class="nav-buttons">
-      @if (currentUser) {
-        <button mat-button type="button" [matMenuTriggerFor]="userMenu" class="user-menu-trigger" (click)="$event.stopPropagation()">
-          <mat-icon>account_circle</mat-icon>
-          <span>{{getUserFullName()}}</span>
-          <mat-icon>arrow_drop_down</mat-icon>
-        </button>
-        <mat-menu #userMenu="matMenu">
-          <button mat-menu-item (click)="logout()">
-            <mat-icon>logout</mat-icon>
-            <span>Logout</span>
-          </button>
-        </mat-menu>
-      } @else {
-        <button mat-button (click)="navigateToLogin()" class="auth-btn">
-          Sign In
-        </button>
-        <button mat-raised-button color="primary" (click)="navigateToSignup()" class="auth-btn">
-          Sign Up
-        </button>
-      }
-    </div>
-  </mat-toolbar>
+	<mat-toolbar>
+		<span>JobMitra</span>
+		<span class="spacer"></span>
+		<div class="nav-buttons">
+			@if (currentUser) {
+				<button mat-button type="button" [matMenuTriggerFor]="userMenu" class="user-menu-trigger" (click)="$event.stopPropagation()">
+					<mat-icon>account_circle</mat-icon>
+					<span>{{getUserFullName()}}</span>
+					<mat-icon>arrow_drop_down</mat-icon>
+				</button>
+				<mat-menu #userMenu="matMenu">
+					<button mat-menu-item (click)="logout()">
+						<mat-icon>logout</mat-icon>
+						<span>Logout</span>
+					</button>
+				</mat-menu>
+			} @else {
+				<button mat-button (click)="navigateToLogin()" class="auth-btn">
+					Sign In
+				</button>
+				<button mat-raised-button color="primary" (click)="navigateToSignup()" class="auth-btn">
+					Sign Up
+				</button>
+			}
+		</div>
+	</mat-toolbar>
 }

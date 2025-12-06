@@ -15,80 +15,83 @@ import { MyJobsPage } from '../pages/my-jobs/my-jobs';
 import { ApplicationsReceivedPage } from '../pages/applications-received/applications-received';
 import { AuthService } from '../services/auth.service';
 import { FeatureUsageService } from '../services/feature-usage.service';
+import { LoadingComponent } from '../shared/components/loading/loading.component';
+import { PAGE_LOADING_CONFIGS } from '../data/page-loading-config';
 
 
 @Component({
-  selector: 'app-dashboard',
-  standalone: true,
-  imports: [
-    CommonModule,
-    SideNav,
-    DashboardPage,
-    JobSearchPage,
-    ApplicationsPage,
-    MockInterviewsPage,
-    ResumeBuilderPage,
-    SkillAssessmentPage,
-    ProfilePage,
-    SettingsPage,
-    PostJobPage,
-    MyJobsPage,
-    ApplicationsReceivedPage,
-
-  ],
-  templateUrl: './dashboard.html',
-  styleUrl: './dashboard.css'
+	selector: 'app-dashboard',
+	standalone: true,
+	imports: [
+		CommonModule,
+		SideNav,
+		DashboardPage,
+		JobSearchPage,
+		ApplicationsPage,
+		MockInterviewsPage,
+		ResumeBuilderPage,
+		SkillAssessmentPage,
+		ProfilePage,
+		SettingsPage,
+		PostJobPage,
+		MyJobsPage,
+		ApplicationsReceivedPage,
+		LoadingComponent
+	],
+	templateUrl: './dashboard.html',
+	styleUrl: './dashboard.css'
 })
 export class Dashboard implements OnInit {
-  currentPage: string = '';
-  userType: string | null = null;
-  
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    private authService: AuthService,
-    public featureUsageService: FeatureUsageService
-  ) {}
+	currentPage: string = '';
+	userType: string | null = null;
+	loadingConfigs = PAGE_LOADING_CONFIGS;
+	
+	constructor(
+		private router: Router,
+		private route: ActivatedRoute,
+		private authService: AuthService,
+		public featureUsageService: FeatureUsageService
+	) {}
 
-  ngOnInit() {
-    // Get user type to determine default page
-    this.userType = this.authService.getUserType();
-    
-    // Listen to route parameter changes
-    this.route.params.subscribe(params => {
-      if (params['page']) {
-        this.currentPage = params['page'];
-      } else {
-        this.currentPage = 'dashboard';
-      }
-    });
+	ngOnInit() {
+		// Get user type to determine default page
+		this.userType = this.authService.getUserType();
+		
+		// Listen to route parameter changes
+		this.route.params.subscribe(params => {
+			if (params['page']) {
+				this.currentPage = params['page'];
+			} else {
+				this.currentPage = 'dashboard';
+			}
+		});
 
-    // Get the current page from URL if no params
-    const urlSegments = this.router.url.split('/');
-    if (urlSegments.length > 2 && urlSegments[2]) {
-      this.currentPage = urlSegments[2];
-    } else if (!this.currentPage) {
-      this.currentPage = 'dashboard';
-    }
-  }
+		// Get the current page from URL if no params
+		const urlSegments = this.router.url.split('/');
+		if (urlSegments.length > 2 && urlSegments[2]) {
+			this.currentPage = urlSegments[2];
+		} else if (!this.currentPage) {
+			this.currentPage = 'dashboard';
+		}
+	}
 
-  onPageSelected(pageId: string) {
-    this.currentPage = pageId;
-    // Navigate to the selected page with URL update
-    if (pageId === 'dashboard') {
-      this.router.navigate(['/dashboard']);
-    } else {
-      this.router.navigate(['/dashboard', pageId]);
-    }
-  }
+	onPageSelected(pageId: string) {
+		this.currentPage = pageId;
+		// Navigate to the selected page with URL update
+		if (pageId === 'dashboard') {
+			this.router.navigate(['/dashboard']);
+		} else {
+			this.router.navigate(['/dashboard', pageId]);
+		}
+	}
 
-  onNavigateToPage(event: {page: string, params?: any}) {
-    this.currentPage = event.page;
-    
-    if (event.params) {
-      this.router.navigate(['/dashboard', event.page], { queryParams: event.params });
-    } else {
-      this.router.navigate(['/dashboard', event.page]);
-    }
-  }
+	onNavigateToPage(event: {page: string, params?: any}) {
+		this.currentPage = event.page;
+		
+		if (event.params) {
+			this.router.navigate(['/dashboard', event.page], { queryParams: event.params });
+		} else {
+			this.router.navigate(['/dashboard', event.page]);
+		}
+	}
 }

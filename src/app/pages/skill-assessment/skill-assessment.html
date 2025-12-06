@@ -1,416 +1,416 @@
 <div class="page-container">
-  <div class="assessment-content">
-    <!-- Mock Interview Usage Status -->
-    <div class="usage-status-card">
-      <div class="usage-info">
-        <h3><mat-icon>smart_toy</mat-icon> AI Mock Interview Status</h3>
-        <div class="usage-details">
-          <span class="usage-count">{{ getUsageStatus() }}</span>
-          @if (!canTakeMockInterview()) {
-            <span class="next-available">
-              Next available: {{ getNextInterviewAvailableTime() }}
-            </span>
-          }
-          @if (canTakeMockInterview()) {
-            <span class="available-now">
-              <mat-icon>check_circle</mat-icon> Available now!
-            </span>
-          }
-        </div>
-      </div>
-      <div class="usage-limits">
-        <small>{{ subscriptionLimits.mockInterviewsPerWeek }} interviews per week • {{ mockInterviewConfig.sessionDurationMinutes }} min sessions • {{ getCurrentPlanName() }}</small>
-      </div>
-    </div>
+	<div class="assessment-content">
+		<!-- Mock Interview Usage Status -->
+		<div class="usage-status-card">
+			<div class="usage-info">
+				<h3><mat-icon>smart_toy</mat-icon> AI Mock Interview Status</h3>
+				<div class="usage-details">
+					<span class="usage-count">{{ getUsageStatus() }}</span>
+					@if (!canTakeMockInterview()) {
+						<span class="next-available">
+							Next available: {{ getNextInterviewAvailableTime() }}
+						</span>
+					}
+					@if (canTakeMockInterview()) {
+						<span class="available-now">
+							<mat-icon>check_circle</mat-icon> Available now!
+						</span>
+					}
+				</div>
+			</div>
+			<div class="usage-limits">
+				<small>{{ subscriptionLimits.mockInterviewsPerWeek }} interviews per week • {{ mockInterviewConfig.sessionDurationMinutes }} min sessions • {{ getCurrentPlanName() }}</small>
+			</div>
+		</div>
 
-    @if (hasSkills()) {
-      <div class="skill-categories">
-        <div class="category-card">
-          <h3><mat-icon>computer</mat-icon> Technical Skills</h3>
-          <div class="skills-list">
-            @for (skill of getTechnicalSkills(); track skill.id) {
-              <div class="skill-item">
-                <span class="skill-name">{{ skill.name }}</span>
-                <div class="skill-level">
-                  <div class="progress-bar">
-                    <div class="progress" [style.width.%]="skill.currentLevel" [style.background]="getProgressColor(skill.currentLevel)"></div>
-                  </div>
-                  <span class="level-text">{{ skill.levelText }}</span>
-                </div>
-                <div class="skill-actions">
-                  <button class="interview-btn" 
-                          (click)="startMockInterview(skill)">
-                    <mat-icon>mic</mat-icon> Mock Interview
-                  </button>
-                </div>
-              </div>
-            }
-          </div>
-        </div>
-        
-        <div class="category-card">
-          <h3><mat-icon>psychology</mat-icon> Soft Skills</h3>
-          <div class="skills-list">
-            @for (skill of getSoftSkills(); track skill.id) {
-              <div class="skill-item">
-                <span class="skill-name">{{ skill.name }}</span>
-                <div class="skill-level">
-                  <div class="progress-bar">
-                    <div class="progress" [style.width.%]="skill.currentLevel" [style.background]="getProgressColor(skill.currentLevel)"></div>
-                  </div>
-                  <span class="level-text">{{ skill.levelText }}</span>
-                </div>
-                <div class="skill-actions">
-                  <button class="interview-btn" 
-                          (click)="startMockInterview(skill)">
-                    <mat-icon>mic</mat-icon> Mock Interview
-                  </button>
-                </div>
-              </div>
-            }
-          </div>
-        </div>
-      </div>
-    } @else {
-      <div class="no-skills-message">
-        <div class="no-skills-content">
-          <mat-icon class="no-skills-icon">psychology</mat-icon>
-          <h3>No Skills Found</h3>
-          <p>Update your profile to see your skills here and start taking assessments.</p>
-          <button class="update-profile-btn" (click)="navigateToProfile()">
-            <mat-icon>person</mat-icon> Update Profile
-          </button>
-        </div>
-      </div>
-    }
-    
-    <div class="assessment-history">
-      <h2>Recent Assessments</h2>
-      <div class="history-list">
-        @for (item of assessmentHistory; track item.id) {
-          <div class="history-item">
-            <div class="assessment-info">
-              <h4>{{ item.skillName }}</h4>
-              <p>Completed: {{ formatDate(item.completedDate) }}</p>
-            </div>
-            <div class="assessment-result">
-              <span class="score">{{ item.score }}%</span>
-              <span [class]="getBadgeClass(item.level)">{{ item.level }}</span>
-              <button class="certificate-btn" (click)="getCertificate(item)" [disabled]="!item.hasCertificate">
-                {{ item.hasCertificate ? 'Get Certificate' : 'No Certificate' }}
-              </button>
-            </div>
-          </div>
-        }
-      </div>
-    </div>
-    
-    @if (getRecommendedSkills().length > 0) {
-      <div class="recommended-skills">
-        <h2><mat-icon>auto_awesome</mat-icon> AI Recommended Skills</h2>
-        <p>Based on your profile and target roles, we recommend improving these skills:</p>
-        <div class="recommendation-list">
-          @for (skill of getRecommendedSkills(); track skill.id) {
-            <div class="recommendation-item">
-              <div class="recommendation-info">
-                <span class="skill-name">{{ skill.name }}</span>
-                <span class="relevance">{{ skill.relevanceReason }}</span>
-              </div>
-              <button class="learn-btn" (click)="startLearning(skill)">Start Learning</button>
-            </div>
-          }
-        </div>
-      </div>
-    }
+		@if (hasSkills()) {
+			<div class="skill-categories">
+				<div class="category-card">
+					<h3><mat-icon>computer</mat-icon> Technical Skills</h3>
+					<div class="skills-list">
+						@for (skill of getTechnicalSkills(); track skill.id) {
+							<div class="skill-item">
+								<span class="skill-name">{{ skill.name }}</span>
+								<div class="skill-level">
+									<div class="progress-bar">
+										<div class="progress" [style.width.%]="skill.currentLevel" [style.background]="getProgressColor(skill.currentLevel)"></div>
+									</div>
+									<span class="level-text">{{ skill.levelText }}</span>
+								</div>
+								<div class="skill-actions">
+									<button class="interview-btn" 
+													(click)="startMockInterview(skill)">
+										<mat-icon>mic</mat-icon> Mock Interview
+									</button>
+								</div>
+							</div>
+						}
+					</div>
+				</div>
+				
+				<div class="category-card">
+					<h3><mat-icon>psychology</mat-icon> Soft Skills</h3>
+					<div class="skills-list">
+						@for (skill of getSoftSkills(); track skill.id) {
+							<div class="skill-item">
+								<span class="skill-name">{{ skill.name }}</span>
+								<div class="skill-level">
+									<div class="progress-bar">
+										<div class="progress" [style.width.%]="skill.currentLevel" [style.background]="getProgressColor(skill.currentLevel)"></div>
+									</div>
+									<span class="level-text">{{ skill.levelText }}</span>
+								</div>
+								<div class="skill-actions">
+									<button class="interview-btn" 
+													(click)="startMockInterview(skill)">
+										<mat-icon>mic</mat-icon> Mock Interview
+									</button>
+								</div>
+							</div>
+						}
+					</div>
+				</div>
+			</div>
+		} @else {
+			<div class="no-skills-message">
+				<div class="no-skills-content">
+					<mat-icon class="no-skills-icon">psychology</mat-icon>
+					<h3>No Skills Found</h3>
+					<p>Update your profile to see your skills here and start taking assessments.</p>
+					<button class="update-profile-btn" (click)="navigateToProfile()">
+						<mat-icon>person</mat-icon> Update Profile
+					</button>
+				</div>
+			</div>
+		}
+		
+		<div class="assessment-history">
+			<h2>Recent Assessments</h2>
+			<div class="history-list">
+				@for (item of assessmentHistory; track item.id) {
+					<div class="history-item">
+						<div class="assessment-info">
+							<h4>{{ item.skillName }}</h4>
+							<p>Completed: {{ formatDate(item.completedDate) }}</p>
+						</div>
+						<div class="assessment-result">
+							<span class="score">{{ item.score }}%</span>
+							<span [class]="getBadgeClass(item.level)">{{ item.level }}</span>
+							<button class="certificate-btn" (click)="getCertificate(item)" [disabled]="!item.hasCertificate">
+								{{ item.hasCertificate ? 'Get Certificate' : 'No Certificate' }}
+							</button>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+		
+		@if (getRecommendedSkills().length > 0) {
+			<div class="recommended-skills">
+				<h2><mat-icon>auto_awesome</mat-icon> AI Recommended Skills</h2>
+				<p>Based on your profile and target roles, we recommend improving these skills:</p>
+				<div class="recommendation-list">
+					@for (skill of getRecommendedSkills(); track skill.id) {
+						<div class="recommendation-item">
+							<div class="recommendation-info">
+								<span class="skill-name">{{ skill.name }}</span>
+								<span class="relevance">{{ skill.relevanceReason }}</span>
+							</div>
+							<button class="learn-btn" (click)="startLearning(skill)">Start Learning</button>
+						</div>
+					}
+				</div>
+			</div>
+		}
 
-    <!-- Learning Resources Modal -->
-    @if (showLearningModal) {
-      <div class="modal-overlay" (click)="hideLearningModal()">
-        <div class="modal-content" (click)="$event.stopPropagation()">
-          <div class="modal-header">
-            <h2><mat-icon>school</mat-icon> Learning Resources for {{ selectedSkill }}</h2>
-            <button class="close-btn" (click)="hideLearningModal()">×</button>
-          </div>
-          
-          <div class="modal-body">
-            <!-- Learning Resources List -->
-            @if (selectedSkillResources.length > 0 && !showContributeForm) {
-              <div class="learning-resources-list">
-                @for (resource of selectedSkillResources; track resource.id) {
-                  <div class="resource-item">
-                    <div class="resource-thumbnail" (click)="openVideo(resource.youtubeUrl)">
-                      <img [src]="getYouTubeThumbnail(resource.youtubeUrl)" 
-                           [alt]="resource.title"
-                           loading="lazy">
-                      <div class="play-overlay">
-                        <div class="play-button"><mat-icon>play_arrow</mat-icon></div>
-                      </div>
-                      <div class="duration-badge">{{ resource.duration }}</div>
-                    </div>
-                    
-                    <div class="resource-info">
-                      <h3 class="resource-title">{{ resource.title }}</h3>
-                      <p class="resource-description">{{ resource.description }}</p>
-                      
-                      <div class="resource-meta">
-                        <div class="channel-info">
-                          <span class="channel-name">{{ resource.channel }}</span>
-                          @if (resource.rating) {
-                            <div class="rating">
-                              @for (star of getStars(resource.rating); track $index) {
-                                <span class="star">★</span>
-                              }
-                              <span class="rating-text">{{ resource.rating }}</span>
-                            </div>
-                          }
-                        </div>
-                        
-                        <div class="resource-tags">
-                          <span [class]="getLevelBadgeClass(resource.level)">{{ resource.level }}</span>
-                          <span class="skill-tag">{{ resource.skill }}</span>
-                        </div>
-                      </div>
-                      
-                      <button class="watch-btn" (click)="openVideo(resource.youtubeUrl)">
-                        Watch on YouTube
-                      </button>
-                    </div>
-                  </div>
-                }
-              </div>
-            }
-            
-            <!-- No Resources Found -->
-            @if (selectedSkillResources.length === 0 && !showContributeForm) {
-              <div class="no-resources">
-                <div class="no-resources-content">
-                  <div class="no-resources-icon"><mat-icon>school</mat-icon></div>
-                  <h3>No Learning Resources Found</h3>
-                  <p>We don't have learning resources for <strong>{{ selectedSkill }}</strong> yet.</p>
-                  <p>Help the community by sharing your knowledge!</p>
-                  <button class="contribute-btn" (click)="showContributeKnowledge()">
-                    Share Your Knowledge
-                  </button>
-                </div>
-              </div>
-            }
+		<!-- Learning Resources Modal -->
+		@if (showLearningModal) {
+			<div class="modal-overlay" (click)="hideLearningModal()">
+				<div class="modal-content" (click)="$event.stopPropagation()">
+					<div class="modal-header">
+						<h2><mat-icon>school</mat-icon> Learning Resources for {{ selectedSkill }}</h2>
+						<button class="close-btn" (click)="hideLearningModal()">×</button>
+					</div>
+					
+					<div class="modal-body">
+						<!-- Learning Resources List -->
+						@if (selectedSkillResources.length > 0 && !showContributeForm) {
+							<div class="learning-resources-list">
+								@for (resource of selectedSkillResources; track resource.id) {
+									<div class="resource-item">
+										<div class="resource-thumbnail" (click)="openVideo(resource.youtubeUrl)">
+											<img [src]="getYouTubeThumbnail(resource.youtubeUrl)" 
+													[alt]="resource.title"
+													loading="lazy">
+											<div class="play-overlay">
+												<div class="play-button"><mat-icon>play_arrow</mat-icon></div>
+											</div>
+											<div class="duration-badge">{{ resource.duration }}</div>
+										</div>
+										
+										<div class="resource-info">
+											<h3 class="resource-title">{{ resource.title }}</h3>
+											<p class="resource-description">{{ resource.description }}</p>
+											
+											<div class="resource-meta">
+												<div class="channel-info">
+													<span class="channel-name">{{ resource.channel }}</span>
+													@if (resource.rating) {
+														<div class="rating">
+															@for (star of getStars(resource.rating); track $index) {
+																<span class="star">★</span>
+															}
+															<span class="rating-text">{{ resource.rating }}</span>
+														</div>
+													}
+												</div>
+												
+												<div class="resource-tags">
+													<span [class]="getLevelBadgeClass(resource.level)">{{ resource.level }}</span>
+													<span class="skill-tag">{{ resource.skill }}</span>
+												</div>
+											</div>
+											
+											<button class="watch-btn" (click)="openVideo(resource.youtubeUrl)">
+												Watch on YouTube
+											</button>
+										</div>
+									</div>
+								}
+							</div>
+						}
+						
+						<!-- No Resources Found -->
+						@if (selectedSkillResources.length === 0 && !showContributeForm) {
+							<div class="no-resources">
+								<div class="no-resources-content">
+									<div class="no-resources-icon"><mat-icon>school</mat-icon></div>
+									<h3>No Learning Resources Found</h3>
+									<p>We don't have learning resources for <strong>{{ selectedSkill }}</strong> yet.</p>
+									<p>Help the community by sharing your knowledge!</p>
+									<button class="contribute-btn" (click)="showContributeKnowledge()">
+										Share Your Knowledge
+									</button>
+								</div>
+							</div>
+						}
 
-            <!-- Contribute Knowledge Form -->
-            @if (showContributeForm) {
-              <div class="contribute-form">
-                <div class="form-header">
-                  <h3><mat-icon>share</mat-icon> Share Your Knowledge for {{ selectedSkill }}</h3>
-                  <p>Help others learn by sharing valuable learning resources!</p>
-                </div>
-                
-                <form (submit)="submitContribution($event)">
-                  <div class="form-group">
-                    <label for="title">Resource Title*</label>
-                    <input type="text" id="title" name="title" required 
-                           placeholder="e.g., Complete {{ selectedSkill }} Tutorial for Beginners">
-                  </div>
-                  
-                  <div class="form-group">
-                    <label for="description">Description*</label>
-                    <textarea id="description" name="description" required rows="3"
-                              placeholder="Brief description of what this resource covers..."></textarea>
-                  </div>
-                  
-                  <div class="form-group">
-                    <label for="youtubeUrl">YouTube URL*</label>
-                    <input type="url" id="youtubeUrl" name="youtubeUrl" required 
-                           placeholder="https://www.youtube.com/watch?v=...">
-                  </div>
-                  
-                  <div class="form-row">
-                    <div class="form-group">
-                      <label for="level">Difficulty Level*</label>
-                      <select id="level" name="level" required>
-                        <option value="">Select Level</option>
-                        <option value="beginner">Beginner</option>
-                        <option value="intermediate">Intermediate</option>
-                        <option value="advanced">Advanced</option>
-                      </select>
-                    </div>
-                    
-                    <div class="form-group">
-                      <label for="submitterName">Your Name*</label>
-                      <input type="text" id="submitterName" name="submitterName" required 
-                             placeholder="Your name">
-                    </div>
-                  </div>
-                  
-                  <div class="form-actions">
-                    <button type="button" class="cancel-btn" (click)="hideContributeForm()">
-                      Cancel
-                    </button>
-                    <button type="submit" class="submit-btn">
-                      Submit Contribution
-                    </button>
-                  </div>
-                </form>
-              </div>
-            }
+						<!-- Contribute Knowledge Form -->
+						@if (showContributeForm) {
+							<div class="contribute-form">
+								<div class="form-header">
+									<h3><mat-icon>share</mat-icon> Share Your Knowledge for {{ selectedSkill }}</h3>
+									<p>Help others learn by sharing valuable learning resources!</p>
+								</div>
+								
+								<form (submit)="submitContribution($event)">
+									<div class="form-group">
+										<label for="title">Resource Title*</label>
+										<input type="text" id="title" name="title" required 
+													placeholder="e.g., Complete {{ selectedSkill }} Tutorial for Beginners">
+									</div>
+									
+									<div class="form-group">
+										<label for="description">Description*</label>
+										<textarea id="description" name="description" required rows="3"
+															placeholder="Brief description of what this resource covers..."></textarea>
+									</div>
+									
+									<div class="form-group">
+										<label for="youtubeUrl">YouTube URL*</label>
+										<input type="url" id="youtubeUrl" name="youtubeUrl" required 
+													placeholder="https://www.youtube.com/watch?v=...">
+									</div>
+									
+									<div class="form-row">
+										<div class="form-group">
+											<label for="level">Difficulty Level*</label>
+											<select id="level" name="level" required>
+												<option value="">Select Level</option>
+												<option value="beginner">Beginner</option>
+												<option value="intermediate">Intermediate</option>
+												<option value="advanced">Advanced</option>
+											</select>
+										</div>
+										
+										<div class="form-group">
+											<label for="submitterName">Your Name*</label>
+											<input type="text" id="submitterName" name="submitterName" required 
+														placeholder="Your name">
+										</div>
+									</div>
+									
+									<div class="form-actions">
+										<button type="button" class="cancel-btn" (click)="hideContributeForm()">
+											Cancel
+										</button>
+										<button type="submit" class="submit-btn">
+											Submit Contribution
+										</button>
+									</div>
+								</form>
+							</div>
+						}
 
-            <!-- Add Resources Button (when resources exist) -->
-            @if (selectedSkillResources.length > 0 && !showContributeForm) {
-              <div class="modal-footer">
-                <button class="add-resource-btn" (click)="showContributeKnowledge()">
-                  <mat-icon>add</mat-icon> Add More Resources
-                </button>
-              </div>
-            }
-          </div>
-        </div>
-      </div>
-    }
+						<!-- Add Resources Button (when resources exist) -->
+						@if (selectedSkillResources.length > 0 && !showContributeForm) {
+							<div class="modal-footer">
+								<button class="add-resource-btn" (click)="showContributeKnowledge()">
+									<mat-icon>add</mat-icon> Add More Resources
+								</button>
+							</div>
+						}
+					</div>
+				</div>
+			</div>
+		}
 
-    <!-- Mock Interview Modal -->
-    @if (showMockInterviewModal) {
-      <div class="modal-overlay" (click)="closeMockInterviewModal()">
-        <div class="modal-content interview-modal" (click)="$event.stopPropagation()">
-          <div class="modal-header">
-            <h2><mat-icon>smart_toy</mat-icon> AI Mock Interview - {{ selectedSkill }}</h2>
-            <button class="close-btn" (click)="closeMockInterviewModal()">×</button>
-          </div>
-          
-          <div class="modal-body">
-            <!-- Interview Setup -->
-            @if (!mockInterviewInProgress) {
-              <div class="interview-setup">
-                <div class="interview-info">
-                  <div class="interview-details">
-                    <h3>Interview Details</h3>
-                    <ul>
-                      <li><strong>Skill:</strong> {{ selectedSkill }}</li>
-                      <li><strong>Duration:</strong> {{ mockInterviewConfig.sessionDurationMinutes }} minutes</li>
-                      <li><strong>Questions:</strong> {{ mockInterviewConfig.questionsPerSession }}</li>
-                      <li><strong>Type:</strong> Technical & Behavioral</li>
-                    </ul>
-                  </div>
-                  
-                  <div class="interview-tips">
-                    <h3><mat-icon>lightbulb</mat-icon> Tips for Success</h3>
-                    <ul>
-                      <li>Find a quiet environment</li>
-                      <li>Speak clearly and think out loud</li>
-                      <li>Take your time to formulate answers</li>
-                      <li>Use specific examples from your experience</li>
-                    </ul>
-                  </div>
-                </div>
-                
-                <div class="sample-questions">
-                  <h3>Sample Questions Preview</h3>
-                  <div class="questions-preview">
-                    @for (question of currentInterviewQuestions.slice(0, 3); track $index) {
-                      <div class="question-item">
-                        <span class="question-text">{{ question }}</span>
-                      </div>
-                    }
-                    @if (currentInterviewQuestions.length > 3) {
-                      <div class="more-questions">
-                        <span>+ {{ currentInterviewQuestions.length - 3 }} more questions</span>
-                      </div>
-                    }
-                  </div>
-                </div>
-                
-                <div class="interview-actions">
-                  <button class="cancel-btn" (click)="closeMockInterviewModal()">
-                    Cancel
-                  </button>
-                  <button class="start-interview-btn" (click)="beginInterview()">
-                    <mat-icon>play_arrow</mat-icon> Start Interview
-                  </button>
-                </div>
-              </div>
-            }
-            
-            <!-- Interview In Progress -->
-            @if (mockInterviewInProgress) {
-              <div class="interview-in-progress">
-                <div class="progress-indicator">
-                  <div class="loading-spinner"></div>
-                  <h3>Interview in Progress...</h3>
-                  <p>Our AI is conducting your {{ selectedSkill }} interview.</p>
-                  <div class="interview-status">
-                    <span class="status-text">Analyzing your responses and providing feedback</span>
-                  </div>
-                </div>
-              </div>
-            }
-          </div>
-        </div>
-      </div>
-    }
-  </div>
+		<!-- Mock Interview Modal -->
+		@if (showMockInterviewModal) {
+			<div class="modal-overlay" (click)="closeMockInterviewModal()">
+				<div class="modal-content interview-modal" (click)="$event.stopPropagation()">
+					<div class="modal-header">
+						<h2><mat-icon>smart_toy</mat-icon> AI Mock Interview - {{ selectedSkill }}</h2>
+						<button class="close-btn" (click)="closeMockInterviewModal()">×</button>
+					</div>
+					
+					<div class="modal-body">
+						<!-- Interview Setup -->
+						@if (!mockInterviewInProgress) {
+							<div class="interview-setup">
+								<div class="interview-info">
+									<div class="interview-details">
+										<h3>Interview Details</h3>
+										<ul>
+											<li><strong>Skill:</strong> {{ selectedSkill }}</li>
+											<li><strong>Duration:</strong> {{ mockInterviewConfig.sessionDurationMinutes }} minutes</li>
+											<li><strong>Questions:</strong> {{ mockInterviewConfig.questionsPerSession }}</li>
+											<li><strong>Type:</strong> Technical & Behavioral</li>
+										</ul>
+									</div>
+									
+									<div class="interview-tips">
+										<h3><mat-icon>lightbulb</mat-icon> Tips for Success</h3>
+										<ul>
+											<li>Find a quiet environment</li>
+											<li>Speak clearly and think out loud</li>
+											<li>Take your time to formulate answers</li>
+											<li>Use specific examples from your experience</li>
+										</ul>
+									</div>
+								</div>
+								
+								<div class="sample-questions">
+									<h3>Sample Questions Preview</h3>
+									<div class="questions-preview">
+										@for (question of currentInterviewQuestions.slice(0, 3); track $index) {
+											<div class="question-item">
+												<span class="question-text">{{ question }}</span>
+											</div>
+										}
+										@if (currentInterviewQuestions.length > 3) {
+											<div class="more-questions">
+												<span>+ {{ currentInterviewQuestions.length - 3 }} more questions</span>
+											</div>
+										}
+									</div>
+								</div>
+								
+								<div class="interview-actions">
+									<button class="cancel-btn" (click)="closeMockInterviewModal()">
+										Cancel
+									</button>
+									<button class="start-interview-btn" (click)="beginInterview()">
+										<mat-icon>play_arrow</mat-icon> Start Interview
+									</button>
+								</div>
+							</div>
+						}
+						
+						<!-- Interview In Progress -->
+						@if (mockInterviewInProgress) {
+							<div class="interview-in-progress">
+								<div class="progress-indicator">
+									<div class="loading-spinner"></div>
+									<h3>Interview in Progress...</h3>
+									<p>Our AI is conducting your {{ selectedSkill }} interview.</p>
+									<div class="interview-status">
+										<span class="status-text">Analyzing your responses and providing feedback</span>
+									</div>
+								</div>
+							</div>
+						}
+					</div>
+				</div>
+			</div>
+		}
+	</div>
 </div>
 
 <!-- Subscription Modal -->
 @if (showSubscriptionModal) {
-  <div class="modal-overlay" (click)="closeSubscriptionModal()">
-    <div class="subscription-modal" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h2>Upgrade Your Plan</h2>
-        <button class="close-btn" (click)="closeSubscriptionModal()">&times;</button>
-      </div>
-      
-      <div class="modal-content">
-        <p class="upgrade-message">
-          You've reached your weekly limit of free mock interviews. 
-          Upgrade to continue improving your skills!
-        </p>
-        
-        <div class="subscription-plans">
-          @for (plan of subscriptionPlans; track plan.id) {
-            <div class="plan-card" 
-                 [class.current-plan]="userSubscription?.planId === plan.id"
-                 [class.recommended]="plan.isPopular">
-              
-              <div class="plan-header">
-                <h3>{{ plan.name }}</h3>
-                <div class="plan-price">
-                  <span class="price">{{ formatPrice(plan.price) }}</span>
-                  <span class="period">/{{ plan.period }}</span>
-                </div>
-                @if (plan.isPopular) {
-                  <div class="plan-badge">Most Popular</div>
-                }
-              </div>
-              
-              <div class="plan-features">
-                @for (feature of getPlanFeatures(plan.id); track $index) {
-                  <div class="feature">
-                    <mat-icon class="check-icon">check</mat-icon>
-                    <span>{{ feature }}</span>
-                  </div>
-                }
-              </div>
-              
-              <button class="select-plan-btn" 
-                      [disabled]="userSubscription?.planId === plan.id"
-                      (click)="selectSubscriptionPlan(plan.id)">
-                @if (userSubscription?.planId === plan.id) {
-                  <span>Current Plan</span>
-                }
-                @if (userSubscription?.planId !== plan.id && plan.price === 0) {
-                  <span>Continue with Free</span>
-                }
-                @if (userSubscription?.planId !== plan.id && plan.price > 0) {
-                  <span>Upgrade to {{ plan.name }}</span>
-                }
-              </button>
-            </div>
-          }
-        </div>
-        
-        <div class="subscription-note">
-          <p><small>• All plans include access to learning resources and job search tools</small></p>
-          <p><small>• Cancel anytime with no commitment</small></p>
-          <p><small>• Secure payment processing with 30-day money-back guarantee</small></p>
-        </div>
-      </div>
-    </div>
-  </div>
+	<div class="modal-overlay" (click)="closeSubscriptionModal()">
+		<div class="subscription-modal" (click)="$event.stopPropagation()">
+			<div class="modal-header">
+				<h2>Upgrade Your Plan</h2>
+				<button class="close-btn" (click)="closeSubscriptionModal()">&times;</button>
+			</div>
+			
+			<div class="modal-content">
+				<p class="upgrade-message">
+					You've reached your weekly limit of free mock interviews. 
+					Upgrade to continue improving your skills!
+				</p>
+				
+				<div class="subscription-plans">
+					@for (plan of subscriptionPlans; track plan.id) {
+						<div class="plan-card" 
+								[class.current-plan]="userSubscription?.planId === plan.id"
+								[class.recommended]="plan.isPopular">
+							
+							<div class="plan-header">
+								<h3>{{ plan.name }}</h3>
+								<div class="plan-price">
+									<span class="price">{{ formatPrice(plan.price) }}</span>
+									<span class="period">/{{ plan.period }}</span>
+								</div>
+								@if (plan.isPopular) {
+									<div class="plan-badge">Most Popular</div>
+								}
+							</div>
+							
+							<div class="plan-features">
+								@for (feature of getPlanFeatures(plan.id); track $index) {
+									<div class="feature">
+										<mat-icon class="check-icon">check</mat-icon>
+										<span>{{ feature }}</span>
+									</div>
+								}
+							</div>
+							
+							<button class="select-plan-btn" 
+											[disabled]="userSubscription?.planId === plan.id"
+											(click)="selectSubscriptionPlan(plan.id)">
+								@if (userSubscription?.planId === plan.id) {
+									<span>Current Plan</span>
+								}
+								@if (userSubscription?.planId !== plan.id && plan.price === 0) {
+									<span>Continue with Free</span>
+								}
+								@if (userSubscription?.planId !== plan.id && plan.price > 0) {
+									<span>Upgrade to {{ plan.name }}</span>
+								}
+							</button>
+						</div>
+					}
+				</div>
+				
+				<div class="subscription-note">
+					<p><small>• All plans include access to learning resources and job search tools</small></p>
+					<p><small>• Cancel anytime with no commitment</small></p>
+					<p><small>• Secure payment processing with 30-day money-back guarantee</small></p>
+				</div>
+			</div>
+		</div>
+	</div>
 }

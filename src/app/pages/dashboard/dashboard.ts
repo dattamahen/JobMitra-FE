@@ -16,91 +16,97 @@ import { DashboardData, DashboardStats, ActivityItem } from '../../types/dashboa
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 
 @Component({
-  selector: 'app-dashboard-page',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule, 
-    MatGridListModule, 
-    MatListModule, 
-    MatIconModule,
-    MatProgressBarModule,
-    MatButtonModule,
-    MatBadgeModule,
-    MatDividerModule,
-    LoadingComponent
-  ],
-  templateUrl: './dashboard.html',
-  styleUrls: ['./dashboard.css']
+	selector: 'app-dashboard-page',
+	standalone: true,
+	imports: [
+		CommonModule,
+		MatCardModule, 
+		MatGridListModule, 
+		MatListModule, 
+		MatIconModule,
+		MatProgressBarModule,
+		MatButtonModule,
+		MatBadgeModule,
+		MatDividerModule,
+		LoadingComponent
+	],
+	templateUrl: './dashboard.html',
+	styleUrls: ['./dashboard.css']
 })
 export class DashboardPage implements OnInit, OnDestroy {
-  dashboardData$!: Observable<DashboardData>;
-  isLoading = true;
-  
-  private readonly destroy$ = new Subject<void>();
+	dashboardData$!: Observable<DashboardData>;
+	isLoading = true;
+	
+	private readonly destroy$ = new Subject<void>();
 
-  constructor(private dashboardService: DashboardService) {}
+	constructor(private dashboardService: DashboardService) {}
 
-  ngOnInit(): void {
-    this.loadDashboardData();
-  }
+	ngOnInit(): void {
+		this.loadDashboardData();
+	}
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
+	ngOnDestroy(): void {
+		this.destroy$.next();
+		this.destroy$.complete();
+	}
 
-  private loadDashboardData(): void {
-    this.isLoading = true;
-    this.dashboardData$ = this.dashboardService.getDashboardData();
-    
-    // Show loading state for 5 seconds as requested
-    setTimeout(() => {
-      this.isLoading = false;
-    }, 5000);
-  }
+	private loadDashboardData(): void {
+		this.isLoading = true;
+		this.dashboardData$ = this.dashboardService.getDashboardData();
+		
+		this.dashboardService.getDashboardData()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: () => {
+					this.isLoading = false;
+				},
+				error: () => {
+					this.isLoading = false;
+				}
+			});
+	}
 
-  refreshDashboard(): void {
-    this.isLoading = true;
-    this.loadDashboardData();
-  }
+	refreshDashboard(): void {
+		this.isLoading = true;
+		this.loadDashboardData();
+	}
 
-  // Helper methods for template
-  getActivityTimeAgo(timestamp: Date | string): string {
-    return this.dashboardService.formatTimeAgo(timestamp);
-  }
+	// Helper methods for template
+	getActivityTimeAgo(timestamp: Date | string): string {
+		return this.dashboardService.formatTimeAgo(timestamp);
+	}
 
-  getTrendIcon(direction: 'up' | 'down' | 'neutral'): string {
-    return this.dashboardService.getTrendIcon(direction);
-  }
+	getTrendIcon(direction: 'up' | 'down' | 'neutral'): string {
+		return this.dashboardService.getTrendIcon(direction);
+	}
 
-  getTrendColor(direction: 'up' | 'down' | 'neutral'): string {
-    return this.dashboardService.getTrendColor(direction);
-  }
+	getTrendColor(direction: 'up' | 'down' | 'neutral'): string {
+		return this.dashboardService.getTrendColor(direction);
+	}
 
-  formatStatValue(stat: DashboardStats): string {
-    return this.dashboardService.formatValue(stat);
-  }
+	formatStatValue(stat: DashboardStats): string {
+		return this.dashboardService.formatValue(stat);
+	}
 
-  getActivityStatusIcon(status?: string): string {
-    switch (status) {
-      case 'completed': return 'check_circle';
-      case 'pending': return 'schedule';
-      case 'in-progress': return 'hourglass_empty';
-      case 'cancelled': return 'cancel';
-      default: return 'info';
-    }
-  }
+	getActivityStatusIcon(status?: string): string {
+		switch (status) {
+			case 'completed': return 'check_circle';
+			case 'pending': return 'schedule';
+			case 'in-progress': return 'hourglass_empty';
+			case 'cancelled': return 'cancel';
+			default: return 'info';
+		}
+	}
 
-  getActivityTypeColor(type: ActivityItem['type']): string {
-    const colorMap: Record<ActivityItem['type'], string> = {
-      'application': 'primary',
-      'interview': 'accent', 
-      'assessment': 'warn',
-      'profile': 'success',
-      'resume': 'info',
-      'other': 'primary'
-    };
-    return colorMap[type] || 'primary';
-  }
+	getActivityTypeColor(type: ActivityItem['type']): string {
+		const colorMap: Record<ActivityItem['type'], string> = {
+			'application': 'primary',
+			'interview': 'accent', 
+			'assessment': 'warn',
+			'profile': 'success',
+			'resume': 'info',
+			'other': 'primary'
+		};
+		return colorMap[type] || 'primary';
+	}
 }

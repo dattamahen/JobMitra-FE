@@ -1,10 +1,10 @@
 /* Global app styles */
 * {
-  box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 /* Remove default margin from router outlet content */
 router-outlet + * {
-  display: block;
-  width: 100%;
+	display: block;
+	width: 100%;
 }

@@ -1,223 +1,152 @@
-.page-container { 
-  padding: 20px; 
-}
-
 .application-card {
-  margin-bottom: 16px;
+	margin-bottom: 16px;
 }
 
 .application-card mat-card-header {
-  position: relative;
+	position: relative;
 }
 
 .header-actions {
-  position: absolute;
-  top: 16px;
-  right: 16px;
+	position: absolute;
+	top: 16px;
+	right: 16px;
 }
 
 .header-actions button {
-  font-size: 12px;
-  padding: 6px 12px;
-  min-width: auto;
-  height: 32px;
+	font-size: 12px;
+	padding: 6px 12px;
+	min-width: auto;
+	height: 32px;
 }
 
 .status-chip {
-  position: absolute;
-  top: 16px;
-  right: 16px;
+	position: absolute;
+	top: 16px;
+	right: 16px;
 }
 
-.status-pending {
-  background-color: #fff3cd !important;
-  color: #856404 !important;
-}
 
-.status-interview {
-  background-color: #d4edda !important;
-  color: #155724 !important;
-}
 
-.status-rejected {
-  background-color: #f8d7da !important;
-  color: #721c24 !important;
-}
+
+
+
 
 .applied-date, .interview-date {
-  color: #666;
-  font-size: 14px;
-  margin: 8px 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+	color: #666;
+	font-size: 14px;
+	margin: 8px 0;
+	display: flex;
+	align-items: center;
+	gap: 8px;
 }
 
 .progress-section {
-  margin-top: 16px;
+	margin-top: 16px;
 }
 
 .progress-label {
-  font-weight: 500;
-  margin-bottom: 8px;
-  color: #333;
+	font-weight: 500;
+	margin-bottom: 8px;
+	color: #333;
 }
 
 .progress-steps {
-  margin-top: 16px;
+	margin-top: 16px;
 }
 
 .step-completed {
-  background-color: #4caf50 !important;
-  color: white !important;
+	background-color: #4caf50 !important;
+	color: white !important;
 }
 
 .step-active {
-  background-color: #2196f3 !important;
-  color: white !important;
+	background-color: #2196f3 !important;
+	color: white !important;
 }
 
 .step-rejected {
-  background-color: #f44336 !important;
-  color: white !important;
+	background-color: #f44336 !important;
+	color: white !important;
 }
 
-mat-chip[disabled] {
-  opacity: 0.5;
-}
 
-mat-chip {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
 
-mat-chip mat-icon {
-  font-size: 1rem;
-  width: 1rem;
-  height: 1rem;
-  vertical-align: middle;
-  line-height: 1;
-}
+
+
+
 
 mat-progress-bar {
-  margin: 8px 0;
+	margin: 8px 0;
 }
 
 /* Additional status classes */
-.status-applied {
-  background-color: #e3f2fd !important;
-  color: #1565c0 !important;
-}
 
-.status-offer {
-  background-color: #e8f5e8 !important;
-  color: #2e7d32 !important;
-}
 
-.status-withdrawn {
-  background-color: #fafafa !important;
-  color: #616161 !important;
-}
 
-.status-default {
-  background-color: #f5f5f5 !important;
-  color: #424242 !important;
-}
+
+
+
+
 
 /* Loading state */
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  text-align: center;
-}
 
-.loading-container p {
-  margin-top: 16px;
-  color: #666;
-  font-size: 16px;
-}
+
+
 
 /* Empty state */
 .no-applications {
-  margin: 40px 0;
+	margin: 40px 0;
 }
 
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 40px;
-}
 
-.empty-state mat-icon {
-  font-size: 64px;
-  width: 64px;
-  height: 64px;
-  color: #ccc;
-  margin-bottom: 16px;
-}
 
-.empty-state h3 {
-  margin: 16px 0 8px 0;
-  color: #424242;
-}
 
-.empty-state p {
-  color: #666;
-  margin-bottom: 0;
-}
+
+
+
+
 
 /* Additional content sections */
 .offer-details,
 .rejection-feedback,
 .application-notes {
-  margin: 12px 0;
-  padding: 12px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  border-left: 4px solid #007bff;
+	margin: 12px 0;
+	padding: 12px;
+	background-color: #f8f9fa;
+	border-radius: 8px;
+	border-left: 4px solid #007bff;
 }
 
 .rejection-feedback {
-  border-left-color: #dc3545;
-  background-color: #fff5f5;
+	border-left-color: #dc3545;
+	background-color: #fff5f5;
 }
 
 .offer-details {
-  border-left-color: #28a745;
-  background-color: #f8fff8;
+	border-left-color: #28a745;
+	background-color: #f8fff8;
 }
 
 .offer-salary,
 .start-date {
-  margin: 4px 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 500;
+	margin: 4px 0;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-weight: 500;
 }
 
 .application-tags {
-  margin-top: 12px;
+	margin-top: 12px;
 }
 
-.tag-chip {
-  background-color: #e0e0e0 !important;
-  color: #424242 !important;
-  font-size: 12px !important;
-  margin-right: 8px !important;
-}
+
 
 .badge-button {
-  border-radius: 20px !important;
-  font-size: 12px !important;
-  padding: 4px 12px !important;
-  min-width: auto !important;
-  height: 32px !important;
-  margin-left: 8px !important;
+	border-radius: 20px !important;
+	font-size: 12px !important;
+	padding: 4px 12px !important;
+	min-width: auto !important;
+	height: 32px !important;
+	margin-left: 8px !important;
 }

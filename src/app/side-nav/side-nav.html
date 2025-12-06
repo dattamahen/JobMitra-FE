@@ -1,21 +1,21 @@
 <nav class="side-nav-container">
-  <mat-nav-list>
-    @for (item of navItems; track item.id) {
-      <mat-list-item 
-        [class.active]="activeItem === item.id"
-        (click)="selectItem(item.id)"
-        class="nav-item">
-        <mat-icon matListItemIcon class="nav-icon">{{ item.matIcon }}</mat-icon>
-        <span matListItemTitle>{{ item.label }}</span>
-      </mat-list-item>
-    }
-    
-    <!-- Logout button -->
-    <mat-list-item 
-      (click)="logout()"
-      class="nav-item logout-item">
-      <mat-icon matListItemIcon class="nav-icon">logout</mat-icon>
-      <span matListItemTitle>Logout</span>
-    </mat-list-item>
-  </mat-nav-list>
+	<mat-nav-list>
+		@for (item of navItems; track item.id) {
+			<mat-list-item 
+				[class.active]="activeItem === item.id"
+				(click)="selectItem(item.id)"
+				class="nav-item">
+				<mat-icon matListItemIcon class="nav-icon">{{ item.matIcon }}</mat-icon>
+				<span matListItemTitle>{{ item.label }}</span>
+			</mat-list-item>
+		}
+		
+		<!-- Logout button -->
+		<mat-list-item 
+			(click)="logout()"
+			class="nav-item logout-item">
+			<mat-icon matListItemIcon class="nav-icon">logout</mat-icon>
+			<span matListItemTitle>Logout</span>
+		</mat-list-item>
+	</mat-nav-list>
 </nav>

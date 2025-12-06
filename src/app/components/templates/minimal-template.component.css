@@ -1,44 +1,44 @@
 .minimal-table {
-  width: 100%;
-  border: none;
-  border-collapse: collapse;
+	width: 100%;
+	border: none;
+	border-collapse: collapse;
 }
 .minimal-table td {
-  border: none;
-  padding: 30px 20px;
+	border: none;
+	padding: 30px 20px;
 }
 .header {
-  text-align: center;
-  padding: 40px 20px;
+	text-align: center;
+	padding: 40px 20px;
 }
 .header h1 {
-  margin: 0 0 20px 0;
-  font-weight: 300;
-  font-size: 2.5em;
+	margin: 0 0 20px 0;
+	font-weight: 300;
+	font-size: 2.5em;
 }
 .contact {
-  color: #666;
-  font-size: 1.1em;
+	color: #666;
+	font-size: 1.1em;
 }
 .section {
-  padding: 25px 20px;
+	padding: 25px 20px;
 }
 .item {
-  margin-bottom: 25px;
+	margin-bottom: 25px;
 }
 .skill {
-  display: inline-block;
-  margin: 5px 10px;
-  font-size: 1.1em;
+	display: inline-block;
+	margin: 5px 10px;
+	font-size: 1.1em;
 }
 h3 {
-  margin: 0 0 20px 0;
-  font-weight: 300;
-  font-size: 1.5em;
-  text-transform: uppercase;
-  letter-spacing: 2px;
+	margin: 0 0 20px 0;
+	font-weight: 300;
+	font-size: 1.5em;
+	text-transform: uppercase;
+	letter-spacing: 2px;
 }
 p {
-  line-height: 1.6;
-  margin: 10px 0;
+	line-height: 1.6;
+	margin: 10px 0;
 }

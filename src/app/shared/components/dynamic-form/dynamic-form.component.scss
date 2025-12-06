@@ -1,205 +1,205 @@
 .dynamic-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
 }
 
 .form-field {
-  width: 100%;
+	width: 100%;
 }
 
 .form-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 16px;
-  align-items: flex-start;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin-bottom: 16px;
+	align-items: flex-start;
 }
 
 .half-width {
-  flex: 1;
+	flex: 1;
 }
 
 .full-width {
-  width: 100%;
+	width: 100%;
 }
 
 .form-actions {
-  display: flex;
-  gap: 16px;
-  justify-content: flex-end;
-  margin-top: 16px;
+	display: flex;
+	gap: 16px;
+	justify-content: flex-end;
+	margin-top: 16px;
 }
 
 .submit-btn {
-  min-width: 120px;
+	min-width: 120px;
 }
 
 .edit-btn {
-  min-width: 100px;
+	min-width: 100px;
 }
 
 .cancel-btn {
-  min-width: 80px;
-  margin-left: 8px;
+	min-width: 80px;
+	margin-left: 8px;
 }
 
 .half-width {
-  width: 48%;
+	width: 48%;
 }
 
 .quarter-width {
-  flex: 0 0 32%;
-  max-width: 32%;
+	flex: 0 0 32%;
+	max-width: 32%;
 }
 
 .three-quarter-width {
-  width: 73%;
+	width: 73%;
 }
 
 mat-spinner {
-  margin-right: 8px;
+	margin-right: 8px;
 }
 
 .password-toggle {
-  cursor: pointer;
+	cursor: pointer;
 }
 
 .mat-mdc-form-field.readonly {
-  opacity: 0.6;
-  pointer-events: none;
+	opacity: 0.6;
+	pointer-events: none;
 }
 
 .mat-mdc-form-field.readonly .mat-mdc-text-field-wrapper {
-  background-color: #f5f5f5;
+	background-color: #f5f5f5;
 }
 
 .mat-mdc-form-field.readonly input,
 .mat-mdc-form-field.readonly textarea,
 .mat-mdc-form-field.readonly select {
-  color: #666;
-  cursor: default;
-  background-color: #f5f5f5;
+	color: #666;
+	cursor: default;
+	background-color: #f5f5f5;
 }
 
 .mat-mdc-form-field.readonly .mat-mdc-select-arrow {
-  display: none;
+	display: none;
 }
 
 .readonly .mat-mdc-form-field {
-  opacity: 0.6;
-  pointer-events: none;
+	opacity: 0.6;
+	pointer-events: none;
 }
 
 .readonly .mat-mdc-form-field input,
 .readonly .mat-mdc-form-field textarea,
 .readonly .mat-mdc-form-field select {
-  color: #666;
-  cursor: default;
-  background-color: #f5f5f5;
+	color: #666;
+	cursor: default;
+	background-color: #f5f5f5;
 }
 
 .readonly .mat-mdc-select-arrow {
-  display: none;
+	display: none;
 }
 
 .dynamic-array-field {
-  width: 100%;
+	width: 100%;
 }
 
 .array-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 16px;
 }
 
 .array-header h4 {
-  margin: 0;
-  font-weight: 500;
+	margin: 0;
+	font-weight: 500;
 }
 
 .array-item {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	padding: 16px;
+	margin-bottom: 16px;
 }
 
 .dynamic-array-item {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: flex-start;
-  
-  .quarter-width {
-    flex: 0 0 calc(32% - 8px);
-    max-width: calc(32% - 8px);
-  }
-  
-  .half-width {
-    flex: 0 0 calc(48% - 6px);
-    max-width: calc(48% - 6px);
-  }
-  
-  .full-width {
-    flex: 0 0 100%;
-    max-width: 100%;
-  }
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	align-items: flex-start;
+	
+	.quarter-width {
+		flex: 0 0 calc(32% - 8px);
+		max-width: calc(32% - 8px);
+	}
+	
+	.half-width {
+		flex: 0 0 calc(48% - 6px);
+		max-width: calc(48% - 6px);
+	}
+	
+	.full-width {
+		flex: 0 0 100%;
+		max-width: 100%;
+	}
 }
 
 .array-item-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  font-weight: 500;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 16px;
+	font-weight: 500;
 }
 
 .item-title {
-  font-size: 14px;
-  color: #666;
-  font-weight: 500;
+	font-size: 14px;
+	color: #666;
+	font-weight: 500;
 }
 
 .delete-btn {
-  color: #f44336;
-  width: 32px;
-  height: 32px;
+	color: #f44336;
+	width: 32px;
+	height: 32px;
 }
 
 .delete-btn:hover {
-  background-color: rgba(244, 67, 54, 0.1);
+	background-color: rgba(244, 67, 54, 0.1);
 }
 
 .delete-btn:disabled {
-  color: #ccc;
-  cursor: not-allowed;
+	color: #ccc;
+	cursor: not-allowed;
 }
 
 .form-actions-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  width: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 16px;
+	width: 100%;
 }
 
 .form-actions-row .submit-btn {
-  flex: 1;
-  min-width: 120px;
+	flex: 1;
+	min-width: 120px;
 }
 
 .form-actions-row .forgot-password {
-  color: #4831af;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 0.9rem;
-  white-space: nowrap;
-  transition: color 0.2s ease;
+	color: #4831af;
+	text-decoration: none;
+	font-weight: 500;
+	font-size: 0.9rem;
+	white-space: nowrap;
+	transition: color 0.2s ease;
 }
 
 .form-actions-row .forgot-password:hover {
-  color: #3730a3;
-  text-decoration: underline;
+	color: #3730a3;
+	text-decoration: underline;
 }

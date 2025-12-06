@@ -1,64 +1,64 @@
 <table class="minimal-table">
-  <tr>
-    <td class="header">
-      <h1>{{ cv.sections.personal_info.full_name }}</h1>
-      <div class="contact">
-        {{ cv.sections.personal_info.email }} | {{ cv.sections.personal_info.phone }} | {{ cv.sections.personal_info.location }}
-      </div>
-    </td>
-  </tr>
-  
-  <tr>
-    <td class="section">
-      <h3>Summary</h3>
-      <p>{{ cv.sections.summary }}</p>
-    </td>
-  </tr>
-  
-  <tr>
-    <td class="section">
-      <h3>Education</h3>
-      @for (edu of cv.sections.education; track edu.degree) {
-        <div class="item">
-          <strong>{{ edu.degree }}</strong><br>
-          {{ edu.institution }}<br>
-          {{ edu.year }}
-        </div>
-      }
-    </td>
-  </tr>
-  
-  <tr>
-    <td class="section">
-      <h3>Experience</h3>
-      @for (exp of cv.sections.experience; track exp.company) {
-        <div class="item">
-          <strong>{{ exp.position }}</strong> - {{ exp.company }}<br>
-          {{ exp.duration }}<br>
-          <p>{{ exp.description }}</p>
-        </div>
-      }
-    </td>
-  </tr>
-  
-  <tr>
-    <td class="section">
-      <h3>Skills</h3>
-      @for (skill of cv.sections.skills.technical; track skill) {
-        <span class="skill">{{ skill }}</span>
-      }
-    </td>
-  </tr>
-  
-  <tr>
-    <td class="section">
-      <h3>Projects</h3>
-      @for (proj of cv.sections.projects; track proj.name) {
-        <div class="item">
-          <strong>{{ proj.name }}</strong><br>
-          <p>{{ proj.description }}</p>
-        </div>
-      }
-    </td>
-  </tr>
+	<tr>
+		<td class="header">
+			<h1>{{ cv.sections.personal_info.full_name }}</h1>
+			<div class="contact">
+				{{ cv.sections.personal_info.email }} | {{ cv.sections.personal_info.phone }} | {{ cv.sections.personal_info.location }}
+			</div>
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="section">
+			<h3>Summary</h3>
+			<p>{{ cv.sections.summary }}</p>
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="section">
+			<h3>Education</h3>
+			@for (edu of cv.sections.education; track edu.degree) {
+				<div class="item">
+					<strong>{{ edu.degree }}</strong><br>
+					{{ edu.institution }}<br>
+					{{ edu.year }}
+				</div>
+			}
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="section">
+			<h3>Experience</h3>
+			@for (exp of cv.sections.experience; track exp.company) {
+				<div class="item">
+					<strong>{{ exp.position }}</strong> - {{ exp.company }}<br>
+					{{ exp.duration }}<br>
+					<p>{{ exp.description }}</p>
+				</div>
+			}
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="section">
+			<h3>Skills</h3>
+			@for (skill of cv.sections.skills.technical; track skill) {
+				<span class="skill">{{ skill }}</span>
+			}
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="section">
+			<h3>Projects</h3>
+			@for (proj of cv.sections.projects; track proj.name) {
+				<div class="item">
+					<strong>{{ proj.name }}</strong><br>
+					<p>{{ proj.description }}</p>
+				</div>
+			}
+		</td>
+	</tr>
 </table>

@@ -1,89 +1,89 @@
 <div class="page-container">
-  <!-- Loading indicator -->
-  @if (isLoading) {
-    <app-loading 
-      title="Loading Applications..."
-      message="Fetching your job application status"
-      icon="assignment">
-    </app-loading>
-  }
+	<!-- Loading indicator -->
+	@if (isLoading) {
+		<app-loading 
+			title="Loading Applications..."
+			message="Fetching your job application status"
+			icon="assignment">
+		</app-loading>
+	}
 
-  <!-- Applications list -->
-  @if (!isLoading) {
-  <div class="applications-list">
-    @if (applications.length === 0) {
-    <div class="no-applications">
-      <mat-card>
-        <mat-card-content>
-          <div class="empty-state">
-            <mat-icon>work_off</mat-icon>
-            <h3>No Applications Yet</h3>
-            <p>Start applying for jobs to see your applications here.</p>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-    } @else {
-    @for (application of applications; track application.application_id) {
-    <mat-card class="application-card">
-      <mat-card-header>
-        <mat-card-title>{{application.job_title}}</mat-card-title>
-        <mat-card-subtitle>{{application.company}}</mat-card-subtitle>
-        <div class="header-actions">
-          <button mat-raised-button color="primary" (click)="prepareForInterview(application.application_id)">
-            <mat-icon>mic</mat-icon>
-            Prepare Interview
-          </button>
-        </div>
-      </mat-card-header>
-      <mat-card-content>
-        <p class="applied-date">Applied: {{formatDate(application.applied_date)}}</p>
+	<!-- Applications list -->
+	@if (!isLoading) {
+	<div class="applications-list">
+		@if (applications.length === 0) {
+		<div class="no-applications">
+			<mat-card>
+				<mat-card-content>
+					<div class="empty-state">
+						<mat-icon>work_off</mat-icon>
+						<h3>No Applications Yet</h3>
+						<p>Start applying for jobs to see your applications here.</p>
+					</div>
+				</mat-card-content>
+			</mat-card>
+		</div>
+		} @else {
+		@for (application of applications; track application.application_id) {
+		<mat-card class="application-card">
+			<mat-card-header>
+				<mat-card-title>{{application.job_title}}</mat-card-title>
+				<mat-card-subtitle>{{application.company}}</mat-card-subtitle>
+				<div class="header-actions">
+					<button mat-raised-button color="primary" (click)="prepareForInterview(application.application_id)">
+						<mat-icon>mic</mat-icon>
+						Prepare Interview
+					</button>
+				</div>
+			</mat-card-header>
+			<mat-card-content>
+				<p class="applied-date">Applied: {{formatDate(application.applied_date)}}</p>
 
-        <!-- Interview date for scheduled interviews -->
-        @if (application.status === 'interview_scheduled' && getNextInterviewStage(application)) {
-        <p class="interview-date">
-          <mat-icon>event</mat-icon>
-          Interview: {{formatDateTime(getNextInterviewStage(application).scheduled_date)}}
-        </p>
-        }
+				<!-- Interview date for scheduled interviews -->
+				@if (application.status === 'interview_scheduled' && getNextInterviewStage(application)) {
+				<p class="interview-date">
+					<mat-icon>event</mat-icon>
+					Interview: {{formatDateTime(getNextInterviewStage(application).scheduled_date)}}
+				</p>
+				}
 
-        <!-- Offer details -->
-        @if (application.status === 'offer_received' && application.offer_details) {
-        <div class="offer-details">
-          <p class="offer-salary">
-            <mat-icon>attach_money</mat-icon>
-            Offer: {{formatSalary(application.offer_details.salary, application.offer_details.currency)}}
-          </p>
-          @if (application.offer_details.start_date) {
-          <p class="start-date">
-            <mat-icon>schedule</mat-icon>
-            Start Date: {{formatDate(application.offer_details.start_date)}}
-          </p>
-          }
-        </div>
-        }
+				<!-- Offer details -->
+				@if (application.status === 'offer_received' && application.offer_details) {
+				<div class="offer-details">
+					<p class="offer-salary">
+						<mat-icon>attach_money</mat-icon>
+						Offer: {{formatSalary(application.offer_details.salary, application.offer_details.currency)}}
+					</p>
+					@if (application.offer_details.start_date) {
+					<p class="start-date">
+						<mat-icon>schedule</mat-icon>
+						Start Date: {{formatDate(application.offer_details.start_date)}}
+					</p>
+					}
+				</div>
+				}
 
-        <!-- Notes -->
-        @if (application.notes) {
-        <div class="application-notes">
-          <p><strong>Notes:</strong> {{application.notes}}</p>
-        </div>
-        }
+				<!-- Notes -->
+				@if (application.notes) {
+				<div class="application-notes">
+					<p><strong>Notes:</strong> {{application.notes}}</p>
+				</div>
+				}
 
-        <!-- Tags -->
-        @if (application.tags && application.tags.length > 0) {
-        <div class="application-tags">
-          <mat-chip-set>
-            @for (tag of application.tags; track tag) {
-            <mat-chip class="tag-chip">{{tag}}</mat-chip>
-            }
-          </mat-chip-set>
-        </div>
-        }
-      </mat-card-content>
-    </mat-card>
-    }
-    }
-  </div>
-  }
+				<!-- Tags -->
+				@if (application.tags && application.tags.length > 0) {
+				<div class="application-tags">
+					<mat-chip-set>
+						@for (tag of application.tags; track tag) {
+						<mat-chip class="tag-chip">{{tag}}</mat-chip>
+						}
+					</mat-chip-set>
+				</div>
+				}
+			</mat-card-content>
+		</mat-card>
+		}
+		}
+	</div>
+	}
 </div>
