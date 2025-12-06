@@ -62,13 +62,18 @@ export class MockInterviewsPage {
 				user_id: user.user_id
 			};
 
+			// Open modal immediately with loading state
+			const dialogRef = this.mockInterviewService.startInterviewWithLoading(type, userProfile);
+
+			// Generate questions in background
 			this.interviewService.startInterview(userProfile).subscribe({
 				next: (response) => {
-					// Open modal with AI-generated questions
-					this.mockInterviewService.startInterview(type, response);
+					// Update modal with AI-generated questions
+					dialogRef.componentInstance.loadQuestions(response);
 				},
 				error: (error) => {
-					alert('Error starting interview. Please try again.');
+					dialogRef.close();
+					alert('Error generating questions. Please try again.');
 				}
 			});
 		});
