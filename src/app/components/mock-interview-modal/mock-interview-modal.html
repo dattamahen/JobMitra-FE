@@ -1,14 +1,21 @@
 <!-- Modal Header -->
-<h2 mat-dialog-title>
-	<mat-icon>psychology</mat-icon>
-	{{ phase() === 'generating' ? 'Preparing Your Interview' :
-		phase() === 'instructions' ? 'Mock Interview Instructions' : 
-		phase() === 'interview' ? 'Mock Interview in Progress' : 
-		phase() === 'evaluation' ? 'Interview Results' : 'Interview Completed' }}
-</h2>
+<div mat-dialog-title class="modal-header">
+	<div class="header-content">
+		<mat-icon>psychology</mat-icon>
+		<span>{{ phase() === 'generating' ? 'Preparing Your Interview' :
+			phase() === 'instructions' ? 'Mock Interview Instructions' : 
+			phase() === 'interview' ? 'Mock Interview in Progress' : 
+			phase() === 'evaluation' ? 'Interview Results' : 'Interview Completed' }}</span>
+	</div>
+	@if (phase() === 'interview' && interviewSession()) {
+		<div class="progress-indicator">
+			<span>{{currentQuestionIndex() + 1}} / {{interviewSession()!.questions.length}}</span>
+		</div>
+	}
+</div>
 
 <!-- Modal Body -->
-<mat-dialog-content class="interview-container">
+<mat-dialog-content class="modal-body">
 	<!-- Generating Questions Phase -->
 	@if (phase() === 'generating') {
 		<div class="generating-section">
@@ -60,17 +67,9 @@
 	<!-- Interview Phase -->
 	@if (phase() === 'interview' && interviewSession()) {
 		<div class="interview-room">
-			<!-- Progress Bar -->
-			<div class="interview-progress">
-				<div class="progress-bar">
-					<div class="progress-fill" [style.width.%]="progress()"></div>
-				</div>
-				<span class="progress-text">Question {{currentQuestionIndex() + 1}} of {{interviewSession()!.questions.length}}</span>
-			</div>
-
 			<!-- Question Section -->
 			<div class="question-section">
-				<div class="question-bubble">
+				<div class="question-card">
 					<p class="question-text">{{currentQuestion()?.question}}</p>
 				</div>
 			</div>
@@ -78,18 +77,18 @@
 			<!-- Answer Section -->
 			<div class="answer-section">
 				@if (currentAnswer()) {
-					<div class="answer-bubble">
+					<div class="answer-display">
 						<p>{{currentAnswer()}}</p>
 					</div>
 				}
 				
-				<div class="recording-controls">
+				<div class="controls">
 					<button 
 						mat-raised-button
 						[class.recording]="isRecording()"
 						[disabled]="isLoading()"
 						(click)="isRecording() ? stopRecording() : startRecording()"
-						class="record-answer-btn">
+						class="record-btn">
 						<mat-icon>{{isRecording() ? 'stop' : 'mic'}}</mat-icon>
 						{{isRecording() ? 'Stop Recording' : 'Record Answer'}}
 					</button>
@@ -104,16 +103,6 @@
 						<mat-icon>{{isLastQuestion() ? 'send' : 'arrow_forward'}}</mat-icon>
 					</button>
 				</div>
-			</div>
-			
-			<!-- Answers List for Evaluation -->
-			<div class="answers-list">
-				<h4>Your Answers:</h4>
-				<ol>
-					@for (answer of answers(); track answer.question_id) {
-						<li>{{ answer.answer }}</li>
-					}
-				</ol>
 			</div>
 		</div>
 	}
@@ -165,7 +154,7 @@
 </mat-dialog-content>
 
 <!-- Modal Footer -->
-<mat-dialog-actions align="end">
+<mat-dialog-actions class="modal-footer">
 	@if (phase() === 'instructions') {
 		<button mat-button (click)="closeModal()">Cancel</button>
 		<button mat-raised-button color="primary" (click)="startInterview()">Start Interview</button>

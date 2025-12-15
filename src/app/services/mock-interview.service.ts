@@ -27,6 +27,16 @@ export interface InterviewEvaluation {
 	}>;
 }
 
+export interface InterviewSubmissionData {
+	session_id: string;
+	user_profile: any;
+	questions_and_answers: Array<{
+		question_id: string;
+		question: string;
+		answer: string;
+	}>;
+}
+
 @Injectable({
 	providedIn: 'root'
 })
@@ -84,5 +94,9 @@ export class MockInterviewService {
 			session_id: sessionId,
 			answers: answers
 		});
+	}
+
+	submitInterviewForEvaluation(interviewData: any): Observable<any> {
+		return this.http.post(`${this.baseUrl}/submit-for-evaluation`, interviewData);
 	}
 }
