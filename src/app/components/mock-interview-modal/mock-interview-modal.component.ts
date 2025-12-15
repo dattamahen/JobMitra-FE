@@ -39,6 +39,7 @@ export class MockInterviewModalComponent {
 	evaluation = signal<InterviewEvaluation | null>(null);
 	phase = signal<'instructions' | 'generating' | 'loading' | 'interview' | 'completed' | 'evaluation'>('instructions');
 	isGeneratingQuestions = signal(false);
+	isTransitioning = signal(false);
 	
 	// Instructions data
 	instructions = INTERVIEW_INSTRUCTIONS;
@@ -67,7 +68,7 @@ export class MockInterviewModalComponent {
 
 		effect(() => {
 			const transcript = this.voiceService.currentTranscript();
-			if (transcript && this.isRecording()) {
+			if (transcript && this.isRecording() && !this.isTransitioning()) {
 				this.currentAnswer.set(transcript);
 			}
 		});
@@ -132,6 +133,11 @@ export class MockInterviewModalComponent {
 		
 		if (!session || !question || !answer.trim()) return;
 
+		// Stop recording and disable recording button
+		this.isRecording.set(false);
+		this.voiceService.stopListening();
+		this.isTransitioning.set(true);
+
 		// Save current answer
 		const currentAnswers = this.answers();
 		currentAnswers.push({
@@ -140,12 +146,17 @@ export class MockInterviewModalComponent {
 		});
 		this.answers.set([...currentAnswers]);
 
+		// Clear current answer
+		this.currentAnswer.set('');
+
 		if (this.isLastQuestion()) {
 			this.submitInterview();
 		} else {
 			this.currentQuestionIndex.update(i => i + 1);
-			this.currentAnswer.set('');
-			setTimeout(() => this.readCurrentQuestion(), 500);
+			setTimeout(() => {
+				this.readCurrentQuestion();
+				this.isTransitioning.set(false);
+			}, 500);
 		}
 	}
 
@@ -172,7 +183,8 @@ export class MockInterviewModalComponent {
 				this.phase.set('completed');
 			},
 			error: (error) => {
-				this.snackBar.open('Failed to submit interview', 'Close', { duration: 3000 });
+				console.error('Interview submission error:', error);
+				this.snackBar.open('Failed to submit interview. Please try again.', 'Close', { duration: 5000 });
 				this.phase.set('completed');
 			}
 		});

@@ -86,7 +86,7 @@
 					<button 
 						mat-raised-button
 						[class.recording]="isRecording()"
-						[disabled]="isLoading()"
+						[disabled]="isLoading() || isTransitioning()"
 						(click)="isRecording() ? stopRecording() : startRecording()"
 						class="record-btn">
 						<mat-icon>{{isRecording() ? 'stop' : 'mic'}}</mat-icon>

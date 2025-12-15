@@ -6,6 +6,6 @@ import { Injectable } from '@angular/core';
 export class EnvironmentService {
 	getGeminiApiKey(): string {
 		// In production, use environment variables or secure config
-		return ''; // Set your Gemini API key here
+		return 'YOUR_GEMINI_API_KEY_HERE'; // Replace with your actual Gemini API key
 	}
 }

@@ -67,7 +67,7 @@ export interface ConfirmationDialogData {
     }
     
     .dialog-content {
-      padding: 1rem 0;
+      padding: 1.5rem;
     }
     
     .message {
