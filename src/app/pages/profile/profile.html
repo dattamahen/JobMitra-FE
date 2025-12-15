@@ -128,9 +128,16 @@
 		</div>
 
 		<!-- Right Side - LinkedIn-style Profile Preview -->
-		<div class="profile-summary-section">
+		<div class="profile-summary-section" #profileSummarySection>
 			<!-- Main Profile Card -->
 			<mat-card class="linkedin-profile-card">
+				<!-- Share Button -->
+				<div class="share-button-container">
+					<app-profile-share 
+						[profileData]="getProfileSnapshot()"
+						[targetElement]="getProfileSummaryElement()!">
+					</app-profile-share>
+				</div>
 				<!-- Cover & Avatar Section -->
 				<div class="profile-cover">
 					<div class="cover-gradient"></div>

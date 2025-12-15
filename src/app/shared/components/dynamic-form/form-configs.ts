@@ -370,6 +370,7 @@ export const POST_JOB_STEP7_CONFIG: FormConfig = {
 // Resume Builder Form Configurations
 export const RESUME_PERSONAL_INFO_CONFIG: FormConfig = {
 	title: 'Personal Information',
+	showActions: false,
 	fields: [
 		{
 			name: 'full_name',
@@ -437,6 +438,7 @@ export const RESUME_PERSONAL_INFO_CONFIG: FormConfig = {
 
 export const RESUME_SUMMARY_CONFIG: FormConfig = {
 	title: 'Professional Summary',
+	showActions: false,
 	fields: [
 		{
 			name: 'summary',
@@ -452,6 +454,7 @@ export const RESUME_SUMMARY_CONFIG: FormConfig = {
 
 export const RESUME_SKILLS_CONFIG: FormConfig = {
 	title: 'Skills & Expertise',
+	showActions: false,
 	fields: [
 		{
 			name: 'technical_skills',
@@ -501,6 +504,7 @@ export const RESUME_SKILLS_CONFIG: FormConfig = {
 
 export const RESUME_EXPERIENCE_CONFIG: FormConfig = {
 	title: 'Work Experience',
+	showActions: false,
 	fields: [
 		{
 			name: 'experiences',
@@ -558,6 +562,7 @@ export const RESUME_EXPERIENCE_CONFIG: FormConfig = {
 
 export const RESUME_EDUCATION_CONFIG: FormConfig = {
 	title: 'Education',
+	showActions: false,
 	fields: [
 		{
 			name: 'education',
@@ -612,6 +617,7 @@ export const RESUME_EDUCATION_CONFIG: FormConfig = {
 
 export const RESUME_PROJECTS_CONFIG: FormConfig = {
 	title: 'Projects',
+	showActions: false,
 	fields: [
 		{
 			name: 'projects',
@@ -662,6 +668,7 @@ export const RESUME_PROJECTS_CONFIG: FormConfig = {
 
 export const RESUME_CERTIFICATIONS_CONFIG: FormConfig = {
 	title: 'Certifications',
+	showActions: false,
 	fields: [
 		{
 			name: 'certifications',

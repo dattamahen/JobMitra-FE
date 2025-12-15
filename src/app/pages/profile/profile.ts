@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -18,6 +18,8 @@ import { AuthService } from '../../services/auth.service';
 import { ResumeIntegrationService } from '../../services/resume-integration.service';
 import { TestProfileService } from '../../test-profile.service';
 import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
+import { ProfileShareComponent } from '../../shared/components/profile-share/profile-share.component';
+import { ProfileShareService, ProfileSnapshot } from '../../services/profile-share.service';
 
 import { 
 	PROFILE_BASIC_INFO_CONFIG, 
@@ -48,6 +50,7 @@ import {
 		MatExpansionModule,
 		MatSnackBarModule,
 		DynamicFormComponent,
+		ProfileShareComponent,
 
 	],
 	templateUrl: './profile.html',
@@ -62,6 +65,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 	@ViewChild('projectsForm') projectsForm!: DynamicFormComponent;
 	@ViewChild('certificationsForm') certificationsForm!: DynamicFormComponent;
 	@ViewChild('jobPreferencesForm') jobPreferencesForm!: DynamicFormComponent;
+	@ViewChild('profileSummarySection', { static: false }) profileSummarySection!: ElementRef<HTMLElement>;
 	profileForm!: FormGroup;
 	currentUser: UserProfile | null = null;
 	isLoading = false;
@@ -615,7 +619,8 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 		private authService: AuthService,
 		private snackBar: MatSnackBar,
 		private resumeIntegrationService: ResumeIntegrationService,
-		private testProfileService: TestProfileService
+		private testProfileService: TestProfileService,
+		private profileShareService: ProfileShareService
 	) {
 		this.createForm();
 	}
@@ -1084,6 +1089,25 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 		).length;
 
 		return Math.round((completedFields / fields.length) * 100);
+	}
+
+	getProfileSnapshot(): ProfileSnapshot {
+		return {
+			name: this.getFullName() || 'Your Name',
+			role: this.getCurrentRole() || 'Add your professional headline',
+			location: this.getLocation() || 'Add your location',
+			experience: this.getExperience() || '0',
+			skills: this.getSkills(),
+			email: this.getEmail(),
+			phone: this.getPhone(),
+			linkedin: this.getLinkedinLink(),
+			github: this.getGithubLink(),
+			summary: this.getProfessionalSummary()
+		};
+	}
+
+	getProfileSummaryElement(): HTMLElement | null {
+		return this.profileSummarySection?.nativeElement || null;
 	}
 
 	isBasicInfoComplete(): boolean {

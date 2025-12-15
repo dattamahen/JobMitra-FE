@@ -10,6 +10,7 @@ export { LearningService } from './learning.service';
 export { DashboardService } from './dashboard.service';
 export { HrService } from './hr.service';
 export { ResumeService } from './resume.service';
+export { ProfileShareService } from './profile-share.service';
 
 // Service Types and Interfaces
 export type { UserProfile, CreateUserRequest, UpdateUserRequest } from './user.service';
@@ -43,3 +44,4 @@ export type {
 export type {
 
 } from './resume.service';
+export type { ProfileSnapshot } from './profile-share.service';

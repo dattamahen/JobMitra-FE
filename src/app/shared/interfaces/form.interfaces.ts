@@ -29,4 +29,5 @@ export interface FormConfig {
 	loading?: boolean;
 	readonly?: boolean;
 	showCancel?: boolean;
+	showActions?: boolean;
 }
