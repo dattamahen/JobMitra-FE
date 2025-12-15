@@ -10,6 +10,7 @@ import { VoiceAiService } from '../../services/voice-ai.service';
 import { MockInterviewService, InterviewSession, InterviewQuestion, InterviewEvaluation } from '../../services/mock-interview.service';
 import { INTERVIEW_INSTRUCTIONS } from '../../data/mock-interview-instructions';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
+import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
 	selector: 'app-mock-interview-modal',
@@ -38,6 +39,7 @@ export class MockInterviewModalComponent {
 	evaluation = signal<InterviewEvaluation | null>(null);
 	phase = signal<'instructions' | 'generating' | 'loading' | 'interview' | 'completed' | 'evaluation'>('instructions');
 	isGeneratingQuestions = signal(false);
+	isTransitioning = signal(false);
 	
 	// Instructions data
 	instructions = INTERVIEW_INSTRUCTIONS;
@@ -66,7 +68,7 @@ export class MockInterviewModalComponent {
 
 		effect(() => {
 			const transcript = this.voiceService.currentTranscript();
-			if (transcript && this.isRecording()) {
+			if (transcript && this.isRecording() && !this.isTransitioning()) {
 				this.currentAnswer.set(transcript);
 			}
 		});
@@ -131,6 +133,11 @@ export class MockInterviewModalComponent {
 		
 		if (!session || !question || !answer.trim()) return;
 
+		// Stop recording and disable recording button
+		this.isRecording.set(false);
+		this.voiceService.stopListening();
+		this.isTransitioning.set(true);
+
 		// Save current answer
 		const currentAnswers = this.answers();
 		currentAnswers.push({
@@ -139,15 +146,17 @@ export class MockInterviewModalComponent {
 		});
 		this.answers.set([...currentAnswers]);
 
-		// Submit answer to backend
-		this.mockInterviewService.submitAnswer(session.session_id, question.id, answer.trim()).subscribe();
+		// Clear current answer
+		this.currentAnswer.set('');
 
 		if (this.isLastQuestion()) {
 			this.submitInterview();
 		} else {
 			this.currentQuestionIndex.update(i => i + 1);
-			this.currentAnswer.set('');
-			setTimeout(() => this.readCurrentQuestion(), 500);
+			setTimeout(() => {
+				this.readCurrentQuestion();
+				this.isTransitioning.set(false);
+			}, 500);
 		}
 	}
 
@@ -157,7 +166,28 @@ export class MockInterviewModalComponent {
 		
 		if (!session) return;
 
-		this.phase.set('completed');
+		// Prepare JSON format for evaluation
+		const interviewData = {
+			session_id: session.session_id,
+			user_profile: this.data?.userProfile,
+			questions_and_answers: session.questions.map((q, index) => ({
+				question_id: q.id,
+				question: q.question,
+				answer: answers[index]?.answer || ''
+			}))
+		};
+
+		// Send to backend for evaluation
+		this.mockInterviewService.submitInterviewForEvaluation(interviewData).subscribe({
+			next: () => {
+				this.phase.set('completed');
+			},
+			error: (error) => {
+				console.error('Interview submission error:', error);
+				this.snackBar.open('Failed to submit interview. Please try again.', 'Close', { duration: 5000 });
+				this.phase.set('completed');
+			}
+		});
 	}
 
 	viewResults(): void {
@@ -190,10 +220,23 @@ export class MockInterviewModalComponent {
 	}
 
 	terminateInterview(): void {
-		if (confirm('Are you sure you want to terminate this interview? Your progress will be lost.')) {
-			this.voiceService.stopListening();
-			this.dialogRef.close({ terminated: true });
-		}
+		const confirmDialog = this.dialog.open(ConfirmationDialogComponent, {
+			width: '400px',
+			data: {
+				title: 'Terminate Interview',
+				message: 'Are you sure you want to terminate this interview?',
+				warning: 'Once terminated, this interview cannot be retaken and one credit will be lost.',
+				confirmText: 'Terminate',
+				cancelText: 'Continue Interview'
+			}
+		});
+
+		confirmDialog.afterClosed().subscribe(result => {
+			if (result) {
+				this.voiceService.stopListening();
+				this.dialogRef.close({ terminated: true });
+			}
+		});
 	}
 
 	loadQuestions(aiResponse: any): void {
