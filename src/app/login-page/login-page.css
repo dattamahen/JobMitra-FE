@@ -298,14 +298,12 @@
 	font-family: 'Poppins', sans-serif;
 	font-size: 2rem;
 	font-weight: 700;
-	color: #1a1a1a;
 	margin: 0 0 6px 0;
 	letter-spacing: -0.02em;
 }
 
 .auth-subtitle {
 	font-size: 1rem;
-	color: #6b7280;
 	margin: 0;
 	font-weight: 400;
 	line-height: 1.5;
@@ -325,7 +323,6 @@
 	border-radius: 12px;
 	font-size: 0.95rem;
 	font-weight: 500;
-	color: #374151;
 	cursor: pointer;
 	transition: all 0.2s ease;
 	display: flex;
@@ -389,7 +386,6 @@
 	text-align: center;
 	margin: 16px 0;
 	position: relative;
-	color: #9ca3af;
 	font-size: 0.85rem;
 }
 
@@ -420,7 +416,6 @@
 	display: block;
 	margin-bottom: 6px;
 	font-weight: 500;
-	color: #22252f;
 	font-size: 0.9rem;
 }
 
@@ -472,7 +467,6 @@
 	display: flex;
 	align-items: center;
 	gap: 6px;
-	color: #666;
 	cursor: pointer;
 }
 

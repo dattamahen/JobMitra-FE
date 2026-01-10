@@ -19,7 +19,6 @@
 }
 
 .nav-buttons button {
-	color: #22252f !important;
 	border: 1px solid #e0e0e0;
 	margin-left: 8px;
 	transition: all 0.2s ease;
@@ -59,6 +58,5 @@ mat-toolbar {
 	right: 0;
 	z-index: 1000;
 	background-color: #ffffff !important;
-	color: #22252f !important;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }

@@ -64,7 +64,6 @@ to {
 .mic-status {
 font-size: 1.1rem;
 font-weight: 600;
-color: #4a5568;
 margin: 0;
 }
 
@@ -76,7 +75,6 @@ margin: 1.5rem 0;
 font-size: 0.875rem;
 font-weight: 700;
 text-transform: uppercase;
-color: #4c51bf;
 margin-bottom: 0.5rem;
 }
 
@@ -85,7 +83,6 @@ padding: 1rem;
 background-color: #f7fafc;
 border: 1px solid #e2e8f0;
 border-radius: 0.5rem;
-color: #4a5568;
 font-style: italic;
 min-height: 40px;
 }
@@ -95,7 +92,6 @@ padding: 1rem;
 background-color: white;
 border: 1px solid #cbd5e0;
 border-radius: 0.5rem;
-color: #2d3748;
 min-height: 100px;
 overflow-y: auto;
 }

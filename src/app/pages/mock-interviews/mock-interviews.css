@@ -1,6 +1,5 @@
 /* Header Styles */
 h1, h2 {
-	color: #1976d2;
 	font-weight: 600;
 }
 
@@ -20,7 +19,6 @@ h1, h2 {
 
 .interview-card h3 { 
 	margin: 0 0 10px 0; 
-	color: #1976d2; 
 }
 
 .difficulty-badges, .topics {
@@ -92,7 +90,6 @@ h1, h2 {
 .score {
 	font-size: 1.2em;
 	font-weight: bold;
-	color: #28a745;
 }
 
 .review-btn { 
