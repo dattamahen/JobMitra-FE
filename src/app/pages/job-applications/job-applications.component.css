@@ -86,7 +86,6 @@
 		.no-applications {
 			text-align: center;
 			padding: 40px;
-			color: #666;
 		}
 
 		.no-applications mat-icon {
@@ -100,7 +99,6 @@
 			display: flex;
 			align-items: center;
 			gap: 8px;
-			color: #f44336;
 			padding: 16px;
 		}
 

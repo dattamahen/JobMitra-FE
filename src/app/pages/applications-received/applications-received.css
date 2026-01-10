@@ -14,7 +14,6 @@
 }
 
 .summary {
-	color: #666;
 	font-size: 0.9rem;
 	font-weight: 500;
 }
@@ -55,7 +54,6 @@
 }
 
 .candidate-info small {
-	color: #666;
 	font-size: 0.8rem;
 }
 
@@ -65,7 +63,6 @@
 }
 
 .contact-info small {
-	color: #666;
 	font-size: 0.8rem;
 }
 

@@ -102,20 +102,17 @@
 .profile-name {
 	font-size: 1.25rem;
 	font-weight: 600;
-	color: #333;
 	margin: 0 0 4px 0;
 }
 
 .profile-headline {
 	font-size: 16px;
-	color: #666;
 	margin: 0 0 8px 0;
 	font-weight: 400;
 }
 
 .profile-location {
 	font-size: 14px;
-	color: #666;
 	margin: 0;
 }
 
@@ -147,14 +144,12 @@
 	display: block;
 	font-size: 20px;
 	font-weight: 600;
-	color: #333;
 	line-height: 1;
 }
 
 .stat-label {
 	display: block;
 	font-size: 12px;
-	color: #666;
 	margin-top: 4px;
 	text-transform: uppercase;
 	letter-spacing: 0.5px;
@@ -176,7 +171,6 @@
 .section-header h2 {
 	font-size: 20px;
 	font-weight: 600;
-	color: #333;
 	margin: 0;
 }
 
@@ -191,7 +185,6 @@
 }
 
 .about-text {
-	color: #333;
 	line-height: 1.6;
 	margin: 0;
 }
@@ -202,7 +195,6 @@
 }
 
 .empty-text {
-	color: #666;
 	margin: 0 0 16px 0;
 	font-size: 14px;
 }
@@ -223,7 +215,6 @@
 	padding: 8px 12px;
 	border-radius: 16px;
 	font-size: 14px;
-	color: #333;
 	font-weight: 500;
 }
 
@@ -277,7 +268,6 @@
 }
 
 .contact-text {
-	color: #333;
 	font-size: 14px;
 }
 
@@ -311,7 +301,6 @@
 }
 
 .qualification-text {
-	color: #333;
 	font-weight: 500;
 	font-size: 14px;
 }

@@ -6,7 +6,6 @@
 .page-container h1 {
 	font-family: 'Poppins', sans-serif;
 	font-weight: 600;
-	color: #2c3e50;
 	margin-bottom: 8px;
 }
 
@@ -15,7 +14,6 @@
 }
 
 .content > p {
-	color: #666;
 	font-size: 1.1rem;
 	margin-bottom: 24px;
 }
@@ -37,7 +35,6 @@
 .setting-group h3 {
 	font-family: 'Poppins', sans-serif;
 	font-weight: 600;
-	color: #2c3e50;
 	margin-bottom: 20px;
 }
 
@@ -50,7 +47,6 @@
 	align-items: center;
 	gap: 12px;
 	font-weight: 500;
-	color: #555;
 	cursor: pointer;
 	font-size: 1rem;
 }
