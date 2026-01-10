@@ -12,7 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 			<mat-progress-bar mode="indeterminate" [color]="color"></mat-progress-bar>
 			<div class="loading-content">
 				<mat-icon class="loading-icon">{{ icon }}</mat-icon>
-				<h3>{{ title }}</h3>
+				<h2>{{ title }}</h2>
 				<p>{{ message }}</p>
 			</div>
 		</div>

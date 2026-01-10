@@ -2,7 +2,7 @@
 	<div class="interview-options">
 		@for (interview of interviewTypes; track interview.id) {
 			<div class="interview-card">
-				<h3>{{ interview.title }}</h3>
+				<h2>{{ interview.title }}</h2>
 				<p>{{ interview.description }}</p>
 				
 				@if (interview.badges) {
