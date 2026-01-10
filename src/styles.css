@@ -59,3 +59,44 @@ p {
 	margin: 0 0 1rem 0;
 	line-height: 1.6;
 }
+/* Angular Material Form Field Height Override */
+.mat-mdc-form-field {
+	--mdc-filled-text-field-container-height: 40px;
+	--mdc-outlined-text-field-container-height: 40px;
+}
+
+.mat-mdc-form-field .mat-mdc-text-field-wrapper {
+	height: 40px !important;
+}
+
+.mat-mdc-form-field .mdc-text-field {
+	height: 40px !important;
+}
+
+.mat-mdc-form-field .mdc-text-field__input {
+	height: 40px !important;
+	padding-top: 8px !important;
+	padding-bottom: 8px !important;
+}
+
+.mat-mdc-form-field .mdc-notched-outline {
+	height: 40px !important;
+}
+
+.mat-mdc-form-field .mdc-notched-outline__leading,
+.mat-mdc-form-field .mdc-notched-outline__notch,
+.mat-mdc-form-field .mdc-notched-outline__trailing {
+	height: 40px !important;
+}
+/* Fix Form Field Height to 40px */
+.mat-mdc-form-field .mdc-text-field__input {
+	height: 24px !important;
+	padding: 8px 12px !important;
+	line-height: 24px !important;
+}
+
+.mat-mdc-form-field-infix {
+	height: 24px !important;
+	padding: 8px 0 !important;
+	min-height: 24px !important;
+}

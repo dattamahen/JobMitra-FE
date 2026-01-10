@@ -1,5 +1,5 @@
 export const environment = {
 	production: false,
 	apiUrl: 'http://localhost:8000',
-	googleClientId: ''  // Add your real Google Client ID here
+	googleClientId: 'YOUR_GOOGLE_CLIENT_ID_HERE'  // Add your real Google Client ID here
 };
