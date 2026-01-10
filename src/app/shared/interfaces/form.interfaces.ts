@@ -1,7 +1,9 @@
+export type FieldType = 'text' | 'email' | 'password' | 'number' | 'date' | 'select' | 'checkbox' | 'textarea' | 'dynamic-array' | 'chip-list' | 'url';
+
 export interface FormFieldConfig {
 	name: string;
 	label: string;
-	type: 'text' | 'email' | 'password' | 'number' | 'select' | 'checkbox' | 'textarea' | 'dynamic-array' | 'chip-list' | 'url' | 'date';
+	type: FieldType;
 	placeholder?: string;
 	required?: boolean;
 	defaultValue?: any;
@@ -29,4 +31,5 @@ export interface FormConfig {
 	loading?: boolean;
 	readonly?: boolean;
 	showCancel?: boolean;
+	showActions?: boolean;
 }

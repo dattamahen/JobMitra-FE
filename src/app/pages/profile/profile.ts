@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -12,12 +12,16 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatListModule } from '@angular/material/list';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Subject, takeUntil, finalize, map } from 'rxjs';
 import { UserService, UserProfile, UpdateUserRequest } from '../../services';
 import { AuthService } from '../../services/auth.service';
 import { ResumeIntegrationService } from '../../services/resume-integration.service';
 import { TestProfileService } from '../../test-profile.service';
 import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
+import { ProfileShareComponent } from '../../shared/components/profile-share/profile-share.component';
+import { ProfileShareService, ProfileSnapshot } from '../../services/profile-share.service';
+import { ImageUploadService } from '../../services/image-upload.service';
 
 import { 
 	PROFILE_BASIC_INFO_CONFIG, 
@@ -47,7 +51,9 @@ import {
 		MatListModule,
 		MatExpansionModule,
 		MatSnackBarModule,
+		MatTooltipModule,
 		DynamicFormComponent,
+		ProfileShareComponent,
 
 	],
 	templateUrl: './profile.html',
@@ -62,6 +68,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 	@ViewChild('projectsForm') projectsForm!: DynamicFormComponent;
 	@ViewChild('certificationsForm') certificationsForm!: DynamicFormComponent;
 	@ViewChild('jobPreferencesForm') jobPreferencesForm!: DynamicFormComponent;
+	@ViewChild('profileSummarySection', { static: false }) profileSummarySection!: ElementRef<HTMLElement>;
 	profileForm!: FormGroup;
 	currentUser: UserProfile | null = null;
 	isLoading = false;
@@ -615,7 +622,9 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 		private authService: AuthService,
 		private snackBar: MatSnackBar,
 		private resumeIntegrationService: ResumeIntegrationService,
-		private testProfileService: TestProfileService
+		private testProfileService: TestProfileService,
+		private profileShareService: ProfileShareService,
+		private imageUploadService: ImageUploadService
 	) {
 		this.createForm();
 	}
@@ -1084,6 +1093,107 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 		).length;
 
 		return Math.round((completedFields / fields.length) * 100);
+	}
+
+	getProfileSnapshot(): ProfileSnapshot {
+		return {
+			name: this.getFullName() || 'Your Name',
+			role: this.getCurrentRole() || 'Add your professional headline',
+			location: this.getLocation() || 'Add your location',
+			experience: this.getExperience() || '0',
+			skills: this.getSkills(),
+			email: this.getEmail(),
+			phone: this.getPhone(),
+			linkedin: this.getLinkedinLink(),
+			github: this.getGithubLink(),
+			summary: this.getProfessionalSummary()
+		};
+	}
+
+	getProfileSummaryElement(): HTMLElement | null {
+		return this.profileSummarySection?.nativeElement || null;
+	}
+
+	getProfileCoverImage(): string | null {
+		return this.imageUploadService.getProfileImage();
+	}
+
+	getProfileAvatarImage(): string | null {
+		return localStorage.getItem('profileAvatarImage');
+	}
+
+	onFileSelected(event: Event): void {
+		const input = event.target as HTMLInputElement;
+		if (input.files && input.files[0]) {
+			const file = input.files[0];
+			const validation = this.imageUploadService.validateImageFile(file);
+			
+			if (!validation.valid) {
+				this.snackBar.open(validation.error!, 'Close', {
+					duration: 3000,
+					panelClass: ['error-snackbar']
+				});
+				return;
+			}
+
+			this.imageUploadService.uploadProfileImage(file).subscribe({
+				next: () => {
+					this.snackBar.open('Profile image updated successfully!', 'Close', {
+						duration: 3000,
+						panelClass: ['success-snackbar']
+					});
+				},
+				error: () => {
+					this.snackBar.open('Failed to upload image', 'Close', {
+						duration: 3000,
+						panelClass: ['error-snackbar']
+					});
+				}
+			});
+		}
+	}
+
+	onAvatarFileSelected(event: Event): void {
+		const input = event.target as HTMLInputElement;
+		if (input.files && input.files[0]) {
+			const file = input.files[0];
+			const validation = this.imageUploadService.validateImageFile(file);
+			
+			if (!validation.valid) {
+				this.snackBar.open(validation.error!, 'Close', {
+					duration: 3000,
+					panelClass: ['error-snackbar']
+				});
+				return;
+			}
+
+			const reader = new FileReader();
+			reader.onload = () => {
+				const base64String = reader.result as string;
+				localStorage.setItem('profileAvatarImage', base64String);
+				this.snackBar.open('Avatar updated successfully!', 'Close', {
+					duration: 3000,
+					panelClass: ['success-snackbar']
+				});
+			};
+			reader.readAsDataURL(file);
+		}
+	}
+
+	removeProfileImage(): void {
+		this.imageUploadService.removeProfileImage();
+		this.snackBar.open('Profile image removed', 'Close', {
+			duration: 2000,
+			panelClass: ['info-snackbar']
+		});
+	}
+
+	removeAvatarImage(): void {
+		localStorage.removeItem('profileAvatarImage');
+		this.snackBar.open('Avatar removed', 'Close', {
+			duration: 2000,
+			panelClass: ['info-snackbar']
+		});
 	}
 
 	isBasicInfoComplete(): boolean {

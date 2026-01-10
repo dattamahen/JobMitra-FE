@@ -8,7 +8,10 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 import { FormFieldConfig, FormConfig } from '../../interfaces/form.interfaces';
+import { DateFieldComponent } from '../date-field/date-field.component';
 
 @Component({
 	selector: 'app-dynamic-form',
@@ -22,7 +25,10 @@ import { FormFieldConfig, FormConfig } from '../../interfaces/form.interfaces';
 		MatCheckboxModule,
 		MatButtonModule,
 		MatIconModule,
-		MatProgressSpinnerModule
+		MatProgressSpinnerModule,
+		MatDatepickerModule,
+		MatNativeDateModule,
+		DateFieldComponent
 	],
 	templateUrl: './dynamic-form.component.html',
 	styleUrls: ['./dynamic-form.component.scss']

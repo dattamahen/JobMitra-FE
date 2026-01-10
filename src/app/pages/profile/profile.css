@@ -798,12 +798,56 @@ h3 {
 	overflow: hidden;
 	box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 	margin-bottom: 20px;
+	position: relative;
+}
+
+.share-button-container {
+	position: absolute;
+	top: 16px;
+	right: 16px;
+	z-index: 10;
 }
 
 .profile-cover {
 	height: 120px;
 	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 	position: relative;
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.cover-upload-controls {
+	position: absolute;
+	top: 12px;
+	left: 12px;
+	display: none;
+	gap: 8px;
+	z-index: 5;
+}
+
+.upload-btn, .remove-btn {
+	background: rgba(0, 0, 0, 0.6);
+	color: white;
+	width: 36px;
+	height: 36px;
+	transition: all 0.3s ease;
+}
+
+.upload-btn:hover {
+	background: rgba(33, 150, 243, 0.8);
+	transform: scale(1.1);
+}
+
+.remove-btn:hover {
+	background: rgba(244, 67, 54, 0.8);
+	transform: scale(1.1);
+}
+
+.upload-btn mat-icon, .remove-btn mat-icon {
+	font-size: 20px;
+	width: 20px;
+	height: 20px;
 }
 
 .cover-gradient {
@@ -830,6 +874,70 @@ h3 {
 	align-items: center;
 	justify-content: center;
 	box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+	position: relative;
+	overflow: hidden;
+}
+
+.avatar-wrapper::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.4);
+	border-radius: 50%;
+	opacity: 0;
+	transition: opacity 0.3s ease;
+	z-index: 5;
+}
+
+.avatar-wrapper:hover::before {
+	opacity: 1;
+}
+
+.avatar-upload-controls {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: flex;
+	gap: 8px;
+	z-index: 6;
+	opacity: 0;
+	transition: opacity 0.3s ease;
+}
+
+.avatar-wrapper:hover .avatar-upload-controls {
+	opacity: 1;
+}
+
+.avatar-upload-btn, .avatar-remove-btn {
+	background: rgba(255, 255, 255, 0.9);
+	color: #333;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+	transition: all 0.3s ease;
+}
+
+.avatar-upload-btn:hover {
+	background: rgba(33, 150, 243, 0.9);
+	color: white;
+	transform: scale(1.1);
+}
+
+.avatar-remove-btn:hover {
+	background: rgba(244, 67, 54, 0.9);
+	color: white;
+	transform: scale(1.1);
+}
+
+.avatar-upload-btn mat-icon, .avatar-remove-btn mat-icon {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
 }
 
 .profile-avatar {

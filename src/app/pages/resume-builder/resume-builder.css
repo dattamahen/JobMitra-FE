@@ -17,7 +17,7 @@
 	display: grid;
 	grid-template-columns: 280px 1fr;
 	gap: 24px;
-	height: calc(100vh - 120px);
+	height: calc(100vh - 80px);
 	overflow: hidden;
 	transition: grid-template-columns 0.3s ease;
 }
@@ -280,6 +280,7 @@
 	display: flex;
 	flex-direction: column;
 	transition: all 0.3s ease;
+	height: 100%;
 }
 
 .form-header-actions {
@@ -313,6 +314,12 @@
 .resume-form {
 	padding: 32px;
 	flex: 1;
+	overflow-y: auto;
+	max-height: calc(100vh - 200px);
+}
+
+.resume-form .form-actions {
+	display: none !important;
 }
 
 .form-header {
@@ -382,13 +389,18 @@
 }
 
 .resume-actions {
-	padding: 24px 32px;
+	position: sticky;
+	bottom: 0;
+	padding: 8px 32px;
 	border-top: 1px solid #e0e0e0;
-	background: #fafafa;
+	background: white;
 	display: flex;
 	justify-content: flex-end;
 	gap: 12px;
 	flex-wrap: wrap;
+	box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+	z-index: 10;
+	min-height: 56px;
 }
 
 /* Preview Panel Styles */
