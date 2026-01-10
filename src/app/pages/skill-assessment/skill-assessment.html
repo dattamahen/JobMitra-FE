@@ -3,7 +3,7 @@
 		<!-- Mock Interview Usage Status -->
 		<div class="usage-status-card">
 			<div class="usage-info">
-				<h3><mat-icon>smart_toy</mat-icon> AI Mock Interview Status</h3>
+				<h2><mat-icon>smart_toy</mat-icon> AI Mock Interview Status</h2>
 				<div class="usage-details">
 					<span class="usage-count">{{ getUsageStatus() }}</span>
 					@if (!canTakeMockInterview()) {
@@ -26,7 +26,7 @@
 		@if (hasSkills()) {
 			<div class="skill-categories">
 				<div class="category-card">
-					<h3><mat-icon>computer</mat-icon> Technical Skills</h3>
+					<h2><mat-icon>computer</mat-icon> Technical Skills</h2>
 					<div class="skills-list">
 						@for (skill of getTechnicalSkills(); track skill.id) {
 							<div class="skill-item">
@@ -49,7 +49,7 @@
 				</div>
 				
 				<div class="category-card">
-					<h3><mat-icon>psychology</mat-icon> Soft Skills</h3>
+					<h2><mat-icon>psychology</mat-icon> Soft Skills</h2>
 					<div class="skills-list">
 						@for (skill of getSoftSkills(); track skill.id) {
 							<div class="skill-item">
@@ -75,7 +75,7 @@
 			<div class="no-skills-message">
 				<div class="no-skills-content">
 					<mat-icon class="no-skills-icon">psychology</mat-icon>
-					<h3>No Skills Found</h3>
+					<h2>No Skills Found</h2>
 					<p>Update your profile to see your skills here and start taking assessments.</p>
 					<button class="update-profile-btn" (click)="navigateToProfile()">
 						<mat-icon>person</mat-icon> Update Profile
@@ -149,7 +149,7 @@
 										</div>
 										
 										<div class="resource-info">
-											<h3 class="resource-title">{{ resource.title }}</h3>
+											<h2 class="resource-title">{{ resource.title }}</h2>
 											<p class="resource-description">{{ resource.description }}</p>
 											
 											<div class="resource-meta">
@@ -185,7 +185,7 @@
 							<div class="no-resources">
 								<div class="no-resources-content">
 									<div class="no-resources-icon"><mat-icon>school</mat-icon></div>
-									<h3>No Learning Resources Found</h3>
+									<h2>No Learning Resources Found</h2>
 									<p>We don't have learning resources for <strong>{{ selectedSkill }}</strong> yet.</p>
 									<p>Help the community by sharing your knowledge!</p>
 									<button class="contribute-btn" (click)="showContributeKnowledge()">
@@ -199,7 +199,7 @@
 						@if (showContributeForm) {
 							<div class="contribute-form">
 								<div class="form-header">
-									<h3><mat-icon>share</mat-icon> Share Your Knowledge for {{ selectedSkill }}</h3>
+									<h2><mat-icon>share</mat-icon> Share Your Knowledge for {{ selectedSkill }}</h2>
 									<p>Help others learn by sharing valuable learning resources!</p>
 								</div>
 								
@@ -280,7 +280,7 @@
 							<div class="interview-setup">
 								<div class="interview-info">
 									<div class="interview-details">
-										<h3>Interview Details</h3>
+										<h2>Interview Details</h2>
 										<ul>
 											<li><strong>Skill:</strong> {{ selectedSkill }}</li>
 											<li><strong>Duration:</strong> {{ mockInterviewConfig.sessionDurationMinutes }} minutes</li>
@@ -290,7 +290,7 @@
 									</div>
 									
 									<div class="interview-tips">
-										<h3><mat-icon>lightbulb</mat-icon> Tips for Success</h3>
+										<h2><mat-icon>lightbulb</mat-icon> Tips for Success</h2>
 										<ul>
 											<li>Find a quiet environment</li>
 											<li>Speak clearly and think out loud</li>
@@ -301,7 +301,7 @@
 								</div>
 								
 								<div class="sample-questions">
-									<h3>Sample Questions Preview</h3>
+									<h2>Sample Questions Preview</h2>
 									<div class="questions-preview">
 										@for (question of currentInterviewQuestions.slice(0, 3); track $index) {
 											<div class="question-item">
@@ -332,7 +332,7 @@
 							<div class="interview-in-progress">
 								<div class="progress-indicator">
 									<div class="loading-spinner"></div>
-									<h3>Interview in Progress...</h3>
+									<h2>Interview in Progress...</h2>
 									<p>Our AI is conducting your {{ selectedSkill }} interview.</p>
 									<div class="interview-status">
 										<span class="status-text">Analyzing your responses and providing feedback</span>
@@ -369,7 +369,7 @@
 								[class.recommended]="plan.isPopular">
 							
 							<div class="plan-header">
-								<h3>{{ plan.name }}</h3>
+								<h2>{{ plan.name }}</h2>
 								<div class="plan-price">
 									<span class="price">{{ formatPrice(plan.price) }}</span>
 									<span class="period">/{{ plan.period }}</span>

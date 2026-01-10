@@ -21,7 +21,7 @@
 		<div class="generating-section">
 			<div class="generating-content">
 				<mat-spinner diameter="60"></mat-spinner>
-				<h3>Generating Interview Questions</h3>
+				<h2>Generating Interview Questions</h2>
 				<p>Our AI is creating personalized questions based on your profile...</p>
 				<div class="generating-info">
 					<div class="info-item">
@@ -112,7 +112,7 @@
 		<div class="completion-section">
 			<div class="completion-header">
 				<mat-icon class="success-icon">check_circle</mat-icon>
-				<h3>Interview Completed!</h3>
+				<h2>Interview Completed!</h2>
 				<p>Thank you for participating in the mock interview.</p>
 			</div>
 		</div>
@@ -134,12 +134,12 @@
 					</div>
 					
 					<div class="feedback-section">
-						<h3>Detailed Feedback</h3>
+						<h2>Detailed Feedback</h2>
 						<p>{{evaluation()!.feedback}}</p>
 					</div>
 
 					<div class="question-scores">
-						<h3>Question Analysis</h3>
+						<h2>Question Analysis</h2>
 						@for (score of evaluation()!.question_scores; track score.question_id) {
 							<div class="question-score">
 								<div class="score-badge">{{score.score}}%</div>
