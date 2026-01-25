@@ -60,10 +60,15 @@
 .contact-info {
 	display: flex;
 	flex-direction: column;
+	max-width: 180px;
 }
 
+.contact-info div,
 .contact-info small {
 	font-size: 0.8rem;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .high-match {
@@ -81,6 +86,11 @@
 	color: white !important;
 }
 
+td.mat-column-applied_date,
+th.mat-column-applied_date {
+	white-space: nowrap;
+}
+
 @media (max-width: 768px) {
 	.page-container {
 		padding: 16px;
@@ -95,4 +105,100 @@
 	.applications-table {
 		font-size: 0.8rem;
 	}
+}
+
+
+/* Expandable row styles */
+.main-row {
+	cursor: pointer;
+}
+
+.detail-row {
+	height: 0;
+	overflow: hidden;
+}
+
+.expanded-detail {
+	overflow: hidden;
+	padding: 0 16px;
+}
+
+.detail-content {
+	padding: 20px;
+	background: #f5f5f5;
+	border-radius: 8px;
+	margin: 8px 0;
+}
+
+.detail-header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 16px;
+}
+
+.detail-header h3 {
+	margin: 0;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.tailored-badge {
+	background: #4caf50 !important;
+	color: white !important;
+	font-size: 12px;
+}
+
+.tailored-badge mat-icon {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+}
+
+.detail-section {
+	margin-bottom: 16px;
+}
+
+.detail-section h4 {
+	margin: 0 0 8px 0;
+	color: #666;
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.detail-section p {
+	margin: 0;
+	line-height: 1.6;
+}
+
+.skills-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.skills-list mat-chip {
+	background: white;
+}
+
+.high-match mat-icon {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	margin-right: 4px;
+}
+
+
+.detail-section h4 {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.detail-section h4 mat-icon {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+	color: #1976d2;
 }

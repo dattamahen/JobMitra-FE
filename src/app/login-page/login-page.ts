@@ -17,6 +17,7 @@ import { DynamicFormComponent } from '../shared/components/dynamic-form/dynamic-
 import { FormConfig } from '../shared/interfaces/form.interfaces';
 import { LOGIN_FORM_CONFIG, SIGNUP_FORM_CONFIG } from '../shared/components/dynamic-form/form-configs';
 import { LOGIN_FEATURES, ENTERPRISE_STATS, CERTIFICATIONS } from '../data/login-page-data';
+import { LOGIN_PAGE_CONSTANTS } from './login-page.constants';
 
 @Component({
 	selector: 'app-login-page',
@@ -45,6 +46,7 @@ export class LoginPage implements OnInit {
 	isLoading = false;
 	errorMessage = '';
 	showPassword = false;
+	readonly CONSTANTS = LOGIN_PAGE_CONSTANTS;
 	
 	loginFormConfig: FormConfig = { ...LOGIN_FORM_CONFIG, loading: false };
 	signupFormConfig: FormConfig = { ...SIGNUP_FORM_CONFIG, loading: false };

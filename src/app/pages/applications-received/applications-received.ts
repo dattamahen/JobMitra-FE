@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatMenuModule } from '@angular/material/menu';
@@ -15,8 +16,10 @@ import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { HrService } from '../../services/hr.service';
 import { ActivatedRoute } from '@angular/router';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 export interface ApplicationReceived {
+	application_id?: string;
 	job_id: string;
 	job_title: string;
 	company: string;
@@ -26,10 +29,13 @@ export interface ApplicationReceived {
 	phone: string;
 	experience_years: number;
 	skills: string[];
+	professional_summary?: string;
 	highest_qualification: string;
 	current_role: string;
 	applied_date: string;
 	status: string;
+	resume_tailored?: boolean;
+	match_score?: number;
 	match_percentage: number;
 	ats_score: number;
 }
@@ -54,12 +60,20 @@ export interface JobOption {
 		MatProgressSpinnerModule,
 		MatSnackBarModule,
 		MatMenuModule,
+		MatTooltipModule,
 		FormsModule,
 		LoadingComponent
 	],
 	templateUrl: './applications-received.html',
 	styleUrls: ['./applications-received.css'],
-	changeDetection: ChangeDetectionStrategy.OnPush
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	animations: [
+		trigger('detailExpand', [
+			state('collapsed', style({ height: '0px', minHeight: '0', opacity: 0 })),
+			state('expanded', style({ height: '*', opacity: 1 })),
+			transition('expanded <=> collapsed', animate('300ms cubic-bezier(0.4, 0.0, 0.2, 1)'))
+		])
+	]
 })
 export class ApplicationsReceivedPage implements OnInit, OnDestroy {
 	private destroy$ = new Subject<void>();
@@ -71,14 +85,15 @@ export class ApplicationsReceivedPage implements OnInit, OnDestroy {
 	selectedJobId = signal('all');
 	isLoading = signal(false);
 	pageTitle = signal('Applications Received');
+	expandedApplicationId = signal<string | null>(null);
 	
 	displayedColumns: string[] = [
+		'expand',
 		'full_name',
-		'email', 
 		'experience_years',
 		'current_role',
-		'highest_qualification',
 		'match_percentage',
+		'ats_score',
 		'applied_date',
 		'actions'
 	];
@@ -206,5 +221,17 @@ export class ApplicationsReceivedPage implements OnInit, OnDestroy {
 	updateStatus(application: ApplicationReceived, newStatus: string) {
 		// TODO: Implement status update
 		this.snackBar.open(`Status updated to ${newStatus} for ${application.full_name}`, 'Close', { duration: 3000 });
+	}
+
+	toggleExpand(applicationId: string) {
+		if (this.expandedApplicationId() === applicationId) {
+			this.expandedApplicationId.set(null);
+		} else {
+			this.expandedApplicationId.set(applicationId);
+		}
+	}
+
+	isExpanded(applicationId: string): boolean {
+		return this.expandedApplicationId() === applicationId;
 	}
 }

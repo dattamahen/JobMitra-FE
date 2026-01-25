@@ -432,7 +432,7 @@ export class JobSearchPage implements OnInit {
 
 	// Force apply without match analysis
 	private forceApplyForJob(jobId: string): void {
-		this.jobService.applyForJob(jobId, true).subscribe({
+		this.tailorService.applyWithoutTailoring(jobId).subscribe({
 			next: (response) => {
 				const job = this.getJobById(jobId);
 				if (job) {
@@ -443,7 +443,7 @@ export class JobSearchPage implements OnInit {
 						job.match_percentage = response.match_percentage;
 					}
 				}
-				this.snackBar.open(response.message, 'Close', { duration: 3000 });
+				this.snackBar.open(response.message || 'Applied successfully!', 'Close', { duration: 3000 });
 			},
 			error: (error) => {
 				const errorMessage = error.error?.detail || 'Failed to apply for job';

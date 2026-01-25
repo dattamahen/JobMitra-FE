@@ -1,6 +1,6 @@
 @if (!isLoginPage()) {
 	<mat-toolbar>
-		<span>JobMitra</span>
+		<span>{{CONSTANTS.APP_NAME}}</span>
 		<span class="spacer"></span>
 		<div class="nav-buttons">
 			@if (currentUser) {
@@ -12,15 +12,15 @@
 				<mat-menu #userMenu="matMenu">
 					<button mat-menu-item (click)="logout()">
 						<mat-icon>logout</mat-icon>
-						<span>Logout</span>
+						<span>{{CONSTANTS.LOGOUT}}</span>
 					</button>
 				</mat-menu>
 			} @else {
 				<button mat-button (click)="navigateToLogin()" class="auth-btn">
-					Sign In
+					{{CONSTANTS.SIGN_IN}}
 				</button>
 				<button mat-raised-button color="primary" (click)="navigateToSignup()" class="auth-btn">
-					Sign Up
+					{{CONSTANTS.SIGN_UP}}
 				</button>
 			}
 		</div>

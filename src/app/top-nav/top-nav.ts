@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../services/auth.service';
 import { UserService } from '../services/user.service';
+import { TOP_NAV_CONSTANTS } from './top-nav.constants';
 
 @Component({
 	selector: 'app-top-nav',
@@ -16,6 +17,7 @@ import { UserService } from '../services/user.service';
 })
 export class TopNav implements OnInit {
 	currentUser: any = null;
+	readonly CONSTANTS = TOP_NAV_CONSTANTS;
 
 	constructor(
 		private router: Router,
