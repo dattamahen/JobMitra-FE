@@ -19,7 +19,7 @@ import { CommonModule } from '@angular/common';
 		MatIconModule
 	],
 	template: `
-		<mat-form-field appearance="outline" class="full-width">
+		<mat-form-field appearance="outline" class="full-width" [class.disabled-field]="disabled || readonly">
 			<mat-label>{{ label }}{{ required ? ' *' : '' }}</mat-label>
 			<input 
 				matInput 
@@ -27,9 +27,9 @@ import { CommonModule } from '@angular/common';
 				[value]="value"
 				(dateInput)="onDateChange($event)"
 				[readonly]="readonly"
-				[disabled]="disabled">
-			<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-			<mat-datepicker #picker></mat-datepicker>
+				[disabled]="disabled || readonly">
+			<mat-datepicker-toggle matSuffix [for]="picker" [disabled]="disabled || readonly"></mat-datepicker-toggle>
+			<mat-datepicker #picker [disabled]="disabled || readonly"></mat-datepicker>
 			@if (hint) {
 				<mat-hint>{{ hint }}</mat-hint>
 			}
@@ -60,8 +60,12 @@ export class DateFieldComponent implements ControlValueAccessor {
 		this.onTouched();
 	}
 
-	writeValue(value: Date | null): void {
-		this.value = value;
+	writeValue(value: Date | string | null): void {
+		if (value) {
+			this.value = value instanceof Date ? value : new Date(value);
+		} else {
+			this.value = null;
+		}
 	}
 
 	registerOnChange(fn: (value: Date | null) => void): void {

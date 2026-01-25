@@ -41,7 +41,7 @@ export class ApiService {
 	/**
 	* GET request
 	*/
-	get<T>(endpoint: string, params?: any): Observable<T> {
+	get<T>(endpoint: string, params?: any, responseType?: 'json' | 'blob'): Observable<T> {
 		let httpParams = new HttpParams();
 		
 		if (params) {
@@ -54,9 +54,16 @@ export class ApiService {
 
 		const url = endpoint.startsWith('/api/v1') ? `${this.baseUrl}${endpoint}` : `${this.apiBaseUrl}${endpoint}`;
 		
+		if (responseType === 'blob') {
+			return this.http.get(url, {
+				headers: this.createHeaders(),
+				params: httpParams,
+				responseType: 'blob' as 'json'
+			}) as Observable<T>;
+		}
+		
 		return this.http.get<T>(url, { headers: this.createHeaders(), params: httpParams })
 			.pipe(
-				retry(1),
 				catchError(this.handleError)
 			);
 	}
