@@ -119,9 +119,11 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 		if (formData.state?.trim()) updateData.state = formData.state.trim();
 		
 		// date_of_birth - datetime (ISO string)
-		if (formData.date_of_birth?.trim()) {
+		if (formData.date_of_birth) {
 			try {
-				const date = new Date(formData.date_of_birth);
+				const date = formData.date_of_birth instanceof Date 
+					? formData.date_of_birth 
+					: new Date(formData.date_of_birth);
 				if (!isNaN(date.getTime())) {
 					updateData.date_of_birth = date.toISOString();
 				}
@@ -583,7 +585,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 			email: user?.email || '',
 			phone: user?.phone || '',
 			location: [user?.city, user?.state].filter(Boolean).join(', ') || '',
-			date_of_birth: user?.date_of_birth ? new Date(user.date_of_birth).toISOString().split('T')[0] : ''
+			date_of_birth: user?.date_of_birth ? new Date(user.date_of_birth) : null
 		};
 
 		this.professionalValues = {

@@ -21,6 +21,8 @@ import { LoadingComponent } from '../../shared/components/loading/loading.compon
 import { FeatureUsageService } from '../../services/feature-usage.service';
 import { MockInterviewService } from '../../services/mock-interview.service';
 import { MockInterviewModalComponent } from '../../components/mock-interview-modal/mock-interview-modal.component';
+import { ResumeTailorService } from '../../services/resume-tailor.service';
+import { ResumeTailorModalComponent } from '../../components/mock-interview-modal/resume-tailor-modal.component';
 
 @Component({
 	selector: 'app-job-search-page',
@@ -84,7 +86,8 @@ export class JobSearchPage implements OnInit {
 		private cdr: ChangeDetectorRef,
 		private dialog: MatDialog,
 		private featureUsageService: FeatureUsageService,
-		private mockInterviewService: MockInterviewService
+		private mockInterviewService: MockInterviewService,
+		private tailorService: ResumeTailorService
 	) {
 		// Initialize filter options with empty arrays to prevent template errors
 		this.filterOptions = {
@@ -301,22 +304,45 @@ export class JobSearchPage implements OnInit {
 		const job = this.getJobById(jobId);
 		if (!job) return;
 		
-		// Check if already done
 		if (job.tailor_resume_done) {
 			this.snackBar.open('Resume already tailored', 'Close', { duration: 3000 });
 			return;
 		}
-		this.jobService.tailorResume(jobId).subscribe({
+
+		// Open tailor modal
+		const dialogRef = this.dialog.open(ResumeTailorModalComponent, {
+			width: '800px',
+			maxHeight: '90vh',
+			data: { jobId: jobId, jobTitle: job.title }
+		});
+
+		dialogRef.afterClosed().subscribe(result => {
+			if (result?.action === 'apply_with_tailor') {
+				this.applyWithTailoredResume(jobId);
+			} else if (result?.action === 'apply_without_tailor') {
+				this.forceApplyForJob(jobId);
+			}
+		});
+	}
+
+	// Apply with tailored resume
+	private applyWithTailoredResume(jobId: string): void {
+		this.tailorService.applyWithTailoredResume(jobId, true).subscribe({
 			next: (response) => {
-				job.match_percentage = response.match_percentage;
-				job.tailor_resume_done = response.tailor_done;
-				
-				this.snackBar.open(response.message, 'Close', { duration: 3000 });
+				const job = this.getJobById(jobId);
+				if (job) {
+					job.already_applied = true;
+					job.match_analysis_done = true;
+					job.tailor_resume_done = true;
+					if (response.match_percentage) {
+						job.match_percentage = response.match_percentage;
+					}
+				}
+				this.snackBar.open('Applied successfully with tailored resume!', 'Close', { duration: 3000 });
 			},
 			error: (error) => {
-				const errorMessage = error.error?.detail || 'Failed to tailor resume';
+				const errorMessage = error.error?.detail || 'Failed to apply';
 				this.snackBar.open(errorMessage, 'Close', { duration: 3000 });
-
 			}
 		});
 	}

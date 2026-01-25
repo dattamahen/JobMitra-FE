@@ -162,6 +162,10 @@ export class HrService {
 				this.http.post<JobListing>(`${this.baseUrl}/hr/jobs`, jobData, { headers: this.getAuthHeaders() })
 			);
 		} catch (error: any) {
+			// Re-throw the full error object to preserve validation details
+			if (error.status === 422 && error.error?.errors) {
+				throw error;
+			}
 			throw new Error(error.error?.detail || 'Failed to create job posting');
 		}
 	}
