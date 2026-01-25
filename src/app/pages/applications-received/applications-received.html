@@ -37,7 +37,15 @@
 	} @else {
 		<mat-card class="applications-table">
 			<mat-card-content>
-				<table mat-table [dataSource]="applications()" class="applications-table">
+				<table mat-table [dataSource]="applications()" class="applications-table" multiTemplateDataRows>
+					
+					<!-- Expand Column -->
+					<ng-container matColumnDef="expand">
+						<th mat-header-cell *matHeaderCellDef></th>
+						<td mat-cell *matCellDef="let app">
+							<mat-icon>{{isExpanded(app.application_id || app.user_id) ? 'expand_less' : 'expand_more'}}</mat-icon>
+						</td>
+					</ng-container>
 					
 					<ng-container matColumnDef="full_name">
 						<th mat-header-cell *matHeaderCellDef>Candidate Name</th>
@@ -71,17 +79,34 @@
 						<td mat-cell *matCellDef="let app">{{app.current_role || 'Not specified'}}</td>
 					</ng-container>
 
-					<ng-container matColumnDef="highest_qualification">
-						<th mat-header-cell *matHeaderCellDef>Education</th>
-						<td mat-cell *matCellDef="let app">{{app.highest_qualification || 'Not specified'}}</td>
+					<ng-container matColumnDef="ats_score">
+						<th mat-header-cell *matHeaderCellDef>Skills Score</th>
+						<td mat-cell *matCellDef="let app">
+							@if (app.ats_score > 0) {
+								<mat-chip [class]="app.ats_score >= 70 ? 'high-match' : app.ats_score >= 50 ? 'medium-match' : 'low-match'">
+									{{app.ats_score}}%
+								</mat-chip>
+							} @else {
+								<mat-chip class="low-match">N/A</mat-chip>
+							}
+						</td>
 					</ng-container>
 
 					<ng-container matColumnDef="match_percentage">
-						<th mat-header-cell *matHeaderCellDef>Match Score</th>
+						<th mat-header-cell *matHeaderCellDef>JD Match Score</th>
 						<td mat-cell *matCellDef="let app">
-							<mat-chip [class]="app.match_percentage >= 70 ? 'high-match' : app.match_percentage >= 50 ? 'medium-match' : 'low-match'">
-								{{app.match_percentage}}%
-							</mat-chip>
+							@if (app.resume_tailored && app.match_score) {
+								<mat-chip class="high-match">
+									<mat-icon>auto_fix_high</mat-icon>
+									{{app.match_score}}%
+								</mat-chip>
+							} @else if (app.match_percentage > 0) {
+								<mat-chip [class]="app.match_percentage >= 70 ? 'high-match' : app.match_percentage >= 50 ? 'medium-match' : 'low-match'">
+									{{app.match_percentage}}%
+								</mat-chip>
+							} @else {
+								<mat-chip class="low-match">N/A</mat-chip>
+							}
 						</td>
 					</ng-container>
 
@@ -92,7 +117,7 @@
 
 					<ng-container matColumnDef="actions">
 						<th mat-header-cell *matHeaderCellDef>Actions</th>
-						<td mat-cell *matCellDef="let app">
+						<td mat-cell *matCellDef="let app" (click)="$event.stopPropagation()">
 							<button mat-icon-button (click)="viewProfile(app)" matTooltip="View Profile">
 								<mat-icon>person</mat-icon>
 							</button>
@@ -116,8 +141,66 @@
 						</td>
 					</ng-container>
 
+					<!-- Expanded Content -->
+					<ng-container matColumnDef="expandedDetail">
+						<td mat-cell *matCellDef="let app" [attr.colspan]="displayedColumns.length">
+							<div class="expanded-detail" [@detailExpand]="isExpanded(app.application_id || app.user_id) ? 'expanded' : 'collapsed'">
+								<div class="detail-content">
+									<div class="detail-header">
+										<h3>Candidate Details
+											@if (app.resume_tailored) {
+												<mat-chip class="tailored-badge">
+													<mat-icon>auto_fix_high</mat-icon>
+													Tailored Resume
+												</mat-chip>
+											}
+										</h3>
+									</div>
+									
+									<!-- Contact Info -->
+									<div class="detail-section">
+										<h4><mat-icon>contact_mail</mat-icon> Contact Information</h4>
+										<p><strong>Email:</strong> {{app.email}}</p>
+										@if (app.phone) {
+											<p><strong>Phone:</strong> {{app.phone}}</p>
+										}
+									</div>
+									
+									<!-- Professional Summary -->
+									@if (app.professional_summary) {
+										<div class="detail-section">
+											<h4><mat-icon>description</mat-icon> Professional Summary</h4>
+											<p>{{app.professional_summary}}</p>
+										</div>
+									}
+									
+									<!-- Skills -->
+									@if (app.skills && app.skills.length > 0) {
+										<div class="detail-section">
+											<h4><mat-icon>code</mat-icon> Skills</h4>
+											<div class="skills-list">
+												@for (skill of app.skills; track $index) {
+													<mat-chip>{{skill}}</mat-chip>
+												}
+											</div>
+										</div>
+									}
+									
+									<!-- Education -->
+									@if (app.highest_qualification) {
+										<div class="detail-section">
+											<h4><mat-icon>school</mat-icon> Education</h4>
+											<p>{{app.highest_qualification}}</p>
+										</div>
+									}
+								</div>
+							</div>
+						</td>
+					</ng-container>
+
 					<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-					<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+					<tr mat-row *matRowDef="let row; columns: displayedColumns;" class="main-row" (click)="toggleExpand(row.application_id || row.user_id)"></tr>
+					<tr mat-row *matRowDef="let row; columns: ['expandedDetail'];" class="detail-row"></tr>
 				</table>
 			</mat-card-content>
 		</mat-card>

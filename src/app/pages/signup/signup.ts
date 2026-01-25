@@ -10,6 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../services/auth.service';
+import { SIGNUP_PAGE_CONSTANTS } from './signup.constants';
 
 @Component({
 	selector: 'app-signup',
@@ -43,7 +44,7 @@ import { AuthService } from '../../services/auth.service';
 					<div class="brand-section">
 						<div class="logo-container">
 							<div class="logo-icon">🚀</div>
-							<h1 class="brand-title">JobMitra</h1>
+							<h1 class="brand-title">{{CONSTANTS.APP_NAME}}</h1>
 						</div>
 						<p class="brand-tagline">Start Your Career Journey</p>
 						<p class="brand-description">Join thousands of professionals who found their dream jobs through our AI-powered platform</p>
@@ -75,7 +76,7 @@ import { AuthService } from '../../services/auth.service';
 				<div class="form-container">
 					<div class="form-header">
 						<h2 class="form-title">Create Your Account</h2>
-						<p class="form-subtitle">Get started with your free JobMitra account</p>
+						<p class="form-subtitle">{{CONSTANTS.GET_STARTED}}</p>
 					</div>
 					
 					<div class="auth-card">
@@ -447,6 +448,7 @@ import { AuthService } from '../../services/auth.service';
 export class SignupPage {
 	signupForm: FormGroup;
 	isLoading = signal(false);
+	readonly CONSTANTS = SIGNUP_PAGE_CONSTANTS;
 
 	constructor(
 		private fb: FormBuilder,

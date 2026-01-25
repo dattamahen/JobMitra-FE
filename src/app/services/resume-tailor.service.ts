@@ -51,11 +51,11 @@ export class ResumeTailorService {
 	}
 
 	applyWithTailoredResume(jobId: string, acceptChanges: boolean): Observable<any> {
-		return this.apiService.post(`/jobs/${jobId}/apply-tailored`, { accept_changes: acceptChanges });
+		return this.apiService.post(`/jobs/${jobId}/apply?use_tailored=true`, {});
 	}
 
 	applyWithoutTailoring(jobId: string): Observable<any> {
-		return this.apiService.post(`/jobs/${jobId}/apply-direct`, {});
+		return this.apiService.post(`/jobs/${jobId}/apply?use_tailored=false`, {});
 	}
 
 	getTailoredResumeHistory(): Observable<any[]> {
