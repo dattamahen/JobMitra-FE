@@ -1,63 +1,17 @@
 <div class="page-container">
-	<mat-card class="search-filters">
-		<mat-card-content>
-			<div class="filter-row">
-				<mat-form-field appearance="outline" class="search-field">
-					<mat-label>Search jobs</mat-label>
-					<input matInput placeholder="Enter job title, skills, or company" [(ngModel)]="searchQuery"
-						(keyup.enter)="onSearchButtonClick()">
-					<mat-icon matSuffix>search</mat-icon>
-				</mat-form-field>
-
-				<mat-form-field appearance="outline">
-					<mat-label>Location</mat-label>
-					<mat-select [(value)]="selectedLocation" (selectionChange)="onLocationChange($event.value)">
-						<mat-option value="all">All Locations</mat-option>
-						@if (filterOptions.locations) {
-						@for (location of filterOptions.locations; track location) {
-						<mat-option [value]="location.toLowerCase().replace(' ', '-')">
-							{{location}}
-						</mat-option>
-						}
-						}
-					</mat-select>
-				</mat-form-field>
-
-				<mat-form-field appearance="outline">
-					<mat-label>Experience Level</mat-label>
-					<mat-select [(value)]="selectedExperience" (selectionChange)="onExperienceChange($event.value)">
-						<mat-option value="all">All Experience Levels</mat-option>
-						@if (filterOptions.experience_levels) {
-						@for (experience of filterOptions.experience_levels; track experience) {
-						<mat-option [value]="experience.toLowerCase().replace(' ', '-')">
-							{{experience | titlecase}}
-						</mat-option>
-						}
-						}
-					</mat-select>
-				</mat-form-field>
-
-				<mat-form-field appearance="outline">
-					<mat-label>Employment Type</mat-label>
-					<mat-select [(value)]="selectedEmploymentType" (selectionChange)="onEmploymentTypeChange($event.value)">
-						<mat-option value="all">All Employment Types</mat-option>
-						@if (filterOptions.employment_types) {
-						@for (type of filterOptions.employment_types; track type) {
-						<mat-option [value]="type.toLowerCase().replace(' ', '-')">
-							{{type | titlecase}}
-						</mat-option>
-						}
-						}
-					</mat-select>
-				</mat-form-field>
-
-				<button mat-raised-button color="primary" class="search-button" (click)="onSearchButtonClick()">
-					<mat-icon>search</mat-icon>
-					Search
-				</button>
-			</div>
-		</mat-card-content>
-	</mat-card>
+	<app-job-filter
+		[filterConfig]="filterConfig"
+		[filterOptions]="filterOptions"
+		[resultsCount]="totalJobs"
+		searchLabel="Search jobs"
+		searchPlaceholder="Enter job title, skills, or company"
+		searchButtonLabel="Search Jobs"
+		resultsLabel="job"
+		[showEmploymentType]="true"
+		[showStatus]="false"
+		(filterChange)="onFilterChange($event)"
+		(search)="onSearchButtonClick()">
+	</app-job-filter>
 
 	<div class="job-listings">
 		<!-- Loading indicator -->
@@ -67,6 +21,14 @@
 				message="Searching for the best opportunities for you"
 				icon="work">
 			</app-loading>
+		} @else if (jobListings.length === 0) {
+			<mat-card>
+				<app-empty-state
+					icon="work_off"
+					title="No Jobs Found"
+					message="Try adjusting your search filters to find more opportunities.">
+				</app-empty-state>
+			</mat-card>
 		} @else {
 		@for (job of jobListings; track job.job_id) {
 		<mat-card class="job-card">

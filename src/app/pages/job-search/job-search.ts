@@ -19,6 +19,8 @@ import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angu
 import { Inject } from '@angular/core';
 import { maskEmail, maskPhone } from '../../utils/mask.util';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
+import { JobFilterComponent, JobFilterConfig, JobFilterOptions } from '../../shared/components/job-filter/job-filter.component';
 import { FeatureUsageService } from '../../services/feature-usage.service';
 import { MockInterviewService } from '../../services/mock-interview.service';
 import { MockInterviewModalComponent } from '../../components/mock-interview-modal/mock-interview-modal.component';
@@ -43,7 +45,9 @@ import { ResumeTailorModalComponent } from '../../components/mock-interview-moda
 		MatProgressSpinnerModule,
 		MatSnackBarModule,
 		MatDialogModule,
-		LoadingComponent
+		LoadingComponent,
+		EmptyStateComponent,
+		JobFilterComponent
 	],
 	templateUrl: './job-search.html',
 	styleUrls: ['./job-search.css'],
@@ -59,12 +63,13 @@ export class JobSearchPage implements OnInit {
 	filterOptions: any = {};
 	isLoading = true;
 	
-	// Filter state
-	searchQuery = '';
-	selectedLocation = 'all';
-	selectedCategory = 'all';
-	selectedExperience = 'all';
-	selectedEmploymentType = 'all';
+	// Filter configuration
+	filterConfig: JobFilterConfig = {
+		searchQuery: '',
+		selectedLocation: 'all',
+		selectedExperience: 'all',
+		selectedEmploymentType: 'all'
+	};
 	
 	// Pagination
 	currentPage = 1;
@@ -111,25 +116,21 @@ export class JobSearchPage implements OnInit {
 	}
 
 	private loadJobs(): void {
-
-		
 		this.isLoading = true;
-
 		
-		// Build filters from current selections
 		const filters: JobSearchFilters = {};
 		
-		if (this.searchQuery) {
-			filters.keywords = this.searchQuery;
+		if (this.filterConfig.searchQuery) {
+			filters.keywords = this.filterConfig.searchQuery;
 		}
-		if (this.selectedLocation !== 'all') {
-			filters.location = this.selectedLocation;
+		if (this.filterConfig.selectedLocation !== 'all') {
+			filters.location = this.filterConfig.selectedLocation;
 		}
-		if (this.selectedExperience !== 'all') {
-			filters.experience_level = [this.selectedExperience];
+		if (this.filterConfig.selectedExperience !== 'all') {
+			filters.experience_level = [this.filterConfig.selectedExperience];
 		}
-		if (this.selectedEmploymentType !== 'all') {
-			filters.employment_type = [this.selectedEmploymentType];
+		if (this.filterConfig.selectedEmploymentType !== 'all') {
+			filters.employment_type = [this.filterConfig.selectedEmploymentType];
 		}
 
 
@@ -212,31 +213,14 @@ export class JobSearchPage implements OnInit {
 		return diffDays <= 7 && diffDays > 0;
 	}
 
-	// Search functionality
+	onFilterChange(config: JobFilterConfig): void {
+		this.filterConfig = config;
+		this.applyFilters();
+	}
+
 	onSearchButtonClick(): void {
-		// Reset to first page when search changes
 		this.currentPage = 1;
 		this.loadJobs();
-	}
-
-	onLocationChange(location: string): void {
-		this.selectedLocation = location;
-		this.applyFilters();
-	}
-
-	onCategoryChange(category: string): void {
-		this.selectedCategory = category;
-		this.applyFilters();
-	}
-
-	onExperienceChange(experience: string): void {
-		this.selectedExperience = experience;
-		this.applyFilters();
-	}
-
-	onEmploymentTypeChange(type: string): void {
-		this.selectedEmploymentType = type;
-		this.applyFilters();
 	}
 
 	private applyFilters(): void {
