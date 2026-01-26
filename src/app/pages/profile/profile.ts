@@ -1,4 +1,4 @@
-import { Component, viewChild, AfterViewInit, ElementRef, DestroyRef, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, viewChild, AfterViewInit, OnInit, ElementRef, DestroyRef, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
@@ -60,7 +60,7 @@ import {
 	styleUrls: ['./profile.css'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProfilePage implements AfterViewInit {
+export class ProfilePage implements OnInit, AfterViewInit {
 	basicForm = viewChild<DynamicFormComponent>('basicForm');
 	professionalForm = viewChild<DynamicFormComponent>('professionalForm');
 	skillsForm = viewChild<DynamicFormComponent>('skillsForm');
@@ -98,14 +98,14 @@ export class ProfilePage implements AfterViewInit {
 	jobPreferencesConfig = PROFILE_JOB_PREFERENCES_CONFIG;
 	
 	// Edit mode states
-	isBasicInfoEditing = false;
-	isProfessionalEditing = false;
-	isSkillsEditing = false;
-	isExperienceEditing = false;
-	isEducationEditing = false;
-	isProjectsEditing = false;
-	isCertificationsEditing = false;
-	isJobPreferencesEditing = false;
+	isBasicInfoEditing = signal(false);
+	isProfessionalEditing = signal(false);
+	isSkillsEditing = signal(false);
+	isExperienceEditing = signal(false);
+	isEducationEditing = signal(false);
+	isProjectsEditing = signal(false);
+	isCertificationsEditing = signal(false);
+	isJobPreferencesEditing = signal(false);
 
 	// Dynamic form handlers
 	onBasicInfoSubmit(formData: any): void {
@@ -143,11 +143,11 @@ export class ProfilePage implements AfterViewInit {
 		
 
 		this.updateProfile(updateData, 'Basic information updated successfully!');
-		this.isBasicInfoEditing = false;
+		this.isBasicInfoEditing.set(false);
 	}
 
 	onBasicInfoToggleEdit(): void {
-		this.isBasicInfoEditing = !this.isBasicInfoEditing;
+		this.isBasicInfoEditing.update(v => !v);
 	}
 
 	onProfessionalSubmit(formData: any): void {
@@ -177,11 +177,11 @@ export class ProfilePage implements AfterViewInit {
 		
 
 		this.updateProfile(updateData, 'Professional information updated successfully!');
-		this.isProfessionalEditing = false;
+		this.isProfessionalEditing.set(false);
 	}
 
 	onProfessionalToggleEdit(): void {
-		this.isProfessionalEditing = !this.isProfessionalEditing;
+		this.isProfessionalEditing.update(v => !v);
 	}
 
 	onJobPreferencesSubmit(formData: any): void {
@@ -218,11 +218,11 @@ export class ProfilePage implements AfterViewInit {
 		}
 		
 		this.updateProfile(updateData, 'Career preferences updated successfully!');
-		this.isJobPreferencesEditing = false;
+		this.isJobPreferencesEditing.set(false);
 	}
 
 	onJobPreferencesToggleEdit(): void {
-		this.isJobPreferencesEditing = !this.isJobPreferencesEditing;
+		this.isJobPreferencesEditing.update(v => !v);
 	}
 
 	// Skills handlers
@@ -241,11 +241,11 @@ export class ProfilePage implements AfterViewInit {
 		
 
 		this.updateProfile(updateData, 'Skills updated successfully!');
-		this.isSkillsEditing = false;
+		this.isSkillsEditing.set(false);
 	}
 
 	onSkillsToggleEdit(): void {
-		this.isSkillsEditing = !this.isSkillsEditing;
+		this.isSkillsEditing.update(v => !v);
 	}
 
 	// Experience handlers
@@ -263,11 +263,11 @@ export class ProfilePage implements AfterViewInit {
 		
 
 		this.updateProfile(updateData, 'Experience updated successfully!');
-		this.isExperienceEditing = false;
+		this.isExperienceEditing.set(false);
 	}
 
 	onExperienceToggleEdit(): void {
-		this.isExperienceEditing = !this.isExperienceEditing;
+		this.isExperienceEditing.update(v => !v);
 	}
 
 	// Education handlers
@@ -284,11 +284,11 @@ export class ProfilePage implements AfterViewInit {
 		
 
 		this.updateProfile(updateData, 'Education updated successfully!');
-		this.isEducationEditing = false;
+		this.isEducationEditing.set(false);
 	}
 
 	onEducationToggleEdit(): void {
-		this.isEducationEditing = !this.isEducationEditing;
+		this.isEducationEditing.update(v => !v);
 	}
 
 	// Projects handlers
@@ -305,11 +305,11 @@ export class ProfilePage implements AfterViewInit {
 		
 
 		this.updateProfile(updateData, 'Projects updated successfully!');
-		this.isProjectsEditing = false;
+		this.isProjectsEditing.set(false);
 	}
 
 	onProjectsToggleEdit(): void {
-		this.isProjectsEditing = !this.isProjectsEditing;
+		this.isProjectsEditing.update(v => !v);
 	}
 
 	// Certifications handlers
@@ -326,15 +326,15 @@ export class ProfilePage implements AfterViewInit {
 		
 
 		this.updateProfile(updateData, 'Certifications updated successfully!');
-		this.isCertificationsEditing = false;
+		this.isCertificationsEditing.set(false);
 	}
 
 	onCertificationsToggleEdit(): void {
-		this.isCertificationsEditing = !this.isCertificationsEditing;
+		this.isCertificationsEditing.update(v => !v);
 	}
 
 	// Helper method to process dynamic array data
-	private processDynamicArrayData(formData: any, arrayName: string): any[] {
+	private processDynamicArrayData(formData: Record<string, any>, arrayName: string): any[] {
 		const result: any[] = [];
 		const keys = Object.keys(formData).filter(key => key.startsWith(arrayName + '_item_'));
 		
@@ -373,11 +373,11 @@ export class ProfilePage implements AfterViewInit {
 	}
 
 	// Methods to populate dynamic array values
-	private populateSkillsValues(user: any): any {
+	private populateSkillsValues(user: Record<string, any>): Record<string, any> {
 		const values: any = {};
 		
-		if (user?.technical_skills && Array.isArray(user.technical_skills)) {
-			const validSkills = user.technical_skills.filter((skill: any) => skill && skill.name);
+		if (user?.['technical_skills'] && Array.isArray(user['technical_skills'])) {
+			const validSkills = user['technical_skills'].filter((skill: any) => skill && skill.name);
 			if (validSkills.length > 0) {
 				validSkills.forEach((skill: any, index: number) => {
 					const itemId = `item_${index}`;
@@ -386,8 +386,8 @@ export class ProfilePage implements AfterViewInit {
 					values[`technical_skills_${itemId}_experience`] = skill.experience || '';
 				});
 			}
-		} else if (user?.skills && Array.isArray(user.skills)) {
-			const validSkills = user.skills.filter((skill: string) => skill && skill.trim());
+		} else if (user?.['skills'] && Array.isArray(user['skills'])) {
+			const validSkills = user['skills'].filter((skill: string) => skill && skill.trim());
 			if (validSkills.length > 0) {
 				validSkills.forEach((skillName: string, index: number) => {
 					const itemId = `item_${index}`;
@@ -401,14 +401,14 @@ export class ProfilePage implements AfterViewInit {
 		return values;
 	}
 
-	private populateExperienceValues(user: any): any {
+	private populateExperienceValues(user: Record<string, any>): Record<string, any> {
 		const values: any = {};
 		
-		if (user?.work_experience && Array.isArray(user.work_experience)) {
+		if (user?.['work_experience'] && Array.isArray(user['work_experience'])) {
 			// Handle malformed data from database (array of separate objects)
-			if (user.work_experience.length > 0 && typeof user.work_experience[0] === 'object') {
+			if (user['work_experience'].length > 0 && typeof user['work_experience'][0] === 'object') {
 				// Check if it's malformed data (separate objects with empty keys)
-				const hasEmptyKeys = user.work_experience.some((item: any) => item.hasOwnProperty(''));
+				const hasEmptyKeys = user['work_experience'].some((item: any) => item.hasOwnProperty(''));
 				
 				if (hasEmptyKeys) {
 	
@@ -417,7 +417,7 @@ export class ProfilePage implements AfterViewInit {
 				}
 				
 				// Handle properly formatted data
-				const validExperiences = user.work_experience.filter((exp: any) => 
+				const validExperiences = user['work_experience'].filter((exp: any) => 
 					exp && (exp.company || exp.position || exp.description)
 				);
 				
@@ -437,18 +437,18 @@ export class ProfilePage implements AfterViewInit {
 		return values;
 	}
 
-	private populateEducationValues(user: any): any {
+	private populateEducationValues(user: Record<string, any>): Record<string, any> {
 		const values: any = {};
-		if (user?.education && Array.isArray(user.education) && user.education.length > 0) {
+		if (user?.['education'] && Array.isArray(user['education']) && user['education'].length > 0) {
 			// Check for malformed data
-			const hasEmptyKeys = user.education.some((item: any) => item.hasOwnProperty(''));
+			const hasEmptyKeys = user['education'].some((item: any) => item.hasOwnProperty(''));
 			
 			if (hasEmptyKeys) {
 
 				return values;
 			}
 			
-			const validEducation = user.education.filter((edu: any) => 
+			const validEducation = user['education'].filter((edu: any) => 
 				edu && (edu.institution || edu.education_type)
 			);
 			
@@ -465,10 +465,10 @@ export class ProfilePage implements AfterViewInit {
 		return values;
 	}
 
-	private populateProjectsValues(user: any): any {
+	private populateProjectsValues(user: Record<string, any>): Record<string, any> {
 		const values: any = {};
-		if (user?.projects && Array.isArray(user.projects) && user.projects.length > 0) {
-			user.projects.forEach((project: any, index: number) => {
+		if (user?.['projects'] && Array.isArray(user['projects']) && user['projects'].length > 0) {
+			user['projects'].forEach((project: any, index: number) => {
 				const itemId = `item_${index}`;
 				values[`projects_${itemId}_name`] = project.name || '';
 				values[`projects_${itemId}_url`] = project.url || '';
@@ -481,10 +481,10 @@ export class ProfilePage implements AfterViewInit {
 		return values;
 	}
 
-	private populateCertificationsValues(user: any): any {
+	private populateCertificationsValues(user: Record<string, any>): Record<string, any> {
 		const values: any = {};
-		if (user?.certifications && Array.isArray(user.certifications) && user.certifications.length > 0) {
-			const validCertifications = user.certifications.filter((cert: any) => {
+		if (user?.['certifications'] && Array.isArray(user['certifications']) && user['certifications'].length > 0) {
+			const validCertifications = user['certifications'].filter((cert: any) => {
 				if (typeof cert === 'object' && cert.name) {
 					return true;
 				} else if (typeof cert === 'string' && cert.trim()) {
@@ -723,20 +723,20 @@ export class ProfilePage implements AfterViewInit {
 			});
 	}
 
-	private convertToUserProfile(user: any): any {
+	private convertToUserProfile(user: Record<string, any>): Record<string, any> {
 		return {
-			full_name: user.full_name || `${user.first_name} ${user.last_name}`,
-			email: user.email,
-			phone: user.phone || user.personal_info?.phone,
-			location: { city: user.personal_info?.location?.city || user.city || '' },
-			professional_summary: user.professional_info?.professional_summary,
-			current_job_title: user.professional_info?.current_role,
-			experience_years: user.professional_info?.total_experience,
-			social_links: user.social_links || {},
-			expected_salary: { min: user.professional_info?.expected_salary || 0 },
-			desired_job_title: user.professional_info?.desired_job_title,
-			preferred_work_types: user.job_preferences || [user.preferences?.remote_preference || 'hybrid'],
-			preferred_employment_types: user.employment_type || ['full-time']
+			full_name: user['full_name'] || `${user['first_name']} ${user['last_name']}`,
+			email: user['email'],
+			phone: user['phone'] || user['personal_info']?.phone,
+			location: { city: user['personal_info']?.location?.city || user['city'] || '' },
+			professional_summary: user['professional_info']?.professional_summary,
+			current_job_title: user['professional_info']?.current_role,
+			experience_years: user['professional_info']?.total_experience,
+			social_links: user['social_links'] || {},
+			expected_salary: { min: user['professional_info']?.expected_salary || 0 },
+			desired_job_title: user['professional_info']?.desired_job_title,
+			preferred_work_types: user['job_preferences'] || [user['preferences']?.remote_preference || 'hybrid'],
+			preferred_employment_types: user['employment_type'] || ['full-time']
 		};
 	}
 
