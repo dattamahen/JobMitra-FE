@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, ChangeDetectorRef, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, ChangeDetectorRef, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -78,11 +78,20 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 		}
 	}
 
-	ngOnChanges() {
-		
+	ngOnChanges(changes: SimpleChanges) {
 		// Only build form if config exists and no form is built yet
 		if (this.config && this.config.fields && !this.form) {
 			this.buildForm();
+		}
+		
+		// Handle readonly state changes
+		if (changes['readonly'] && this.form) {
+			if (this.readonly) {
+				this.form.disable();
+			} else {
+				this.form.enable();
+				this.markAllFieldsAsTouched();
+			}
 		}
 	}
 
