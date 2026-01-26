@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -14,7 +14,6 @@ import { SIGNUP_PAGE_CONSTANTS } from './signup.constants';
 
 @Component({
 	selector: 'app-signup',
-	standalone: true,
 	imports: [
 		CommonModule,
 		ReactiveFormsModule,
@@ -450,12 +449,12 @@ export class SignupPage {
 	isLoading = signal(false);
 	readonly CONSTANTS = SIGNUP_PAGE_CONSTANTS;
 
-	constructor(
-		private fb: FormBuilder,
-		private authService: AuthService,
-		private router: Router,
-		private snackBar: MatSnackBar
-	) {
+	private fb = inject(FormBuilder);
+	private authService = inject(AuthService);
+	private router = inject(Router);
+	private snackBar = inject(MatSnackBar);
+
+	constructor() {
 		this.signupForm = this.fb.group({
 			email: ['', [Validators.required, Validators.email]],
 			password: ['', [Validators.required, Validators.minLength(8)]],
@@ -476,8 +475,9 @@ export class SignupPage {
 				const result = await this.authService.register(signupData);
 				this.snackBar.open('Account created successfully!', 'Close', { duration: 3000 });
 				this.router.navigate(['/login']);
-			} catch (error: any) {
-				this.snackBar.open(error.message || 'Registration failed', 'Close', { duration: 5000 });
+			} catch (error: unknown) {
+				const message = error instanceof Error ? error.message : 'Registration failed';
+				this.snackBar.open(message, 'Close', { duration: 5000 });
 			} finally {
 				this.isLoading.set(false);
 			}

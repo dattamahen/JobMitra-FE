@@ -42,7 +42,6 @@ import html2canvas from 'html2canvas';
 
 @Component({
 	selector: 'app-resume-builder-page',
-	standalone: true,
 	imports: [
 		CommonModule,
 		ReactiveFormsModule,
@@ -79,6 +78,14 @@ export class ResumeBuilderPage implements OnInit {
 	// Local signals
 	showPreview = signal(false);
 	isOptimizing = signal(false);
+	
+	private destroyRef = inject(DestroyRef);
+	private resumeService = inject(ResumeService);
+	private fb = inject(FormBuilder);
+	private snackBar = inject(MatSnackBar);
+	private dialog = inject(MatDialog);
+	private http = inject(HttpClient);
+	private featureUsageService = inject(FeatureUsageService);
 	
 	// Computed values
 	readonly completionPercentage = computed(() => {
@@ -129,33 +136,21 @@ export class ResumeBuilderPage implements OnInit {
 	readonly projectsConfig = RESUME_PROJECTS_CONFIG;
 	readonly certificationsConfig = RESUME_CERTIFICATIONS_CONFIG;
 
-	private destroyRef = inject(DestroyRef);
-
-
-	constructor(
-		private resumeService: ResumeService,
-		private fb: FormBuilder,
-		private snackBar: MatSnackBar,
-		private dialog: MatDialog,
-		private http: HttpClient,
-		private featureUsageService: FeatureUsageService
-	) {
+	constructor() {
 		this.initializeForms();
+	}
+
+	ngOnInit(): void {
+		this.loadUserData();
+		this.loadTemplates();
 		
-		// Auto-save effect in constructor
+		// Auto-save effect
 		effect(() => {
 			const resume = this.currentResume();
 			if (resume && this.personalInfoForm?.dirty) {
 				this.autoSave();
 			}
 		});
-		
-
-	}
-
-	ngOnInit(): void {
-		this.loadUserData();
-		this.loadTemplates();
 	}
 
 	private loadUserData(): void {

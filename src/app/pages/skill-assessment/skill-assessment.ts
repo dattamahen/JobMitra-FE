@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
+import { Component, OnInit, DestroyRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -39,10 +39,10 @@ export interface AssessmentHistory {
 
 @Component({
 	selector: 'app-skill-assessment-page',
-	standalone: true,
 	imports: [CommonModule, MatIconModule],
 	templateUrl: './skill-assessment.html',
-	styleUrls: ['./skill-assessment.css']
+	styleUrls: ['./skill-assessment.css'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SkillAssessmentPage implements OnInit {
 	skillAssessments: SkillAssessment[] = [];
@@ -82,11 +82,10 @@ export class SkillAssessmentPage implements OnInit {
 	subscriptionPlans: readonly SubscriptionPlan[] = [];
 	showSubscriptionModal: boolean = false;
 
-	constructor(
-		private skillAssessmentService: SkillAssessmentService,
-		private mockInterviewService: MockInterviewService,
-		private cdr: ChangeDetectorRef
-	) {}
+	private skillAssessmentService = inject(SkillAssessmentService);
+	private mockInterviewService = inject(MockInterviewService);
+
+	constructor() {}
 
 	ngOnInit(): void {
 		this.skillAssessmentService.getTechnicalSkills()
@@ -123,10 +122,8 @@ export class SkillAssessmentPage implements OnInit {
 					levelText: skill.level_text as any
 				}));
 				this.skillAssessments = [...this.skillAssessments.filter(s => s.category !== 'technical' && !s.isRecommended), ...technicalSkills];
-				this.cdr.detectChanges();
 			},
 			error: (error) => {
-				this.cdr.detectChanges();
 			}
 		});
 
@@ -143,10 +140,8 @@ export class SkillAssessmentPage implements OnInit {
 					levelText: skill.level_text as any
 				}));
 				this.skillAssessments = [...this.skillAssessments.filter(s => s.category !== 'soft-skills'), ...softSkills];
-				this.cdr.detectChanges();
 			},
 			error: (error) => {
-				this.cdr.detectChanges();
 			}
 		});
 		
@@ -165,10 +160,8 @@ export class SkillAssessmentPage implements OnInit {
 					relevanceReason: skill.relevance_reason
 				}));
 				this.skillAssessments = [...this.skillAssessments.filter(s => !s.isRecommended), ...recommendedSkills];
-				this.cdr.detectChanges();
 			},
 			error: (error) => {
-				this.cdr.detectChanges();
 			}
 		});
 	}
@@ -188,10 +181,8 @@ export class SkillAssessmentPage implements OnInit {
 					level: item.level,
 					hasCertificate: item.has_certificate
 				}));
-				this.cdr.detectChanges();
 			},
 			error: (error) => {
-				this.cdr.detectChanges();
 			}
 		});
 	}
