@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,11 +29,15 @@ export class MockInterviewsPage {
 		private dialog: MatDialog
 	) {
 		// Force refresh feature usage to ensure UI updates
-		this.featureUsageService.refreshFeatureUsage().subscribe();
+		this.featureUsageService.refreshFeatureUsage()
+			.pipe(takeUntilDestroyed())
+			.subscribe();
 	}
 
 	onStartInterview(type: string = 'technical'): void {
-		this.featureUsageService.useFeature('mock_interview').subscribe({
+		this.featureUsageService.useFeature('mock_interview')
+			.pipe(takeUntilDestroyed())
+			.subscribe({
 			next: (response) => {
 				if (response.success) {
 					this.startInterviewWithPrompt(type);
@@ -52,7 +57,9 @@ export class MockInterviewsPage {
 	}
 
 	private startInterviewWithPrompt(type: string = 'technical'): void {
-		this.authService.getCurrentUser().subscribe(user => {
+		this.authService.getCurrentUser()
+			.pipe(takeUntilDestroyed())
+			.subscribe(user => {
 			if (!user) return;
 
 			const userProfile = {
@@ -66,7 +73,9 @@ export class MockInterviewsPage {
 			const dialogRef = this.mockInterviewService.startInterviewWithLoading(type, userProfile);
 
 			// Generate questions in background
-			this.interviewService.startInterview(userProfile).subscribe({
+			this.interviewService.startInterview(userProfile)
+				.pipe(takeUntilDestroyed())
+				.subscribe({
 				next: (response) => {
 					// Update modal with AI-generated questions
 					dialogRef.componentInstance.loadQuestions(response);

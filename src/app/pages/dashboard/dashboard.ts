@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -8,10 +8,10 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatDividerModule } from '@angular/material/divider';
-
 import { DashboardService } from '../../services/dashboard.service';
 import { DashboardData, DashboardStats, ActivityItem } from '../../types/dashboard.types';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
 	selector: 'app-dashboard-page',
@@ -34,6 +34,7 @@ import { LoadingComponent } from '../../shared/components/loading/loading.compon
 export class DashboardPage implements OnInit {
 	dashboardData = signal<DashboardData | null>(null);
 	isLoading = signal(true);
+	private destroyRef = inject(DestroyRef);
 
 	constructor(private dashboardService: DashboardService) {}
 
@@ -44,7 +45,9 @@ export class DashboardPage implements OnInit {
 	private loadDashboardData(): void {
 		this.isLoading.set(true);
 		
-		this.dashboardService.getDashboardData().subscribe({
+		this.dashboardService.getDashboardData()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
 			next: (data) => {
 				this.dashboardData.set(data);
 				this.isLoading.set(false);

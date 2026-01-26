@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -10,6 +10,7 @@ import { JobService, JobListing, JobApplication } from '../../services/job.servi
 import { UserService } from '../../services/user.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
 	selector: 'app-applications-page',
@@ -32,6 +33,7 @@ export class ApplicationsPage implements OnInit {
 	applications: any[] = [];
 	isLoading = true;
 	error = '';
+	private destroyRef = inject(DestroyRef);
 
 	constructor(
 		private jobService: JobService,
@@ -45,7 +47,9 @@ export class ApplicationsPage implements OnInit {
 	}
 
 	loadApplications(): void {
-		this.userService.getCurrentUser().subscribe(currentUser => {
+		this.userService.getCurrentUser()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe(currentUser => {
 			if (!currentUser) {
 				this.error = 'Please login to view your applications';
 				this.isLoading = false;
@@ -70,6 +74,7 @@ export class ApplicationsPage implements OnInit {
 				this.error = '';
 				
 				this.jobService.getUserAppliedJobs(actualUserId)
+					.pipe(takeUntilDestroyed(this.destroyRef))
 					.subscribe({
 						next: (response) => {
 							this.applications = response.applications || [];

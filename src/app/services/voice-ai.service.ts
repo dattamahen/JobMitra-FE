@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable, from } from 'rxjs';
 import { EnvironmentService } from './environment.service';
@@ -38,7 +39,8 @@ export class VoiceAiService {
 
 	// Speech recognition and synthesis
 	private recognition?: any;
-	private synthesis = window.speechSynthesis;
+	private synthesis?: SpeechSynthesis;
+	private platformId = inject(PLATFORM_ID);
 
 	// Signals for reactive state
 	isListening = signal(false);
@@ -52,10 +54,15 @@ export class VoiceAiService {
 		private envService: EnvironmentService
 	) {
 		this.apiKey = this.envService.getGeminiApiKey();
-		this.initSpeechRecognition();
+		if (isPlatformBrowser(this.platformId)) {
+			this.synthesis = window.speechSynthesis;
+			this.initSpeechRecognition();
+		}
 	}
 
 	private initSpeechRecognition(): void {
+		if (!isPlatformBrowser(this.platformId)) return;
+		
 		const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 		
 		if (!SpeechRecognition) {

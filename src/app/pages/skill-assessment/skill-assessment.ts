@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { 
@@ -50,6 +51,7 @@ export class SkillAssessmentPage implements OnInit {
 	showLearningModal: boolean = false;
 	selectedSkill: string = '';
 	showContributeForm: boolean = false;
+	private destroyRef = inject(DestroyRef);
 	
 	// Mock Interview Properties
 	mockInterviewConfig: MockInterviewConfig = {
@@ -87,9 +89,11 @@ export class SkillAssessmentPage implements OnInit {
 	) {}
 
 	ngOnInit(): void {
-		this.skillAssessmentService.getTechnicalSkills().subscribe({
-			error: (error) => console.error('API test failed:', error)
-		});
+		this.skillAssessmentService.getTechnicalSkills()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				error: (error) => console.error('API test failed:', error)
+			});
 		
 		this.loadSkillAssessments();
 		this.loadAssessmentHistory();
@@ -107,7 +111,9 @@ export class SkillAssessmentPage implements OnInit {
 		this.skillAssessments = [];
 		
 		// Load technical skills from API
-		this.skillAssessmentService.getTechnicalSkills().subscribe({
+		this.skillAssessmentService.getTechnicalSkills()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
 			next: (skills) => {
 				const technicalSkills = skills.map(skill => ({
 					id: skill.skill_id,
@@ -125,7 +131,9 @@ export class SkillAssessmentPage implements OnInit {
 		});
 
 		// Load soft skills from API
-		this.skillAssessmentService.getSoftSkills().subscribe({
+		this.skillAssessmentService.getSoftSkills()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
 			next: (skills) => {
 				const softSkills = skills.map(skill => ({
 					id: skill.skill_id,
@@ -143,7 +151,9 @@ export class SkillAssessmentPage implements OnInit {
 		});
 		
 		// Load recommended skills from API
-		this.skillAssessmentService.getRecommendedSkills().subscribe({
+		this.skillAssessmentService.getRecommendedSkills()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
 			next: (skills) => {
 				const recommendedSkills = skills.map(skill => ({
 					id: skill.id,
@@ -166,7 +176,9 @@ export class SkillAssessmentPage implements OnInit {
 
 
 	private loadAssessmentHistory(): void {
-		this.skillAssessmentService.getAssessmentHistory().subscribe({
+		this.skillAssessmentService.getAssessmentHistory()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
 			next: (history) => {
 				this.assessmentHistory = history.map(item => ({
 					id: item.id,
@@ -223,7 +235,9 @@ export class SkillAssessmentPage implements OnInit {
 	}
 
 	takeTest(skill: SkillAssessment): void {
-		this.skillAssessmentService.takeSkillTest(skill.id).subscribe({
+		this.skillAssessmentService.takeSkillTest(skill.id)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
 			next: (response) => {
 				alert(`Assessment for ${skill.name} started! Test ID: ${response.test_id}`);
 			},
@@ -234,7 +248,9 @@ export class SkillAssessmentPage implements OnInit {
 	}
 
 	getCertificate(historyItem: AssessmentHistory): void {
-		this.skillAssessmentService.getCertificate(historyItem.id).subscribe({
+		this.skillAssessmentService.getCertificate(historyItem.id)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
 			next: (response) => {
 				window.open(response.certificate_url, '_blank');
 			},
@@ -246,7 +262,9 @@ export class SkillAssessmentPage implements OnInit {
 
 	startLearning(skill: SkillAssessment): void {
 		this.selectedSkill = skill.name;
-		this.skillAssessmentService.getLearningResources(skill.name).subscribe({
+		this.skillAssessmentService.getLearningResources(skill.name)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
 			next: (resources) => {
 				this.selectedSkillResources = resources.map(resource => ({
 					id: resource.id,
@@ -299,7 +317,9 @@ export class SkillAssessmentPage implements OnInit {
 			submitter_name: formData.get('submitterName') as string
 		};
 
-		this.skillAssessmentService.contributeResource(contribution).subscribe({
+		this.skillAssessmentService.contributeResource(contribution)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
 			next: (response) => {
 				this.hideContributeForm();
 				form.reset();
@@ -414,7 +434,9 @@ export class SkillAssessmentPage implements OnInit {
 	}
 
 	private loadUsageStatus(): void {
-		this.skillAssessmentService.getUsageStatus().subscribe({
+		this.skillAssessmentService.getUsageStatus()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
 			next: (status) => {
 				// Update usage status from API
 				this.subscriptionLimits = {
@@ -452,3 +474,4 @@ export class SkillAssessmentPage implements OnInit {
 		return [];
 	}
 }
+

@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ElementRef, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -74,6 +75,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 	isLoading = false;
 	isSaving = false;
 	private destroy$ = new Subject<void>();
+	private destroyRef = inject(DestroyRef);
 	
 	// Form configurations
 	basicInfoConfig = PROFILE_BASIC_INFO_CONFIG;
@@ -529,6 +531,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 					this.isSaving = false;
 				})
 			)
+			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: (response) => {
 
@@ -555,7 +558,9 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 
 	private syncWithResumeBuilder(): void {
 		// Sync updated profile data with resume builder
-		this.resumeIntegrationService.getResumeData().subscribe({
+		this.resumeIntegrationService.getResumeData()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
 			next: (resumeData) => {
 
 			},
@@ -714,6 +719,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 					this.isLoading = false;
 				})
 			)
+			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: (user: any) => {
 
@@ -792,6 +798,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 					this.isLoading = false;
 				})
 			)
+			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: (user) => {
 
@@ -883,7 +890,9 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 					takeUntil(this.destroy$),
 					finalize(() => this.isSaving = false)
 				)
-				.subscribe({
+				
+.pipe(takeUntilDestroyed())
+.subscribe({
 					next: (response) => {
 
 						this.snackBar.open('Profile updated successfully!', 'Close', { 
@@ -1138,7 +1147,9 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 				return;
 			}
 
-			this.imageUploadService.uploadProfileImage(file).subscribe({
+		this.imageUploadService.uploadProfileImage(file)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
 				next: () => {
 					this.snackBar.open('Profile image updated successfully!', 'Close', {
 						duration: 3000,
@@ -1304,7 +1315,9 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 	runSelfTest(): void {
 
 		
-		this.testProfileService.testProfileFlow().subscribe({
+		this.testProfileService.testProfileFlow()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
 			next: (result: any) => {
 
 				
@@ -1333,7 +1346,9 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 	exportToResume(): void {
 
 		
-		this.resumeIntegrationService.getResumeData().subscribe({
+		this.resumeIntegrationService.getResumeData()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
 			next: (resumeData) => {
 
 				
@@ -1442,3 +1457,4 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 		this.onCertificationsSubmit(formData);
 	}
 }
+

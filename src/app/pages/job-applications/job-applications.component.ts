@@ -12,9 +12,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatBadgeModule } from '@angular/material/badge';
-
 import { JobApplicationService, JobApplicationsResponse, ApplicantProfile } from '../../services/job-application.service';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
 	selector: 'app-job-applications',
@@ -50,7 +50,9 @@ export class JobApplicationsComponent implements OnInit {
 	) {}
 
 	ngOnInit(): void {
-		this.route.params.subscribe(params => {
+		this.route.params
+			.pipe(takeUntilDestroyed())
+			.subscribe(params => {
 			this.jobId = params['jobId'];
 			if (this.jobId) {
 				this.loadApplications();
@@ -62,7 +64,9 @@ export class JobApplicationsComponent implements OnInit {
 		this.isLoading = true;
 		this.error = '';
 
-		this.jobApplicationService.getJobApplications(this.jobId).subscribe({
+		this.jobApplicationService.getJobApplications(this.jobId)
+			.pipe(takeUntilDestroyed())
+			.subscribe({
 			next: (data) => {
 				this.applicationsData = data;
 				this.isLoading = false;
@@ -75,7 +79,9 @@ export class JobApplicationsComponent implements OnInit {
 	}
 
 	updateStatus(applicationId: string, newStatus: string): void {
-		this.jobApplicationService.updateApplicationStatus(applicationId, newStatus).subscribe({
+		this.jobApplicationService.updateApplicationStatus(applicationId, newStatus)
+			.pipe(takeUntilDestroyed())
+			.subscribe({
 			next: () => {
 				this.snackBar.open('Application status updated', 'Close', { duration: 3000 });
 				this.loadApplications(); // Reload to get updated data
