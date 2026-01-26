@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { NavigationService, NavItem } from '../services/navigation.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
 	selector: 'app-side-nav',
@@ -26,6 +27,7 @@ export class SideNav implements OnInit {
 
 	activeItem: string = '';
 	navItems: NavItem[] = [];
+	private destroyRef = inject(DestroyRef);
 
 	constructor(
 		private router: Router,
@@ -34,27 +36,20 @@ export class SideNav implements OnInit {
 	) {}
 
 	ngOnInit() {
-		// Get navigation items based on current user
 		this.navItems = this.navigationService.getNavigationItems();
-		
-
-		
-		// Initialize with dashboard as default
 		this.activeItem = 'dashboard';
 	}
 
 	selectItem(itemId: string) {
 		this.activeItem = itemId;
 		this.pageSelected.emit(itemId);
-		
-		// ALL pages should stay within the dashboard layout to keep side navigation visible
-		// The dashboard component will handle switching between different page components
-		// No need to navigate away from dashboard for any page
 		return;
 	}
 
 	logout() {
-		this.authService.logout().subscribe({
+		this.authService.logout()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
 			next: (response) => {
 				console.log('Logout successful:', response);
 			},
