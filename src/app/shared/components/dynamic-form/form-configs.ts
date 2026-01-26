@@ -376,15 +376,16 @@ export const RESUME_PERSONAL_INFO_CONFIG: FormConfig = {
 			name: 'full_name',
 			type: 'text',
 			label: 'Full Name',
-			placeholder: 'e.g., John Doe',
+			placeholder: 'e.g., Rajesh Kumar',
 			required: true,
 			icon: '',
+			width: 'half',
 		},
 		{
 			name: 'email',
 			type: 'email',
 			label: 'Email Address',
-			placeholder: 'e.g., john@example.com',
+			placeholder: 'e.g., rajesh.kumar@example.com',
 			required: true,
 			width: 'half',
 			icon: '',
@@ -393,7 +394,7 @@ export const RESUME_PERSONAL_INFO_CONFIG: FormConfig = {
 			name: 'phone',
 			type: 'text',
 			label: 'Phone Number',
-			placeholder: 'e.g., +1 (555) 123-4567',
+			placeholder: 'e.g., +91 98765 43210',
 			required: true,
 			width: 'half',
 			icon: '',
@@ -402,16 +403,17 @@ export const RESUME_PERSONAL_INFO_CONFIG: FormConfig = {
 			name: 'location',
 			type: 'text',
 			label: 'Location',
-			placeholder: 'e.g., San Francisco, CA',
+			placeholder: 'e.g., Bangalore, Karnataka',
 			required: true,
 			icon: '',
+			width: 'half',
 			hint: 'City, State/Country'
 		},
 		{
 			name: 'linkedin',
 			type: 'text',
 			label: 'LinkedIn Profile',
-			placeholder: 'e.g., linkedin.com/in/johndoe',
+			placeholder: 'e.g., linkedin.com/in/rajeshkumar',
 			width: 'half',
 			icon: '',
 			hint: 'Professional networking profile'
@@ -420,7 +422,7 @@ export const RESUME_PERSONAL_INFO_CONFIG: FormConfig = {
 			name: 'portfolio',
 			type: 'text',
 			label: 'Portfolio Website',
-			placeholder: 'e.g., johndoe.dev',
+			placeholder: 'e.g., rajeshkumar.dev',
 			width: 'half',
 			icon: '',
 			hint: 'Personal website or portfolio'
@@ -429,9 +431,10 @@ export const RESUME_PERSONAL_INFO_CONFIG: FormConfig = {
 			name: 'github',
 			type: 'text',
 			label: 'GitHub Profile',
-			placeholder: 'e.g., github.com/johndoe',
+			placeholder: 'e.g., github.com/rajeshkumar',
 			icon: '',
-			hint: 'Code repository and projects'
+			hint: 'Code repository and projects',
+			width: 'half',
 		}
 	]
 };
@@ -447,7 +450,7 @@ export const RESUME_SUMMARY_CONFIG: FormConfig = {
 			placeholder: 'Write a compelling summary of your professional experience, key skills, and career objectives. Aim for 3-4 sentences that highlight your unique value proposition.',
 			required: true,
 			rows: 6,
-			validators: { minLength: 50 }
+			validators: { minLength: 200, maxLength: 500 },	
 		}
 	]
 };
@@ -467,7 +470,8 @@ export const RESUME_SKILLS_CONFIG: FormConfig = {
 					label: 'Skill Name',
 					placeholder: 'e.g., JavaScript',
 					required: true,
-					icon: 'code'
+					icon: 'code',
+					width: 'quarter'
 				},
 				{
 					name: 'version',
@@ -475,6 +479,7 @@ export const RESUME_SKILLS_CONFIG: FormConfig = {
 					label: 'Version',
 					placeholder: 'e.g., ES6, v3.9',
 					icon: '',
+					width: 'quarter',
 				},
 				{
 					name: 'experience',
@@ -482,6 +487,7 @@ export const RESUME_SKILLS_CONFIG: FormConfig = {
 					label: 'Experience',
 					required: true,
 					icon: '',
+					width: 'quarter',
 					options: [
 						{ value: 'Less than 1 year', label: 'Less than 1 year' },
 						{ value: '1 year', label: '1 year' },
@@ -515,10 +521,10 @@ export const RESUME_EXPERIENCE_CONFIG: FormConfig = {
 					name: 'company',
 					type: 'text',
 					label: 'Company Name',
-					placeholder: 'e.g., Google, Microsoft',
+					placeholder: 'e.g., TCS, Infosys, Wipro',
 					required: true,
 					icon: '',
-					width: 'quarter'
+					width: 'half'
 				},
 				{
 					name: 'position',
@@ -527,20 +533,20 @@ export const RESUME_EXPERIENCE_CONFIG: FormConfig = {
 					placeholder: 'e.g., Senior Software Engineer',
 					required: true,
 					icon: '',
-					width: 'quarter'
+					width: 'half'
 				},
 				{
 					name: 'start_date',
 					type: 'date',
 					label: 'Start Date',
 					required: true,
-					width: 'quarter'
+					width: 'half'
 				},
 				{
 					name: 'end_date',
 					type: 'date',
 					label: 'End Date',
-					width: 'quarter',
+					width: 'half',
 					hint: 'Leave empty if current position'
 				},
 				{
@@ -551,6 +557,7 @@ export const RESUME_EXPERIENCE_CONFIG: FormConfig = {
 					required: true,
 					rows: 4,
 					icon: '',
+					width: 'full',
 					hint: 'Use bullet points to highlight key achievements and responsibilities'
 				}
 			]
@@ -571,7 +578,7 @@ export const RESUME_EDUCATION_CONFIG: FormConfig = {
 					name: 'institution',
 					type: 'text',
 					label: 'Institution Name',
-					placeholder: 'e.g., Stanford University',
+					placeholder: 'e.g., IIT Bombay, BITS Pilani',
 					required: true,
 					icon: '',
 					width: 'half'
@@ -635,10 +642,20 @@ export const RESUME_PROJECTS_CONFIG: FormConfig = {
 					name: 'url',
 					type: 'url',
 					label: 'Project URL',
-					placeholder: 'e.g., github.com/user/project',
+					placeholder: 'e.g., github.com/rajeshkumar/project',
 					icon: '',
 					width: 'half',
 					hint: 'GitHub, live demo, or portfolio link'
+				},
+				{
+					name: 'technologies',
+					type: 'text',
+					label: 'Technologies Used / Skills Used',
+					placeholder: 'e.g., React, Node.js, MongoDB, AWS',
+					required: true,
+					icon: '',
+					width: 'full',
+					hint: 'Separate technologies with commas'
 				},
 				{
 					name: 'description',
@@ -648,17 +665,9 @@ export const RESUME_PROJECTS_CONFIG: FormConfig = {
 					required: true,
 					rows: 4,
 					icon: '',
+					width: 'full',
 					hint: 'Highlight your role, technologies used, and impact'
 				},
-				{
-					name: 'technologies',
-					type: 'text',
-					label: 'Technologies Used',
-					placeholder: 'e.g., React, Node.js, MongoDB, AWS',
-					required: true,
-					icon: '',
-					hint: 'Separate technologies with commas'
-				}
 			]
 		}
 	]
@@ -686,7 +695,7 @@ export const RESUME_CERTIFICATIONS_CONFIG: FormConfig = {
 					name: 'issuer',
 					type: 'text',
 					label: 'Issuing Organization',
-					placeholder: 'e.g., Amazon Web Services',
+					placeholder: 'e.g., AWS, Microsoft, Google',
 					required: true,
 					icon: '',
 					width: 'half'
@@ -740,7 +749,7 @@ export const PROFILE_BASIC_INFO_CONFIG: FormConfig = {
 			name: 'email',
 			type: 'email',
 			label: 'Email Address',
-			placeholder: 'e.g., john@example.com',
+			placeholder: 'e.g., rajesh.kumar@example.com',
 			required: true,
 			icon: '',
 			readonly: true,
@@ -750,7 +759,7 @@ export const PROFILE_BASIC_INFO_CONFIG: FormConfig = {
 			name: 'phone',
 			type: 'text',
 			label: 'Phone Number',
-			placeholder: 'e.g., +1 (555) 123-4567',
+			placeholder: 'e.g., +91 98765 43210',
 			required: true,
 			width: 'half',
 			icon: '',
@@ -765,7 +774,7 @@ export const PROFILE_BASIC_INFO_CONFIG: FormConfig = {
 			name: 'location',
 			type: 'text',
 			label: 'Location',
-			placeholder: 'e.g., San Francisco, CA',
+			placeholder: 'e.g., Bangalore, Karnataka',
 			required: true,
 			icon: '',
 			hint: 'City, State/Country',
@@ -800,7 +809,7 @@ export const PROFILE_PROFESSIONAL_CONFIG: FormConfig = {
 			name: 'current_company',
 			type: 'text',
 			label: 'Current Company',
-			placeholder: 'e.g., Google, Microsoft',
+			placeholder: 'e.g., TCS, Infosys, Wipro',
 			required: false,
 			icon: '',
 			width: 'half'
@@ -831,7 +840,7 @@ export const PROFILE_PROFESSIONAL_CONFIG: FormConfig = {
 			name: 'linkedin_link',
 			type: 'text',
 			label: 'LinkedIn Profile',
-			placeholder: 'e.g., linkedin.com/in/johndoe',
+			placeholder: 'e.g., linkedin.com/in/rajeshkumar',
 			width: 'half',
 			icon: '',
 			hint: 'Professional networking profile'
@@ -840,7 +849,7 @@ export const PROFILE_PROFESSIONAL_CONFIG: FormConfig = {
 			name: 'github_link',
 			type: 'text',
 			label: 'GitHub Profile',
-			placeholder: 'e.g., github.com/johndoe',
+			placeholder: 'e.g., github.com/rajeshkumar',
 			width: 'half',
 			icon: '',
 			hint: 'Code repository and projects'
@@ -849,7 +858,7 @@ export const PROFILE_PROFESSIONAL_CONFIG: FormConfig = {
 			name: 'portfolio_link',
 			type: 'text',
 			label: 'Portfolio Website',
-			placeholder: 'e.g., johndoe.dev',
+			placeholder: 'e.g., rajeshkumar.dev',
 			icon: '',
 			hint: 'Personal website or portfolio'
 		}
@@ -918,7 +927,7 @@ export const PROFILE_EXPERIENCE_CONFIG: FormConfig = {
 					name: 'company',
 					type: 'text',
 					label: 'Company Name',
-					placeholder: 'e.g., Google, Microsoft',
+					placeholder: 'e.g., TCS, Infosys, Wipro',
 					required: true,
 					icon: '',
 					width: 'half'
@@ -975,7 +984,7 @@ export const PROFILE_EDUCATION_CONFIG: FormConfig = {
 					name: 'institution',
 					type: 'text',
 					label: 'Institution Name',
-					placeholder: 'e.g., Stanford University',
+					placeholder: 'e.g., IIT Bombay, BITS Pilani',
 					required: true,
 					icon: '',
 					width: 'half'
@@ -1038,7 +1047,7 @@ export const PROFILE_PROJECTS_CONFIG: FormConfig = {
 					name: 'url',
 					type: 'url',
 					label: 'Project URL',
-					placeholder: 'e.g., github.com/user/project',
+					placeholder: 'e.g., github.com/rajeshkumar/project',
 					icon: '',
 					width: 'half',
 					hint: 'GitHub, live demo, or portfolio link'
@@ -1088,7 +1097,7 @@ export const PROFILE_CERTIFICATIONS_CONFIG: FormConfig = {
 					name: 'issuer',
 					type: 'text',
 					label: 'Issuing Organization',
-					placeholder: 'e.g., Amazon Web Services',
+					placeholder: 'e.g., AWS, Microsoft, Google',
 					required: true,
 					icon: '',
 					width: 'half'
