@@ -379,6 +379,7 @@ export const RESUME_PERSONAL_INFO_CONFIG: FormConfig = {
 			placeholder: 'e.g., John Doe',
 			required: true,
 			icon: '',
+			width: 'half',
 		},
 		{
 			name: 'email',
@@ -405,6 +406,7 @@ export const RESUME_PERSONAL_INFO_CONFIG: FormConfig = {
 			placeholder: 'e.g., San Francisco, CA',
 			required: true,
 			icon: '',
+			width: 'half',
 			hint: 'City, State/Country'
 		},
 		{
@@ -431,7 +433,8 @@ export const RESUME_PERSONAL_INFO_CONFIG: FormConfig = {
 			label: 'GitHub Profile',
 			placeholder: 'e.g., github.com/johndoe',
 			icon: '',
-			hint: 'Code repository and projects'
+			hint: 'Code repository and projects',
+			width: 'half',
 		}
 	]
 };
@@ -447,7 +450,7 @@ export const RESUME_SUMMARY_CONFIG: FormConfig = {
 			placeholder: 'Write a compelling summary of your professional experience, key skills, and career objectives. Aim for 3-4 sentences that highlight your unique value proposition.',
 			required: true,
 			rows: 6,
-			validators: { minLength: 50 }
+			validators: { minLength: 200, maxLength: 500 },	
 		}
 	]
 };
@@ -467,7 +470,8 @@ export const RESUME_SKILLS_CONFIG: FormConfig = {
 					label: 'Skill Name',
 					placeholder: 'e.g., JavaScript',
 					required: true,
-					icon: 'code'
+					icon: 'code',
+					width: 'quarter'
 				},
 				{
 					name: 'version',
@@ -475,6 +479,7 @@ export const RESUME_SKILLS_CONFIG: FormConfig = {
 					label: 'Version',
 					placeholder: 'e.g., ES6, v3.9',
 					icon: '',
+					width: 'quarter',
 				},
 				{
 					name: 'experience',
@@ -482,6 +487,7 @@ export const RESUME_SKILLS_CONFIG: FormConfig = {
 					label: 'Experience',
 					required: true,
 					icon: '',
+					width: 'quarter',
 					options: [
 						{ value: 'Less than 1 year', label: 'Less than 1 year' },
 						{ value: '1 year', label: '1 year' },
@@ -518,7 +524,7 @@ export const RESUME_EXPERIENCE_CONFIG: FormConfig = {
 					placeholder: 'e.g., Google, Microsoft',
 					required: true,
 					icon: '',
-					width: 'quarter'
+					width: 'half'
 				},
 				{
 					name: 'position',
@@ -527,20 +533,20 @@ export const RESUME_EXPERIENCE_CONFIG: FormConfig = {
 					placeholder: 'e.g., Senior Software Engineer',
 					required: true,
 					icon: '',
-					width: 'quarter'
+					width: 'half'
 				},
 				{
 					name: 'start_date',
 					type: 'date',
 					label: 'Start Date',
 					required: true,
-					width: 'quarter'
+					width: 'half'
 				},
 				{
 					name: 'end_date',
 					type: 'date',
 					label: 'End Date',
-					width: 'quarter',
+					width: 'half',
 					hint: 'Leave empty if current position'
 				},
 				{
@@ -551,6 +557,7 @@ export const RESUME_EXPERIENCE_CONFIG: FormConfig = {
 					required: true,
 					rows: 4,
 					icon: '',
+					width: 'full',
 					hint: 'Use bullet points to highlight key achievements and responsibilities'
 				}
 			]
@@ -641,6 +648,16 @@ export const RESUME_PROJECTS_CONFIG: FormConfig = {
 					hint: 'GitHub, live demo, or portfolio link'
 				},
 				{
+					name: 'technologies',
+					type: 'text',
+					label: 'Technologies Used / Skills Used',
+					placeholder: 'e.g., React, Node.js, MongoDB, AWS',
+					required: true,
+					icon: '',
+					width: 'full',
+					hint: 'Separate technologies with commas'
+				},
+				{
 					name: 'description',
 					type: 'textarea',
 					label: 'Project Description',
@@ -648,17 +665,9 @@ export const RESUME_PROJECTS_CONFIG: FormConfig = {
 					required: true,
 					rows: 4,
 					icon: '',
+					width: 'full',
 					hint: 'Highlight your role, technologies used, and impact'
 				},
-				{
-					name: 'technologies',
-					type: 'text',
-					label: 'Technologies Used',
-					placeholder: 'e.g., React, Node.js, MongoDB, AWS',
-					required: true,
-					icon: '',
-					hint: 'Separate technologies with commas'
-				}
 			]
 		}
 	]
