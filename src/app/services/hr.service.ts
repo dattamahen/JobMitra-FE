@@ -251,6 +251,19 @@ export class HrService {
 		}
 	}
 
+	async updateApplicationStatus(applicationId: string, status: string): Promise<any> {
+		try {
+			return await firstValueFrom(
+				this.http.put(`${this.baseUrl}/hr/applications/${applicationId}/status?app_status=${status}`, 
+					{}, 
+					{ headers: this.getAuthHeaders() }
+				)
+			);
+		} catch (error: any) {
+			throw new Error(error.error?.detail || 'Failed to update application status');
+		}
+	}
+
 	isAuthenticated(): boolean {
 		return this.authService.isAuthenticated();
 	}

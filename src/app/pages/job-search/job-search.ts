@@ -387,7 +387,7 @@ export class JobSearchPage implements OnInit {
 	// Apply for job
 	applyForJob(jobId: string): void {
 		this.userService.getCurrentUser()
-			.pipe(takeUntilDestroyed())
+			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe(currentUser => {
 			if (!currentUser) {
 				this.snackBar.open('Please login to apply for jobs', 'Close', { duration: 3000 });
