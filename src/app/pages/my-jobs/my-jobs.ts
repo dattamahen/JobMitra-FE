@@ -16,6 +16,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { FormsModule } from '@angular/forms';
 import { HrService } from '../../services/hr.service';
 import { JobFilterComponent, JobFilterConfig, JobFilterOptions } from '../../shared/components/job-filter/job-filter.component';
+import { Router } from '@angular/router';
 
 export interface HRJobListing {
 	_id?: string;
@@ -264,11 +265,6 @@ export class MyJobsPage {
 
 	onFilterChange(config: JobFilterConfig) {
 		this.filterConfig.set(config);
-		this.applyFilters();
-	}
-
-	onSearchButtonClick() {
-		this.applyFilters();
 	}
 
 	private applyFilters() {

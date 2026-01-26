@@ -9,8 +9,7 @@
 		resultsLabel="job"
 		[showEmploymentType]="true"
 		[showStatus]="false"
-		(filterChange)="onFilterChange($event)"
-		(search)="onSearchButtonClick()">
+		(filterChange)="onFilterChange($event)">
 	</app-job-filter>
 
 	<div class="job-listings">
@@ -21,7 +20,7 @@
 				message="Searching for the best opportunities for you"
 				icon="work">
 			</app-loading>
-		} @else if (jobListings.length === 0) {
+		} @else if (filteredJobListings().length === 0) {
 			<mat-card>
 				<app-empty-state
 					icon="work_off"
@@ -30,7 +29,7 @@
 				</app-empty-state>
 			</mat-card>
 		} @else {
-		@for (job of jobListings; track job.job_id) {
+		@for (job of filteredJobListings(); track job.job_id) {
 		<mat-card class="job-card">
 			<mat-card-header>
 				<mat-card-title>{{job.title}} <span class="job-type-badge">{{job.employment_type | titlecase}}</span></mat-card-title>
@@ -89,10 +88,39 @@
 					<div class="job-meta">
 						<span class="posted-date">Posted {{getFormattedPostedDate(job)}}</span>
 					</div>
-				</div>
+					<div class="job-description">
+						<p>{{job.description}}</p>
+					</div>
 
-				<!-- Short Description -->
-				<p class="description">{{job.description}}</p>
+					@if (job.skills_required && job.skills_required.length > 0) {
+					<div class="skills-section">
+						<h4>Required Skills:</h4>
+						<mat-chip-set>
+							@for (skill of job.skills_required; track skill) {
+							<mat-chip class="skill-chip">{{skill}}</mat-chip>
+							}
+						</mat-chip-set>
+					</div>
+					}
+
+					@if (job.requirements && job.requirements.length > 0) {
+					<div class="requirements-section">
+						<h4>Requirements:</h4>
+						<ul>
+							@for (requirement of job.requirements; track requirement) {
+							<li>{{requirement}}</li>
+							}
+						</ul>
+					</div>
+					}
+
+					<div class="job-stats">
+						<div class="stat-item">
+							<mat-icon>schedule</mat-icon>
+							<span>Posted {{getFormattedPostedDate(job)}}</span>
+						</div>
+					</div>
+				</div>
 
 				<!-- Know More Button -->
 				<button mat-button class="know-more-btn" (click)="toggleJobExpansion(job.job_id)">
@@ -103,50 +131,15 @@
 				<!-- Expanded Content -->
 				@if (isJobExpanded(job.job_id)) {
 				<div class="expanded-content">
-					<!-- Full Job Description -->
+					<!-- Responsibilities -->
+					@if (job.responsibilities && job.responsibilities.length > 0) {
 					<div class="job-section">
-						<h4><mat-icon>description</mat-icon> Full Job Description</h4>
-						<p>{{job.description}}</p>
-					</div>
-
-					<!-- Requirements -->
-					<div class="job-section">
-						<h4><mat-icon>checklist</mat-icon> Requirements</h4>
-
-						@if (job.requirements && job.requirements.length > 0) {
-						<div class="requirements-category">
-							<h5>Requirements:</h5>
-							<ul class="requirements-list required">
-								@for (requirement of job.requirements; track $index) {
-								<li>{{requirement}}</li>
-								}
-							</ul>
-						</div>
-						}
-
-						@if (job.responsibilities && job.responsibilities.length > 0) {
-						<div class="requirements-category">
-							<h5>Responsibilities:</h5>
-							<ul class="requirements-list preferred">
-								@for (responsibility of job.responsibilities; track $index) {
-								<li>{{responsibility}}</li>
-								}
-							</ul>
-						</div>
-						}
-					</div>
-
-					<!-- Required Skills -->
-					@if (job.skills_required && job.skills_required.length > 0) {
-					<div class="job-section">
-						<h4><mat-icon>engineering</mat-icon> Required Skills</h4>
-						<div class="skills-container">
-							<mat-chip-set>
-								@for (skill of job.skills_required; track skill) {
-								<mat-chip class="skill-chip required">{{skill}}</mat-chip>
-								}
-							</mat-chip-set>
-						</div>
+						<h4><mat-icon>checklist</mat-icon> Responsibilities</h4>
+						<ul class="requirements-list preferred">
+							@for (responsibility of job.responsibilities; track $index) {
+							<li>{{responsibility}}</li>
+							}
+						</ul>
 					</div>
 					}
 

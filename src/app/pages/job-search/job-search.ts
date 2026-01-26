@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, DestroyRef, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, DestroyRef, inject, ChangeDetectionStrategy, computed } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -76,6 +76,41 @@ export class JobSearchPage implements OnInit {
 	totalJobs = 0;
 	jobsPerPage = 10;
 
+	// Computed filtered jobs
+	filteredJobListings = computed(() => {
+		const jobs = this.jobListings;
+		const config = this.filterConfig;
+		
+		if (!jobs || jobs.length === 0) return [];
+		
+		return jobs.filter(job => {
+			if (config.searchQuery) {
+				const query = config.searchQuery.toLowerCase();
+				const matchesSearch = 
+					job.title.toLowerCase().includes(query) ||
+					job.company.toLowerCase().includes(query) ||
+					job.description.toLowerCase().includes(query) ||
+					job.skills_required?.some(s => s.toLowerCase().includes(query));
+				if (!matchesSearch) return false;
+			}
+			
+			if (config.selectedLocation !== 'all') {
+				const jobLocation = this.formatLocation(job).toLowerCase().replace(' ', '-');
+				if (!jobLocation.includes(config.selectedLocation)) return false;
+			}
+			
+			if (config.selectedExperience !== 'all') {
+				if (job.experience_level?.toLowerCase().replace(' ', '-') !== config.selectedExperience) return false;
+			}
+			
+			if (config.selectedEmploymentType !== 'all') {
+				if (job.employment_type?.toLowerCase().replace(' ', '-') !== config.selectedEmploymentType) return false;
+			}
+			
+			return true;
+		});
+	});
+
 
 
 	// Debugging getter
@@ -120,21 +155,6 @@ export class JobSearchPage implements OnInit {
 		
 		const filters: JobSearchFilters = {};
 		
-		if (this.filterConfig.searchQuery) {
-			filters.keywords = this.filterConfig.searchQuery;
-		}
-		if (this.filterConfig.selectedLocation !== 'all') {
-			filters.location = this.filterConfig.selectedLocation;
-		}
-		if (this.filterConfig.selectedExperience !== 'all') {
-			filters.experience_level = [this.filterConfig.selectedExperience];
-		}
-		if (this.filterConfig.selectedEmploymentType !== 'all') {
-			filters.employment_type = [this.filterConfig.selectedEmploymentType];
-		}
-
-
-
 		this.jobService.searchJobs(filters, this.currentPage, this.jobsPerPage)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
@@ -143,7 +163,7 @@ export class JobSearchPage implements OnInit {
 					
 					// Update data first
 					this.jobListings = response.jobs || [];
-					this.totalJobs = response.total_count || 0;
+					this.totalJobs = this.filteredJobListings().length;
 					
 					// Update filter options from API response if available
 					if (response.filters) {
@@ -215,17 +235,8 @@ export class JobSearchPage implements OnInit {
 
 	onFilterChange(config: JobFilterConfig): void {
 		this.filterConfig = config;
-		this.applyFilters();
-	}
-
-	onSearchButtonClick(): void {
-		this.currentPage = 1;
-		this.loadJobs();
-	}
-
-	private applyFilters(): void {
-		this.currentPage = 1;
-		this.loadJobs();
+		this.totalJobs = this.filteredJobListings().length;
+		this.cdr.markForCheck();
 	}
 
 	toggleJobExpansion(jobId: string): void {
