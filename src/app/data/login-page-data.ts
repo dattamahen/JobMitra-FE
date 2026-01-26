@@ -15,11 +15,6 @@ export interface Certification {
 
 export const LOGIN_FEATURES: Feature[] = [
 	{
-		icon: '💼',
-		title: 'Smart Job Postings',
-		description: 'Create and manage job listings with AI-powered optimization for maximum reach and qualified candidates.'
-	},
-	{
 		icon: '📄',
 		title: 'ATS CV Compatible',
 		description: 'AI-enhanced resume parsing and matching ensures compatibility with all major ATS systems.'
