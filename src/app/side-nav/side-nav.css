@@ -1,5 +1,5 @@
 .side-nav-container {
-	width: 200px;
+	width: 250px;
 	height: 100vh;
 	background-color: #4831af;
 	color: #fff;
@@ -8,15 +8,113 @@
 	top: 0;
 	z-index: 500;
 	border-right: 1px solid #e0e0e0;
+	display: flex;
+	flex-direction: column;
+}
+
+.app-header {
+	padding: 1.5rem 1rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.75rem;
+	border-bottom: 1px solid rgba(255,255,255,0.2);
+	flex-shrink: 0;
+}
+
+.app-logo {
+	width: 48px;
+	height: 48px;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.logo-icon {
+	font-size: 28px !important;
+	width: 28px !important;
+	height: 28px !important;
+	color: #fff !important;
 }
 
 .app-name {
-	padding: 1rem;
 	font-size: 1.25rem;
 	font-weight: 700;
-	text-align: center;
-	border-bottom: 1px solid rgba(255,255,255,0.1);
-	margin-bottom: 0.5rem;
+	margin: 0;
+	color: #fff;
+	letter-spacing: 0.5px;
+}
+
+.nav-menu-scrollable {
+	flex: 1;
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding: 0 !important;
+}
+
+.nav-menu-scrollable::-webkit-scrollbar {
+	width: 4px;
+}
+
+.nav-menu-scrollable::-webkit-scrollbar-track {
+	background: rgba(255,255,255,0.1);
+}
+
+.nav-menu-scrollable::-webkit-scrollbar-thumb {
+	background: rgba(255,255,255,0.3);
+	border-radius: 2px;
+}
+
+.app-footer {
+	flex-shrink: 0;
+	border-top: 1px solid rgba(255,255,255,0.2);
+	padding: 0.5rem 0;
+	background-color: #4831af;
+}
+
+.user-info {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.75rem 1rem;
+	background: rgba(255,255,255,0.1);
+	margin: 0 0.5rem 0.5rem 0.5rem;
+	border-radius: 8px;
+}
+
+.user-avatar {
+	font-size: 32px !important;
+	width: 32px !important;
+	height: 32px !important;
+	color: #fff !important;
+}
+
+.user-details {
+	display: flex;
+	flex-direction: column;
+	gap: 0.125rem;
+	flex: 1;
+	min-width: 0;
+}
+
+.user-name {
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: #fff !important;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.user-email {
+	font-size: 0.75rem;
+	color: #fff !important;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .nav-item {
@@ -71,10 +169,6 @@
 	color: #fff !important;
 }
 
-mat-nav-list {
-	padding: 0 !important;
-}
-
 mat-list-item {
 	font-family: 'Inter', sans-serif !important;
 	color: #fff !important;
@@ -88,7 +182,6 @@ mat-list-item {
 	color: #fff !important;
 }
 
-/* Ensure proper spacing */
 .mat-mdc-list-item {
 	padding-left: 8px !important;
 	padding-right: 8px !important;
@@ -96,76 +189,29 @@ mat-list-item {
 	min-height: 2.5rem !important;
 }
 
-.nav-menu li:hover {
-	background-color: #f8f9fa;
-	transform: translateX(2px);
-	border-left: 4px solid #1976d2;
+.logout-item {
+	color: #fff !important;
+	border-top: none !important;
+	margin: 0 !important;
+	padding-bottom: 0.5rem !important;
 }
 
-.nav-menu li.active {
-	background-color: #e3f2fd;
-	border-left: 4px solid #4831af;
-	color: #4831af;
+.logout-item:hover {
+	background-color: rgba(211, 47, 47, 0.2) !important;
+	color: #fff !important;
+	border-left: 4px solid #ef5350 !important;
 }
 
-.nav-menu li.active:hover {
-	background-color: #e3f2fd;
+.logout-item .nav-icon {
+	color: #fff !important;
 }
 
-.nav-icon {
-	font-size: 1.2em;
-	margin-right: 12px;
-	width: 20px;
-	text-align: center;
-	color: #fff;
+.logout-item:hover .nav-icon {
+	color: #ef5350 !important;
 }
 
-.nav-label {
-	font-size: 1em;
-	font-weight: 500;
-	letter-spacing: 0.025em;
-	color: #fff;
-}
-
-.nav-menu li.active .nav-label {
-	font-weight: 600;
-}
-
-.nav-menu li.active .nav-icon {
-	color: #4831af;
-}
-
-.nav-menu li:hover .nav-icon {
-	color: #1976d2;
-}
-
-/* Responsive design */
 @media (max-width: 768px) {
 	.side-nav-container {
 		width: 200px;
 	}
-	
-	.nav-menu li {
-		padding: 12px 15px;
-	}
-	
-	.nav-label {
-		font-size: 0.9em;
-	}
-}
-
-/* Logout item styling */
-.logout-item {
-	margin-top: auto;
-	border-top: 1px solid #e0e0e0;
-	color: #d32f2f !important;
-}
-
-.logout-item:hover {
-	background-color: #ffebee !important;
-	color: #d32f2f !important;
-}
-
-.logout-item .nav-icon {
-	color: #d32f2f !important;
 }

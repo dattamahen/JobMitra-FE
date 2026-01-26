@@ -27,6 +27,8 @@ export class SideNav implements OnInit {
 
 	activeItem: string = '';
 	navItems: NavItem[] = [];
+	userName: string = '';
+	userEmail: string = '';
 	private destroyRef = inject(DestroyRef);
 
 	constructor(
@@ -38,6 +40,12 @@ export class SideNav implements OnInit {
 	ngOnInit() {
 		this.navItems = this.navigationService.getNavigationItems();
 		this.activeItem = 'dashboard';
+		
+		const user = this.authService.getCurrentUserValue();
+		if (user) {
+			this.userName = `${user.first_name} ${user.last_name}`;
+			this.userEmail = user.email;
+		}
 	}
 
 	selectItem(itemId: string) {
