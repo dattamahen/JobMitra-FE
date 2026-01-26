@@ -138,11 +138,6 @@ export class ResumeBuilderPage implements OnInit {
 
 	constructor() {
 		this.initializeForms();
-	}
-
-	ngOnInit(): void {
-		this.loadUserData();
-		this.loadTemplates();
 		
 		// Auto-save effect
 		effect(() => {
@@ -151,6 +146,11 @@ export class ResumeBuilderPage implements OnInit {
 				this.autoSave();
 			}
 		});
+	}
+
+	ngOnInit(): void {
+		this.loadUserData();
+		this.loadTemplates();
 	}
 
 	private loadUserData(): void {
