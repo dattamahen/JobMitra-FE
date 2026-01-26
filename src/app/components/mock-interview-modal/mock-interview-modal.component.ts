@@ -1,4 +1,4 @@
-import { Component, computed, effect, Inject, signal } from '@angular/core';
+import { Component, computed, effect, Inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,7 +26,8 @@ import { ConfirmationDialogComponent } from '../../shared/components/confirmatio
 		LoadingComponent
 	],
 	templateUrl: './mock-interview-modal.html',
-	styleUrl: './mock-interview-modal.css'
+	styleUrl: './mock-interview-modal.css',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MockInterviewModalComponent {
 	// Signals for state management

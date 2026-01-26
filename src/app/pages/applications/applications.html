@@ -1,6 +1,6 @@
 <div class="page-container">
 	<!-- Loading indicator -->
-	@if (isLoading) {
+	@if (isLoading()) {
 		<app-loading 
 			title="Loading Applications..."
 			message="Fetching your job application status"
@@ -9,9 +9,9 @@
 	}
 
 	<!-- Applications list -->
-	@if (!isLoading) {
+	@if (!isLoading()) {
 	<div class="applications-list">
-		@if (applications.length === 0) {
+		@if (applications().length === 0) {
 		<div class="no-applications">
 			<mat-card>
 				<mat-card-content>
@@ -24,7 +24,7 @@
 			</mat-card>
 		</div>
 		} @else {
-		@for (application of applications; track application.application_id) {
+		@for (application of applications(); track application.application_id) {
 		<mat-card class="application-card">
 			<mat-card-header>
 				<mat-card-title>{{application.job_title}}</mat-card-title>

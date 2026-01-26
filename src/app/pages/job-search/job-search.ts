@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, DestroyRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -46,7 +46,8 @@ import { ResumeTailorModalComponent } from '../../components/mock-interview-moda
 		LoadingComponent
 	],
 	templateUrl: './job-search.html',
-	styleUrls: ['./job-search.css']
+	styleUrls: ['./job-search.css'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class JobSearchPage implements OnInit {
 	expandedJobs: { [key: string]: boolean } = {};

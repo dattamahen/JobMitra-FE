@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -14,7 +14,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
 	selector: 'app-applications-page',
-	standalone: true,
 	imports: [
 		CommonModule,
 		MatCardModule,
@@ -27,22 +26,19 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 		LoadingComponent
 	],
 	templateUrl: './applications.html',
-	styleUrls: ['./applications.css']
+	styleUrls: ['./applications.css'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ApplicationsPage implements OnInit {
-	applications: any[] = [];
-	isLoading = true;
-	error = '';
+export class ApplicationsPage {
+	applications = signal<any[]>([]);
+	isLoading = signal(true);
+	error = signal('');
 	private destroyRef = inject(DestroyRef);
+	private jobService = inject(JobService);
+	private userService = inject(UserService);
+	private snackBar = inject(MatSnackBar);
 
-	constructor(
-		private jobService: JobService,
-		private userService: UserService,
-		private snackBar: MatSnackBar,
-		private cdr: ChangeDetectorRef
-	) {}
-
-	ngOnInit(): void {
+	constructor() {
 		this.loadApplications();
 	}
 
@@ -51,16 +47,16 @@ export class ApplicationsPage implements OnInit {
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe(currentUser => {
 			if (!currentUser) {
-				this.error = 'Please login to view your applications';
-				this.isLoading = false;
+				this.error.set('Please login to view your applications');
+				this.isLoading.set(false);
 				return;
 			}
 
 			// Get the actual user ID from auth token instead of using fallback
 			const token = localStorage.getItem('jobmitra_token');
 			if (!token) {
-				this.error = 'Please login to view your applications';
-				this.isLoading = false;
+				this.error.set('Please login to view your applications');
+				this.isLoading.set(false);
 				return;
 			}
 
@@ -70,28 +66,25 @@ export class ApplicationsPage implements OnInit {
 				const actualUserId = payload.user_id;
 				
 
-				this.isLoading = true;
-				this.error = '';
+				this.isLoading.set(true);
+				this.error.set('');
 				
 				this.jobService.getUserAppliedJobs(actualUserId)
 					.pipe(takeUntilDestroyed(this.destroyRef))
 					.subscribe({
 						next: (response) => {
-							this.applications = response.applications || [];
-							this.isLoading = false;
-							this.cdr.detectChanges();
+							this.applications.set(response.applications || []);
+							this.isLoading.set(false);
 						},
 						error: (error) => {
-
-							this.error = error.error?.detail || 'Failed to load applications';
-							this.isLoading = false;
-							this.cdr.detectChanges();
+							this.error.set(error.error?.detail || 'Failed to load applications');
+							this.isLoading.set(false);
 						}
 					});
 			} catch (e) {
 
-				this.error = 'Invalid authentication. Please login again.';
-				this.isLoading = false;
+				this.error.set('Invalid authentication. Please login again.');
+				this.isLoading.set(false);
 			}
 		});
 	}

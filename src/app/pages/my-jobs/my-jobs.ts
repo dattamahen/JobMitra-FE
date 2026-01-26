@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,7 +14,6 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { FormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
 import { HrService } from '../../services/hr.service';
 import { Router } from '@angular/router';
 
@@ -75,7 +74,6 @@ export interface FilterOptions {
 
 @Component({
 	selector: 'app-my-jobs',
-	standalone: true,
 	imports: [
 		CommonModule,
 		MatCardModule,
@@ -94,102 +92,70 @@ export interface FilterOptions {
 		FormsModule
 	],
 	templateUrl: './my-jobs.html',
-	styleUrls: ['./my-jobs.css']
+	styleUrls: ['./my-jobs.css'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MyJobsPage implements OnInit, OnDestroy {
-	private destroy$ = new Subject<void>();
+export class MyJobsPage {
+	private hrService = inject(HrService);
+	private snackBar = inject(MatSnackBar);
+	private dialog = inject(MatDialog);
+	private router = inject(Router);
 	
-	@Output() navigateToPage = new EventEmitter<{page: string, params?: any}>();
+	navigateToPage = output<{page: string, params?: any}>();
 	
-	// Expose Math for template use
-	Math = Math;
+	jobListings = signal<HRJobListing[]>([]);
+	filteredJobs = signal<HRJobListing[]>([]);
+	isLoading = signal(false);
 	
-	// Job listings
-	jobListings: HRJobListing[] = [];
-	filteredJobs: HRJobListing[] = [];
-	isLoading = false;
+	currentPage = signal(1);
+	itemsPerPage = signal(10);
+	totalJobs = computed(() => this.jobListings().length);
+	totalPages = computed(() => Math.ceil(this.totalJobs() / this.itemsPerPage()));
 	
-	// Pagination
-	currentPage = 1;
-	itemsPerPage = 10;
-	totalJobs = 0;
+	searchQuery = signal('');
+	selectedLocation = signal('all');
+	selectedExperience = signal('all');
+	selectedEmploymentType = signal('all');
+	selectedJobType = signal('all');
+	selectedStatus = signal('all');
 	
-	// Filters
-	searchQuery = '';
-	selectedLocation = 'all';
-	selectedExperience = 'all';
-	selectedEmploymentType = 'all';
-	selectedJobType = 'all';
-	selectedStatus = 'all';
-	
-	filterOptions: FilterOptions = {
+	filterOptions = signal<FilterOptions>({
 		locations: ['All Locations'],
 		experience_levels: ['All Experience Levels'],
 		employment_types: ['All Employment Types'],
 		job_types: ['All Job Types'],
 		companies: ['All Companies'],
 		salary_ranges: []
-	};
+	});
 
-	constructor(
-		private hrService: HrService,
-		private snackBar: MatSnackBar,
-		private dialog: MatDialog,
-		private cdr: ChangeDetectorRef,
-		private router: Router
-	) {}
-
-	ngOnInit() {
+	constructor() {
 		this.loadMyJobs();
 	}
 
-	ngOnDestroy() {
-		this.destroy$.next();
-		this.destroy$.complete();
-	}
-
 	async loadMyJobs() {
-
-		this.isLoading = true;
+		this.isLoading.set(true);
 		try {
 			const response = await this.hrService.getMyJobs();
-			
-			// The HR service already handles the response format and returns the jobs array
 			if (Array.isArray(response)) {
-				this.jobListings = this.transformJobsToHRFormat(response);
-				this.totalJobs = response.length;
-
+				const transformed = this.transformJobsToHRFormat(response);
+				this.jobListings.set(transformed);
+				this.filteredJobs.set([...transformed]);
+				this.buildFilterOptions();
 			} else {
-
-				this.jobListings = [];
-				this.totalJobs = 0;
+				this.jobListings.set([]);
+				this.filteredJobs.set([]);
 			}
-			
-			this.filteredJobs = [...this.jobListings];
-			this.buildFilterOptions();
-
 		} catch (error: any) {
-
 			this.snackBar.open(error.message || 'Failed to load your job postings', 'Close', { duration: 5000 });
-			this.jobListings = [];
-			this.filteredJobs = [];
+			this.jobListings.set([]);
+			this.filteredJobs.set([]);
 		} finally {
-
-			this.isLoading = false;
-			
-			// Force change detection to ensure UI updates
-			this.cdr.detectChanges();
-			
-
+			this.isLoading.set(false);
 		}
 	}
 
-	// Transform backend job format to frontend HR format
 	private transformJobsToHRFormat(jobs: any[]): HRJobListing[] {
 		return jobs.map((job, index) => {
-
-			
-			// Handle location transformation
 			let locationObj;
 			if (typeof job.location === 'string') {
 				locationObj = {
@@ -217,7 +183,6 @@ export class MyJobsPage implements OnInit, OnDestroy {
 				};
 			}
 
-			// Handle salary transformation
 			let salaryObj;
 			if (job.salary_range && typeof job.salary_range === 'object') {
 				salaryObj = {
@@ -231,7 +196,7 @@ export class MyJobsPage implements OnInit, OnDestroy {
 				salaryObj = undefined;
 			}
 
-			const transformedJob: HRJobListing = {
+			return {
 				_id: job._id,
 				job_id: job.job_id || job.id || job._id || `job_${index}`,
 				title: job.title || 'Untitled Job',
@@ -264,34 +229,31 @@ export class MyJobsPage implements OnInit, OnDestroy {
 				views_count: job.views_count || 0,
 				applications_count: job.applications_received ? job.applications_received.length : (job.applications_count || 0)
 			};
-
-
-			return transformedJob;
 		});
 	}
 
 	private buildFilterOptions() {
-		// Extract unique values from job listings
+		const jobs = this.jobListings();
 		const locations = new Set<string>();
 		const experienceLevels = new Set<string>();
 		const employmentTypes = new Set<string>();
 		const jobTypes = new Set<string>();
 		
-		this.jobListings.forEach(job => {
+		jobs.forEach(job => {
 			locations.add(this.formatLocation(job));
 			experienceLevels.add(this.getExperienceLevelDisplay(job.experience_level));
 			employmentTypes.add(this.getEmploymentTypeDisplay(job.employment_type));
 			jobTypes.add(this.getJobTypeDisplay(job.job_type));
 		});
 
-		this.filterOptions = {
+		this.filterOptions.set({
 			locations: ['All Locations', ...Array.from(locations)],
 			experience_levels: ['All Experience Levels', ...Array.from(experienceLevels)],
 			employment_types: ['All Employment Types', ...Array.from(employmentTypes)],
 			job_types: ['All Job Types', ...Array.from(jobTypes)],
 			companies: ['All Companies'],
 			salary_ranges: []
-		};
+		});
 	}
 
 	onSearchButtonClick() {
@@ -299,103 +261,95 @@ export class MyJobsPage implements OnInit, OnDestroy {
 	}
 
 	onLocationChange(value: string) {
-		this.selectedLocation = value;
+		this.selectedLocation.set(value);
 		this.applyFilters();
 	}
 
 	onExperienceChange(value: string) {
-		this.selectedExperience = value;
+		this.selectedExperience.set(value);
 		this.applyFilters();
 	}
 
 	onEmploymentTypeChange(value: string) {
-		this.selectedEmploymentType = value;
+		this.selectedEmploymentType.set(value);
 		this.applyFilters();
 	}
 
 	onJobTypeChange(value: string) {
-		this.selectedJobType = value;
+		this.selectedJobType.set(value);
 		this.applyFilters();
 	}
 
 	onStatusChange(value: string) {
-		this.selectedStatus = value;
+		this.selectedStatus.set(value);
 		this.applyFilters();
 	}
 
 	private applyFilters() {
-		this.filteredJobs = this.jobListings.filter(job => {
-			// Search query filter
-			if (this.searchQuery.trim()) {
-				const query = this.searchQuery.toLowerCase();
+		const jobs = this.jobListings();
+		const query = this.searchQuery();
+		const location = this.selectedLocation();
+		const experience = this.selectedExperience();
+		const employmentType = this.selectedEmploymentType();
+		const jobType = this.selectedJobType();
+		const status = this.selectedStatus();
+
+		const filtered = jobs.filter(job => {
+			if (query.trim()) {
+				const q = query.toLowerCase();
 				const matchesSearch = 
-					job.title.toLowerCase().includes(query) ||
-					job.company.toLowerCase().includes(query) ||
-					job.description.toLowerCase().includes(query) ||
-					job.skills_required.some(skill => skill.toLowerCase().includes(query));
+					job.title.toLowerCase().includes(q) ||
+					job.company.toLowerCase().includes(q) ||
+					job.description.toLowerCase().includes(q) ||
+					job.skills_required.some(skill => skill.toLowerCase().includes(q));
 				
 				if (!matchesSearch) return false;
 			}
 
-			// Location filter
-			if (this.selectedLocation !== 'all') {
+			if (location !== 'all') {
 				const jobLocation = this.formatLocation(job);
-				if (jobLocation !== this.selectedLocation.replace('-', ' ')) return false;
+				if (jobLocation !== location.replace('-', ' ')) return false;
 			}
 
-			// Experience filter
-			if (this.selectedExperience !== 'all') {
+			if (experience !== 'all') {
 				const jobExperience = this.getExperienceLevelDisplay(job.experience_level);
-				if (jobExperience.toLowerCase().replace(' ', '-') !== this.selectedExperience) return false;
+				if (jobExperience.toLowerCase().replace(' ', '-') !== experience) return false;
 			}
 
-			// Employment type filter
-			if (this.selectedEmploymentType !== 'all') {
-				const jobType = this.getEmploymentTypeDisplay(job.employment_type);
-				if (jobType.toLowerCase().replace(' ', '-') !== this.selectedEmploymentType) return false;
+			if (employmentType !== 'all') {
+				const jobEmpType = this.getEmploymentTypeDisplay(job.employment_type);
+				if (jobEmpType.toLowerCase().replace(' ', '-') !== employmentType) return false;
 			}
 
-			// Job type filter
-			if (this.selectedJobType !== 'all') {
-				const jobType = this.getJobTypeDisplay(job.job_type);
-				if (jobType.toLowerCase().replace(' ', '-') !== this.selectedJobType) return false;
+			if (jobType !== 'all') {
+				const jobTypeDisplay = this.getJobTypeDisplay(job.job_type);
+				if (jobTypeDisplay.toLowerCase().replace(' ', '-') !== jobType) return false;
 			}
 
-			// Status filter
-			if (this.selectedStatus !== 'all') {
-				if (this.selectedStatus === 'active' && !job.is_active) return false;
-				if (this.selectedStatus === 'inactive' && job.is_active) return false;
+			if (status !== 'all') {
+				if (status === 'active' && !job.is_active) return false;
+				if (status === 'inactive' && job.is_active) return false;
 			}
 
 			return true;
 		});
+
+		this.filteredJobs.set(filtered);
 	}
 
-	// Utility methods (reused from job-search)
 	formatLocation(job: HRJobListing): string {
 		try {
-			if (!job || !job.location) {
-				return 'Location not specified';
-			}
-			
-			if (job.location.is_remote) {
-				return 'Remote';
-			}
+			if (!job || !job.location) return 'Location not specified';
+			if (job.location.is_remote) return 'Remote';
 			
 			const city = job.location.city || '';
 			const state = job.location.state || '';
 			
-			if (city && state) {
-				return `${city}, ${state}`;
-			} else if (city) {
-				return city;
-			} else if (state) {
-				return state;
-			} else {
-				return 'Location not specified';
-			}
+			if (city && state) return `${city}, ${state}`;
+			if (city) return city;
+			if (state) return state;
+			return 'Location not specified';
 		} catch (error) {
-
 			return 'Location error';
 		}
 	}
@@ -465,10 +419,23 @@ export class MyJobsPage implements OnInit, OnDestroy {
 		return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 	}
 
-	// HR-specific actions
+	previousPage() {
+		if (this.currentPage() > 1) {
+			this.currentPage.update(p => p - 1);
+			this.loadMyJobs();
+		}
+	}
+
+	nextPage() {
+		if (this.currentPage() * this.itemsPerPage() < this.totalJobs()) {
+			this.currentPage.update(p => p + 1);
+			this.loadMyJobs();
+		}
+	}
+
 	async toggleJobStatus(job: HRJobListing) {
 		try {
-			await this.hrService.deleteJob(job.job_id); // This actually toggles status
+			await this.hrService.deleteJob(job.job_id);
 			job.is_active = !job.is_active;
 			this.snackBar.open(
 				`Job ${job.is_active ? 'activated' : 'deactivated'} successfully`,
@@ -481,12 +448,10 @@ export class MyJobsPage implements OnInit, OnDestroy {
 	}
 
 	editJob(job: HRJobListing) {
-		// TODO: Navigate to edit job form
 		this.snackBar.open('Edit job functionality coming soon', 'Close', { duration: 3000 });
 	}
 
 	viewJobStats(job: HRJobListing) {
-		// TODO: Show job statistics
 		this.snackBar.open('Job statistics functionality coming soon', 'Close', { duration: 3000 });
 	}
 
@@ -496,7 +461,6 @@ export class MyJobsPage implements OnInit, OnDestroy {
 			return;
 		}
 		
-		// Navigate to applications-received page with specific job ID
 		this.navigateToPage.emit({
 			page: 'applications-received',
 			params: { jobId: job.job_id }
@@ -507,7 +471,8 @@ export class MyJobsPage implements OnInit, OnDestroy {
 		if (confirm(`Are you sure you want to delete the job "${job.title}"?`)) {
 			try {
 				await this.hrService.deleteJob(job.job_id);
-				this.jobListings = this.jobListings.filter(j => j.job_id !== job.job_id);
+				const updated = this.jobListings().filter(j => j.job_id !== job.job_id);
+				this.jobListings.set(updated);
 				this.applyFilters();
 				this.snackBar.open('Job deleted successfully', 'Close', { duration: 3000 });
 			} catch (error: any) {
@@ -517,7 +482,6 @@ export class MyJobsPage implements OnInit, OnDestroy {
 	}
 
 	duplicateJob(job: HRJobListing) {
-		// TODO: Create duplicate job with same details
 		this.snackBar.open('Duplicate job functionality coming soon', 'Close', { duration: 3000 });
 	}
 

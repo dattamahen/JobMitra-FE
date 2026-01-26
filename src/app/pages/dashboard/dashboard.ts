@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, DestroyRef, inject } from '@angular/core';
+import { Component, OnInit, signal, DestroyRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -29,7 +29,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 		LoadingComponent
 	],
 	templateUrl: './dashboard.html',
-	styleUrls: ['./dashboard.css']
+	styleUrls: ['./dashboard.css'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardPage implements OnInit {
 	dashboardData = signal<DashboardData | null>(null);

@@ -2,15 +2,15 @@
 	<mat-card class="header-card">
 		<mat-card-header>
 			<mat-card-title>Job Applications</mat-card-title>
-			@if (applicationsData) {
+			@if (applicationsData()) {
 				<mat-card-subtitle>
-					{{applicationsData.job_title}} - {{applicationsData.total_applications}} Applications
+					{{applicationsData()!.job_title}} - {{applicationsData()!.total_applications}} Applications
 				</mat-card-subtitle>
 			}
 		</mat-card-header>
 	</mat-card>
 
-	@if (isLoading) {
+	@if (isLoading()) {
 		<app-loading 
 			title="Loading Applications..."
 			message="Fetching job applications"
@@ -18,9 +18,9 @@
 		</app-loading>
 	}
 
-	@if (!isLoading && applicationsData) {
+	@if (!isLoading() && applicationsData()) {
 		<div class="applications-list">
-			@for (applicant of applicationsData.applications; track applicant.application_id) {
+			@for (applicant of applicationsData()!.applications; track applicant.application_id) {
 				<mat-card class="applicant-card">
 					<mat-card-header>
 						<mat-card-title>{{applicant.full_name}}</mat-card-title>
@@ -135,7 +135,7 @@
 				</mat-card>
 			}
 
-			@if (applicationsData.applications.length === 0) {
+			@if (applicationsData()!.applications.length === 0) {
 				<div class="no-applications">
 					<mat-icon>inbox</mat-icon>
 					<h2>No Applications Yet</h2>
@@ -145,10 +145,10 @@
 		</div>
 	}
 
-	@if (error) {
+	@if (error()) {
 		<div class="error-message">
 			<mat-icon>error</mat-icon>
-			<p>{{error}}</p>
+			<p>{{error()}}</p>
 		</div>
 	}
 </div>
