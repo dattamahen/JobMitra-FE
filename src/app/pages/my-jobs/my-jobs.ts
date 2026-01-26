@@ -15,6 +15,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { FormsModule } from '@angular/forms';
 import { HrService } from '../../services/hr.service';
+import { JobFilterComponent, JobFilterConfig, JobFilterOptions } from '../../shared/components/job-filter/job-filter.component';
 import { Router } from '@angular/router';
 
 export interface HRJobListing {
@@ -89,7 +90,8 @@ export interface FilterOptions {
 		MatDialogModule,
 		MatMenuModule,
 		MatDividerModule,
-		FormsModule
+		FormsModule,
+		JobFilterComponent
 	],
 	templateUrl: './my-jobs.html',
 	styleUrls: ['./my-jobs.css'],
@@ -112,12 +114,17 @@ export class MyJobsPage {
 	totalJobs = computed(() => this.jobListings().length);
 	totalPages = computed(() => Math.ceil(this.totalJobs() / this.itemsPerPage()));
 	
-	searchQuery = signal('');
-	selectedLocation = signal('all');
-	selectedExperience = signal('all');
-	selectedEmploymentType = signal('all');
-	selectedJobType = signal('all');
-	selectedStatus = signal('all');
+	filterConfig = signal<JobFilterConfig>({
+		searchQuery: '',
+		selectedLocation: 'all',
+		selectedExperience: 'all',
+		selectedStatus: 'all'
+	});
+	
+	filterOptionsForComponent = computed<JobFilterOptions>(() => ({
+		locations: this.filterOptions().locations,
+		experience_levels: this.filterOptions().experience_levels
+	}));
 	
 	filterOptions = signal<FilterOptions>({
 		locations: ['All Locations'],
@@ -256,43 +263,17 @@ export class MyJobsPage {
 		});
 	}
 
-	onSearchButtonClick() {
-		this.applyFilters();
-	}
-
-	onLocationChange(value: string) {
-		this.selectedLocation.set(value);
-		this.applyFilters();
-	}
-
-	onExperienceChange(value: string) {
-		this.selectedExperience.set(value);
-		this.applyFilters();
-	}
-
-	onEmploymentTypeChange(value: string) {
-		this.selectedEmploymentType.set(value);
-		this.applyFilters();
-	}
-
-	onJobTypeChange(value: string) {
-		this.selectedJobType.set(value);
-		this.applyFilters();
-	}
-
-	onStatusChange(value: string) {
-		this.selectedStatus.set(value);
-		this.applyFilters();
+	onFilterChange(config: JobFilterConfig) {
+		this.filterConfig.set(config);
 	}
 
 	private applyFilters() {
 		const jobs = this.jobListings();
-		const query = this.searchQuery();
-		const location = this.selectedLocation();
-		const experience = this.selectedExperience();
-		const employmentType = this.selectedEmploymentType();
-		const jobType = this.selectedJobType();
-		const status = this.selectedStatus();
+		const config = this.filterConfig();
+		const query = config.searchQuery;
+		const location = config.selectedLocation;
+		const experience = config.selectedExperience;
+		const status = config.selectedStatus;
 
 		const filtered = jobs.filter(job => {
 			if (query.trim()) {
@@ -314,16 +295,6 @@ export class MyJobsPage {
 			if (experience !== 'all') {
 				const jobExperience = this.getExperienceLevelDisplay(job.experience_level);
 				if (jobExperience.toLowerCase().replace(' ', '-') !== experience) return false;
-			}
-
-			if (employmentType !== 'all') {
-				const jobEmpType = this.getEmploymentTypeDisplay(job.employment_type);
-				if (jobEmpType.toLowerCase().replace(' ', '-') !== employmentType) return false;
-			}
-
-			if (jobType !== 'all') {
-				const jobTypeDisplay = this.getJobTypeDisplay(job.job_type);
-				if (jobTypeDisplay.toLowerCase().replace(' ', '-') !== jobType) return false;
 			}
 
 			if (status !== 'all') {

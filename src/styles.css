@@ -59,11 +59,13 @@ input:not([type="checkbox"]):not([type="radio"]), textarea, select {
 label, .mat-mdc-form-field-label, .mat-mdc-floating-label {
 	font-size: 0.875rem;
 	color: #65697b !important;
+	text-transform: capitalize;
 }
 
 /* Buttons */
-button, .mat-mdc-button {
+button, .mat-mdc-button, .mdc-button__label {
 	font-size: 0.875rem;
+	text-transform: capitalize;
 }
 
 /* Better text rendering */
@@ -71,6 +73,16 @@ p {
 	margin: 0 0 1rem 0;
 	line-height: 1.6;
 	font-size: 0.875rem;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+	text-transform: capitalize;
+}
+
+/* Form input text */
+input:not([type="checkbox"]):not([type="radio"]), textarea, select {
+	text-transform: capitalize;
 }
 
 /* Small text */

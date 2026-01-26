@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, DestroyRef, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, DestroyRef, inject, ChangeDetectionStrategy, computed } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -19,6 +19,8 @@ import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angu
 import { Inject } from '@angular/core';
 import { maskEmail, maskPhone } from '../../utils/mask.util';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
+import { JobFilterComponent, JobFilterConfig, JobFilterOptions } from '../../shared/components/job-filter/job-filter.component';
 import { FeatureUsageService } from '../../services/feature-usage.service';
 import { MockInterviewService } from '../../services/mock-interview.service';
 import { MockInterviewModalComponent } from '../../components/mock-interview-modal/mock-interview-modal.component';
@@ -43,7 +45,9 @@ import { ResumeTailorModalComponent } from '../../components/mock-interview-moda
 		MatProgressSpinnerModule,
 		MatSnackBarModule,
 		MatDialogModule,
-		LoadingComponent
+		LoadingComponent,
+		EmptyStateComponent,
+		JobFilterComponent
 	],
 	templateUrl: './job-search.html',
 	styleUrls: ['./job-search.css'],
@@ -59,17 +63,53 @@ export class JobSearchPage implements OnInit {
 	filterOptions: any = {};
 	isLoading = true;
 	
-	// Filter state
-	searchQuery = '';
-	selectedLocation = 'all';
-	selectedCategory = 'all';
-	selectedExperience = 'all';
-	selectedEmploymentType = 'all';
+	// Filter configuration
+	filterConfig: JobFilterConfig = {
+		searchQuery: '',
+		selectedLocation: 'all',
+		selectedExperience: 'all',
+		selectedEmploymentType: 'all'
+	};
 	
 	// Pagination
 	currentPage = 1;
 	totalJobs = 0;
 	jobsPerPage = 10;
+
+	// Computed filtered jobs
+	filteredJobListings = computed(() => {
+		const jobs = this.jobListings;
+		const config = this.filterConfig;
+		
+		if (!jobs || jobs.length === 0) return [];
+		
+		return jobs.filter(job => {
+			if (config.searchQuery) {
+				const query = config.searchQuery.toLowerCase();
+				const matchesSearch = 
+					job.title.toLowerCase().includes(query) ||
+					job.company.toLowerCase().includes(query) ||
+					job.description.toLowerCase().includes(query) ||
+					job.skills_required?.some(s => s.toLowerCase().includes(query));
+				if (!matchesSearch) return false;
+			}
+			
+			if (config.selectedLocation !== 'all') {
+				const jobLocation = this.formatLocation(job).toLowerCase().replace(' ', '-');
+				if (!jobLocation.includes(config.selectedLocation)) return false;
+			}
+			
+			if (config.selectedExperience !== 'all') {
+				if (job.experience_level?.toLowerCase().replace(' ', '-') !== config.selectedExperience) return false;
+			}
+			
+			if (config.selectedEmploymentType !== 'all') {
+				if (job.employment_type?.toLowerCase().replace(' ', '-') !== config.selectedEmploymentType) return false;
+			}
+			
+			return true;
+		});
+	});
 
 
 
@@ -111,29 +151,10 @@ export class JobSearchPage implements OnInit {
 	}
 
 	private loadJobs(): void {
-
-		
 		this.isLoading = true;
-
 		
-		// Build filters from current selections
 		const filters: JobSearchFilters = {};
 		
-		if (this.searchQuery) {
-			filters.keywords = this.searchQuery;
-		}
-		if (this.selectedLocation !== 'all') {
-			filters.location = this.selectedLocation;
-		}
-		if (this.selectedExperience !== 'all') {
-			filters.experience_level = [this.selectedExperience];
-		}
-		if (this.selectedEmploymentType !== 'all') {
-			filters.employment_type = [this.selectedEmploymentType];
-		}
-
-
-
 		this.jobService.searchJobs(filters, this.currentPage, this.jobsPerPage)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
@@ -142,7 +163,7 @@ export class JobSearchPage implements OnInit {
 					
 					// Update data first
 					this.jobListings = response.jobs || [];
-					this.totalJobs = response.total_count || 0;
+					this.totalJobs = this.filteredJobListings().length;
 					
 					// Update filter options from API response if available
 					if (response.filters) {
@@ -212,36 +233,10 @@ export class JobSearchPage implements OnInit {
 		return diffDays <= 7 && diffDays > 0;
 	}
 
-	// Search functionality
-	onSearchButtonClick(): void {
-		// Reset to first page when search changes
-		this.currentPage = 1;
-		this.loadJobs();
-	}
-
-	onLocationChange(location: string): void {
-		this.selectedLocation = location;
-		this.applyFilters();
-	}
-
-	onCategoryChange(category: string): void {
-		this.selectedCategory = category;
-		this.applyFilters();
-	}
-
-	onExperienceChange(experience: string): void {
-		this.selectedExperience = experience;
-		this.applyFilters();
-	}
-
-	onEmploymentTypeChange(type: string): void {
-		this.selectedEmploymentType = type;
-		this.applyFilters();
-	}
-
-	private applyFilters(): void {
-		this.currentPage = 1;
-		this.loadJobs();
+	onFilterChange(config: JobFilterConfig): void {
+		this.filterConfig = config;
+		this.totalJobs = this.filteredJobListings().length;
+		this.cdr.markForCheck();
 	}
 
 	toggleJobExpansion(jobId: string): void {

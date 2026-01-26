@@ -1,61 +1,17 @@
 <div class="page-container">
 
-	<mat-card class="search-filters">
-		<mat-card-content>
-			<div class="filter-row">
-				<mat-form-field appearance="outline" class="search-field">
-					<mat-label>Search your jobs</mat-label>
-					<input matInput placeholder="Enter job title, skills, or description" [ngModel]="searchQuery()"
-						(ngModelChange)="searchQuery.set($event)"
-						(keyup.enter)="onSearchButtonClick()">
-					<mat-icon matSuffix>search</mat-icon>
-				</mat-form-field>
-
-				<mat-form-field appearance="outline">
-					<mat-label>Location</mat-label>
-					<mat-select [value]="selectedLocation()" (selectionChange)="onLocationChange($event.value)">
-						<mat-option value="all">All Locations</mat-option>
-						@for (location of filterOptions().locations; track location) {
-						<mat-option [value]="location.toLowerCase().replace(' ', '-')">
-							{{location}}
-						</mat-option>
-						}
-					</mat-select>
-				</mat-form-field>
-
-				<mat-form-field appearance="outline">
-					<mat-label>Experience Level</mat-label>
-					<mat-select [value]="selectedExperience()" (selectionChange)="onExperienceChange($event.value)">
-						<mat-option value="all">All Experience Levels</mat-option>
-						@for (experience of filterOptions().experience_levels; track experience) {
-						<mat-option [value]="experience.toLowerCase().replace(' ', '-')">
-							{{experience}}
-						</mat-option>
-						}
-					</mat-select>
-				</mat-form-field>
-
-				<mat-form-field appearance="outline">
-					<mat-label>Job Status</mat-label>
-					<mat-select [value]="selectedStatus()" (selectionChange)="onStatusChange($event.value)">
-						<mat-option value="all">All Status</mat-option>
-						<mat-option value="active">Active</mat-option>
-						<mat-option value="inactive">Inactive</mat-option>
-					</mat-select>
-				</mat-form-field>
-			</div>
-			
-			<div class="search-button-container">
-				<div class="results-summary">
-					{{filteredJobs().length}} job{{filteredJobs().length !== 1 ? 's' : ''}} found
-				</div>
-				<button mat-raised-button color="primary" class="search-button" (click)="onSearchButtonClick()">
-					<mat-icon>search</mat-icon>
-					Search Jobs
-				</button>
-			</div>
-		</mat-card-content>
-	</mat-card>
+	<app-job-filter
+		[filterConfig]="filterConfig()"
+		[filterOptions]="filterOptionsForComponent()"
+		[resultsCount]="filteredJobs().length"
+		searchLabel="Search your jobs"
+		searchPlaceholder="Enter job title, skills, or description"
+		searchButtonLabel="Search Jobs"
+		resultsLabel="job"
+		[showEmploymentType]="false"
+		[showStatus]="true"
+		(filterChange)="onFilterChange($event)">
+	</app-job-filter>
 
 	<div class="job-listings">
 		<!-- Loading indicator -->

@@ -136,11 +136,11 @@
 			}
 
 			@if (applicationsData()!.applications.length === 0) {
-				<div class="no-applications">
-					<mat-icon>inbox</mat-icon>
-					<h2>No Applications Yet</h2>
-					<p>No one has applied for this job yet.</p>
-				</div>
+				<app-empty-state
+					icon="inbox"
+					title="No Applications Yet"
+					message="No one has applied for this job yet.">
+				</app-empty-state>
 			}
 		</div>
 	}

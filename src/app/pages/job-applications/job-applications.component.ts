@@ -14,6 +14,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatBadgeModule } from '@angular/material/badge';
 import { JobApplicationService, JobApplicationsResponse, ApplicantProfile } from '../../services/job-application.service';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -31,7 +32,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 		MatSnackBarModule,
 		MatExpansionModule,
 		MatBadgeModule,
-		LoadingComponent
+		LoadingComponent,
+		EmptyStateComponent
 	],
 	templateUrl: './job-applications.component.html',
 	styleUrls: ['./job-applications.component.css'],
