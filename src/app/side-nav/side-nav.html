@@ -1,5 +1,11 @@
 <nav class="side-nav-container">
-	<mat-nav-list>
+	<div class="app-header">
+		<div class="app-logo">
+			<mat-icon class="logo-icon">work</mat-icon>
+		</div>
+		<h1 class="app-name">JobMouka</h1>
+	</div>
+	<mat-nav-list class="nav-menu-scrollable">
 		@for (item of navItems; track item.id) {
 			<mat-list-item 
 				[class.active]="activeItem === item.id"
@@ -9,13 +15,21 @@
 				<span matListItemTitle>{{ item.label }}</span>
 			</mat-list-item>
 		}
-		
-		<!-- Logout button -->
+	</mat-nav-list>
+	
+	<div class="app-footer">
+		<div class="user-info">
+			<mat-icon class="user-avatar">account_circle</mat-icon>
+			<div class="user-details">
+				<span class="user-name">{{ userName }}</span>
+				<span class="user-email">{{ userEmail }}</span>
+			</div>
+		</div>
 		<mat-list-item 
 			(click)="logout()"
 			class="nav-item logout-item">
 			<mat-icon matListItemIcon class="nav-icon">logout</mat-icon>
 			<span matListItemTitle>Logout</span>
 		</mat-list-item>
-	</mat-nav-list>
+	</div>
 </nav>
