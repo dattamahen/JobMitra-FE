@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, signal, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, signal, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
@@ -97,18 +97,17 @@ export class ApplicationsReceivedPage implements OnInit {
 		'actions'
 	];
 
-	constructor(
-		private hrService: HrService,
-		private snackBar: MatSnackBar,
-		private route: ActivatedRoute,
-		private cdr: ChangeDetectorRef
-	) {}
+	private hrService = inject(HrService);
+	private snackBar = inject(MatSnackBar);
+	private route = inject(ActivatedRoute);
+	private cdr = inject(ChangeDetectorRef);
+	private destroyRef = inject(DestroyRef);
 
 	ngOnInit() {
 		
 		// Check for specific job ID from route or input
 		this.route.queryParams
-			.pipe(takeUntilDestroyed())
+			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe(params => {
 			if (params['jobId']) {
 				this.specificJobId = params['jobId'];

@@ -156,24 +156,7 @@
 											}
 										</h3>
 									</div>
-									
-									<!-- Contact Info -->
-									<div class="detail-section">
-										<h4><mat-icon>contact_mail</mat-icon> Contact Information</h4>
-										<p><strong>Email:</strong> {{app.email}}</p>
-										@if (app.phone) {
-											<p><strong>Phone:</strong> {{app.phone}}</p>
-										}
-									</div>
-									
-									<!-- Professional Summary -->
-									@if (app.professional_summary) {
-										<div class="detail-section">
-											<h4><mat-icon>description</mat-icon> Professional Summary</h4>
-											<p>{{app.professional_summary}}</p>
-										</div>
-									}
-									
+
 									<!-- Skills -->
 									@if (app.skills && app.skills.length > 0) {
 										<div class="detail-section">
@@ -185,6 +168,14 @@
 											</div>
 										</div>
 									}
+
+									<!-- Professional Summary -->
+									@if (app.professional_summary) {
+										<div class="detail-section">
+											<h4><mat-icon>description</mat-icon> Professional Summary</h4>
+											<p>{{app.professional_summary}}</p>
+										</div>
+									}
 									
 									<!-- Education -->
 									@if (app.highest_qualification) {
@@ -193,6 +184,15 @@
 											<p>{{app.highest_qualification}}</p>
 										</div>
 									}
+
+									<!-- Contact Info -->
+									<div class="detail-section">
+										<h4><mat-icon>contact_mail</mat-icon> Contact Information</h4>
+										<p><strong>Email:</strong> {{app.email}}</p>
+										@if (app.phone) {
+											<p><strong>Phone:</strong> {{app.phone}}</p>
+										}
+									</div>
 								</div>
 							</div>
 						</td>
