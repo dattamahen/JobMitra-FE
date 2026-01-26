@@ -12,6 +12,11 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { FormFieldConfig, FormConfig } from '../../interfaces/form.interfaces';
 import { DateFieldComponent } from '../date-field/date-field.component';
+import { emailValidator } from '../../../validators/email.validator';
+import { mobileNumberValidator } from '../../../validators/mobile-number.validator';
+import { linkedinUrlValidator } from '../../../validators/linkedin-url.validator';
+import { githubUrlValidator } from '../../../validators/github-url.validator';
+import { websiteUrlValidator } from '../../../validators/website-url.validator';
 
 @Component({
 	selector: 'app-dynamic-form',
@@ -61,7 +66,13 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 		// Only patch values if form was built and we have values
 		if (this.form && this.initialValues && Object.keys(this.initialValues).length > 0) {
 			setTimeout(() => {
-				this.form.patchValue(this.initialValues);
+				this.form.patchValue(this.initialValues, { emitEvent: false });
+				Object.keys(this.form.controls).forEach(key => {
+					const control = this.form.get(key);
+					if (control?.value) {
+						control.markAsTouched();
+					}
+				});
 				this.cdr.detectChanges();
 			}, 100);
 		}
@@ -152,7 +163,23 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 		}
 		
 		if (field.type === 'email') {
-			validators.push(Validators.email);
+			validators.push(emailValidator());
+		}
+		
+		if (field.name === 'phone' || field.name === 'mobile') {
+			validators.push(mobileNumberValidator());
+		}
+		
+		if (field.name === 'linkedin' || field.name === 'linkedin_link') {
+			validators.push(linkedinUrlValidator());
+		}
+		
+		if (field.name === 'github' || field.name === 'github_link') {
+			validators.push(githubUrlValidator());
+		}
+		
+		if (field.name === 'portfolio' || field.name === 'portfolio_link' || field.name === 'website') {
+			validators.push(websiteUrlValidator());
 		}
 		
 		if (field.validators) {

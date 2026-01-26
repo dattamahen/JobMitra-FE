@@ -106,13 +106,13 @@
 }
 
 .profile-headline {
-	font-size: 16px;
+	font-size: 1.125rem;
 	margin: 0 0 8px 0;
 	font-weight: 400;
 }
 
 .profile-location {
-	font-size: 14px;
+	font-size: 1.125rem;
 	margin: 0;
 }
 
@@ -175,7 +175,7 @@
 }
 
 .skills-count {
-	font-size: 14px;
+	font-size: 1.125rem;
 	color: #666;
 	font-weight: 400;
 }
@@ -185,6 +185,7 @@
 }
 
 .about-text {
+	font-size: 1.125rem;
 	line-height: 1.6;
 	margin: 0;
 }
@@ -196,7 +197,7 @@
 
 .empty-text {
 	margin: 0 0 16px 0;
-	font-size: 14px;
+	font-size: 1.125rem;
 }
 
 .add-btn {
@@ -214,7 +215,7 @@
 	background: #f0f2f5;
 	padding: 8px 12px;
 	border-radius: 16px;
-	font-size: 14px;
+	font-size: 1.125rem;
 	font-weight: 500;
 }
 
@@ -237,13 +238,13 @@
 }
 
 .pref-label {
-	font-size: 14px;
+	font-size: 1.125rem;
 	color: #666;
 	font-weight: 500;
 }
 
 .pref-value {
-	font-size: 14px;
+	font-size: 1.125rem;
 	color: #333;
 	font-weight: 500;
 }
@@ -268,13 +269,13 @@
 }
 
 .contact-text {
-	font-size: 14px;
+	font-size: 1.125rem;
 }
 
 .contact-link {
 	color: #1976d2;
 	text-decoration: none;
-	font-size: 14px;
+	font-size: 1.125rem;
 	font-weight: 500;
 }
 
@@ -302,7 +303,7 @@
 
 .qualification-text {
 	font-weight: 500;
-	font-size: 14px;
+	font-size: 1.125rem;
 }
 
 /* Responsive Design */

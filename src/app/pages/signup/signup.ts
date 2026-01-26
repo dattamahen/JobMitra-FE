@@ -11,6 +11,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../services/auth.service';
 import { SIGNUP_PAGE_CONSTANTS } from './signup.constants';
+import { emailValidator } from '../../validators/email.validator';
 
 @Component({
 	selector: 'app-signup',
@@ -456,7 +457,7 @@ export class SignupPage {
 
 	constructor() {
 		this.signupForm = this.fb.group({
-			email: ['', [Validators.required, Validators.email]],
+			email: ['', [Validators.required, emailValidator()]],
 			password: ['', [Validators.required, Validators.minLength(8)]],
 			confirmPassword: ['', [Validators.required]],
 			first_name: ['', Validators.required],
