@@ -4,10 +4,12 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { NavigationService, NavItem } from '../services/navigation.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ConfirmationDialogComponent } from '../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
 	selector: 'app-side-nav',
@@ -34,7 +36,8 @@ export class SideNav implements OnInit {
 	constructor(
 		private router: Router,
 		private authService: AuthService,
-		private navigationService: NavigationService
+		private navigationService: NavigationService,
+		private dialog: MatDialog
 	) {}
 
 	ngOnInit() {
@@ -55,15 +58,27 @@ export class SideNav implements OnInit {
 	}
 
 	logout() {
-		this.authService.logout()
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-			next: (response) => {
-				console.log('Logout successful:', response);
-			},
-			error: (error) => {
-				console.error('Logout error:', error);
-				// Navigation is handled in the auth service
+		const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+			data: {
+				title: 'Confirm Logout',
+				message: 'Are you sure you want to logout?',
+				confirmText: 'Logout',
+				cancelText: 'Cancel'
+			}
+		});
+
+		dialogRef.afterClosed().subscribe(result => {
+			if (result) {
+				this.authService.logout()
+					.pipe(takeUntilDestroyed(this.destroyRef))
+					.subscribe({
+					next: (response) => {
+						console.log('Logout successful:', response);
+					},
+					error: (error) => {
+						console.error('Logout error:', error);
+					}
+				});
 			}
 		});
 	}
