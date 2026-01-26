@@ -5,42 +5,39 @@
 			<div class="filter-row">
 				<mat-form-field appearance="outline" class="search-field">
 					<mat-label>Search your jobs</mat-label>
-					<input matInput placeholder="Enter job title, skills, or description" [(ngModel)]="searchQuery"
+					<input matInput placeholder="Enter job title, skills, or description" [ngModel]="searchQuery()"
+						(ngModelChange)="searchQuery.set($event)"
 						(keyup.enter)="onSearchButtonClick()">
 					<mat-icon matSuffix>search</mat-icon>
 				</mat-form-field>
 
 				<mat-form-field appearance="outline">
 					<mat-label>Location</mat-label>
-					<mat-select [(value)]="selectedLocation" (selectionChange)="onLocationChange($event.value)">
+					<mat-select [value]="selectedLocation()" (selectionChange)="onLocationChange($event.value)">
 						<mat-option value="all">All Locations</mat-option>
-						@if (filterOptions.locations) {
-						@for (location of filterOptions.locations; track location) {
+						@for (location of filterOptions().locations; track location) {
 						<mat-option [value]="location.toLowerCase().replace(' ', '-')">
 							{{location}}
 						</mat-option>
-						}
 						}
 					</mat-select>
 				</mat-form-field>
 
 				<mat-form-field appearance="outline">
 					<mat-label>Experience Level</mat-label>
-					<mat-select [(value)]="selectedExperience" (selectionChange)="onExperienceChange($event.value)">
+					<mat-select [value]="selectedExperience()" (selectionChange)="onExperienceChange($event.value)">
 						<mat-option value="all">All Experience Levels</mat-option>
-						@if (filterOptions.experience_levels) {
-						@for (experience of filterOptions.experience_levels; track experience) {
+						@for (experience of filterOptions().experience_levels; track experience) {
 						<mat-option [value]="experience.toLowerCase().replace(' ', '-')">
 							{{experience}}
 						</mat-option>
-						}
 						}
 					</mat-select>
 				</mat-form-field>
 
 				<mat-form-field appearance="outline">
 					<mat-label>Job Status</mat-label>
-					<mat-select [(value)]="selectedStatus" (selectionChange)="onStatusChange($event.value)">
+					<mat-select [value]="selectedStatus()" (selectionChange)="onStatusChange($event.value)">
 						<mat-option value="all">All Status</mat-option>
 						<mat-option value="active">Active</mat-option>
 						<mat-option value="inactive">Inactive</mat-option>
@@ -50,7 +47,7 @@
 			
 			<div class="search-button-container">
 				<div class="results-summary">
-					{{filteredJobs.length}} job{{filteredJobs.length !== 1 ? 's' : ''}} found
+					{{filteredJobs().length}} job{{filteredJobs().length !== 1 ? 's' : ''}} found
 				</div>
 				<button mat-raised-button color="primary" class="search-button" (click)="onSearchButtonClick()">
 					<mat-icon>search</mat-icon>
@@ -62,17 +59,17 @@
 
 	<div class="job-listings">
 		<!-- Loading indicator -->
-		@if (isLoading) {
+		@if (isLoading()) {
 		<div class="loading-container">
 			<mat-spinner></mat-spinner>
 			<p>Loading your job postings...</p>
 		</div>
-		} @else if (filteredJobs.length === 0) {
+		} @else if (filteredJobs().length === 0) {
 		<!-- No jobs found -->
 		<div class="no-jobs-container">
 			<mat-icon class="no-jobs-icon">work_off</mat-icon>
 			<h2>No job postings found</h2>
-			@if (jobListings.length === 0) {
+			@if (jobListings().length === 0) {
 			<p>You haven't posted any jobs yet. Create your first job posting to get started!</p>
 			} @else {
 			<p>Try adjusting your search filters to find the jobs you're looking for.</p>
@@ -80,7 +77,7 @@
 		</div>
 		} @else {
 		<!-- Job cards -->
-		@for (job of filteredJobs; track job.job_id) {
+		@for (job of filteredJobs(); track job.job_id) {
 		<mat-card class="job-card" [class.inactive-job]="!job.is_active">
 			<mat-card-header>
 				<mat-card-title>{{job.title}}</mat-card-title>
@@ -178,16 +175,16 @@
 	</div>
 
 	<!-- Pagination (if needed) -->
-	@if (totalJobs > itemsPerPage) {
+	@if (totalJobs() > itemsPerPage()) {
 	<div class="pagination-container">
-		<button mat-raised-button [disabled]="currentPage === 1" (click)="currentPage = currentPage - 1; loadMyJobs()">
+		<button mat-raised-button [disabled]="currentPage() === 1" (click)="previousPage()">
 			<mat-icon>chevron_left</mat-icon>
 			Previous
 		</button>
 		<span class="page-info">
-			Page {{currentPage}} of {{Math.ceil(totalJobs / itemsPerPage)}}
+			Page {{currentPage()}} of {{totalPages()}}
 		</span>
-		<button mat-raised-button [disabled]="currentPage * itemsPerPage >= totalJobs" (click)="currentPage = currentPage + 1; loadMyJobs()">
+		<button mat-raised-button [disabled]="currentPage() * itemsPerPage() >= totalJobs()" (click)="nextPage()">
 			Next
 			<mat-icon>chevron_right</mat-icon>
 		</button>

@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, signal, viewChild, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -27,7 +27,6 @@ import { JOB_VALIDATION } from '../../constants/validation.constants';
 
 @Component({
 	selector: 'app-post-job',
-	standalone: true,
 	imports: [
 		CommonModule,
 		ReactiveFormsModule,
@@ -46,12 +45,20 @@ import { JOB_VALIDATION } from '../../constants/validation.constants';
 		DynamicFormComponent
 	],
 	templateUrl: './post-job.html',
-	styleUrl: './post-job.css'
+	styleUrl: './post-job.css',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PostJobPage implements OnInit {
+export class PostJobPage {
 	jobForm: FormGroup;
 	isSubmitting = false;
 	currentStep = signal(0);
+	
+	stepper = viewChild.required<MatStepper>('stepper');
+	
+	private formBuilder = inject(FormBuilder);
+	private router = inject(Router);
+	private snackBar = inject(MatSnackBar);
+	private hrService = inject(HrService);
 	
 	// Form configurations
 	step1Config = POST_JOB_STEP1_CONFIG;
@@ -77,39 +84,35 @@ export class PostJobPage implements OnInit {
 
 	validationErrors = signal<Map<string, string>>(new Map());
 
-	constructor(
-		private formBuilder: FormBuilder,
-		private router: Router,
-		private snackBar: MatSnackBar,
-		private hrService: HrService
-	) {
+	constructor() {
 		this.jobForm = this.createForm();
+		this.prefillHRInfo();
 	}
 
 	// Dynamic form handlers
 	onStep1Submit(formData: any): void {
 		this.updateFormData(formData);
-		this.stepper.next();
+		this.stepper().next();
 	}
 
 	onStep2Submit(formData: any): void {
 		this.updateFormData(formData);
-		this.stepper.next();
+		this.stepper().next();
 	}
 
 	onStep3Submit(formData: any): void {
 		this.updateFormData(formData);
-		this.stepper.next();
+		this.stepper().next();
 	}
 
 	onStep5Submit(formData: any): void {
 		this.updateFormData(formData);
-		this.stepper.next();
+		this.stepper().next();
 	}
 
 	onStep6Submit(formData: any): void {
 		this.updateFormData(formData);
-		this.stepper.next();
+		this.stepper().next();
 	}
 
 	onStep7Submit(formData: any): void {
@@ -147,13 +150,7 @@ export class PostJobPage implements OnInit {
 
 
 	previousStep(): void {
-		this.stepper.previous();
-	}
-
-	@ViewChild('stepper') stepper!: MatStepper;
-
-	ngOnInit(): void {
-		this.prefillHRInfo();
+		this.stepper().previous();
 	}
 
 	private createForm(): FormGroup {

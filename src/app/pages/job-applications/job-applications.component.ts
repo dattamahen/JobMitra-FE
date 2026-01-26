@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, signal, DestroyRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -18,7 +18,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
 	selector: 'app-job-applications',
-	standalone: true,
 	imports: [
 		CommonModule,
 		MatCardModule,
@@ -35,52 +34,51 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 		LoadingComponent
 	],
 	templateUrl: './job-applications.component.html',
-	styleUrls: ['./job-applications.component.css']
+	styleUrls: ['./job-applications.component.css'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class JobApplicationsComponent implements OnInit {
-	jobId: string = '';
-	applicationsData: JobApplicationsResponse | null = null;
-	isLoading = false;
-	error = '';
+export class JobApplicationsComponent {
+	jobId = signal('');
+	applicationsData = signal<JobApplicationsResponse | null>(null);
+	isLoading = signal(false);
+	error = signal('');
+	private destroyRef = inject(DestroyRef);
+	private route = inject(ActivatedRoute);
+	private jobApplicationService = inject(JobApplicationService);
+	private snackBar = inject(MatSnackBar);
 
-	constructor(
-		private route: ActivatedRoute,
-		private jobApplicationService: JobApplicationService,
-		private snackBar: MatSnackBar
-	) {}
-
-	ngOnInit(): void {
+	constructor() {
 		this.route.params
-			.pipe(takeUntilDestroyed())
+			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe(params => {
-			this.jobId = params['jobId'];
-			if (this.jobId) {
+			this.jobId.set(params['jobId']);
+			if (this.jobId()) {
 				this.loadApplications();
 			}
 		});
 	}
 
 	loadApplications(): void {
-		this.isLoading = true;
-		this.error = '';
+		this.isLoading.set(true);
+		this.error.set('');
 
-		this.jobApplicationService.getJobApplications(this.jobId)
-			.pipe(takeUntilDestroyed())
+		this.jobApplicationService.getJobApplications(this.jobId())
+			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 			next: (data) => {
-				this.applicationsData = data;
-				this.isLoading = false;
+				this.applicationsData.set(data);
+				this.isLoading.set(false);
 			},
 			error: (error) => {
-				this.error = error.userMessage || 'Failed to load applications';
-				this.isLoading = false;
+				this.error.set(error.userMessage || 'Failed to load applications');
+				this.isLoading.set(false);
 			}
 		});
 	}
 
 	updateStatus(applicationId: string, newStatus: string): void {
 		this.jobApplicationService.updateApplicationStatus(applicationId, newStatus)
-			.pipe(takeUntilDestroyed())
+			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 			next: () => {
 				this.snackBar.open('Application status updated', 'Close', { duration: 3000 });
@@ -93,7 +91,7 @@ export class JobApplicationsComponent implements OnInit {
 	}
 
 	contactApplicant(applicant: ApplicantProfile): void {
-		const subject = `Regarding your application for ${this.applicationsData?.job_title}`;
+		const subject = `Regarding your application for ${this.applicationsData()?.job_title}`;
 		const mailtoLink = `mailto:${applicant.email}?subject=${encodeURIComponent(subject)}`;
 		window.open(mailtoLink);
 	}

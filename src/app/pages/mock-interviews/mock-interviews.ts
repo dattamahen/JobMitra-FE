@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,34 +9,34 @@ import { FeatureUsageService } from '../../services/feature-usage.service';
 import { FeatureGuardDirective } from '../../shared/directives/feature-guard.directive';
 import { InterviewService } from '../../services/interview.service';
 import { AuthService } from '../../services/auth.service';
-import { INTERVIEW_TYPES, InterviewType } from '../../data/mock-interview-data';
+import { INTERVIEW_TYPES } from '../../data/mock-interview-data';
 
 @Component({
 	selector: 'app-mock-interviews-page',
-	standalone: true,
 	imports: [CommonModule, MatButtonModule, MatIconModule, FeatureGuardDirective],
 	templateUrl: './mock-interviews.html',
-	styleUrls: ['./mock-interviews.css']
+	styleUrls: ['./mock-interviews.css'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MockInterviewsPage {
 	interviewTypes = INTERVIEW_TYPES;
+	private destroyRef = inject(DestroyRef);
+	private mockInterviewService = inject(MockInterviewService);
+	private featureUsageService = inject(FeatureUsageService);
+	private interviewService = inject(InterviewService);
+	private authService = inject(AuthService);
+	private dialog = inject(MatDialog);
 
-	constructor(
-		private mockInterviewService: MockInterviewService,
-		private featureUsageService: FeatureUsageService,
-		private interviewService: InterviewService,
-		private authService: AuthService,
-		private dialog: MatDialog
-	) {
+	constructor() {
 		// Force refresh feature usage to ensure UI updates
 		this.featureUsageService.refreshFeatureUsage()
-			.pipe(takeUntilDestroyed())
+			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe();
 	}
 
 	onStartInterview(type: string = 'technical'): void {
 		this.featureUsageService.useFeature('mock_interview')
-			.pipe(takeUntilDestroyed())
+			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 			next: (response) => {
 				if (response.success) {
@@ -58,7 +58,7 @@ export class MockInterviewsPage {
 
 	private startInterviewWithPrompt(type: string = 'technical'): void {
 		this.authService.getCurrentUser()
-			.pipe(takeUntilDestroyed())
+			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe(user => {
 			if (!user) return;
 
@@ -74,7 +74,7 @@ export class MockInterviewsPage {
 
 			// Generate questions in background
 			this.interviewService.startInterview(userProfile)
-				.pipe(takeUntilDestroyed())
+				.pipe(takeUntilDestroyed(this.destroyRef))
 				.subscribe({
 				next: (response) => {
 					// Update modal with AI-generated questions
