@@ -36,13 +36,13 @@
 						{{ interview.disabledMessage || 'Coming Soon' }}
 					</button>
 				} @else {
-					<div *appFeatureGuard="'mock_interview'; showWhenDisabled: true; let canUse = canUseFeature">
+					<ng-container *appFeatureGuard="'mock_interview'; showWhenDisabled: true; let canUse = canUseFeature">
 						<button mat-raised-button [color]="canUse ? 'primary' : 'warn'" class="start-btn" 
 										(click)="canUse ? onStartInterview(interview.id) : onUsePaidVersion()">
 							<mat-icon>{{ canUse ? 'play_arrow' : 'diamond' }}</mat-icon>
 							{{ canUse ? 'Start Interview' : 'Use Paid Version' }}
 						</button>
-					</div>
+					</ng-container>
 				}
 			</div>
 		}
