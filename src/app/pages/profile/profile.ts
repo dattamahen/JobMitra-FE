@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ElementRef, DestroyRef, inject } from '@angular/core';
+import { Component, viewChild, AfterViewInit, ElementRef, DestroyRef, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
@@ -14,7 +14,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Subject, takeUntil, finalize, map } from 'rxjs';
+import { finalize } from 'rxjs';
 import { UserService, UserProfile, UpdateUserRequest } from '../../services';
 import { AuthService } from '../../services/auth.service';
 import { ResumeIntegrationService } from '../../services/resume-integration.service';
@@ -37,7 +37,6 @@ import {
 
 @Component({
 	selector: 'app-profile',
-	standalone: true,
 	imports: [
 		CommonModule,
 		ReactiveFormsModule,
@@ -58,24 +57,35 @@ import {
 
 	],
 	templateUrl: './profile.html',
-	styleUrls: ['./profile.css']
+	styleUrls: ['./profile.css'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
-	@ViewChild('basicForm') basicForm!: DynamicFormComponent;
-	@ViewChild('professionalForm') professionalForm!: DynamicFormComponent;
-	@ViewChild('skillsForm') skillsForm!: DynamicFormComponent;
-	@ViewChild('experienceForm') experienceForm!: DynamicFormComponent;
-	@ViewChild('educationForm') educationForm!: DynamicFormComponent;
-	@ViewChild('projectsForm') projectsForm!: DynamicFormComponent;
-	@ViewChild('certificationsForm') certificationsForm!: DynamicFormComponent;
-	@ViewChild('jobPreferencesForm') jobPreferencesForm!: DynamicFormComponent;
-	@ViewChild('profileSummarySection', { static: false }) profileSummarySection!: ElementRef<HTMLElement>;
+export class ProfilePage implements AfterViewInit {
+	basicForm = viewChild<DynamicFormComponent>('basicForm');
+	professionalForm = viewChild<DynamicFormComponent>('professionalForm');
+	skillsForm = viewChild<DynamicFormComponent>('skillsForm');
+	experienceForm = viewChild<DynamicFormComponent>('experienceForm');
+	educationForm = viewChild<DynamicFormComponent>('educationForm');
+	projectsForm = viewChild<DynamicFormComponent>('projectsForm');
+	certificationsForm = viewChild<DynamicFormComponent>('certificationsForm');
+	jobPreferencesForm = viewChild<DynamicFormComponent>('jobPreferencesForm');
+	profileSummarySection = viewChild<ElementRef<HTMLElement>>('profileSummarySection');
+	
+	private destroyRef = inject(DestroyRef);
+	private fb = inject(FormBuilder);
+	private userService = inject(UserService);
+	private authService = inject(AuthService);
+	private snackBar = inject(MatSnackBar);
+	private resumeIntegrationService = inject(ResumeIntegrationService);
+	private testProfileService = inject(TestProfileService);
+	private profileShareService = inject(ProfileShareService);
+	private imageUploadService = inject(ImageUploadService);
+	
 	profileForm!: FormGroup;
 	currentUser: UserProfile | null = null;
-	isLoading = false;
-	isSaving = false;
-	private destroy$ = new Subject<void>();
-	private destroyRef = inject(DestroyRef);
+	isLoading = signal(false);
+	isSaving = signal(false);
+	private formsInitialized = false;
 	
 	// Form configurations
 	basicInfoConfig = PROFILE_BASIC_INFO_CONFIG;
@@ -96,9 +106,6 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 	isProjectsEditing = false;
 	isCertificationsEditing = false;
 	isJobPreferencesEditing = false;
-	
-	// Flag to prevent multiple form updates
-	private formsInitialized = false;
 
 	// Dynamic form handlers
 	onBasicInfoSubmit(formData: any): void {
@@ -509,11 +516,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	private updateProfile(updateData: any, successMessage: string): void {
-
-		
-		// Check if there's actually data to update
 		if (!updateData || Object.keys(updateData).length === 0) {
-
 			this.snackBar.open('No changes to save', 'Close', {
 				duration: 2000,
 				panelClass: ['info-snackbar']
@@ -521,33 +524,23 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 			return;
 		}
 		
-		this.isSaving = true;
+		this.isSaving.set(true);
 		
 		this.userService.updateCurrentUser(updateData)
-			.pipe(
-				takeUntil(this.destroy$),
-				finalize(() => {
-
-					this.isSaving = false;
-				})
-			)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: (response) => {
-
+					this.isSaving.set(false);
 					this.snackBar.open(successMessage, 'Close', {
 						duration: 3000,
 						panelClass: ['success-snackbar']
 					});
-					// Reset forms initialized flag to allow refresh
 					this.formsInitialized = false;
-					// Refresh user data after successful update
 					this.loadUserProfile();
-					// Sync with resume builder
 					this.syncWithResumeBuilder();
 				},
 				error: (error) => {
-
+					this.isSaving.set(false);
 					this.snackBar.open('Error updating profile. Please try again.', 'Close', {
 						duration: 3000,
 						panelClass: ['error-snackbar']
@@ -623,16 +616,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 
 	}
 
-	constructor(
-		private fb: FormBuilder,
-		private userService: UserService,
-		private authService: AuthService,
-		private snackBar: MatSnackBar,
-		private resumeIntegrationService: ResumeIntegrationService,
-		private testProfileService: TestProfileService,
-		private profileShareService: ProfileShareService,
-		private imageUploadService: ImageUploadService
-	) {
+	constructor() {
 		this.createForm();
 	}
 
@@ -649,29 +633,38 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 		if (this.formsInitialized) return;
 		
 		setTimeout(() => {
-			if (this.basicForm && Object.keys(this.basicInfoValues).length > 0) {
-				this.basicForm.patchValue(this.basicInfoValues);
+			const basicFormRef = this.basicForm();
+			const professionalFormRef = this.professionalForm();
+			const skillsFormRef = this.skillsForm();
+			const experienceFormRef = this.experienceForm();
+			const educationFormRef = this.educationForm();
+			const projectsFormRef = this.projectsForm();
+			const certificationsFormRef = this.certificationsForm();
+			const jobPreferencesFormRef = this.jobPreferencesForm();
+			
+			if (basicFormRef && Object.keys(this.basicInfoValues).length > 0) {
+				basicFormRef.patchValue(this.basicInfoValues);
 			}
-			if (this.professionalForm && Object.keys(this.professionalValues).length > 0) {
-				this.professionalForm.patchValue(this.professionalValues);
+			if (professionalFormRef && Object.keys(this.professionalValues).length > 0) {
+				professionalFormRef.patchValue(this.professionalValues);
 			}
-			if (this.skillsForm && Object.keys(this.skillsValues).length > 0) {
-				this.skillsForm.patchValue(this.skillsValues);
+			if (skillsFormRef && Object.keys(this.skillsValues).length > 0) {
+				skillsFormRef.patchValue(this.skillsValues);
 			}
-			if (this.experienceForm && Object.keys(this.experienceValues).length > 0) {
-				this.experienceForm.patchValue(this.experienceValues);
+			if (experienceFormRef && Object.keys(this.experienceValues).length > 0) {
+				experienceFormRef.patchValue(this.experienceValues);
 			}
-			if (this.educationForm && Object.keys(this.educationValues).length > 0) {
-				this.educationForm.patchValue(this.educationValues);
+			if (educationFormRef && Object.keys(this.educationValues).length > 0) {
+				educationFormRef.patchValue(this.educationValues);
 			}
-			if (this.projectsForm && Object.keys(this.projectsValues).length > 0) {
-				this.projectsForm.patchValue(this.projectsValues);
+			if (projectsFormRef && Object.keys(this.projectsValues).length > 0) {
+				projectsFormRef.patchValue(this.projectsValues);
 			}
-			if (this.certificationsForm && Object.keys(this.certificationsValues).length > 0) {
-				this.certificationsForm.patchValue(this.certificationsValues);
+			if (certificationsFormRef && Object.keys(this.certificationsValues).length > 0) {
+				certificationsFormRef.patchValue(this.certificationsValues);
 			}
-			if (this.jobPreferencesForm && Object.keys(this.jobPreferencesValues).length > 0) {
-				this.jobPreferencesForm.patchValue(this.jobPreferencesValues);
+			if (jobPreferencesFormRef && Object.keys(this.jobPreferencesValues).length > 0) {
+				jobPreferencesFormRef.patchValue(this.jobPreferencesValues);
 			}
 			
 			this.formsInitialized = true;
@@ -710,30 +703,18 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 			return;
 		}
 		
-		this.isLoading = true;
+		this.isLoading.set(true);
 		this.authService.getCurrentUser()
-			.pipe(
-				takeUntil(this.destroy$),
-				finalize(() => {
-
-					this.isLoading = false;
-				})
-			)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: (user: any) => {
-
-					
+					this.isLoading.set(false);
 					this.currentUser = user as any;
 					this.updateFormValues();
-					
-					// Only update forms once after all values are set
 					this.updateDynamicForms();
-					
-
 				},
 				error: (error: any) => {
-
+					this.isLoading.set(false);
 					if (error.status === 401) {
 						this.authService.clearAllAuthData();
 					}
@@ -759,10 +740,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 		};
 	}
 
-	ngOnDestroy(): void {
-		this.destroy$.next();
-		this.destroy$.complete();
-	}
+
 
 	private createForm(): void {
 		this.profileForm = this.fb.group({
@@ -787,34 +765,7 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 		});
 	}
 
-	private loadCurrentUser(): void {
 
-		this.isLoading = true;
-		this.userService.getCurrentUser()
-			.pipe(
-				takeUntil(this.destroy$),
-				finalize(() => {
-	
-					this.isLoading = false;
-				})
-			)
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-				next: (user) => {
-
-					if (user) {
-						this.currentUser = user;
-						this.populateForm(user);
-					} else {
-
-					}
-				},
-				error: (error) => {
-
-					this.snackBar.open('Error loading profile data', 'Close', { duration: 3000 });
-				}
-			});
-	}
 
 	private populateForm(user: UserProfile): void {
 		this.profileForm.patchValue({
@@ -852,8 +803,8 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 	get f() { return this.profileForm.controls; }
 
 	saveProfile(): void {
-		if (!this.isSaving) {
-			this.isSaving = true;
+		if (!this.isSaving()) {
+			this.isSaving.set(true);
 			const formValue = this.profileForm.value;
 			
 			// Convert form data to API format
@@ -887,12 +838,10 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 			
 			this.userService.updateCurrentUser(updateData)
 				.pipe(
-					takeUntil(this.destroy$),
-					finalize(() => this.isSaving = false)
+					takeUntilDestroyed(this.destroyRef),
+					finalize(() => this.isSaving.set(false))
 				)
-				
-.pipe(takeUntilDestroyed())
-.subscribe({
+				.subscribe({
 					next: (response) => {
 
 						this.snackBar.open('Profile updated successfully!', 'Close', { 
@@ -1122,7 +1071,8 @@ export class ProfilePage implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	getProfileSummaryElement(): HTMLElement | null {
-		return this.profileSummarySection?.nativeElement || null;
+		const section = this.profileSummarySection();
+		return section?.nativeElement || null;
 	}
 
 	getProfileCoverImage(): string | null {
