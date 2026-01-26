@@ -58,12 +58,6 @@ export class NavigationService {
 			matIcon: 'record_voice_over',
 			userTypes: ['job_seeker', 'candidate']
 		},
-		{ 
-			id: 'settings', 
-			label: 'Settings', 
-			matIcon: 'settings',
-			userTypes: ['job_seeker', 'candidate', 'hr', 'hire', 'admin']
-		},
 
 		// HR Navigation
 		{ 
@@ -111,25 +105,17 @@ export class NavigationService {
 
 	getNavigationItems(): NavItem[] {
 		const userType = this.authService.getUserType();
-		
-
-		
 		if (!userType) {
 
 			return [];
 		}
-
 		const filteredItems = this.allNavItems.filter(item => 
 			item.userTypes.includes(userType as any)
 		);
-		
-
-		
 		return filteredItems;
 	}
 
 	getDefaultRoute(): string {
-		// Use unified dashboard for all user types
 		return '/dashboard';
 	}
 }

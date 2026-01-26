@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, DestroyRef, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatButton } from '@angular/material/button';
@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../services/auth.service';
 import { UserService } from '../services/user.service';
 import { TOP_NAV_CONSTANTS } from './top-nav.constants';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
 	selector: 'app-top-nav',
@@ -18,6 +19,7 @@ import { TOP_NAV_CONSTANTS } from './top-nav.constants';
 export class TopNav implements OnInit {
 	currentUser: any = null;
 	readonly CONSTANTS = TOP_NAV_CONSTANTS;
+	private destroyRef = inject(DestroyRef);
 
 	constructor(
 		private router: Router,
@@ -30,7 +32,9 @@ export class TopNav implements OnInit {
 	}
 
 	private loadCurrentUser(): void {
-		this.userService.getCurrentUser().subscribe({
+		this.userService.getCurrentUser()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
 			next: (user) => {
 				this.currentUser = user;
 			},
@@ -66,7 +70,9 @@ export class TopNav implements OnInit {
 	}
 
 	logout() {
-		this.authService.logout().subscribe({
+		this.authService.logout()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
 			next: (response) => {
 				console.log('Logout successful:', response);
 			},

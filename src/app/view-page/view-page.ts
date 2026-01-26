@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, DestroyRef, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { LoginPage } from '../login-page/login-page';
 import { Dashboard } from '../dashboard/dashboard';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
 	selector: 'app-view-page',
@@ -12,11 +13,14 @@ import { Dashboard } from '../dashboard/dashboard';
 })
 export class ViewPage implements OnInit {
 	currentPage: string = '';
+	private destroyRef = inject(DestroyRef);
 
 	constructor(private route: ActivatedRoute) {}
 
 	ngOnInit() {
-		this.route.data.subscribe(data => {
+		this.route.data
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe(data => {
 			this.currentPage = data['page'] || '';
 		});
 	}

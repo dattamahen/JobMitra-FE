@@ -1,38 +1,30 @@
 import { Routes } from '@angular/router';
-import { LoginPage } from './login-page/login-page';
-import { SignupPage } from './pages/signup/signup';
-import { Dashboard } from './dashboard/dashboard';
-import { ViewPage } from './view-page/view-page';
-import { JobApplicationsComponent } from './pages/job-applications/job-applications.component';
-import { ErrorPageComponent } from './pages/error/error-page.component';
 import { AuthGuard } from './guards/auth.guard';
-import { JobSeekerGuard } from './guards/job-seeker.guard';
-import { HRGuard } from './guards/hr.guard';
 
 export const routes: Routes = [
 	{ path: '', redirectTo: '/login', pathMatch: 'full' },
 	{ 
 		path: 'login', 
-		component: LoginPage
+		loadComponent: () => import('./login-page/login-page').then(m => m.LoginPage)
 	},
 	{ 
 		path: 'signup', 
-		component: SignupPage
+		loadComponent: () => import('./pages/signup/signup').then(m => m.SignupPage)
 	},
 
 	{ 
 		path: 'dashboard', 
-		component: Dashboard,
+		loadComponent: () => import('./dashboard/dashboard').then(m => m.Dashboard),
 		canActivate: [AuthGuard]
 	},
 	{ 
 		path: 'dashboard/:page', 
-		component: Dashboard,
+		loadComponent: () => import('./dashboard/dashboard').then(m => m.Dashboard),
 		canActivate: [AuthGuard]
 	},
 	{
 		path: 'job-applications/:jobId',
-		component: JobApplicationsComponent,
+		loadComponent: () => import('./pages/job-applications/job-applications.component').then(m => m.JobApplicationsComponent),
 		canActivate: [AuthGuard]
 	},
 	// Legacy route support for backwards compatibility
@@ -78,12 +70,8 @@ export const routes: Routes = [
 		redirectTo: '/dashboard'
 	},
 	{
-		path: 'settings',
-		redirectTo: '/dashboard'
-	},
-	{
 		path: 'error',
-		component: ErrorPageComponent
+		loadComponent: () => import('./pages/error/error-page.component').then(m => m.ErrorPageComponent)
 	},
 	// Catch all route
 	{ path: '**', redirectTo: '/login' }
