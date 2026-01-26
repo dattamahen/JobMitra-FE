@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -50,6 +51,7 @@ import { ResumeTailorModalComponent } from '../../components/mock-interview-moda
 export class JobSearchPage implements OnInit {
 	expandedJobs: { [key: string]: boolean } = {};
 	unmaskedHRDetails: { [key: string]: boolean } = {};
+	private destroyRef = inject(DestroyRef);
 	
 	// Data properties using the API service
 	jobListings: ApiJobListing[] = [];
@@ -132,6 +134,7 @@ export class JobSearchPage implements OnInit {
 
 
 		this.jobService.searchJobs(filters, this.currentPage, this.jobsPerPage)
+			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: (response) => {
 
@@ -286,7 +289,9 @@ export class JobSearchPage implements OnInit {
 			this.snackBar.open('Match analysis already completed', 'Close', { duration: 3000 });
 			return;
 		}
-		this.jobService.performMatchAnalysis(jobId).subscribe({
+		this.jobService.performMatchAnalysis(jobId)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
 			next: (response) => {
 				job.match_percentage = response.match_percentage;
 				job.match_analysis_done = response.analysis_done;
@@ -327,7 +332,9 @@ export class JobSearchPage implements OnInit {
 
 	// Apply with tailored resume
 	private applyWithTailoredResume(jobId: string): void {
-		this.tailorService.applyWithTailoredResume(jobId, true).subscribe({
+		this.tailorService.applyWithTailoredResume(jobId, true)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
 			next: (response) => {
 				const job = this.getJobById(jobId);
 				if (job) {
@@ -368,7 +375,9 @@ export class JobSearchPage implements OnInit {
 		const job = this.getJobById(jobId);
 		if (!job) return;
 
-		this.userService.getCurrentUser().subscribe(user => {
+		this.userService.getCurrentUser()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe(user => {
 			if (!user) return;
 
 			this.mockInterviewService.startInterview('technical', {
@@ -381,7 +390,9 @@ export class JobSearchPage implements OnInit {
 
 	// Apply for job
 	applyForJob(jobId: string): void {
-		this.userService.getCurrentUser().subscribe(currentUser => {
+		this.userService.getCurrentUser()
+			.pipe(takeUntilDestroyed())
+			.subscribe(currentUser => {
 			if (!currentUser) {
 				this.snackBar.open('Please login to apply for jobs', 'Close', { duration: 3000 });
 				return;
@@ -394,7 +405,9 @@ export class JobSearchPage implements OnInit {
 			}
 
 			// First attempt - check if match analysis prompt should be shown
-			this.jobService.applyForJob(jobId, false).subscribe({
+			this.jobService.applyForJob(jobId, false)
+				.pipe(takeUntilDestroyed(this.destroyRef))
+				.subscribe({
 				next: (response) => {
 					if (response.show_match_prompt) {
 						// Show apply confirmation modal
@@ -432,7 +445,9 @@ export class JobSearchPage implements OnInit {
 
 	// Force apply without match analysis
 	private forceApplyForJob(jobId: string): void {
-		this.tailorService.applyWithoutTailoring(jobId).subscribe({
+		this.tailorService.applyWithoutTailoring(jobId)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
 			next: (response) => {
 				const job = this.getJobById(jobId);
 				if (job) {

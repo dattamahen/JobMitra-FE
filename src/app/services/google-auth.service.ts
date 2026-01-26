@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { AuthService } from './auth.service';
 import { environment } from '../../environments/environment';
 
@@ -9,11 +10,14 @@ declare const google: any;
 })
 export class GoogleAuthService {
 	private clientId = environment.googleClientId;
+	private platformId = inject(PLATFORM_ID);
 
 	constructor(private authService: AuthService) {
 	}
 
 	async initializeGoogleSignIn(): Promise<void> {
+		if (!isPlatformBrowser(this.platformId)) return Promise.resolve();
+		
 		return new Promise((resolve) => {
 			if (typeof google !== 'undefined' && google?.accounts?.id) {
 				google.accounts.id.initialize({
@@ -40,6 +44,8 @@ export class GoogleAuthService {
 	}
 
 	renderSignInButton(elementId: string): void {
+		if (!isPlatformBrowser(this.platformId)) return;
+		
 		if (typeof google !== 'undefined' && google?.accounts?.id) {
 			const element = document.getElementById(elementId);
 			if (element) {
@@ -53,6 +59,8 @@ export class GoogleAuthService {
 	}
 
 	private async handleCredentialResponse(response: any): Promise<void> {
+		if (!isPlatformBrowser(this.platformId)) return;
+		
 		try {
 			const result = await this.authService.googleSignIn(response.credential).toPromise();
 			// Redirect to dashboard or handle success

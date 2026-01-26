@@ -162,7 +162,8 @@ export class ResumeBuilderPage implements OnInit {
 		this.resumeService.setLoading(true);
 		this.resumeService.getUserProfileData().pipe(
 			takeUntilDestroyed(this.destroyRef)
-		).subscribe({
+		)
+			.subscribe({
 			next: (profile) => {
 
 				this.mapUserDataToForms(profile);
@@ -183,7 +184,8 @@ export class ResumeBuilderPage implements OnInit {
 		
 		this.resumeService.getUserProfileData().pipe(
 			takeUntilDestroyed(this.destroyRef)
-		).subscribe({
+		)
+			.subscribe({
 			next: (profile) => {
 
 				this.mapUserDataToForms(profile);
@@ -440,7 +442,8 @@ export class ResumeBuilderPage implements OnInit {
 	private loadTemplates(): void {
 		this.resumeService.getTemplates().pipe(
 			takeUntilDestroyed(this.destroyRef)
-		).subscribe({
+		)
+			.subscribe({
 			next: (response) => {
 				// Templates are already loaded in service
 			},
@@ -611,43 +614,50 @@ export class ResumeBuilderPage implements OnInit {
 	private setupFormListeners(): void {
 		this.personalInfoForm.valueChanges.pipe(
 			takeUntilDestroyed(this.destroyRef)
-		).subscribe(value => {
+		)
+			.subscribe(value => {
 			this.resumeService.updateCurrentResumeSection('personal_info', value);
 		});
 
 		this.summaryForm.valueChanges.pipe(
 			takeUntilDestroyed(this.destroyRef)
-		).subscribe(value => {
+		)
+			.subscribe(value => {
 			this.resumeService.updateCurrentResumeSection('summary', value.summary);
 		});
 
 		this.skillsForm.valueChanges.pipe(
 			takeUntilDestroyed(this.destroyRef)
-		).subscribe(() => {
+		)
+			.subscribe(() => {
 			this.updateSkillsSection();
 		});
 
 		this.experienceForm.valueChanges.pipe(
 			takeUntilDestroyed(this.destroyRef)
-		).subscribe(() => {
+		)
+			.subscribe(() => {
 			this.updateExperienceSection();
 		});
 
 		this.educationForm.valueChanges.pipe(
 			takeUntilDestroyed(this.destroyRef)
-		).subscribe(() => {
+		)
+			.subscribe(() => {
 			this.updateEducationSection();
 		});
 
 		this.projectsForm.valueChanges.pipe(
 			takeUntilDestroyed(this.destroyRef)
-		).subscribe(() => {
+		)
+			.subscribe(() => {
 			this.updateProjectsSection();
 		});
 
 		this.certificationsForm.valueChanges.pipe(
 			takeUntilDestroyed(this.destroyRef)
-		).subscribe(() => {
+		)
+			.subscribe(() => {
 			this.updateCertificationsSection();
 		});
 	}
@@ -898,7 +908,8 @@ export class ResumeBuilderPage implements OnInit {
 		
 		this.resumeService.optimizeResume(resume.resume_id).pipe(
 			takeUntilDestroyed(this.destroyRef)
-		).subscribe({
+		)
+			.subscribe({
 			next: (optimization) => {
 				this.isOptimizing.set(false);
 				this.snackBar.open(`Resume optimized! Score improved from ${optimization.original_score}% to ${optimization.optimized_score}%`, 'Close', { duration: 5000 });
@@ -1320,7 +1331,9 @@ export class ResumeBuilderPage implements OnInit {
 		}
 
 		// Use the feature
-		this.featureUsageService.useFeature('resume_download').subscribe({
+		this.featureUsageService.useFeature('resume_download')
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
 			next: (response) => {
 				if (response.success) {
 					this.generatePDF();
@@ -1685,3 +1698,4 @@ export class ResumeBuilderPage implements OnInit {
 		this.certificationsForm?.markAsPristine();
 	}
 }
+

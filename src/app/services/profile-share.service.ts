@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import html2canvas from 'html2canvas';
@@ -20,6 +21,8 @@ export interface ProfileSnapshot {
 	providedIn: 'root'
 })
 export class ProfileShareService {
+	private platformId = inject(PLATFORM_ID);
+	
 	constructor(private http: HttpClient) {}
 
 	async generateProfileSnapshot(element: HTMLElement): Promise<string> {
@@ -33,6 +36,8 @@ export class ProfileShareService {
 	}
 
 	shareViaEmail(profileData: ProfileSnapshot, imageData?: string): void {
+		if (!isPlatformBrowser(this.platformId)) return;
+		
 		const subject = `${profileData.name} - Professional Profile`;
 		const body = this.generateEmailBody(profileData);
 		
@@ -41,12 +46,16 @@ export class ProfileShareService {
 	}
 
 	shareViaWhatsApp(profileData: ProfileSnapshot): void {
+		if (!isPlatformBrowser(this.platformId)) return;
+		
 		const message = this.generateWhatsAppMessage(profileData);
 		const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
 		window.open(whatsappUrl, '_blank');
 	}
 
 	shareViaLinkedIn(profileData: ProfileSnapshot): void {
+		if (!isPlatformBrowser(this.platformId)) return;
+		
 		const text = `Check out ${profileData.name}'s professional profile - ${profileData.role} with ${profileData.experience} years of experience in ${profileData.skills.slice(0, 3).join(', ')}`;
 		const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}&summary=${encodeURIComponent(text)}`;
 		window.open(linkedinUrl, '_blank');

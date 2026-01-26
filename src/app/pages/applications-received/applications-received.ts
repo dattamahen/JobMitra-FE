@@ -13,10 +13,10 @@ import { LoadingComponent } from '../../shared/components/loading/loading.compon
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatMenuModule } from '@angular/material/menu';
 import { FormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
 import { HrService } from '../../services/hr.service';
 import { ActivatedRoute } from '@angular/router';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 export interface ApplicationReceived {
 	application_id?: string;
@@ -75,8 +75,7 @@ export interface JobOption {
 		])
 	]
 })
-export class ApplicationsReceivedPage implements OnInit, OnDestroy {
-	private destroy$ = new Subject<void>();
+export class ApplicationsReceivedPage implements OnInit {
 	
 	@Input() specificJobId?: string;
 	
@@ -108,7 +107,9 @@ export class ApplicationsReceivedPage implements OnInit, OnDestroy {
 	ngOnInit() {
 		
 		// Check for specific job ID from route or input
-		this.route.queryParams.subscribe(params => {
+		this.route.queryParams
+			.pipe(takeUntilDestroyed())
+			.subscribe(params => {
 			if (params['jobId']) {
 				this.specificJobId = params['jobId'];
 				this.pageTitle.set('Job Applications');
@@ -124,10 +125,6 @@ export class ApplicationsReceivedPage implements OnInit, OnDestroy {
 		this.loadApplications();
 	}
 
-	ngOnDestroy() {
-		this.destroy$.next();
-		this.destroy$.complete();
-	}
 
 	async loadJobOptions() {
 		try {
