@@ -10,7 +10,7 @@
 							#basicForm
 							[config]="basicInfoConfig" 
 							[initialValues]="basicInfoValues"
-							[readonly]="!isBasicInfoEditing"
+							[readonly]="!isBasicInfoEditing()"
 							(formSubmit)="onBasicInfoSubmit($event)"
 							(toggleEdit)="onBasicInfoToggleEdit()"
 							submitButtonText="Update Basic Info">
@@ -25,7 +25,7 @@
 							#professionalForm
 							[config]="professionalConfig" 
 							[initialValues]="professionalValues"
-							[readonly]="!isProfessionalEditing"
+							[readonly]="!isProfessionalEditing()"
 							(formSubmit)="onProfessionalSubmit($event)"
 							(toggleEdit)="onProfessionalToggleEdit()"
 							submitButtonText="Update Professional Info">
@@ -40,7 +40,7 @@
 							#skillsForm
 							[config]="skillsConfig" 
 							[initialValues]="skillsValues"
-							[readonly]="!isSkillsEditing"
+							[readonly]="!isSkillsEditing()"
 							(formSubmit)="onSkillsSubmit($event)"
 							(toggleEdit)="onSkillsToggleEdit()"
 							submitButtonText="Update Skills">
@@ -55,7 +55,7 @@
 							#experienceForm
 							[config]="experienceConfig" 
 							[initialValues]="experienceValues"
-							[readonly]="!isExperienceEditing"
+							[readonly]="!isExperienceEditing()"
 							(formSubmit)="onExperienceSubmit($event)"
 							(toggleEdit)="onExperienceToggleEdit()"
 							submitButtonText="Update Experience">
@@ -70,7 +70,7 @@
 							#educationForm
 							[config]="educationConfig" 
 							[initialValues]="educationValues"
-							[readonly]="!isEducationEditing"
+							[readonly]="!isEducationEditing()"
 							(formSubmit)="onEducationSubmit($event)"
 							(toggleEdit)="onEducationToggleEdit()"
 							submitButtonText="Update Education">
@@ -85,7 +85,7 @@
 							#projectsForm
 							[config]="projectsConfig" 
 							[initialValues]="projectsValues"
-							[readonly]="!isProjectsEditing"
+							[readonly]="!isProjectsEditing()"
 							(formSubmit)="onProjectsSubmit($event)"
 							(toggleEdit)="onProjectsToggleEdit()"
 							submitButtonText="Update Projects">
@@ -100,7 +100,7 @@
 							#certificationsForm
 							[config]="certificationsConfig" 
 							[initialValues]="certificationsValues"
-							[readonly]="!isCertificationsEditing"
+							[readonly]="!isCertificationsEditing()"
 							(formSubmit)="onCertificationsSubmit($event)"
 							(toggleEdit)="onCertificationsToggleEdit()"
 							submitButtonText="Update Certifications">
@@ -115,7 +115,7 @@
 							#jobPreferencesForm
 							[config]="jobPreferencesConfig" 
 							[initialValues]="jobPreferencesValues"
-							[readonly]="!isJobPreferencesEditing"
+							[readonly]="!isJobPreferencesEditing()"
 							(formSubmit)="onJobPreferencesSubmit($event)"
 							(toggleEdit)="onJobPreferencesToggleEdit()"
 							submitButtonText="Update Job Preferences">
