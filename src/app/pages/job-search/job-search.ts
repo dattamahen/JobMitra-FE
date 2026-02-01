@@ -328,7 +328,7 @@ export class JobSearchPage implements OnInit {
 
 	// Apply with tailored resume
 	private applyWithTailoredResume(jobId: string): void {
-		this.tailorService.applyWithTailoredResume(jobId, true)
+		this.tailorService.applyWithTailoredResume(jobId)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 			next: (response) => {
@@ -341,6 +341,7 @@ export class JobSearchPage implements OnInit {
 						job.match_percentage = response.match_percentage;
 					}
 				}
+				this.cdr.markForCheck();
 				this.snackBar.open('Applied successfully with tailored resume!', 'Close', { duration: 3000 });
 			},
 			error: (error) => {
@@ -353,13 +354,13 @@ export class JobSearchPage implements OnInit {
 	// Check if match analysis button should be disabled
 	isMatchAnalysisDisabled(jobId: string): boolean {
 		const job = this.getJobById(jobId);
-		return job?.match_analysis_done || false;
+		return job?.match_analysis_done || job?.already_applied || false;
 	}
 
 	// Check if tailor resume button should be disabled
 	isTailorResumeDisabled(jobId: string): boolean {
 		const job = this.getJobById(jobId);
-		return job?.tailor_resume_done || false;
+		return job?.tailor_resume_done || job?.already_applied || false;
 	}
 
 	takeMockInterview(jobId: string): void {
@@ -413,6 +414,7 @@ export class JobSearchPage implements OnInit {
 						job.already_applied = true;
 						job.match_analysis_done = true;
 						job.tailor_resume_done = true;
+						this.cdr.markForCheck();
 						this.snackBar.open(response.message, 'Close', { duration: 3000 });
 					}
 				},
@@ -454,6 +456,7 @@ export class JobSearchPage implements OnInit {
 						job.match_percentage = response.match_percentage;
 					}
 				}
+				this.cdr.markForCheck();
 				this.snackBar.open(response.message || 'Applied successfully!', 'Close', { duration: 3000 });
 			},
 			error: (error) => {

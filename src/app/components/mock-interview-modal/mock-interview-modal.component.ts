@@ -211,11 +211,11 @@ export class MockInterviewModalComponent {
 		});
 	}
 
-	parseAIQuestions(questionsText: string): InterviewQuestion[] {
-		const lines = questionsText.split('\n').filter(line => line.trim());
-		return lines.map((line, index) => ({
+	parseAIQuestions(questions: string[] | string): InterviewQuestion[] {
+		const questionsArray = Array.isArray(questions) ? questions : questions.split('\n').filter(line => line.trim());
+		return questionsArray.map((question, index) => ({
 			id: `q_${index + 1}`,
-			question: line.replace(/^\d+\.\s*/, '').trim(),
+			question: typeof question === 'string' ? question.replace(/^\d+\.\s*/, '').trim() : question,
 			type: 'technical'
 		}));
 	}
@@ -244,7 +244,13 @@ export class MockInterviewModalComponent {
 		if (aiResponse?.questions && aiResponse?.session_id) {
 			const mockSession: InterviewSession = {
 				session_id: aiResponse.session_id,
-				questions: this.parseAIQuestions(aiResponse.questions),
+				questions: Array.isArray(aiResponse.questions) 
+					? aiResponse.questions.map((q: string, i: number) => ({
+							id: `q_${i + 1}`,
+							question: q,
+							type: 'technical'
+						}))
+					: this.parseAIQuestions(aiResponse.questions),
 				created_at: new Date().toISOString()
 			};
 			
