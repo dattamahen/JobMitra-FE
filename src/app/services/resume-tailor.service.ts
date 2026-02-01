@@ -2,26 +2,65 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
 
+// Request Models
 export interface TailorRequest {
 	job_id: string;
-	user_resume?: any;
-	job_description?: string;
 }
 
+// Response Models
 export interface TailorResponse {
 	success: boolean;
 	message: string;
-	tailored_resume?: any;
-	match_percentage?: number;
-	suggestions?: string[];
 	tailor_done: boolean;
+	match_percentage: number;
 }
 
 export interface TailorPreviewData {
-	original_resume: any;
-	tailored_resume: any;
+	original_resume: OriginalResume;
+	tailored_resume: TailoredResume;
 	changes: TailorChange[];
 	match_improvement: number;
+}
+
+export interface OriginalResume {
+	first_name: string;
+	last_name: string;
+	email: string;
+	phone?: string;
+	professional_summary?: string;
+	skills: string[];
+	work_experience?: any[];
+	education?: any[];
+	projects?: any[];
+	certifications?: any[];
+}
+
+export interface TailoredResume {
+	professional_summary?: string;
+	skills_organized?: string[];
+	work_experience?: WorkExperience[];
+	education?: Education[];
+	projects?: Project[];
+	certifications?: string[];
+}
+
+export interface WorkExperience {
+	company: string;
+	position: string;
+	duration: string;
+	achievements: string[];
+}
+
+export interface Education {
+	degree: string;
+	institution: string;
+	year: string;
+}
+
+export interface Project {
+	name: string;
+	description: string;
+	technologies: string[];
 }
 
 export interface TailorChange {
@@ -30,6 +69,17 @@ export interface TailorChange {
 	original?: string;
 	modified?: string;
 	reason: string;
+}
+
+export interface ApplyJobRequest {
+	use_tailored: boolean;
+}
+
+export interface ApplyJobResponse {
+	success: boolean;
+	message: string;
+	application_id: string;
+	match_percentage?: number;
 }
 
 @Injectable({
@@ -43,26 +93,14 @@ export class ResumeTailorService {
 	}
 
 	getTailorPreview(jobId: string): Observable<TailorPreviewData> {
-		console.log('[Service] Calling getTailorPreview for job:', jobId);
-		return this.apiService.get<TailorPreviewData>(`/jobs/${jobId}/tailor-preview`).pipe(
-			// Add tap to log the response
-			// Note: You'll need to import 'tap' from 'rxjs/operators' if not already imported
-		);
+		return this.apiService.get<TailorPreviewData>(`/jobs/${jobId}/tailor-preview`);
 	}
 
-	applyWithTailoredResume(jobId: string, acceptChanges: boolean): Observable<any> {
-		return this.apiService.post(`/jobs/${jobId}/apply?use_tailored=true`, {});
+	applyWithTailoredResume(jobId: string): Observable<ApplyJobResponse> {
+		return this.apiService.post<ApplyJobResponse>(`/jobs/${jobId}/apply?use_tailored=true`, {});
 	}
 
-	applyWithoutTailoring(jobId: string): Observable<any> {
-		return this.apiService.post(`/jobs/${jobId}/apply?use_tailored=false`, {});
-	}
-
-	getTailoredResumeHistory(): Observable<any[]> {
-		return this.apiService.get<any[]>('/resume/tailored-history');
-	}
-
-	downloadTailoredResume(jobId: string, format: 'pdf' | 'docx' = 'pdf'): Observable<Blob> {
-		return this.apiService.get<Blob>(`/jobs/${jobId}/download-tailored-resume`, { format }, 'blob');
+	applyWithoutTailoring(jobId: string): Observable<ApplyJobResponse> {
+		return this.apiService.post<ApplyJobResponse>(`/jobs/${jobId}/apply?use_tailored=false`, {});
 	}
 }
