@@ -6,8 +6,20 @@ export type InterviewQuestion = {
 
 export type InterviewSession = {
 	session_id: string;
-	questions: InterviewQuestion[];
+	questions?: InterviewQuestion[];
 	created_at: string;
+	interview_type?: string;
+	overall_score?: number;
+	completed_at?: string;
+	questions_count?: number;
+};
+
+export type InterviewHistorySession = {
+	session_id: string;
+	interview_type: string;
+	overall_score: number;
+	completed_at: string;
+	questions_count: number;
 };
 
 export type InterviewEvaluation = {

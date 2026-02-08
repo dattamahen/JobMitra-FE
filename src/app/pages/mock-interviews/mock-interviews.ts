@@ -8,7 +8,8 @@ import { FeatureGuardDirective } from '../../shared/directives/feature-guard.dir
 import { InterviewService } from '../../services/interview.service';
 import { AuthService } from '../../services/auth.service';
 import { INTERVIEW_TYPES } from '../../data/mock-interview-data';
-import { InterviewHistoryComponent, InterviewSession } from '../../shared/components/interview-history/interview-history.component';
+import { InterviewHistoryComponent } from '../../shared/components/interview-history/interview-history.component';
+import type { InterviewHistorySession } from '../../types/mock-interview.types';
 
 @Component({
 	selector: 'app-mock-interviews-page',
@@ -19,7 +20,7 @@ import { InterviewHistoryComponent, InterviewSession } from '../../shared/compon
 })
 export class MockInterviewsPage {
 	interviewTypes = INTERVIEW_TYPES;
-	interviewHistory = signal<InterviewSession[]>([]);
+	interviewHistory = signal<InterviewHistorySession[]>([]);
 	private readonly destroyRef = inject(DestroyRef);
 	private readonly mockInterviewService = inject(MockInterviewService);
 	private readonly featureUsageService = inject(FeatureUsageService);

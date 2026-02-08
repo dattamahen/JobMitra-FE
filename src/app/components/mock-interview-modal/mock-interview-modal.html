@@ -9,7 +9,7 @@
 	</div>
 	@if (phase() === 'interview' && interviewSession()) {
 		<div class="progress-indicator">
-			<span>{{currentQuestionIndex() + 1}} / {{interviewSession()!.questions.length}}</span>
+			<span>{{currentQuestionIndex() + 1}} / {{interviewSession()!.questions?.length || 0}}</span>
 		</div>
 	}
 </div>

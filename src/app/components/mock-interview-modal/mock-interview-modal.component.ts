@@ -6,7 +6,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
 import { VoiceAiService } from '../../services/voice-ai.service';
-import { MockInterviewService, InterviewSession, InterviewQuestion, InterviewEvaluation } from '../../services/mock-interview.service';
+import { MockInterviewService } from '../../services/mock-interview.service';
+import type { InterviewSession, InterviewQuestion, InterviewEvaluation } from '../../types/mock-interview.types';
 import { INTERVIEW_INSTRUCTIONS } from '../../data/mock-interview-instructions';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
@@ -75,13 +76,13 @@ export class MockInterviewModalComponent {
 	readonly currentQuestion = computed(() => {
 		const session = this.interviewSession();
 		const index = this.currentQuestionIndex();
-		return session?.questions[index] || null;
+		return session?.questions?.[index] || null;
 	});
 
 	readonly progress = computed(() => {
 		const session = this.interviewSession();
 		const index = this.currentQuestionIndex();
-		if (!session) return 0;
+		if (!session?.questions) return 0;
 		return ((index + 1) / session.questions.length) * 100;
 	});
 
@@ -92,7 +93,7 @@ export class MockInterviewModalComponent {
 	readonly isLastQuestion = computed(() => {
 		const session = this.interviewSession();
 		const index = this.currentQuestionIndex();
-		return session ? index >= session.questions.length - 1 : false;
+		return session?.questions ? index >= session.questions.length - 1 : false;
 	});
 
 	startInterview(): void {
@@ -170,7 +171,7 @@ export class MockInterviewModalComponent {
 				...this.data?.userProfile,
 				user_id: this.data?.userProfile?.user_id || 'user_' + Date.now()
 			},
-			questions_and_answers: session.questions.map((q, index) => ({
+			questions_and_answers: (session.questions || []).map((q, index) => ({
 				question_id: q.id,
 				question: q.question,
 				answer: answers[index]?.answer || ''
@@ -243,7 +244,11 @@ export class MockInterviewModalComponent {
 							type: 'technical'
 						}))
 					: this.parseAIQuestions(aiResponse.questions),
-				created_at: new Date().toISOString()
+				created_at: new Date().toISOString(),
+				interview_type: 'technical',
+				overall_score: 0,
+				completed_at: new Date().toISOString(),
+				questions_count: 0
 			};
 			
 			this.interviewSession.set(mockSession);
