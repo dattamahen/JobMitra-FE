@@ -1,16 +1,4 @@
 <div class="page-container">
-	<app-job-filter
-		[filterConfig]="filterConfig"
-		[filterOptions]="filterOptions"
-		[resultsCount]="totalJobs"
-		searchLabel="Search jobs"
-		searchPlaceholder="Enter job title, skills, or company"
-		searchButtonLabel="Search Jobs"
-		resultsLabel="job"
-		[showEmploymentType]="true"
-		[showStatus]="false"
-		(filterChange)="onFilterChange($event)">
-	</app-job-filter>
 
 	<div class="job-listings">
 		<!-- Loading indicator -->

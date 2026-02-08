@@ -1,48 +1,34 @@
-import { Component, OnInit, ChangeDetectorRef, DestroyRef, inject, ChangeDetectionStrategy, computed } from '@angular/core';
+import { Component, ChangeDetectorRef, DestroyRef, inject, ChangeDetectionStrategy, computed, Inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { CommonModule, DatePipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { JobService, JobListing as ApiJobListing, JobSearchFilters } from '../../services/job.service';
-import { UserService } from '../../services/user.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Inject } from '@angular/core';
+import { JobService, JobListing as ApiJobListing, JobSearchFilters } from '../../services/job.service';
+import { UserService } from '../../services/user.service';
 import { maskEmail, maskPhone } from '../../utils/mask.util';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
-import { JobFilterComponent, JobFilterConfig, JobFilterOptions } from '../../shared/components/job-filter/job-filter.component';
+import { JobFilterComponent, JobFilterConfig } from '../../shared/components/job-filter/job-filter.component';
 import { FeatureUsageService } from '../../services/feature-usage.service';
 import { MockInterviewService } from '../../services/mock-interview.service';
-import { MockInterviewModalComponent } from '../../components/mock-interview-modal/mock-interview-modal.component';
 import { ResumeTailorService } from '../../services/resume-tailor.service';
 import { ResumeTailorModalComponent } from '../../components/mock-interview-modal/resume-tailor-modal.component';
 
 @Component({
 	selector: 'app-job-search-page',
-	standalone: true,
 	imports: [
 		CommonModule,
-		FormsModule,
+		DatePipe,
 		MatCardModule,
-		MatInputModule,
-		MatFormFieldModule,
-		MatSelectModule,
 		MatButtonModule,
 		MatIconModule,
 		MatChipsModule,
 		MatTooltipModule,
-		MatExpansionModule,
-		MatProgressSpinnerModule,
 		MatSnackBarModule,
 		MatDialogModule,
 		LoadingComponent,
@@ -50,33 +36,34 @@ import { ResumeTailorModalComponent } from '../../components/mock-interview-moda
 		JobFilterComponent
 	],
 	templateUrl: './job-search.html',
-	styleUrls: ['./job-search.css'],
+	styleUrl: './job-search.css',
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class JobSearchPage implements OnInit {
+export class JobSearchPage {
+	private readonly destroyRef = inject(DestroyRef);
+	private readonly jobService = inject(JobService);
+	private readonly userService = inject(UserService);
+	private readonly snackBar = inject(MatSnackBar);
+	private readonly cdr = inject(ChangeDetectorRef);
+	private readonly dialog = inject(MatDialog);
+	private readonly featureUsageService = inject(FeatureUsageService);
+	private readonly mockInterviewService = inject(MockInterviewService);
+	private readonly tailorService = inject(ResumeTailorService);
+
 	expandedJobs: { [key: string]: boolean } = {};
 	unmaskedHRDetails: { [key: string]: boolean } = {};
-	private destroyRef = inject(DestroyRef);
-	
-	// Data properties using the API service
 	jobListings: ApiJobListing[] = [];
 	filterOptions: any = {};
 	isLoading = true;
+	totalJobs = 0;
 	
-	// Filter configuration
 	filterConfig: JobFilterConfig = {
 		searchQuery: '',
 		selectedLocation: 'all',
 		selectedExperience: 'all',
 		selectedEmploymentType: 'all'
 	};
-	
-	// Pagination
-	currentPage = 1;
-	totalJobs = 0;
-	jobsPerPage = 10;
 
-	// Computed filtered jobs
 	filteredJobListings = computed(() => {
 		const jobs = this.jobListings;
 		const config = this.filterConfig;
@@ -111,28 +98,7 @@ export class JobSearchPage implements OnInit {
 		});
 	});
 
-
-
-	// Debugging getter
-	get debugInfo() {
-		return {
-			isLoading: this.isLoading,
-			jobListingsLength: this.jobListings?.length || 0,
-			jobListings: this.jobListings
-		};
-	}
-	
-	constructor(
-		private jobService: JobService,
-		private userService: UserService,
-		private snackBar: MatSnackBar,
-		private cdr: ChangeDetectorRef,
-		private dialog: MatDialog,
-		private featureUsageService: FeatureUsageService,
-		private mockInterviewService: MockInterviewService,
-		private tailorService: ResumeTailorService
-	) {
-		// Initialize filter options with empty arrays to prevent template errors
+	constructor() {
 		this.filterOptions = {
 			locations: [],
 			experience_levels: [],
@@ -141,58 +107,34 @@ export class JobSearchPage implements OnInit {
 			companies: [],
 			salary_ranges: []
 		};
-		
-
-	}
-
-	ngOnInit(): void {
-
 		this.loadJobs();
 	}
 
 	private loadJobs(): void {
 		this.isLoading = true;
-		
 		const filters: JobSearchFilters = {};
 		
-		this.jobService.searchJobs(filters, this.currentPage, this.jobsPerPage)
+		this.jobService.searchJobs(filters, 1, 10)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: (response) => {
-
-					
-					// Update data first
 					this.jobListings = response.jobs || [];
 					this.totalJobs = this.filteredJobListings().length;
 					
-					// Update filter options from API response if available
 					if (response.filters) {
 						this.filterOptions = response.filters;
 					}
 					
-					// Set loading to false immediately
 					this.isLoading = false;
-
-					
-					// Mark for check to trigger change detection
 					this.cdr.markForCheck();
-					this.cdr.detectChanges();
-					
-
 				},
-				error: (error) => {
+				error: () => {
 					this.isLoading = false;
-					
-					// Mark for check to trigger change detection
 					this.cdr.markForCheck();
-					this.cdr.detectChanges();
-					
-
 				}
 			});
 	}
 
-	// Format location for API job data
 	formatLocation(job: ApiJobListing): string {
 		const parts = [];
 		if (job.location.city) parts.push(job.location.city);
@@ -208,7 +150,6 @@ export class JobSearchPage implements OnInit {
 		return location;
 	}
 
-	// Get formatted posted date
 	getFormattedPostedDate(job: ApiJobListing): string {
 		const now = new Date();
 		const postedDate = new Date(job.posted_date);
@@ -221,7 +162,6 @@ export class JobSearchPage implements OnInit {
 		return `${Math.ceil(diffDays / 30)} months ago`;
 	}
 
-	// Check if application deadline is approaching
 	isDeadlineApproaching(job: ApiJobListing): boolean {
 		if (!job.application_deadline) return false;
 		
@@ -251,7 +191,6 @@ export class JobSearchPage implements OnInit {
 		return this.jobListings.find(job => job.job_id === jobId);
 	}
 
-	// Format salary for API job data
 	formatSalary(job: ApiJobListing): string {
 		if (!job.salary || (!job.salary.min && !job.salary.max)) {
 			return 'Salary not disclosed';
@@ -296,7 +235,6 @@ export class JobSearchPage implements OnInit {
 			error: (error) => {
 				const errorMessage = error.error?.detail || 'Failed to perform match analysis';
 				this.snackBar.open(errorMessage, 'Close', { duration: 3000 });
-
 			}
 		});
 	}
@@ -310,7 +248,6 @@ export class JobSearchPage implements OnInit {
 			return;
 		}
 
-		// Open tailor modal
 		const dialogRef = this.dialog.open(ResumeTailorModalComponent, {
 			width: '800px',
 			maxHeight: '90vh',
@@ -326,7 +263,6 @@ export class JobSearchPage implements OnInit {
 		});
 	}
 
-	// Apply with tailored resume
 	private applyWithTailoredResume(jobId: string): void {
 		this.tailorService.applyWithTailoredResume(jobId)
 			.pipe(takeUntilDestroyed(this.destroyRef))
@@ -351,13 +287,11 @@ export class JobSearchPage implements OnInit {
 		});
 	}
 
-	// Check if match analysis button should be disabled
 	isMatchAnalysisDisabled(jobId: string): boolean {
 		const job = this.getJobById(jobId);
 		return job?.match_analysis_done || job?.already_applied || false;
 	}
 
-	// Check if tailor resume button should be disabled
 	isTailorResumeDisabled(jobId: string): boolean {
 		const job = this.getJobById(jobId);
 		return job?.tailor_resume_done || job?.already_applied || false;
@@ -385,7 +319,6 @@ export class JobSearchPage implements OnInit {
 		});
 	}
 
-	// Apply for job
 	applyForJob(jobId: string): void {
 		this.userService.getCurrentUser()
 			.pipe(takeUntilDestroyed(this.destroyRef))
@@ -401,16 +334,13 @@ export class JobSearchPage implements OnInit {
 				return;
 			}
 
-			// First attempt - check if match analysis prompt should be shown
 			this.jobService.applyForJob(jobId, false)
 				.pipe(takeUntilDestroyed(this.destroyRef))
 				.subscribe({
 				next: (response) => {
 					if (response.show_match_prompt) {
-						// Show apply confirmation modal
 						this.showApplyConfirmationModal(jobId);
 					} else {
-						// Application successful
 						job.already_applied = true;
 						job.match_analysis_done = true;
 						job.tailor_resume_done = true;
@@ -421,13 +351,11 @@ export class JobSearchPage implements OnInit {
 				error: (error) => {
 					const errorMessage = error.error?.detail || 'Failed to apply for job';
 					this.snackBar.open(errorMessage, 'Close', { duration: 3000 });
-	
 				}
 			});
 		});
 	}
 
-	// Show apply confirmation modal
 	private showApplyConfirmationModal(jobId: string): void {
 		const dialogRef = this.dialog.open(ApplyConfirmationDialog, {
 			width: '400px',
@@ -441,7 +369,6 @@ export class JobSearchPage implements OnInit {
 		});
 	}
 
-	// Force apply without match analysis
 	private forceApplyForJob(jobId: string): void {
 		this.tailorService.applyWithoutTailoring(jobId)
 			.pipe(takeUntilDestroyed(this.destroyRef))
@@ -462,63 +389,10 @@ export class JobSearchPage implements OnInit {
 			error: (error) => {
 				const errorMessage = error.error?.detail || 'Failed to apply for job';
 				this.snackBar.open(errorMessage, 'Close', { duration: 3000 });
-
 			}
 		});
 	}
 
-	// Save job for later
-	saveJob(jobId: string): void {
-		const job = this.getJobById(jobId);
-
-		
-		const dialogRef = this.dialog.open(SaveJobDialog, {
-			width: '400px',
-			data: { jobTitle: job?.title }
-		});
-	}
-
-	// Get skill level color
-	getLevelColor(level: 'beginner' | 'intermediate' | 'advanced'): string {
-		switch (level) {
-			case 'beginner': return '#4caf50';
-			case 'intermediate': return '#ff9800';
-			case 'advanced': return '#f44336';
-			default: return '#757575';
-		}
-	}
-
-	// Get rating stars array for display
-	getRatingStars(rating?: number): boolean[] {
-		if (!rating) return [];
-		const stars = [];
-		for (let i = 1; i <= 5; i++) {
-			stars.push(i <= rating);
-		}
-		return stars;
-	}
-
-	// Get YouTube video ID for thumbnail
-	getYouTubeVideoId(url: string): string | null {
-		const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-		const match = url.match(regExp);
-		return (match && match[2].length === 11) ? match[2] : null;
-	}
-
-	// Get YouTube thumbnail URL
-	getYouTubeThumbnail(url: string): string {
-		const videoId = this.getYouTubeVideoId(url);
-		return videoId 
-			? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`
-			: '/assets/default-video-thumbnail.jpg';
-	}
-
-	// Open YouTube video in new tab
-	openLearningResource(resource: any): void {
-		window.open(resource.youtube_url, '_blank');
-	}
-
-	// Get match analysis result text
 	getMatchAnalysisText(jobId: string): string {
 		const job = this.getJobById(jobId);
 		if (job?.match_analysis_done && job.match_percentage) {
@@ -527,7 +401,6 @@ export class JobSearchPage implements OnInit {
 		return 'Match Analysis';
 	}
 
-	// Get tailor resume text
 	getTailorResumeText(jobId: string): string {
 		const job = this.getJobById(jobId);
 		if (job?.tailor_resume_done) {
@@ -536,7 +409,6 @@ export class JobSearchPage implements OnInit {
 		return 'Tailor Resume';
 	}
 
-	// Mask HR contact details
 	getMaskedEmail(email: string, jobId: string): string {
 		return maskEmail(email, !this.unmaskedHRDetails[jobId]);
 	}
@@ -545,7 +417,6 @@ export class JobSearchPage implements OnInit {
 		return maskPhone(phone, !this.unmaskedHRDetails[jobId]);
 	}
 
-	// Toggle HR details visibility
 	getHRDetails(jobId: string): void {
 		if (!this.featureUsageService.canUsePaidFeatures()) {
 			this.snackBar.open('Upgrade to view HR contact details', 'Close', { duration: 3000 });
@@ -554,7 +425,6 @@ export class JobSearchPage implements OnInit {
 		this.unmaskedHRDetails[jobId] = true;
 	}
 
-	// Check if HR details are unmasked
 	isHRDetailsUnmasked(jobId: string): boolean {
 		return this.unmaskedHRDetails[jobId] || false;
 	}
@@ -572,7 +442,6 @@ export class JobSearchPage implements OnInit {
 			<button mat-raised-button color="primary" (click)="onApply()">Continue Applying</button>
 		</mat-dialog-actions>
 	`,
-	standalone: true,
 	imports: [MatDialogModule, MatButtonModule]
 })
 export class ApplyConfirmationDialog {
@@ -587,55 +456,5 @@ export class ApplyConfirmationDialog {
 
 	onApply(): void {
 		this.dialogRef.close('apply');
-	}
-}
-
-@Component({
-	selector: 'mock-interview-dialog',
-	template: `
-		<h2 mat-dialog-title>Mock Interview</h2>
-		<mat-dialog-content>
-			<p>Starting mock interview preparation for {{data.jobTitle}} position...</p>
-		</mat-dialog-content>
-		<mat-dialog-actions align="end">
-			<button mat-raised-button color="primary" (click)="onClose()">OK</button>
-		</mat-dialog-actions>
-	`,
-	standalone: true,
-	imports: [MatDialogModule, MatButtonModule]
-})
-export class MockInterviewDialog {
-	constructor(
-		public dialogRef: MatDialogRef<MockInterviewDialog>,
-		@Inject(MAT_DIALOG_DATA) public data: { jobTitle: string }
-	) {}
-
-	onClose(): void {
-		this.dialogRef.close();
-	}
-}
-
-@Component({
-	selector: 'save-job-dialog',
-	template: `
-		<h2 mat-dialog-title>Job Saved</h2>
-		<mat-dialog-content>
-			<p>{{data.jobTitle}} has been saved to your favorites!</p>
-		</mat-dialog-content>
-		<mat-dialog-actions align="end">
-			<button mat-raised-button color="primary" (click)="onClose()">OK</button>
-		</mat-dialog-actions>
-	`,
-	standalone: true,
-	imports: [MatDialogModule, MatButtonModule]
-})
-export class SaveJobDialog {
-	constructor(
-		public dialogRef: MatDialogRef<SaveJobDialog>,
-		@Inject(MAT_DIALOG_DATA) public data: { jobTitle: string }
-	) {}
-
-	onClose(): void {
-		this.dialogRef.close();
 	}
 }
