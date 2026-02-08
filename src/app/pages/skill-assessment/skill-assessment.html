@@ -6,11 +6,6 @@
 				<h2><mat-icon>smart_toy</mat-icon> AI Mock Interview Status</h2>
 				<div class="usage-details">
 					<span class="usage-count">{{ getUsageStatus() }}</span>
-					@if (!canTakeMockInterview()) {
-						<span class="next-available">
-							Next available: {{ getNextInterviewAvailableTime() }}
-						</span>
-					}
 					@if (canTakeMockInterview()) {
 						<span class="available-now">
 							<mat-icon>check_circle</mat-icon> Available now!
@@ -19,7 +14,7 @@
 				</div>
 			</div>
 			<div class="usage-limits">
-				<small>{{ subscriptionLimits.mockInterviewsPerWeek }} interviews per week • {{ mockInterviewConfig.sessionDurationMinutes }} min sessions • {{ getCurrentPlanName() }}</small>
+				<small>5 interviews per week • 30 min sessions • {{ getCurrentPlanName() }}</small>
 			</div>
 		</div>
 
@@ -252,153 +247,5 @@
 				</div>
 			</div>
 		}
-
-		<!-- Mock Interview Modal -->
-		@if (showMockInterviewModal) {
-			<div class="modal-overlay" (click)="closeMockInterviewModal()">
-				<div class="modal-content interview-modal" (click)="$event.stopPropagation()">
-					<div class="modal-header">
-						<h2><mat-icon>smart_toy</mat-icon> AI Mock Interview - {{ selectedSkill }}</h2>
-						<button class="close-btn" (click)="closeMockInterviewModal()">×</button>
-					</div>
-					
-					<div class="modal-body">
-						<!-- Interview Setup -->
-						@if (!mockInterviewInProgress) {
-							<div class="interview-setup">
-								<div class="interview-info">
-									<div class="interview-details">
-										<h2>Interview Details</h2>
-										<ul>
-											<li><strong>Skill:</strong> {{ selectedSkill }}</li>
-											<li><strong>Duration:</strong> {{ mockInterviewConfig.sessionDurationMinutes }} minutes</li>
-											<li><strong>Questions:</strong> {{ mockInterviewConfig.questionsPerSession }}</li>
-											<li><strong>Type:</strong> Technical & Behavioral</li>
-										</ul>
-									</div>
-									
-									<div class="interview-tips">
-										<h2><mat-icon>lightbulb</mat-icon> Tips for Success</h2>
-										<ul>
-											<li>Find a quiet environment</li>
-											<li>Speak clearly and think out loud</li>
-											<li>Take your time to formulate answers</li>
-											<li>Use specific examples from your experience</li>
-										</ul>
-									</div>
-								</div>
-								
-								<div class="sample-questions">
-									<h2>Sample Questions Preview</h2>
-									<div class="questions-preview">
-										@for (question of currentInterviewQuestions.slice(0, 3); track $index) {
-											<div class="question-item">
-												<span class="question-text">{{ question }}</span>
-											</div>
-										}
-										@if (currentInterviewQuestions.length > 3) {
-											<div class="more-questions">
-												<span>+ {{ currentInterviewQuestions.length - 3 }} more questions</span>
-											</div>
-										}
-									</div>
-								</div>
-								
-								<div class="interview-actions">
-									<button class="cancel-btn" (click)="closeMockInterviewModal()">
-										Cancel
-									</button>
-									<button class="start-interview-btn" (click)="beginInterview()">
-										<mat-icon>play_arrow</mat-icon> Start Interview
-									</button>
-								</div>
-							</div>
-						}
-						
-						<!-- Interview In Progress -->
-						@if (mockInterviewInProgress) {
-							<div class="interview-in-progress">
-								<div class="progress-indicator">
-									<div class="loading-spinner"></div>
-									<h2>Interview in Progress...</h2>
-									<p>Our AI is conducting your {{ selectedSkill }} interview.</p>
-									<div class="interview-status">
-										<span class="status-text">Analyzing your responses and providing feedback</span>
-									</div>
-								</div>
-							</div>
-						}
-					</div>
-				</div>
-			</div>
-		}
 	</div>
 </div>
-
-<!-- Subscription Modal -->
-@if (showSubscriptionModal) {
-	<div class="modal-overlay" (click)="closeSubscriptionModal()">
-		<div class="subscription-modal" (click)="$event.stopPropagation()">
-			<div class="modal-header">
-				<h2>Upgrade Your Plan</h2>
-				<button class="close-btn" (click)="closeSubscriptionModal()">&times;</button>
-			</div>
-			
-			<div class="modal-content">
-				<p class="upgrade-message">
-					You've reached your weekly limit of free mock interviews. 
-					Upgrade to continue improving your skills!
-				</p>
-				
-				<div class="subscription-plans">
-					@for (plan of subscriptionPlans; track plan.id) {
-						<div class="plan-card" 
-								[class.current-plan]="userSubscription?.planId === plan.id"
-								[class.recommended]="plan.isPopular">
-							
-							<div class="plan-header">
-								<h2>{{ plan.name }}</h2>
-								<div class="plan-price">
-									<span class="price">{{ formatPrice(plan.price) }}</span>
-									<span class="period">/{{ plan.period }}</span>
-								</div>
-								@if (plan.isPopular) {
-									<div class="plan-badge">Most Popular</div>
-								}
-							</div>
-							
-							<div class="plan-features">
-								@for (feature of getPlanFeatures(plan.id); track $index) {
-									<div class="feature">
-										<mat-icon class="check-icon">check</mat-icon>
-										<span>{{ feature }}</span>
-									</div>
-								}
-							</div>
-							
-							<button class="select-plan-btn" 
-											[disabled]="userSubscription?.planId === plan.id"
-											(click)="selectSubscriptionPlan(plan.id)">
-								@if (userSubscription?.planId === plan.id) {
-									<span>Current Plan</span>
-								}
-								@if (userSubscription?.planId !== plan.id && plan.price === 0) {
-									<span>Continue with Free</span>
-								}
-								@if (userSubscription?.planId !== plan.id && plan.price > 0) {
-									<span>Upgrade to {{ plan.name }}</span>
-								}
-							</button>
-						</div>
-					}
-				</div>
-				
-				<div class="subscription-note">
-					<p><small>• All plans include access to learning resources and job search tools</small></p>
-					<p><small>• Cancel anytime with no commitment</small></p>
-					<p><small>• Secure payment processing with 30-day money-back guarantee</small></p>
-				</div>
-			</div>
-		</div>
-	</div>
-}
