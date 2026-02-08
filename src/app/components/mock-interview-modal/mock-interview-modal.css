@@ -1,4 +1,18 @@
 /* Modal Structure */
+::ng-deep .mock-interview-dialog {
+	display: flex;
+	flex-direction: column;
+	min-height: 80vh;
+	height: 80vh;
+	max-height: 90vh;
+	overflow: hidden;
+}
+
+::ng-deep .mock-interview-dialog .mat-mdc-dialog-container {
+	padding: 0;
+	overflow: hidden;
+}
+
 .modal-header {
 	display: flex;
 	justify-content: space-between;
@@ -6,6 +20,7 @@
 	padding: 1rem 1.5rem;
 	border-bottom: 1px solid #e2e8f0;
 	background: #f8fafc;
+	flex-shrink: 0;
 }
 
 .header-content {
@@ -25,9 +40,10 @@
 }
 
 .modal-body {
-	padding: 0;
-	height: 400px;
-	overflow: hidden;
+	padding: 1.5rem;
+	overflow-y: auto;
+	flex: 1;
+	min-height: 0;
 }
 
 .modal-footer {
@@ -36,6 +52,7 @@
 	background: #f8fafc;
 	justify-content: flex-end;
 	gap: 0.75rem;
+	flex-shrink: 0;
 }
 
 /* Generating Questions Phase */
@@ -44,8 +61,7 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	padding: 4rem 2rem;
-	min-height: 400px;
+	padding: 2rem;
 	text-align: center;
 }
 
@@ -91,7 +107,6 @@
 /* Instructions Phase */
 .instructions-section {
 	text-align: center;
-	padding: 2rem;
 }
 
 .instructions-header {
@@ -173,11 +188,9 @@
 /* Interview Room */
 .interview-room {
 	background: #ffffff;
-	padding: 1.5rem;
-	height: 400px;
 	display: flex;
 	flex-direction: column;
-	overflow: hidden;
+	gap: 1rem;
 }
 
 .interview-header {
@@ -323,7 +336,7 @@
 /* Completion Screen */
 .completion-section {
 	text-align: center;
-	padding: 3rem;
+	padding: 2rem;
 }
 
 .completion-header {
@@ -352,7 +365,7 @@
 
 /* Evaluation Results */
 .evaluation-content {
-	padding: 1rem 0;
+	padding: 0;
 }
 
 .results-header {

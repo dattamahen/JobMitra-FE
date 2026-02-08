@@ -1,4 +1,4 @@
-import { Component, OnInit, DestroyRef, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -52,6 +52,7 @@ export class SkillAssessmentPage implements OnInit {
 	selectedSkill: string = '';
 	showContributeForm: boolean = false;
 	private destroyRef = inject(DestroyRef);
+	private cdr = inject(ChangeDetectorRef);
 	
 	// Mock Interview Properties
 	mockInterviewConfig: MockInterviewConfig = {
@@ -106,9 +107,6 @@ export class SkillAssessmentPage implements OnInit {
 
 	private loadSkillAssessments(): void {
 		
-		// Reset skills array
-		this.skillAssessments = [];
-		
 		// Load technical skills from API
 		this.skillAssessmentService.getTechnicalSkills()
 			.pipe(takeUntilDestroyed(this.destroyRef))
@@ -121,9 +119,11 @@ export class SkillAssessmentPage implements OnInit {
 					currentLevel: skill.current_level,
 					levelText: skill.level_text as any
 				}));
-				this.skillAssessments = [...this.skillAssessments.filter(s => s.category !== 'technical' && !s.isRecommended), ...technicalSkills];
+				this.skillAssessments = [...technicalSkills, ...this.skillAssessments.filter(s => s.category !== 'technical' && !s.isRecommended)];
+				this.cdr.markForCheck();
 			},
 			error: (error) => {
+				console.error('Error loading technical skills:', error);
 			}
 		});
 
@@ -140,8 +140,10 @@ export class SkillAssessmentPage implements OnInit {
 					levelText: skill.level_text as any
 				}));
 				this.skillAssessments = [...this.skillAssessments.filter(s => s.category !== 'soft-skills'), ...softSkills];
+				this.cdr.markForCheck();
 			},
 			error: (error) => {
+				console.error('Error loading soft skills:', error);
 			}
 		});
 		
@@ -160,8 +162,10 @@ export class SkillAssessmentPage implements OnInit {
 					relevanceReason: skill.relevance_reason
 				}));
 				this.skillAssessments = [...this.skillAssessments.filter(s => !s.isRecommended), ...recommendedSkills];
+				this.cdr.markForCheck();
 			},
 			error: (error) => {
+				console.error('Error loading recommended skills:', error);
 			}
 		});
 	}
@@ -181,6 +185,7 @@ export class SkillAssessmentPage implements OnInit {
 					level: item.level,
 					hasCertificate: item.has_certificate
 				}));
+				this.cdr.markForCheck();
 			},
 			error: (error) => {
 			}

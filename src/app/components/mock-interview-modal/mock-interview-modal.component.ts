@@ -27,7 +27,10 @@ import { ConfirmationDialogComponent } from '../../shared/components/confirmatio
 	],
 	templateUrl: './mock-interview-modal.html',
 	styleUrl: './mock-interview-modal.css',
-	changeDetection: ChangeDetectionStrategy.OnPush
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	host: {
+		'class': 'mock-interview-dialog'
+	}
 })
 export class MockInterviewModalComponent {
 	// Signals for state management
