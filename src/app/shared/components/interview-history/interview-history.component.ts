@@ -1,14 +1,7 @@
 import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-
-export interface InterviewSession {
-	session_id: string;
-	interview_type: string;
-	overall_score: number;
-	completed_at: string;
-	questions_count: number;
-}
+import type { InterviewHistorySession } from '../../../types/mock-interview.types';
 
 @Component({
 	selector: 'app-interview-history',
@@ -109,7 +102,7 @@ export interface InterviewSession {
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InterviewHistoryComponent {
-	sessions = input.required<InterviewSession[]>();
+	sessions = input.required<InterviewHistorySession[]>();
 	title = input<string>('Recent Interview Sessions');
 	emptyMessage = input<string>('No interview sessions yet. Start your first interview above!');
 }

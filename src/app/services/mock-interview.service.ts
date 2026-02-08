@@ -3,19 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { MockInterviewModalComponent } from '../components/mock-interview-modal/mock-interview-modal.component';
-import { 
-	InterviewQuestion, 
-	InterviewSession, 
-	InterviewEvaluation, 
-	InterviewSubmissionData 
-} from '../types/mock-interview.types';
-
-export type { 
-	InterviewQuestion, 
-	InterviewSession, 
-	InterviewEvaluation, 
-	InterviewSubmissionData 
-}
+import type { InterviewEvaluation } from '../types/mock-interview.types';
 
 @Injectable({
 	providedIn: 'root'

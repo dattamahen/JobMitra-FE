@@ -3,7 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { SkillAssessmentService } from '../../services/skill-assessment.service';
 import { MockInterviewService } from '../../services/mock-interview.service';
-import { InterviewHistoryComponent, InterviewSession } from '../../shared/components/interview-history/interview-history.component';
+import { InterviewHistoryComponent } from '../../shared/components/interview-history/interview-history.component';
+import type { InterviewHistorySession } from '../../types/mock-interview.types';
 import { AuthService } from '../../services/auth.service';
 import { JobSearchDataService, LearningResource } from '../../data/job-search-data';
 import type { SkillAssessment } from '../../types/skill-assessment.types';
@@ -17,7 +18,7 @@ import type { SkillAssessment } from '../../types/skill-assessment.types';
 })
 export class SkillAssessmentPage implements OnInit {
 	skillAssessments: SkillAssessment[] = [];
-	interviewHistory = signal<InterviewSession[]>([]);
+	interviewHistory = signal<InterviewHistorySession[]>([]);
 	selectedSkillResources: readonly LearningResource[] = [];
 	showLearningModal = false;
 	selectedSkill = '';
