@@ -78,6 +78,44 @@ export const SIGNUP_FORM_CONFIG: FormConfig = {
 	submitLabel: 'Create Account'
 };
 
+export const FORGOT_PASSWORD_FORM_CONFIG: FormConfig = {
+	fields: [
+		{
+			name: 'email',
+			label: 'Email',
+			type: 'email',
+			placeholder: 'Enter your email',
+			required: true,
+			icon: ''
+		}
+	],
+	submitLabel: 'Send Reset Link',
+	showCancel: false
+};
+
+export const RESET_PASSWORD_FORM_CONFIG: FormConfig = {
+	fields: [
+		{
+			name: 'new_password',
+			label: 'New Password',
+			type: 'password',
+			placeholder: 'Enter new password',
+			required: true,
+			icon: 'visibility'
+		},
+		{
+			name: 'confirm_password',
+			label: 'Confirm Password',
+			type: 'password',
+			placeholder: 'Confirm new password',
+			required: true,
+			icon: 'visibility'
+		}
+	],
+	submitLabel: 'Reset Password',
+	showCancel: false
+};
+
 // Post Job Form Configurations
 export const POST_JOB_STEP1_CONFIG: FormConfig = {
 	title: 'Basic Information',
@@ -228,10 +266,7 @@ export const POST_JOB_STEP5_CONFIG: FormConfig = {
 			required: true,
 			width: 'half',
 			options: [
-				{ value: 'INR', label: 'INR (₹)' },
-				{ value: 'USD', label: 'USD ($)' },
-				{ value: 'EUR', label: 'EUR (€)' },
-				{ value: 'GBP', label: 'GBP (£)' }
+				{ value: 'INR', label: 'INR (₹)' }
 			]
 		},
 		{

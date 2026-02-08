@@ -584,5 +584,21 @@ export class AuthService {
 		return this.getCurrentUserValue()?.user_type || null;
 	}
 
+	/**
+	* Forgot password - send reset link
+	*/
+	forgotPassword(email: string): Observable<{message: string, token?: string}> {
+		return this.http.post<{message: string, token?: string}>(`${this.API_URL}/forgot-password`, { email })
+			.pipe(catchError(this.handleError));
+	}
 
+	/**
+	* Reset password with token
+	*/
+	resetPassword(token: string, newPassword: string): Observable<{message: string}> {
+		return this.http.post<{message: string}>(`${this.API_URL}/reset-password`, {
+			token,
+			new_password: newPassword
+		}).pipe(catchError(this.handleError));
+	}
 }

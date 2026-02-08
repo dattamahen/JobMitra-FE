@@ -1,5 +1,5 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,7 +15,7 @@ import { AuthService, LoginRequest, LoginResponse, RegisterRequest } from '../se
 import { GoogleAuthService } from '../services/google-auth.service';
 import { DynamicFormComponent } from '../shared/components/dynamic-form/dynamic-form.component';
 import { FormConfig } from '../shared/interfaces/form.interfaces';
-import { LOGIN_FORM_CONFIG, SIGNUP_FORM_CONFIG } from '../shared/components/dynamic-form/form-configs';
+import { LOGIN_FORM_CONFIG, SIGNUP_FORM_CONFIG, FORGOT_PASSWORD_FORM_CONFIG, RESET_PASSWORD_FORM_CONFIG } from '../shared/components/dynamic-form/form-configs';
 import { LOGIN_FEATURES, ENTERPRISE_STATS, CERTIFICATIONS } from '../data/login-page-data';
 import { LOGIN_PAGE_CONSTANTS } from './login-page.constants';
 
@@ -41,15 +41,21 @@ import { LOGIN_PAGE_CONSTANTS } from './login-page.constants';
 })
 export class LoginPage implements OnInit {
 	isSignupMode = signal(false);
+	isForgotPasswordMode = signal(false);
+	isResetPasswordMode = signal(false);
 	loginForm: FormGroup;
 	signupForm: FormGroup;
 	isLoading = false;
 	errorMessage = '';
+	successMessage = '';
 	showPassword = false;
+	resetToken = '';
 	readonly CONSTANTS = LOGIN_PAGE_CONSTANTS;
 	
 	loginFormConfig: FormConfig = { ...LOGIN_FORM_CONFIG, loading: false };
 	signupFormConfig: FormConfig = { ...SIGNUP_FORM_CONFIG, loading: false };
+	forgotPasswordFormConfig: FormConfig = { ...FORGOT_PASSWORD_FORM_CONFIG, loading: false };
+	resetPasswordFormConfig: FormConfig = { ...RESET_PASSWORD_FORM_CONFIG, loading: false };
 	
 	features = LOGIN_FEATURES;
 	stats = ENTERPRISE_STATS;
@@ -57,6 +63,7 @@ export class LoginPage implements OnInit {
 
 	constructor(
 		private router: Router,
+		private route: ActivatedRoute,
 		private formBuilder: FormBuilder,
 		private authService: AuthService,
 		private googleAuthService: GoogleAuthService,
@@ -84,6 +91,14 @@ export class LoginPage implements OnInit {
 		if (isAuth && userType) {
 			this.redirectBasedOnUserType(userType);
 		}
+
+		// Check for reset token in URL
+		this.route.queryParams.subscribe(params => {
+			if (params['token']) {
+				this.resetToken = params['token'];
+				this.isResetPasswordMode.set(true);
+			}
+		});
 		
 		// Initialize Google Sign-In
 		this.initializeGoogleSignIn();
@@ -94,9 +109,12 @@ export class LoginPage implements OnInit {
 			await this.googleAuthService.initializeGoogleSignIn();
 			
 			// Render Google Sign-In button only in login mode
-			if (!this.isSignupMode()) {
+			if (!this.isSignupMode() && !this.isForgotPasswordMode() && !this.isResetPasswordMode()) {
 				setTimeout(() => {
-					this.googleAuthService.renderSignInButton('google-signin-button');
+					const container = document.getElementById('google-signin-button');
+					if (container) {
+						this.googleAuthService.renderSignInButton('google-signin-button');
+					}
 				}, 100);
 			}
 		} catch (error) {
@@ -163,14 +181,85 @@ export class LoginPage implements OnInit {
 
 	toggleSignupMode(): void {
 		this.isSignupMode.set(!this.isSignupMode());
+		this.isForgotPasswordMode.set(false);
+		this.isResetPasswordMode.set(false);
 		this.errorMessage = '';
+		this.successMessage = '';
 		
 		// Re-render Google Sign-In button when switching to login mode
 		if (!this.isSignupMode()) {
 			setTimeout(() => {
-				this.googleAuthService.renderSignInButton('google-signin-button');
+				const container = document.getElementById('google-signin-button');
+				if (container) {
+					this.googleAuthService.renderSignInButton('google-signin-button');
+				}
 			}, 100);
 		}
+	}
+
+	toggleForgotPasswordMode(): void {
+		this.isForgotPasswordMode.set(!this.isForgotPasswordMode());
+		this.isSignupMode.set(false);
+		this.isResetPasswordMode.set(false);
+		this.errorMessage = '';
+		this.successMessage = '';
+	}
+
+	toggleResetPasswordMode(): void {
+		this.isResetPasswordMode.set(false);
+		this.isForgotPasswordMode.set(false);
+		this.isSignupMode.set(false);
+		this.errorMessage = '';
+		this.successMessage = '';
+		this.router.navigate(['/login']);
+	}
+
+	onForgotPassword(formData: any): void {
+		this.isLoading = true;
+		this.forgotPasswordFormConfig.loading = true;
+		this.errorMessage = '';
+		this.successMessage = '';
+
+		this.authService.forgotPassword(formData.email).subscribe({
+			next: (response) => {
+				this.isLoading = false;
+				this.forgotPasswordFormConfig.loading = false;
+				this.successMessage = 'Password reset link sent! Check your email.';
+			},
+			error: (error) => {
+				this.isLoading = false;
+				this.forgotPasswordFormConfig.loading = false;
+				this.errorMessage = error.error?.detail || 'Failed to send reset link';
+			}
+		});
+	}
+
+	onResetPassword(formData: any): void {
+		if (formData.new_password !== formData.confirm_password) {
+			this.errorMessage = 'Passwords do not match';
+			return;
+		}
+
+		this.isLoading = true;
+		this.resetPasswordFormConfig.loading = true;
+		this.errorMessage = '';
+		this.successMessage = '';
+
+		this.authService.resetPassword(this.resetToken, formData.new_password).subscribe({
+			next: (response) => {
+				this.isLoading = false;
+				this.resetPasswordFormConfig.loading = false;
+				this.successMessage = response.message;
+				setTimeout(() => {
+					this.toggleResetPasswordMode();
+				}, 2000);
+			},
+			error: (error) => {
+				this.isLoading = false;
+				this.resetPasswordFormConfig.loading = false;
+				this.errorMessage = error.error?.detail || 'Failed to reset password';
+			}
+		});
 	}
 
 	onSignup(formData: any): void {

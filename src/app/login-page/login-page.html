@@ -48,7 +48,12 @@
 		<div class="auth-container">
 			<div class="auth-header">
 				<h1 class="auth-title">Welcome</h1>
-				<p class="auth-subtitle">{{ isSignupMode() ? 'Create your account to get started' : 'Please sign in to continue' }}</p>
+				<p class="auth-subtitle">
+					{{ isSignupMode() ? 'Create your account to get started' : 
+					   isForgotPasswordMode() ? 'Reset your password' :
+					   isResetPasswordMode() ? 'Enter your new password' :
+					   'Please sign in to continue' }}
+				</p>
 			</div>
 			
 			<!-- Error Message Display -->
@@ -59,8 +64,16 @@
 				</div>
 			}
 
+			<!-- Success Message Display -->
+			@if (successMessage) {
+				<div class="success-message">
+					<mat-icon>check_circle</mat-icon>
+					{{ successMessage }}
+				</div>
+			}
+
 			<!-- Google Sign-in Button - Only show in login mode -->
-			@if (!isSignupMode()) {
+			@if (!isSignupMode() && !isForgotPasswordMode() && !isResetPasswordMode()) {
 				<div id="google-signin-button" class="google-signin-container"></div>
 
 				<div class="divider">
@@ -69,7 +82,7 @@
 			}
 
 			<!-- Dynamic Forms -->
-			@if (!isSignupMode()) {
+			@if (!isSignupMode() && !isForgotPasswordMode() && !isResetPasswordMode()) {
 				<div class="auth-form">
 					<app-dynamic-form 
 						[config]="loginFormConfig" 
@@ -86,13 +99,38 @@
 					</app-dynamic-form>
 				</div>
 			}
+
+			@if (isForgotPasswordMode()) {
+				<div class="auth-form">
+					<app-dynamic-form 
+						[config]="forgotPasswordFormConfig" 
+						(formSubmit)="onForgotPassword($event)">
+					</app-dynamic-form>
+				</div>
+			}
+
+			@if (isResetPasswordMode()) {
+				<div class="auth-form">
+					<app-dynamic-form 
+						[config]="resetPasswordFormConfig" 
+						(formSubmit)="onResetPassword($event)">
+					</app-dynamic-form>
+				</div>
+			}
 			
 			<div class="auth-toggle">
-				@if (!isSignupMode()) {
+				@if (!isSignupMode() && !isForgotPasswordMode() && !isResetPasswordMode()) {
 					<p>Don't have an account? <a (click)="toggleSignupMode()" class="toggle-link">Create account</a></p>
+					<p><a (click)="toggleForgotPasswordMode()" class="toggle-link">Forgot Password?</a></p>
 				}
 				@if (isSignupMode()) {
 					<p>Already have an account? <a (click)="toggleSignupMode()" class="toggle-link">Sign in</a></p>
+				}
+				@if (isForgotPasswordMode()) {
+					<p><a (click)="toggleForgotPasswordMode()" class="toggle-link">Back to Sign in</a></p>
+				}
+				@if (isResetPasswordMode()) {
+					<p><a (click)="toggleResetPasswordMode()" class="toggle-link">Back to Sign in</a></p>
 				}
 			</div>
 		</div>
