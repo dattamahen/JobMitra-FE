@@ -1,4 +1,5 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -61,6 +62,8 @@ export class LoginPage implements OnInit {
 	stats = ENTERPRISE_STATS;
 	certifications = CERTIFICATIONS;
 
+	private platformId = inject(PLATFORM_ID);
+	
 	constructor(
 		private router: Router,
 		private route: ActivatedRoute,
@@ -105,6 +108,8 @@ export class LoginPage implements OnInit {
 	}
 	
 	private async initializeGoogleSignIn(): Promise<void> {
+		if (!isPlatformBrowser(this.platformId)) return;
+		
 		try {
 			await this.googleAuthService.initializeGoogleSignIn();
 			
@@ -187,7 +192,7 @@ export class LoginPage implements OnInit {
 		this.successMessage = '';
 		
 		// Re-render Google Sign-In button when switching to login mode
-		if (!this.isSignupMode()) {
+		if (!this.isSignupMode() && isPlatformBrowser(this.platformId)) {
 			setTimeout(() => {
 				const container = document.getElementById('google-signin-button');
 				if (container) {

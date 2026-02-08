@@ -181,22 +181,13 @@
 					Saving...
 				</button>
 			} @else {
-				@if (config.submitLabel === 'Sign In') {
-					<div class="form-actions-row">
-						<button mat-raised-button color="primary" type="submit" [disabled]="form.invalid" class="submit-btn">
-							{{ config.submitLabel || submitButtonText || 'Save' }}
-						</button>
-						<a href="#" class="forgot-password">Forgot password?</a>
-					</div>
-				} @else {
-					<button mat-raised-button color="primary" type="submit" [disabled]="form.invalid" class="submit-btn">
-						{{ config.submitLabel || submitButtonText || 'Save' }}
+				<button mat-raised-button color="primary" type="submit" [disabled]="form.invalid" class="submit-btn">
+					{{ config.submitLabel || submitButtonText || 'Save' }}
+				</button>
+				@if (config.showCancel !== false) {
+					<button mat-button type="button" (click)="onToggleEdit()" class="cancel-btn">
+						Cancel
 					</button>
-					@if (config.showCancel !== false) {
-						<button mat-button type="button" (click)="onToggleEdit()" class="cancel-btn">
-							Cancel
-						</button>
-					}
 				}
 			}
 		}

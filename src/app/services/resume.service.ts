@@ -34,6 +34,8 @@ export class ResumeService {
 		return 'danger';
 	});
 
+
+
 	constructor(
 		private http: HttpClient,
 		private authService: AuthService
@@ -181,38 +183,7 @@ export class ResumeService {
 		return errors;
 	}
 
-	calculateCompletionPercentage(): number {
-		const resume = this.currentResumeSignal();
-		if (!resume) return 0;
 
-		let completed = 0;
-		let total = 7; // Total sections
-
-		const { sections } = resume;
-		
-		// Personal info (required)
-		if (sections.personal_info?.full_name && sections.personal_info?.email) completed++;
-		
-		// Summary
-		if (sections.summary?.trim()) completed++;
-		
-		// Experience
-		if (sections.experience?.length > 0) completed++;
-		
-		// Education
-		if (sections.education?.length > 0) completed++;
-		
-		// Skills
-		if (sections.skills?.technical?.length > 0 || sections.skills?.soft?.length > 0) completed++;
-		
-		// Projects
-		if (sections.projects?.length > 0) completed++;
-		
-		// Certifications
-		if (sections.certifications?.length > 0) completed++;
-
-		return Math.round((completed / total) * 100);
-	}
 
 	// Export functionality
 	exportToPDF(resumeId: string): Observable<Blob> {
