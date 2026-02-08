@@ -1,10 +1,9 @@
 import { Component, computed, effect, Inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
 import { VoiceAiService } from '../../services/voice-ai.service';
 import { MockInterviewService, InterviewSession, InterviewQuestion, InterviewEvaluation } from '../../services/mock-interview.service';
@@ -14,14 +13,11 @@ import { ConfirmationDialogComponent } from '../../shared/components/confirmatio
 
 @Component({
 	selector: 'app-mock-interview-modal',
-	standalone: true,
 	imports: [
-		CommonModule,
 		MatDialogModule,
 		MatButtonModule,
 		MatIconModule,
 		MatProgressSpinnerModule,
-		MatSnackBarModule,
 		MatCardModule,
 		LoadingComponent
 	],
@@ -33,30 +29,28 @@ import { ConfirmationDialogComponent } from '../../shared/components/confirmatio
 	}
 })
 export class MockInterviewModalComponent {
-	// Signals for state management
-	currentQuestionIndex = signal(0);
-	isRecording = signal(false);
-	isLoading = signal(false);
-	interviewSession = signal<InterviewSession | null>(null);
-	currentAnswer = signal('');
-	answers = signal<Array<{question_id: string, answer: string}>>([]);
-	evaluation = signal<InterviewEvaluation | null>(null);
-	phase = signal<'instructions' | 'generating' | 'loading' | 'interview' | 'completed' | 'evaluation'>('instructions');
-	isGeneratingQuestions = signal(false);
-	isTransitioning = signal(false);
+	// Signals for reactive state management
+	readonly currentQuestionIndex = signal(0);
+	readonly isRecording = signal(false);
+	readonly isLoading = signal(false);
+	readonly interviewSession = signal<InterviewSession | null>(null);
+	readonly currentAnswer = signal('');
+	readonly answers = signal<Array<{question_id: string, answer: string}>>([]);
+	readonly evaluation = signal<InterviewEvaluation | null>(null);
+	readonly phase = signal<'instructions' | 'generating' | 'loading' | 'interview' | 'completed' | 'evaluation'>('instructions');
+	readonly isGeneratingQuestions = signal(false);
+	readonly isTransitioning = signal(false);
 	
-	// Instructions data
-	instructions = INTERVIEW_INSTRUCTIONS;
+	readonly instructions = INTERVIEW_INSTRUCTIONS;
 
 	constructor(
 		public voiceService: VoiceAiService,
-		private mockInterviewService: MockInterviewService,
-		private snackBar: MatSnackBar,
-		private dialog: MatDialog,
-		private dialogRef: MatDialogRef<MockInterviewModalComponent>,
+		private readonly mockInterviewService: MockInterviewService,
+		private readonly snackBar: MatSnackBar,
+		private readonly dialog: MatDialog,
+		private readonly dialogRef: MatDialogRef<MockInterviewModalComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: any
 	) {
-		// Check if we're in generating mode
 		if (this.data?.isGenerating) {
 			this.phase.set('generating');
 			this.isGeneratingQuestions.set(true);
@@ -78,24 +72,24 @@ export class MockInterviewModalComponent {
 		});
 	}
 
-	currentQuestion = computed(() => {
+	readonly currentQuestion = computed(() => {
 		const session = this.interviewSession();
 		const index = this.currentQuestionIndex();
 		return session?.questions[index] || null;
 	});
 
-	progress = computed(() => {
+	readonly progress = computed(() => {
 		const session = this.interviewSession();
 		const index = this.currentQuestionIndex();
 		if (!session) return 0;
 		return ((index + 1) / session.questions.length) * 100;
 	});
 
-	canGoNext = computed(() => {
+	readonly canGoNext = computed(() => {
 		return this.currentAnswer().trim().length > 0;
 	});
 
-	isLastQuestion = computed(() => {
+	readonly isLastQuestion = computed(() => {
 		const session = this.interviewSession();
 		const index = this.currentQuestionIndex();
 		return session ? index >= session.questions.length - 1 : false;
@@ -137,12 +131,10 @@ export class MockInterviewModalComponent {
 		
 		if (!session || !question || !answer.trim()) return;
 
-		// Stop recording and disable recording button
 		this.isRecording.set(false);
 		this.voiceService.stopListening();
 		this.isTransitioning.set(true);
 
-		// Save current answer
 		const currentAnswers = this.answers();
 		currentAnswers.push({
 			question_id: question.id,
@@ -150,7 +142,6 @@ export class MockInterviewModalComponent {
 		});
 		this.answers.set([...currentAnswers]);
 
-		// Clear current answer and voice transcript
 		this.currentAnswer.set('');
 		this.voiceService.clearTranscript();
 
@@ -173,7 +164,6 @@ export class MockInterviewModalComponent {
 
 		this.isLoading.set(true);
 
-		// Prepare JSON format for evaluation
 		const interviewData = {
 			session_id: session.session_id,
 			user_profile: {
@@ -187,7 +177,6 @@ export class MockInterviewModalComponent {
 			}))
 		};
 
-		// Send to backend for evaluation
 		this.mockInterviewService.submitInterviewForEvaluation(interviewData).subscribe({
 			next: (response) => {
 				if (response.evaluation) {
@@ -209,9 +198,7 @@ export class MockInterviewModalComponent {
 	}
 
 	viewResults(): void {
-		const evaluation = this.evaluation();
-		if (evaluation) {
-			// Already have evaluation, just show it
+		if (this.evaluation()) {
 			this.phase.set('evaluation');
 		}
 	}
