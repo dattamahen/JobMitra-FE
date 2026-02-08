@@ -31,6 +31,7 @@ export type {
 	SavedJob,
 	JobApplication
 } from '../types/job.types';
+export type { ApplicationData } from '../types/application.types';
 export type { 
 	JobApplication as ApplicationJobApplication, 
 	CreateApplicationRequest, 
@@ -38,7 +39,7 @@ export type {
 	ApplicationFilters,
 	ApplicationsResponse,
 	ApplicationStats
-} from './application.service';
+} from '../types/application.types';
 export type { 
 	InterviewQuestion,
 	InterviewSession,

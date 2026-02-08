@@ -8,29 +8,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { JobService } from '../../services/job.service';
 import { UserService } from '../../services/user.service';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
-
-interface ApplicationData {
-	application_id: string;
-	job_title: string;
-	company: string;
-	status: 'applied' | 'under_review' | 'interview_scheduled' | 'interviewed' | 'offer_received' | 'rejected' | 'withdrawn';
-	applied_date: string;
-	interview_stages?: {
-		stage_id: string;
-		stage_name: string;
-		status: 'scheduled' | 'completed' | 'cancelled';
-		scheduled_date?: string;
-		feedback?: string;
-	}[];
-	offer_details?: {
-		salary: number;
-		currency: string;
-		start_date?: string;
-	};
-	notes?: string;
-	tags?: string[];
-	progress_percentage?: number;
-}
+import type { ApplicationData } from '../../types/application.types';
 
 @Component({
 	selector: 'app-applications-page',
