@@ -1,4 +1,4 @@
-import { Component, OnInit, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,6 +14,8 @@ import {
 } from '../../data/job-search-data';
 import { SkillAssessmentService, SkillLevel, AssessmentResult, UsageStatus, RecommendedSkill } from '../../services/skill-assessment.service';
 import { MockInterviewService } from '../../services/mock-interview.service';
+import { InterviewHistoryComponent, InterviewSession } from '../../shared/components/interview-history/interview-history.component';
+import { AuthService } from '../../services/auth.service';
 
 export interface SkillAssessment {
 	readonly id: string;
@@ -39,7 +41,7 @@ export interface AssessmentHistory {
 
 @Component({
 	selector: 'app-skill-assessment-page',
-	imports: [CommonModule, MatIconModule],
+	imports: [CommonModule, MatIconModule, InterviewHistoryComponent],
 	templateUrl: './skill-assessment.html',
 	styleUrls: ['./skill-assessment.css'],
 	changeDetection: ChangeDetectionStrategy.OnPush
@@ -47,6 +49,7 @@ export interface AssessmentHistory {
 export class SkillAssessmentPage implements OnInit {
 	skillAssessments: SkillAssessment[] = [];
 	assessmentHistory: AssessmentHistory[] = [];
+	interviewHistory = signal<InterviewSession[]>([]);
 	selectedSkillResources: readonly LearningResource[] = [];
 	showLearningModal: boolean = false;
 	selectedSkill: string = '';
@@ -85,6 +88,7 @@ export class SkillAssessmentPage implements OnInit {
 
 	private skillAssessmentService = inject(SkillAssessmentService);
 	private mockInterviewService = inject(MockInterviewService);
+	private authService = inject(AuthService);
 
 	constructor() {}
 
@@ -96,13 +100,33 @@ export class SkillAssessmentPage implements OnInit {
 			});
 		
 		this.loadSkillAssessments();
-		this.loadAssessmentHistory();
 		this.loadUsageStatus();
 		this.loadMockInterviewData();
+		this.loadInterviewHistory();
 	}
 
 	private loadMockInterviewData(): void {
 		// Load from service/API - no mock data
+	}
+
+	private loadInterviewHistory(): void {
+		this.authService.getCurrentUser()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe(user => {
+				if (user?.user_id) {
+					this.mockInterviewService.getInterviewHistory(user.user_id)
+						.pipe(takeUntilDestroyed(this.destroyRef))
+						.subscribe({
+							next: (response) => {
+								if (response.success && response.interviews) {
+									this.interviewHistory.set(response.interviews);
+									this.cdr.markForCheck();
+								}
+							},
+							error: (error) => console.error('Error loading interview history:', error)
+						});
+				}
+			});
 	}
 
 	private loadSkillAssessments(): void {

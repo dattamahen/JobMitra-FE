@@ -110,11 +110,17 @@
 	<!-- End Screen -->
 	@if (phase() === 'completed') {
 		<div class="completion-section">
-			<div class="completion-header">
-				<mat-icon class="success-icon">check_circle</mat-icon>
-				<h2>Interview Completed!</h2>
-				<p>Thank you for participating in the mock interview.</p>
-			</div>
+			@if (isLoading()) {
+				<mat-spinner diameter="60"></mat-spinner>
+				<h2>Evaluating Your Performance...</h2>
+				<p>Our AI is analyzing your answers. This may take a moment.</p>
+			} @else {
+				<div class="completion-header">
+					<mat-icon class="success-icon">check_circle</mat-icon>
+					<h2>Interview Completed!</h2>
+					<p>Thank you for participating in the mock interview.</p>
+				</div>
+			}
 		</div>
 	}
 
@@ -168,8 +174,11 @@
 	}
 	
 	@if (phase() === 'completed') {
-		<button mat-button (click)="closeModal()">Close</button>
-		<button mat-raised-button color="primary" (click)="viewResults()">View Results</button>
+		@if (!isLoading() && evaluation()) {
+			<button mat-raised-button color="primary" (click)="viewResults()">View Results</button>
+		} @else if (!isLoading()) {
+			<button mat-button (click)="closeModal()">Close</button>
+		}
 	}
 	
 	@if (phase() === 'evaluation') {

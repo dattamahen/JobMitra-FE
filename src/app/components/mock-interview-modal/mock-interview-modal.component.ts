@@ -150,8 +150,9 @@ export class MockInterviewModalComponent {
 		});
 		this.answers.set([...currentAnswers]);
 
-		// Clear current answer
+		// Clear current answer and voice transcript
 		this.currentAnswer.set('');
+		this.voiceService.clearTranscript();
 
 		if (this.isLastQuestion()) {
 			this.submitInterview();
@@ -170,10 +171,15 @@ export class MockInterviewModalComponent {
 		
 		if (!session) return;
 
+		this.isLoading.set(true);
+
 		// Prepare JSON format for evaluation
 		const interviewData = {
 			session_id: session.session_id,
-			user_profile: this.data?.userProfile,
+			user_profile: {
+				...this.data?.userProfile,
+				user_id: this.data?.userProfile?.user_id || 'user_' + Date.now()
+			},
 			questions_and_answers: session.questions.map((q, index) => ({
 				question_id: q.id,
 				question: q.question,
@@ -183,35 +189,31 @@ export class MockInterviewModalComponent {
 
 		// Send to backend for evaluation
 		this.mockInterviewService.submitInterviewForEvaluation(interviewData).subscribe({
-			next: () => {
-				this.phase.set('completed');
+			next: (response) => {
+				if (response.evaluation) {
+					this.evaluation.set(response.evaluation);
+					this.phase.set('evaluation');
+				} else {
+					this.phase.set('completed');
+				}
+				this.isLoading.set(false);
+				this.dialogRef.close({ success: true, evaluation: response.evaluation });
 			},
 			error: (error) => {
 				console.error('Interview submission error:', error);
 				this.snackBar.open('Failed to submit interview. Please try again.', 'Close', { duration: 5000 });
 				this.phase.set('completed');
+				this.isLoading.set(false);
 			}
 		});
 	}
 
 	viewResults(): void {
-		const session = this.interviewSession();
-		const answers = this.answers();
-		
-		if (!session) return;
-
-		this.isLoading.set(true);
-		this.mockInterviewService.evaluateInterview(session.session_id, answers).subscribe({
-			next: (evaluation) => {
-				this.evaluation.set(evaluation);
-				this.phase.set('evaluation');
-				this.isLoading.set(false);
-			},
-			error: (error) => {
-				this.snackBar.open('Failed to evaluate interview', 'Close', { duration: 3000 });
-				this.isLoading.set(false);
-			}
-		});
+		const evaluation = this.evaluation();
+		if (evaluation) {
+			// Already have evaluation, just show it
+			this.phase.set('evaluation');
+		}
 	}
 
 	parseAIQuestions(questions: string[] | string): InterviewQuestion[] {

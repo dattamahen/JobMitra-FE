@@ -70,28 +70,6 @@ h1, h2 {
 	gap: 8px;
 }
 
-.history-item {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	background: white;
-	padding: 15px;
-	border-radius: 8px;
-	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-	margin-bottom: 10px;
-}
-
-.session-score {
-	display: flex;
-	align-items: center;
-	gap: 15px;
-}
-
-.score {
-	font-size: 1.2em;
-	font-weight: bold;
-}
-
 .review-btn { 
 	width: auto; 
 	padding: 6px 12px; 

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,16 +10,18 @@ import { FeatureGuardDirective } from '../../shared/directives/feature-guard.dir
 import { InterviewService } from '../../services/interview.service';
 import { AuthService } from '../../services/auth.service';
 import { INTERVIEW_TYPES } from '../../data/mock-interview-data';
+import { InterviewHistoryComponent, InterviewSession } from '../../shared/components/interview-history/interview-history.component';
 
 @Component({
 	selector: 'app-mock-interviews-page',
-	imports: [CommonModule, MatButtonModule, MatIconModule, FeatureGuardDirective],
+	imports: [CommonModule, MatButtonModule, MatIconModule, FeatureGuardDirective, InterviewHistoryComponent],
 	templateUrl: './mock-interviews.html',
 	styleUrls: ['./mock-interviews.css'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MockInterviewsPage {
 	interviewTypes = INTERVIEW_TYPES;
+	interviewHistory = signal<InterviewSession[]>([]);
 	private destroyRef = inject(DestroyRef);
 	private mockInterviewService = inject(MockInterviewService);
 	private featureUsageService = inject(FeatureUsageService);
@@ -32,6 +34,28 @@ export class MockInterviewsPage {
 		this.featureUsageService.refreshFeatureUsage()
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe();
+		
+		// Load interview history
+		this.loadInterviewHistory();
+	}
+
+	private loadInterviewHistory(): void {
+		this.authService.getCurrentUser()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe(user => {
+				if (user?.user_id) {
+					this.mockInterviewService.getInterviewHistory(user.user_id)
+						.pipe(takeUntilDestroyed(this.destroyRef))
+						.subscribe({
+							next: (response) => {
+								if (response.success && response.interviews) {
+									this.interviewHistory.set(response.interviews);
+								}
+							},
+							error: (error) => console.error('Error loading interview history:', error)
+						});
+				}
+			});
 	}
 
 	onStartInterview(type: string = 'technical'): void {
@@ -83,6 +107,13 @@ export class MockInterviewsPage {
 				error: (error) => {
 					dialogRef.close();
 					alert('Error generating questions. Please try again.');
+				}
+			});
+			
+			// Reload history after interview completes
+			dialogRef.afterClosed().subscribe((result: any) => {
+				if (result?.success) {
+					this.loadInterviewHistory();
 				}
 			});
 		});
