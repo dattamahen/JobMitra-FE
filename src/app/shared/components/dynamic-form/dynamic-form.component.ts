@@ -67,12 +67,15 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 		if (this.form && this.initialValues && Object.keys(this.initialValues).length > 0) {
 			setTimeout(() => {
 				this.form.patchValue(this.initialValues, { emitEvent: false });
+				// Mark all controls with values as touched and dirty to trigger label float
 				Object.keys(this.form.controls).forEach(key => {
 					const control = this.form.get(key);
 					if (control?.value) {
 						control.markAsTouched();
+						control.markAsDirty();
 					}
 				});
+				this.form.updateValueAndValidity();
 				this.cdr.detectChanges();
 			}, 100);
 		}
