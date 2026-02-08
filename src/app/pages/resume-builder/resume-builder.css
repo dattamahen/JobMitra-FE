@@ -67,29 +67,6 @@
 	gap: 12px;
 }
 
-.completion-percentage {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	min-width: 40px;
-}
-
-.percentage-text {
-	font-size: 0.75rem;
-	font-weight: 600;
-	color: #666;
-	background: #f0f0f0;
-	padding: 4px 8px;
-	border-radius: 12px;
-	min-width: 32px;
-	text-align: center;
-}
-
-.section-item.active .percentage-text {
-	background: #1976d2;
-	color: white;
-}
-
 /* Template Section */
 .template-section {
 	padding: 20px;

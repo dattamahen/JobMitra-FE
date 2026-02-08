@@ -44,7 +44,7 @@
 	font-size: 1.25rem;
 	font-weight: 700;
 	margin: 0;
-	color: #fff;
+	color: #fff !important;
 	letter-spacing: 0.5px;
 }
 

@@ -87,25 +87,7 @@ export class ResumeBuilderPage implements OnInit {
 	private http = inject(HttpClient);
 	private featureUsageService = inject(FeatureUsageService);
 	
-	// Computed values
-	readonly completionPercentage = computed(() => {
-		return this.resumeService.calculateCompletionPercentage();
-	});
 
-	readonly sectionProgress = computed(() => {
-		const resume = this.currentResume();
-		if (!resume) return {};
-		
-		return {
-			personal_info: !!(resume.sections.personal_info?.full_name && resume.sections.personal_info?.email),
-			summary: !!resume.sections.summary?.trim(),
-			experience: resume.sections.experience?.length > 0,
-			education: resume.sections.education?.length > 0,
-			skills: (resume.sections.skills?.technical?.length > 0 || resume.sections.skills?.soft?.length > 0),
-			projects: resume.sections.projects?.length > 0,
-			certifications: resume.sections.certifications?.length > 0
-		};
-	});
 
 	// Form groups
 	personalInfoForm!: FormGroup;
@@ -926,117 +908,27 @@ export class ResumeBuilderPage implements OnInit {
 	}
 
 	isSectionComplete(sectionId: string): boolean {
-		const progress = this.sectionProgress();
-		return progress[sectionId as keyof typeof progress] || false;
-	}
-
-	getSectionCompletionPercentage(sectionId: string): number {
 		const resume = this.currentResume();
-		if (!resume) return 0;
-
+		if (!resume) return false;
+		
 		switch (sectionId) {
 			case 'personal_info':
-				return this.calculatePersonalInfoCompletion(resume.sections.personal_info);
+				return !!(resume.sections.personal_info?.full_name && resume.sections.personal_info?.email);
 			case 'summary':
-				return this.calculateSummaryCompletion(resume.sections.summary);
+				return !!resume.sections.summary?.trim();
 			case 'experience':
-				return this.calculateExperienceCompletion(resume.sections.experience);
+				return resume.sections.experience?.length > 0;
 			case 'education':
-				return this.calculateEducationCompletion(resume.sections.education);
+				return resume.sections.education?.length > 0;
 			case 'skills':
-				return this.calculateSkillsCompletion(resume.sections.skills);
+				return (resume.sections.skills?.technical?.length > 0 || resume.sections.skills?.soft?.length > 0);
 			case 'projects':
-				return this.calculateProjectsCompletion(resume.sections.projects);
+				return resume.sections.projects?.length > 0;
 			case 'certifications':
-				return this.calculateCertificationsCompletion(resume.sections.certifications);
+				return resume.sections.certifications?.length > 0;
 			default:
-				return 0;
+				return false;
 		}
-	}
-
-	private calculatePersonalInfoCompletion(personalInfo: any): number {
-		if (!personalInfo) return 0;
-		const fields = ['full_name', 'email', 'phone', 'location'];
-		const optionalFields = ['linkedin', 'portfolio', 'github'];
-		const requiredCompleted = fields.filter(field => personalInfo[field]?.trim()).length;
-		const optionalCompleted = optionalFields.filter(field => personalInfo[field]?.trim()).length;
-		return Math.round(((requiredCompleted / fields.length) * 70) + ((optionalCompleted / optionalFields.length) * 30));
-	}
-
-	private calculateSummaryCompletion(summary: string): number {
-		if (!summary?.trim()) return 0;
-		if (summary.trim().length < 50) return 30;
-		if (summary.trim().length < 100) return 60;
-		return 100;
-	}
-
-	private calculateExperienceCompletion(experience: any[]): number {
-		if (!experience?.length) return 0;
-		const totalFields = experience.length * 4; // company, position, duration, description
-		const completedFields = experience.reduce((count, exp) => {
-			return count + 
-				(exp.company?.trim() ? 1 : 0) +
-				(exp.position?.trim() ? 1 : 0) +
-				(exp.duration?.trim() ? 1 : 0) +
-				(exp.description?.trim() ? 1 : 0);
-		}, 0);
-		return Math.round((completedFields / totalFields) * 100);
-	}
-
-	private calculateEducationCompletion(education: any[]): number {
-		if (!education?.length) return 0;
-		const totalFields = education.length * 3; // institution, degree, year (gpa is optional)
-		const completedFields = education.reduce((count, edu) => {
-			return count + 
-				(edu.institution?.trim() ? 1 : 0) +
-				(edu.degree?.trim() ? 1 : 0) +
-				(edu.year?.toString().trim() ? 1 : 0);
-		}, 0);
-		return Math.round((completedFields / totalFields) * 100);
-	}
-
-	private calculateSkillsCompletion(skills: any): number {
-		if (!skills) return 0;
-		
-		let technicalCompletion = 0;
-		if (skills.technical?.length > 0) {
-			const totalTechFields = skills.technical.length * 3; // name, version, last_used
-			const completedTechFields = skills.technical.reduce((count: number, skill: any) => {
-				return count + 
-					(skill.name?.trim() ? 1 : 0) +
-					(skill.version?.trim() ? 1 : 0) +
-					(skill.last_used?.trim() ? 1 : 0);
-			}, 0);
-			technicalCompletion = (completedTechFields / totalTechFields) * 70; // 70% weight for technical
-		}
-		
-		const softCompletion = (skills.soft?.length > 0 ? 30 : 0); // 30% weight for soft skills
-		
-		return Math.round(technicalCompletion + softCompletion);
-	}
-
-	private calculateProjectsCompletion(projects: any[]): number {
-		if (!projects?.length) return 0;
-		const totalFields = projects.length * 3; // name, description, technologies (url is optional)
-		const completedFields = projects.reduce((count, proj) => {
-			return count + 
-				(proj.name?.trim() ? 1 : 0) +
-				(proj.description?.trim() ? 1 : 0) +
-				(proj.technologies?.length ? 1 : 0);
-		}, 0);
-		return Math.round((completedFields / totalFields) * 100);
-	}
-
-	private calculateCertificationsCompletion(certifications: any[]): number {
-		if (!certifications?.length) return 0;
-		const totalFields = certifications.length * 3; // name, issuer, date (credential_id is optional)
-		const completedFields = certifications.reduce((count, cert) => {
-			return count + 
-				(cert.name?.trim() ? 1 : 0) +
-				(cert.issuer?.trim() ? 1 : 0) +
-				(cert.date?.trim() ? 1 : 0);
-		}, 0);
-		return Math.round((completedFields / totalFields) * 100);
 	}
 
 	getATSScoreClass(): string {
