@@ -85,23 +85,11 @@
 		}
 		
 		<div class="assessment-history">
-			<h2>Recent Assessments</h2>
 			<div class="history-list">
-				@for (item of assessmentHistory; track item.id) {
-					<div class="history-item">
-						<div class="assessment-info">
-							<h4>{{ item.skillName }}</h4>
-							<p>Completed: {{ formatDate(item.completedDate) }}</p>
-						</div>
-						<div class="assessment-result">
-							<span class="score">{{ item.score }}%</span>
-							<span [class]="getBadgeClass(item.level)">{{ item.level }}</span>
-							<button class="certificate-btn" (click)="getCertificate(item)" [disabled]="!item.hasCertificate">
-								{{ item.hasCertificate ? 'Get Certificate' : 'No Certificate' }}
-							</button>
-						</div>
-					</div>
-				}
+				<app-interview-history 
+			[sessions]="interviewHistory()" 
+			[title]="'Recent Assessments'"
+			[emptyMessage]="'No assessments yet. Start a mock interview to see your results here!'" />
 			</div>
 		</div>
 		

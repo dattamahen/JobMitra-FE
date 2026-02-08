@@ -99,4 +99,8 @@ export class MockInterviewService {
 	submitInterviewForEvaluation(interviewData: any): Observable<any> {
 		return this.http.post(`${this.baseUrl}/submit-for-evaluation`, interviewData);
 	}
+
+	getInterviewHistory(userId: string, limit: number = 10): Observable<any> {
+		return this.http.get(`${this.baseUrl}/history/${userId}?limit=${limit}`);
+	}
 }

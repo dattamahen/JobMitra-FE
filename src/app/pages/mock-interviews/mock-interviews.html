@@ -48,30 +48,8 @@
 		}
 	</div>
 	
-	<div class="interview-history">
-		<h2>Recent Interview Sessions</h2>
-		<div class="history-list">
-			<div class="history-item">
-				<div class="session-info">
-					<h4>Technical Interview - JavaScript</h4>
-					<p>Completed: March 20, 2025</p>
-				</div>
-				<div class="session-score">
-					<span class="score">85%</span>
-					<button mat-button class="review-btn">View Feedback</button>
-				</div>
-			</div>
-			
-			<div class="history-item">
-				<div class="session-info">
-					<h4>Behavioral Interview - Leadership</h4>
-					<p>Completed: March 18, 2025</p>
-				</div>
-				<div class="session-score">
-					<span class="score">92%</span>
-					<button mat-button class="review-btn">View Feedback</button>
-				</div>
-			</div>
-		</div>
-	</div>
+	<app-interview-history 
+		[sessions]="interviewHistory()" 
+		[title]="'Recent Interview Sessions'"
+		[emptyMessage]="'No interview sessions yet. Start your first interview above!'" />
 </div>

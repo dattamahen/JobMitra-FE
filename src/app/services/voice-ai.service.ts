@@ -203,4 +203,8 @@ export class VoiceAiService {
 	clearError(): void {
 		this.error.set('');
 	}
+
+	clearTranscript(): void {
+		this.currentTranscript.set('');
+	}
 }
