@@ -40,10 +40,10 @@
 				<p class="applied-date">Applied: {{formatDate(application.applied_date)}}</p>
 
 				<!-- Interview date for scheduled interviews -->
-				@if (application.status === 'interview_scheduled' && getNextInterviewStage(application)) {
+				@if (application.status === 'interview_scheduled' && getNextInterviewStage(application)?.scheduled_date) {
 				<p class="interview-date">
 					<mat-icon>event</mat-icon>
-					Interview: {{formatDateTime(getNextInterviewStage(application).scheduled_date)}}
+					Interview: {{formatDateTime(getNextInterviewStage(application)!.scheduled_date!)}}
 				</p>
 				}
 
