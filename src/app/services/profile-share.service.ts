@@ -3,19 +3,9 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import html2canvas from 'html2canvas';
+import { ProfileSnapshot } from '../types/profile.types';
 
-export interface ProfileSnapshot {
-	name: string;
-	role: string;
-	location: string;
-	experience: string;
-	skills: string[];
-	email: string;
-	phone?: string;
-	linkedin?: string;
-	github?: string;
-	summary?: string;
-}
+export type { ProfileSnapshot }
 
 @Injectable({
 	providedIn: 'root'
