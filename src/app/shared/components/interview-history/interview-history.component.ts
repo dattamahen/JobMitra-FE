@@ -1,5 +1,5 @@
 import { Component, input, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 
 export interface InterviewSession {
@@ -12,7 +12,7 @@ export interface InterviewSession {
 
 @Component({
 	selector: 'app-interview-history',
-	imports: [CommonModule, MatButtonModule],
+	imports: [DatePipe, MatButtonModule],
 	template: `
 		<div class="interview-history">
 			<h2>{{ title() }}</h2>

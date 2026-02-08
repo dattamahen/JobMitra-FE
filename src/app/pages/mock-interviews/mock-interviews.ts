@@ -1,9 +1,7 @@
 import { Component, ChangeDetectionStrategy, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDialog } from '@angular/material/dialog';
 import { MockInterviewService } from '../../services/mock-interview.service';
 import { FeatureUsageService } from '../../services/feature-usage.service';
 import { FeatureGuardDirective } from '../../shared/directives/feature-guard.directive';
@@ -14,28 +12,25 @@ import { InterviewHistoryComponent, InterviewSession } from '../../shared/compon
 
 @Component({
 	selector: 'app-mock-interviews-page',
-	imports: [CommonModule, MatButtonModule, MatIconModule, FeatureGuardDirective, InterviewHistoryComponent],
+	imports: [MatButtonModule, MatIconModule, FeatureGuardDirective, InterviewHistoryComponent],
 	templateUrl: './mock-interviews.html',
-	styleUrls: ['./mock-interviews.css'],
+	styleUrl: './mock-interviews.css',
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MockInterviewsPage {
 	interviewTypes = INTERVIEW_TYPES;
 	interviewHistory = signal<InterviewSession[]>([]);
-	private destroyRef = inject(DestroyRef);
-	private mockInterviewService = inject(MockInterviewService);
-	private featureUsageService = inject(FeatureUsageService);
-	private interviewService = inject(InterviewService);
-	private authService = inject(AuthService);
-	private dialog = inject(MatDialog);
+	private readonly destroyRef = inject(DestroyRef);
+	private readonly mockInterviewService = inject(MockInterviewService);
+	private readonly featureUsageService = inject(FeatureUsageService);
+	private readonly interviewService = inject(InterviewService);
+	private readonly authService = inject(AuthService);
 
 	constructor() {
-		// Force refresh feature usage to ensure UI updates
 		this.featureUsageService.refreshFeatureUsage()
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe();
 		
-		// Load interview history
 		this.loadInterviewHistory();
 	}
 
@@ -76,46 +71,39 @@ export class MockInterviewsPage {
 	}
 
 	onUsePaidVersion(): void {
-		if (confirm('Upgrade to Premium to unlock unlimited mock interviews and advanced features. Upgrade now?')) {
-		}
+		confirm('Upgrade to Premium to unlock unlimited mock interviews and advanced features. Upgrade now?');
 	}
 
 	private startInterviewWithPrompt(type: string = 'technical'): void {
 		this.authService.getCurrentUser()
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe(user => {
-			if (!user) return;
+				if (!user) return;
 
-			const userProfile = {
-				role: user.professional_info?.current_role || 'Software Engineer',
-				experience_years: user.overall_experience_years || 3,
-				skills: user.skills || ['JavaScript', 'Python'],
-				user_id: user.user_id
-			};
+				const userProfile = {
+					role: user.professional_info?.current_role || 'Software Engineer',
+					experience_years: user.overall_experience_years || 3,
+					skills: user.skills || ['JavaScript', 'Python'],
+					user_id: user.user_id
+				};
 
-			// Open modal immediately with loading state
-			const dialogRef = this.mockInterviewService.startInterviewWithLoading(type, userProfile);
+				const dialogRef = this.mockInterviewService.startInterviewWithLoading(type, userProfile);
 
-			// Generate questions in background
-			this.interviewService.startInterview(userProfile)
-				.pipe(takeUntilDestroyed(this.destroyRef))
-				.subscribe({
-				next: (response) => {
-					// Update modal with AI-generated questions
-					dialogRef.componentInstance.loadQuestions(response);
-				},
-				error: (error) => {
-					dialogRef.close();
-					alert('Error generating questions. Please try again.');
-				}
+				this.interviewService.startInterview(userProfile)
+					.pipe(takeUntilDestroyed(this.destroyRef))
+					.subscribe({
+						next: (response) => dialogRef.componentInstance.loadQuestions(response),
+						error: () => {
+							dialogRef.close();
+							alert('Error generating questions. Please try again.');
+						}
+					});
+
+				dialogRef.afterClosed()
+					.pipe(takeUntilDestroyed(this.destroyRef))
+					.subscribe((result: any) => {
+						if (result?.success) this.loadInterviewHistory();
+					});
 			});
-			
-			// Reload history after interview completes
-			dialogRef.afterClosed().subscribe((result: any) => {
-				if (result?.success) {
-					this.loadInterviewHistory();
-				}
-			});
-		});
 	}
 }
