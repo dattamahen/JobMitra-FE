@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
-import { PersonalInfo, Experience, Education, Project, Certification, ResumeSection, Resume, ResumeTemplate } from '../shared/interfaces/resume.interfaces';
+import type { PersonalInfo, Experience, Education, Project, Certification, ResumeSection, Resume, ResumeTemplate } from '../types/resume.types';
 
 @Injectable({
 	providedIn: 'root'
