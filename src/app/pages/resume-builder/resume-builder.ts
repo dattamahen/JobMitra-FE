@@ -21,7 +21,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ResumeService } from '../../services/resume.service';
-import { Resume, ResumeTemplate, Experience, Education, Project, Certification } from '../../shared/interfaces/resume.interfaces';
+import type { Resume, ResumeTemplate, Experience, Education, Project, Certification } from '../../types/resume.types';
 import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 import { FeatureUsageService } from '../../services/feature-usage.service';
