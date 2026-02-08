@@ -3,38 +3,18 @@ import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { MockInterviewModalComponent } from '../components/mock-interview-modal/mock-interview-modal.component';
+import { 
+	InterviewQuestion, 
+	InterviewSession, 
+	InterviewEvaluation, 
+	InterviewSubmissionData 
+} from '../types/mock-interview.types';
 
-export interface InterviewQuestion {
-	id: string;
-	question: string;
-	type: string;
-}
-
-export interface InterviewSession {
-	session_id: string;
-	questions: InterviewQuestion[];
-	created_at: string;
-}
-
-export interface InterviewEvaluation {
-	session_id: string;
-	overall_score: number;
-	feedback: string;
-	question_scores: Array<{
-		question_id: string;
-		score: number;
-		feedback: string;
-	}>;
-}
-
-export interface InterviewSubmissionData {
-	session_id: string;
-	user_profile: any;
-	questions_and_answers: Array<{
-		question_id: string;
-		question: string;
-		answer: string;
-	}>;
+export type { 
+	InterviewQuestion, 
+	InterviewSession, 
+	InterviewEvaluation, 
+	InterviewSubmissionData 
 }
 
 @Injectable({

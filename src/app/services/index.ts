@@ -14,7 +14,16 @@ export { ProfileShareService } from './profile-share.service';
 export { ImageUploadService } from './image-upload.service';
 
 // Service Types and Interfaces
-export type { UserProfile, CreateUserRequest, UpdateUserRequest } from './user.service';
+export type { 
+	UserProfile, 
+	CreateUserRequest, 
+	UpdateUserRequest,
+	TechnicalSkill,
+	WorkExperience,
+	Education,
+	Project,
+	Certification
+} from '../types/profile.types';
 export type { 
 	JobListing, 
 	JobSearchFilters, 
@@ -29,7 +38,12 @@ export type {
 	ApplicationsResponse,
 	ApplicationStats
 } from './application.service';
-// Mock interview types will be added when needed
+export type { 
+	InterviewQuestion,
+	InterviewSession,
+	InterviewEvaluation,
+	InterviewSubmissionData
+} from '../types/mock-interview.types';
 export type { 
 	LearningResource, 
 	UserProgress, 
@@ -45,5 +59,5 @@ export type {
 export type {
 
 } from './resume.service';
-export type { ProfileSnapshot } from './profile-share.service';
+export type { ProfileSnapshot } from '../types/profile.types';
 // ImageUploadService has no exported types
