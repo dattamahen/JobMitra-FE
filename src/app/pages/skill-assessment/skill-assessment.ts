@@ -1,112 +1,46 @@
 import { Component, OnInit, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { 
-	LearningResource, 
-	JobSearchDataService, 
-	MockInterviewSession, 
-	UserMockInterviewData, 
-	MockInterviewConfig,
-	SubscriptionPlan,
-	UserSubscription,
-	SubscriptionLimits
-} from '../../data/job-search-data';
-import { SkillAssessmentService, SkillLevel, AssessmentResult, UsageStatus, RecommendedSkill } from '../../services/skill-assessment.service';
+import { SkillAssessmentService } from '../../services/skill-assessment.service';
 import { MockInterviewService } from '../../services/mock-interview.service';
 import { InterviewHistoryComponent, InterviewSession } from '../../shared/components/interview-history/interview-history.component';
 import { AuthService } from '../../services/auth.service';
+import { JobSearchDataService, LearningResource } from '../../data/job-search-data';
 
-export interface SkillAssessment {
+interface SkillAssessment {
 	readonly id: string;
 	readonly name: string;
 	readonly category: 'technical' | 'soft-skills';
-	readonly currentLevel: number; // 0-100
+	readonly currentLevel: number;
 	readonly levelText: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
-	readonly lastAssessed?: Date;
-	readonly lastScore?: number;
-	readonly hasCertificate?: boolean;
 	readonly isRecommended?: boolean;
 	readonly relevanceReason?: string;
 }
 
-export interface AssessmentHistory {
-	readonly id: string;
-	readonly skillName: string;
-	readonly completedDate: Date;
-	readonly score: number;
-	readonly level: string;
-	readonly hasCertificate: boolean;
-}
-
 @Component({
 	selector: 'app-skill-assessment-page',
-	imports: [CommonModule, MatIconModule, InterviewHistoryComponent],
+	imports: [MatIconModule, InterviewHistoryComponent],
 	templateUrl: './skill-assessment.html',
 	styleUrls: ['./skill-assessment.css'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SkillAssessmentPage implements OnInit {
 	skillAssessments: SkillAssessment[] = [];
-	assessmentHistory: AssessmentHistory[] = [];
 	interviewHistory = signal<InterviewSession[]>([]);
 	selectedSkillResources: readonly LearningResource[] = [];
-	showLearningModal: boolean = false;
-	selectedSkill: string = '';
-	showContributeForm: boolean = false;
+	showLearningModal = false;
+	selectedSkill = '';
+	showContributeForm = false;
+
 	private destroyRef = inject(DestroyRef);
 	private cdr = inject(ChangeDetectorRef);
-	
-	// Mock Interview Properties
-	mockInterviewConfig: MockInterviewConfig = {
-		maxSessionsPerWeek: 2,
-		sessionDurationMinutes: 30,
-		cooldownHours: 24,
-		questionsPerSession: 8,
-		skillCategories: []
-	};
-	userMockInterviewData: UserMockInterviewData = {
-		userId: 'current-user',
-		currentWeekSessions: [],
-		totalSessions: 0
-	};
-	showMockInterviewModal: boolean = false;
-	currentInterviewQuestions: readonly string[] = [];
-	mockInterviewInProgress: boolean = false;
-	
-	// Subscription Properties
-	userSubscription?: UserSubscription;
-	subscriptionLimits: SubscriptionLimits = {
-		mockInterviewsPerWeek: 5,
-		cooldownHours: 24,
-		canAccessPremiumContent: false,
-		canSkipCooldown: false,
-		prioritySupport: false
-	};
-	subscriptionPlans: readonly SubscriptionPlan[] = [];
-	showSubscriptionModal: boolean = false;
-
 	private skillAssessmentService = inject(SkillAssessmentService);
 	private mockInterviewService = inject(MockInterviewService);
 	private authService = inject(AuthService);
 
-	constructor() {}
-
 	ngOnInit(): void {
-		this.skillAssessmentService.getTechnicalSkills()
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-				error: (error) => console.error('API test failed:', error)
-			});
-		
 		this.loadSkillAssessments();
-		this.loadUsageStatus();
-		this.loadMockInterviewData();
 		this.loadInterviewHistory();
-	}
-
-	private loadMockInterviewData(): void {
-		// Load from service/API - no mock data
 	}
 
 	private loadInterviewHistory(): void {
@@ -130,90 +64,58 @@ export class SkillAssessmentPage implements OnInit {
 	}
 
 	private loadSkillAssessments(): void {
-		
-		// Load technical skills from API
 		this.skillAssessmentService.getTechnicalSkills()
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
-			next: (skills) => {
-				const technicalSkills = skills.map(skill => ({
-					id: skill.skill_id,
-					name: skill.skill_name,
-					category: 'technical' as const,
-					currentLevel: skill.current_level,
-					levelText: skill.level_text as any
-				}));
-				this.skillAssessments = [...technicalSkills, ...this.skillAssessments.filter(s => s.category !== 'technical' && !s.isRecommended)];
-				this.cdr.markForCheck();
-			},
-			error: (error) => {
-				console.error('Error loading technical skills:', error);
-			}
-		});
+				next: (skills) => {
+					const technicalSkills = skills.map(skill => ({
+						id: skill.skill_id,
+						name: skill.skill_name,
+						category: 'technical' as const,
+						currentLevel: skill.current_level,
+						levelText: skill.level_text as SkillAssessment['levelText']
+					}));
+					this.skillAssessments = [...technicalSkills, ...this.skillAssessments.filter(s => s.category !== 'technical' && !s.isRecommended)];
+					this.cdr.markForCheck();
+				},
+				error: (error) => console.error('Error loading technical skills:', error)
+			});
 
-		// Load soft skills from API
 		this.skillAssessmentService.getSoftSkills()
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
-			next: (skills) => {
-				const softSkills = skills.map(skill => ({
-					id: skill.skill_id,
-					name: skill.skill_name,
-					category: 'soft-skills' as const,
-					currentLevel: skill.current_level,
-					levelText: skill.level_text as any
-				}));
-				this.skillAssessments = [...this.skillAssessments.filter(s => s.category !== 'soft-skills'), ...softSkills];
-				this.cdr.markForCheck();
-			},
-			error: (error) => {
-				console.error('Error loading soft skills:', error);
-			}
-		});
-		
-		// Load recommended skills from API
+				next: (skills) => {
+					const softSkills = skills.map(skill => ({
+						id: skill.skill_id,
+						name: skill.skill_name,
+						category: 'soft-skills' as const,
+						currentLevel: skill.current_level,
+						levelText: skill.level_text as SkillAssessment['levelText']
+					}));
+					this.skillAssessments = [...this.skillAssessments.filter(s => s.category !== 'soft-skills'), ...softSkills];
+					this.cdr.markForCheck();
+				},
+				error: (error) => console.error('Error loading soft skills:', error)
+			});
+
 		this.skillAssessmentService.getRecommendedSkills()
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
-			next: (skills) => {
-				const recommendedSkills = skills.map(skill => ({
-					id: skill.id,
-					name: skill.name,
-					category: 'technical' as const,
-					currentLevel: 0,
-					levelText: 'Beginner' as const,
-					isRecommended: true,
-					relevanceReason: skill.relevance_reason
-				}));
-				this.skillAssessments = [...this.skillAssessments.filter(s => !s.isRecommended), ...recommendedSkills];
-				this.cdr.markForCheck();
-			},
-			error: (error) => {
-				console.error('Error loading recommended skills:', error);
-			}
-		});
-	}
-	
-
-
-	private loadAssessmentHistory(): void {
-		this.skillAssessmentService.getAssessmentHistory()
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-			next: (history) => {
-				this.assessmentHistory = history.map(item => ({
-					id: item.id,
-					skillName: item.skill_name,
-					completedDate: new Date(item.completed_date),
-					score: item.score,
-					level: item.level,
-					hasCertificate: item.has_certificate
-				}));
-				this.cdr.markForCheck();
-			},
-			error: (error) => {
-			}
-		});
+				next: (skills) => {
+					const recommendedSkills = skills.map(skill => ({
+						id: skill.id,
+						name: skill.name,
+						category: 'technical' as const,
+						currentLevel: 0,
+						levelText: 'Beginner' as const,
+						isRecommended: true,
+						relevanceReason: skill.relevance_reason
+					}));
+					this.skillAssessments = [...this.skillAssessments.filter(s => !s.isRecommended), ...recommendedSkills];
+					this.cdr.markForCheck();
+				},
+				error: (error) => console.error('Error loading recommended skills:', error)
+			});
 	}
 
 	getTechnicalSkills(): SkillAssessment[] {
@@ -223,7 +125,7 @@ export class SkillAssessmentPage implements OnInit {
 	getSoftSkills(): SkillAssessment[] {
 		return this.skillAssessments.filter(skill => skill.category === 'soft-skills');
 	}
-	
+
 	hasSkills(): boolean {
 		return this.getTechnicalSkills().length > 0 || this.getSoftSkills().length > 0;
 	}
@@ -231,10 +133,8 @@ export class SkillAssessmentPage implements OnInit {
 	getRecommendedSkills(): SkillAssessment[] {
 		return this.skillAssessments.filter(skill => skill.isRecommended);
 	}
-	
+
 	navigateToProfile(): void {
-		// This would typically use Router to navigate to profile page
-		// For now, just show an alert
 		alert('Please update your profile to add skills. Navigate to Profile section.');
 	}
 
@@ -245,39 +145,8 @@ export class SkillAssessmentPage implements OnInit {
 		return 'linear-gradient(90deg, #6c757d, #495057)';
 	}
 
-	getBadgeClass(level: string): string {
-		switch (level.toLowerCase()) {
-			case 'expert': return 'badge expert';
-			case 'advanced': return 'badge advanced';
-			case 'intermediate': return 'badge intermediate';
-			default: return 'badge beginner';
-		}
-	}
-
-	takeTest(skill: SkillAssessment): void {
-		this.skillAssessmentService.takeSkillTest(skill.id)
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-			next: (response) => {
-				alert(`Assessment for ${skill.name} started! Test ID: ${response.test_id}`);
-			},
-			error: (error) => {
-				alert('Failed to start test. Please try again.');
-			}
-		});
-	}
-
-	getCertificate(historyItem: AssessmentHistory): void {
-		this.skillAssessmentService.getCertificate(historyItem.id)
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-			next: (response) => {
-				window.open(response.certificate_url, '_blank');
-			},
-			error: (error) => {
-				alert('Failed to get certificate. Please try again.');
-			}
-		});
+	startMockInterview(skill: SkillAssessment): void {
+		this.mockInterviewService.startInterview('technical');
 	}
 
 	startLearning(skill: SkillAssessment): void {
@@ -285,27 +154,27 @@ export class SkillAssessmentPage implements OnInit {
 		this.skillAssessmentService.getLearningResources(skill.name)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
-			next: (resources) => {
-				this.selectedSkillResources = resources.map(resource => ({
-					id: resource.id,
-					title: resource.title,
-					description: resource.description,
-					youtubeUrl: resource.youtubeUrl,
-					channel: resource.channel,
-					duration: resource.duration,
-					level: resource.level as 'beginner' | 'intermediate' | 'advanced',
-					skill: resource.skill,
-					rating: resource.rating
-				}));
-				this.showLearningModal = true;
-				this.showContributeForm = false;
-			},
-			error: (error) => {
-				this.selectedSkillResources = [];
-				this.showLearningModal = true;
-				this.showContributeForm = false;
-			}
-		});
+				next: (resources) => {
+					this.selectedSkillResources = resources.map(resource => ({
+						id: resource.id,
+						title: resource.title,
+						description: resource.description,
+						youtubeUrl: resource.youtubeUrl,
+						channel: resource.channel,
+						duration: resource.duration,
+						level: resource.level as 'beginner' | 'intermediate' | 'advanced',
+						skill: resource.skill,
+						rating: resource.rating
+					}));
+					this.showLearningModal = true;
+					this.showContributeForm = false;
+				},
+				error: () => {
+					this.selectedSkillResources = [];
+					this.showLearningModal = true;
+					this.showContributeForm = false;
+				}
+			});
 	}
 
 	hideLearningModal(): void {
@@ -327,7 +196,7 @@ export class SkillAssessmentPage implements OnInit {
 		event.preventDefault();
 		const form = event.target as HTMLFormElement;
 		const formData = new FormData(form);
-		
+
 		const contribution = {
 			skill: this.selectedSkill,
 			title: formData.get('title') as string,
@@ -340,14 +209,12 @@ export class SkillAssessmentPage implements OnInit {
 		this.skillAssessmentService.contributeResource(contribution)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
-			next: (response) => {
-				this.hideContributeForm();
-				form.reset();
-			},
-			error: (error) => {
-				alert('Failed to submit contribution. Please try again.');
-			}
-		});
+				next: () => {
+					this.hideContributeForm();
+					form.reset();
+				},
+				error: () => alert('Failed to submit contribution. Please try again.')
+			});
 	}
 
 	getYouTubeVideoId(url: string): string | null {
@@ -377,121 +244,15 @@ export class SkillAssessmentPage implements OnInit {
 		return Array(Math.floor(rating)).fill(0);
 	}
 
-	formatDate(date: Date): string {
-		return new Intl.DateTimeFormat('en-US', {
-			year: 'numeric',
-			month: 'long',
-			day: 'numeric'
-		}).format(date);
+	getUsageStatus(): string {
+		return '0/5 used this week';
 	}
 
-	// Mock Interview Methods
 	canTakeMockInterview(): boolean {
-		return true; // Simplified - always allow for now
-	}
-
-	getRemainingInterviews(): number {
-		return 5; // Default remaining interviews
-	}
-
-	getNextInterviewAvailableTime(): string {
-		return 'Available now';
-	}
-
-	shouldShowUpgradePrompt(): boolean {
-		return false;
+		return true;
 	}
 
 	getCurrentPlanName(): string {
 		return 'Free Plan';
 	}
-
-	startMockInterview(skill: SkillAssessment): void {
-		this.mockInterviewService.startInterview('technical');
-	}
-
-	closeMockInterviewModal(): void {
-		this.showMockInterviewModal = false;
-		this.selectedSkill = '';
-		this.currentInterviewQuestions = [];
-		this.mockInterviewInProgress = false;
-	}
-
-	beginInterview(): void {
-		this.mockInterviewInProgress = true;
-		
-		// In a real application, this would start the actual interview process
-		// For now, we'll simulate completion after a delay
-		setTimeout(() => {
-			this.completeInterview();
-		}, 3000);
-	}
-
-	completeInterview(): void {
-		// Simulate interview completion
-		const newSession: MockInterviewSession = {
-			id: `session-${Date.now()}`,
-			skill: this.selectedSkill,
-			date: new Date(),
-			duration: this.mockInterviewConfig.sessionDurationMinutes,
-			score: Math.floor(Math.random() * 40 + 60), // Random score between 60-100
-			feedback: 'Great job! Continue practicing to improve your skills.',
-			questions: this.currentInterviewQuestions,
-			status: 'completed'
-		};
-
-		// Update user data
-		this.userMockInterviewData = {
-			...this.userMockInterviewData,
-			currentWeekSessions: [...this.userMockInterviewData.currentWeekSessions, newSession],
-			totalSessions: this.userMockInterviewData.totalSessions + 1,
-			lastSessionDate: newSession.date,
-			nextAvailableSession: undefined
-		};
-
-		this.mockInterviewInProgress = false;
-		this.closeMockInterviewModal();
-	}
-
-	private loadUsageStatus(): void {
-		this.skillAssessmentService.getUsageStatus()
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-			next: (status) => {
-				// Update usage status from API
-				this.subscriptionLimits = {
-					mockInterviewsPerWeek: status.weekly_limit,
-					cooldownHours: 24,
-					canAccessPremiumContent: false,
-					canSkipCooldown: false,
-					prioritySupport: false
-				};
-			},
-			error: (error) => console.error('Error loading usage status:', error)
-		});
-	}
-
-	getUsageStatus(): string {
-		const remaining = this.getRemainingInterviews();
-		const total = this.subscriptionLimits.mockInterviewsPerWeek;
-		return `${total - remaining}/${total} used this week`;
-	}
-
-	// Subscription modal methods
-	closeSubscriptionModal(): void {
-		this.showSubscriptionModal = false;
-	}
-
-	selectSubscriptionPlan(planId: string): void {
-		this.closeSubscriptionModal();
-	}
-
-	formatPrice(price: number): string {
-		return `$${price.toFixed(2)}`;
-	}
-
-	getPlanFeatures(planId: string): readonly string[] {
-		return [];
-	}
 }
-
