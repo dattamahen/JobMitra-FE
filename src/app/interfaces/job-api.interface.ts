@@ -1,9 +1,9 @@
-// Import the existing interfaces from job.service.ts since they match the API structure
-import { 
+// Import the existing types from job.types.ts since they match the API structure
+import type { 
 	JobListing as ApiJobListing,
 	JobSearchResponse,
 	JobSearchFilters
-} from '../services/job.service';
+} from '../types/job.types';
 
 // Import the existing frontend interfaces from job-search-data.ts
 import { 
@@ -47,13 +47,13 @@ export class JobApiConverter {
 			matchPercentage: apiJob.match_percentage || 0,
 			shortDescription: this.truncateDescription(apiJob.description, 150),
 			fullDescription: apiJob.description,
-			requirements: apiJob.requirements.map((req, index) => ({
+			requirements: apiJob.requirements.map((req: string, index: number) => ({
 				id: `req-${apiJob.job_id}-${index}`,
 				description: req,
 				type: 'required' as const,
 				category: 'technical' as const
 			})),
-			benefits: apiJob.benefits.map((benefit, index) => ({
+			benefits: apiJob.benefits.map((benefit: string, index: number) => ({
 				id: `benefit-${apiJob.job_id}-${index}`,
 				title: benefit,
 				description: benefit,
@@ -74,7 +74,7 @@ export class JobApiConverter {
 			applicationDeadline: apiJob.application_deadline ? new Date(apiJob.application_deadline) : new Date(),
 			isActive: apiJob.is_active,
 			tags: apiJob.tags || [],
-			learningResources: (apiJob.learning_resources || []).map(lr => ({
+			learningResources: (apiJob.learning_resources || []).map((lr: any) => ({
 				id: lr.id,
 				title: lr.title,
 				description: lr.description,

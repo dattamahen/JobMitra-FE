@@ -8,7 +8,8 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { JobService, JobListing as ApiJobListing, JobSearchFilters } from '../../services/job.service';
+import { JobService } from '../../services/job.service';
+import type { JobListing, JobSearchFilters } from '../../types/job.types';
 import { UserService } from '../../services/user.service';
 import { maskEmail, maskPhone } from '../../utils/mask.util';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
@@ -52,7 +53,7 @@ export class JobSearchPage {
 
 	expandedJobs: { [key: string]: boolean } = {};
 	unmaskedHRDetails: { [key: string]: boolean } = {};
-	jobListings: ApiJobListing[] = [];
+	jobListings: JobListing[] = [];
 	filterOptions: any = {};
 	isLoading = true;
 	totalJobs = 0;
@@ -135,7 +136,7 @@ export class JobSearchPage {
 			});
 	}
 
-	formatLocation(job: ApiJobListing): string {
+	formatLocation(job: JobListing): string {
 		const parts = [];
 		if (job.location.city) parts.push(job.location.city);
 		if (job.location.state) parts.push(job.location.state);
@@ -150,7 +151,7 @@ export class JobSearchPage {
 		return location;
 	}
 
-	getFormattedPostedDate(job: ApiJobListing): string {
+	getFormattedPostedDate(job: JobListing): string {
 		const now = new Date();
 		const postedDate = new Date(job.posted_date);
 		const diffTime = Math.abs(now.getTime() - postedDate.getTime());
@@ -162,7 +163,7 @@ export class JobSearchPage {
 		return `${Math.ceil(diffDays / 30)} months ago`;
 	}
 
-	isDeadlineApproaching(job: ApiJobListing): boolean {
+	isDeadlineApproaching(job: JobListing): boolean {
 		if (!job.application_deadline) return false;
 		
 		const now = new Date();
@@ -187,11 +188,11 @@ export class JobSearchPage {
 		return this.expandedJobs[jobId] || false;
 	}
 
-	getJobById(jobId: string): ApiJobListing | undefined {
+	getJobById(jobId: string): JobListing | undefined {
 		return this.jobListings.find(job => job.job_id === jobId);
 	}
 
-	formatSalary(job: ApiJobListing): string {
+	formatSalary(job: JobListing): string {
 		if (!job.salary || (!job.salary.min && !job.salary.max)) {
 			return 'Salary not disclosed';
 		}

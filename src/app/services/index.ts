@@ -28,10 +28,11 @@ export type {
 	JobListing, 
 	JobSearchFilters, 
 	JobSearchResponse, 
-	SavedJob 
-} from './job.service';
+	SavedJob,
+	JobApplication
+} from '../types/job.types';
 export type { 
-	JobApplication, 
+	JobApplication as ApplicationJobApplication, 
 	CreateApplicationRequest, 
 	UpdateApplicationRequest,
 	ApplicationFilters,
