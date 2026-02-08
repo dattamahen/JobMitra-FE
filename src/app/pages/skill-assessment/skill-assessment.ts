@@ -6,16 +6,7 @@ import { MockInterviewService } from '../../services/mock-interview.service';
 import { InterviewHistoryComponent, InterviewSession } from '../../shared/components/interview-history/interview-history.component';
 import { AuthService } from '../../services/auth.service';
 import { JobSearchDataService, LearningResource } from '../../data/job-search-data';
-
-interface SkillAssessment {
-	readonly id: string;
-	readonly name: string;
-	readonly category: 'technical' | 'soft-skills';
-	readonly currentLevel: number;
-	readonly levelText: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
-	readonly isRecommended?: boolean;
-	readonly relevanceReason?: string;
-}
+import type { SkillAssessment } from '../../types/skill-assessment.types';
 
 @Component({
 	selector: 'app-skill-assessment-page',

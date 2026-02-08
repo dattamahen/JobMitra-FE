@@ -32,6 +32,14 @@ export type {
 	JobApplication
 } from '../types/job.types';
 export type { ApplicationData } from '../types/application.types';
+export type {
+	SkillLevel,
+	AssessmentResult,
+	LearningResource as SkillLearningResource,
+	UsageStatus,
+	RecommendedSkill,
+	SkillAssessment
+} from '../types/skill-assessment.types';
 export type { 
 	JobApplication as ApplicationJobApplication, 
 	CreateApplicationRequest, 
