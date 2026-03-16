@@ -2,14 +2,16 @@ import { Component, ChangeDetectionStrategy, DestroyRef, inject, signal } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+
+import { FeatureGuardDirective } from '../../shared/directives/feature-guard.directive';
+import { InterviewHistoryComponent } from '../../shared/components/interview-history/interview-history.component';
+import { INTERVIEW_TYPES } from '../../data/mock-interview-data';
+import type { InterviewHistorySession } from '../../types/mock-interview.types';
+
 import { MockInterviewService } from '../../services/mock-interview.service';
 import { FeatureUsageService } from '../../services/feature-usage.service';
-import { FeatureGuardDirective } from '../../shared/directives/feature-guard.directive';
 import { InterviewService } from '../../services/interview.service';
 import { AuthService } from '../../services/auth.service';
-import { INTERVIEW_TYPES } from '../../data/mock-interview-data';
-import { InterviewHistoryComponent } from '../../shared/components/interview-history/interview-history.component';
-import type { InterviewHistorySession } from '../../types/mock-interview.types';
 
 @Component({
 	selector: 'app-mock-interviews-page',

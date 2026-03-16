@@ -1,6 +1,6 @@
 import { Component, ChangeDetectorRef, DestroyRef, inject, ChangeDetectionStrategy, computed, Inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule, DatePipe } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,17 +8,19 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { JobService } from '../../services/job.service';
-import type { JobListing, JobSearchFilters } from '../../types/job.types';
-import { UserService } from '../../services/user.service';
-import { maskEmail, maskPhone } from '../../utils/mask.util';
+
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { JobFilterComponent, JobFilterConfig } from '../../shared/components/job-filter/job-filter.component';
+import { ResumeTailorModalComponent } from '../../components/mock-interview-modal/resume-tailor-modal.component';
+import type { JobListing, JobSearchFilters } from '../../types/job.types';
+import { maskEmail, maskPhone } from '../../utils/mask.util';
+
+import { JobService } from '../../services/job.service';
+import { UserService } from '../../services/user.service';
 import { FeatureUsageService } from '../../services/feature-usage.service';
 import { MockInterviewService } from '../../services/mock-interview.service';
 import { ResumeTailorService } from '../../services/resume-tailor.service';
-import { ResumeTailorModalComponent } from '../../components/mock-interview-modal/resume-tailor-modal.component';
 
 @Component({
 	selector: 'app-job-search-page',

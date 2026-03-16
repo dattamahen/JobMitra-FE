@@ -1,13 +1,12 @@
 import { Component, OnInit, DestroyRef, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LoginPage } from '../login-page/login-page';
 import { Dashboard } from '../dashboard/dashboard';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
 	selector: 'app-view-page',
-	imports: [CommonModule, LoginPage, Dashboard],
+	imports: [LoginPage, Dashboard],
 	templateUrl: './view-page.html',
 	styleUrl: './view-page.css'
 })

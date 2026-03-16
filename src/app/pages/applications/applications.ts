@@ -1,14 +1,17 @@
 import { Component, DestroyRef, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { JobService } from '../../services/job.service';
-import { UserService } from '../../services/user.service';
+
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 import type { ApplicationData } from '../../types/application.types';
+import { APPLICATION_STATUS_CLASSES, APPLICATION_STATUS_LABELS, APPLICATION_PROGRESS_MAP } from './applications.constants';
+
+import { JobService } from '../../services/job.service';
+import { UserService } from '../../services/user.service';
 
 @Component({
 	selector: 'app-applications-page',
@@ -82,29 +85,11 @@ export class ApplicationsPage {
 	}
 
 	getStatusClass(status: string): string {
-		const statusClasses: Record<string, string> = {
-			'applied': 'status-applied',
-			'under_review': 'status-pending',
-			'interview_scheduled': 'status-interview',
-			'interviewed': 'status-interview',
-			'offer_received': 'status-offer',
-			'rejected': 'status-rejected',
-			'withdrawn': 'status-withdrawn'
-		};
-		return statusClasses[status] || 'status-default';
+		return APPLICATION_STATUS_CLASSES[status] || 'status-default';
 	}
 
 	getStatusLabel(status: string): string {
-		const statusLabels: Record<string, string> = {
-			'applied': 'Applied',
-			'under_review': 'Under Review',
-			'interview_scheduled': 'Interview Scheduled',
-			'interviewed': 'Interviewed',
-			'offer_received': 'Offer Received',
-			'rejected': 'Not Selected',
-			'withdrawn': 'Withdrawn'
-		};
-		return statusLabels[status] || status;
+		return APPLICATION_STATUS_LABELS[status] || status;
 	}
 
 	getProgressPercentage(application: ApplicationData): number {
@@ -112,16 +97,7 @@ export class ApplicationsPage {
 	}
 
 	private calculateProgressFromStatus(status: string): number {
-		const progressMap: Record<string, number> = {
-			'applied': 25,
-			'under_review': 50,
-			'interview_scheduled': 75,
-			'interviewed': 85,
-			'offer_received': 100,
-			'rejected': 100,
-			'withdrawn': 100
-		};
-		return progressMap[status] || 25;
+		return APPLICATION_PROGRESS_MAP[status] || 25;
 	}
 
 	formatDate(dateString: string): string {

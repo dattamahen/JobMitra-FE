@@ -1,17 +1,19 @@
 import { Component, OnInit, signal, DestroyRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatDividerModule } from '@angular/material/divider';
-import { DashboardService } from '../../services/dashboard.service';
-import { DashboardData, DashboardStats, ActivityItem } from '../../types/dashboard.types';
+
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DashboardData, DashboardStats, ActivityItem } from '../../types/dashboard.types';
+import { ACTIVITY_TYPE_COLOR_MAP, ACTIVITY_STATUS_ICON_MAP } from './dashboard.constants';
+
+import { DashboardService } from '../../services/dashboard.service';
 
 @Component({
 	selector: 'app-dashboard-page',
@@ -22,7 +24,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 		MatGridListModule, 
 		MatListModule, 
 		MatIconModule,
-		MatProgressBarModule,
 		MatButtonModule,
 		MatBadgeModule,
 		MatDividerModule,
@@ -93,24 +94,10 @@ export class DashboardPage implements OnInit {
 	}
 
 	getActivityStatusIcon(status?: string): string {
-		switch (status) {
-			case 'completed': return 'check_circle';
-			case 'pending': return 'schedule';
-			case 'in-progress': return 'hourglass_empty';
-			case 'cancelled': return 'cancel';
-			default: return 'info';
-		}
+		return ACTIVITY_STATUS_ICON_MAP[status ?? ''] ?? 'info';
 	}
 
 	getActivityTypeColor(type: ActivityItem['type']): string {
-		const colorMap: Record<ActivityItem['type'], string> = {
-			'application': 'primary',
-			'interview': 'accent', 
-			'assessment': 'warn',
-			'profile': 'success',
-			'resume': 'info',
-			'other': 'primary'
-		};
-		return colorMap[type] || 'primary';
+		return ACTIVITY_TYPE_COLOR_MAP[type] || 'primary';
 	}
 }

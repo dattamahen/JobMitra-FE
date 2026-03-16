@@ -1,7 +1,6 @@
-import { Component, OnInit, OnDestroy, signal, computed, effect, DestroyRef, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, effect, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,15 +8,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialogModule, MatDialog } from '@angular/material/dialog';
-import { MatListModule } from '@angular/material/list';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatBadgeModule } from '@angular/material/badge';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatChipInputEvent } from '@angular/material/chips';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ResumeService } from '../../services/resume.service';
@@ -35,6 +27,7 @@ import {
 	RESUME_PROJECTS_CONFIG,
 	RESUME_CERTIFICATIONS_CONFIG
 } from '../../shared/components/dynamic-form/form-configs';
+import { RESUME_SECTIONS, CV_TEMPLATES } from './resume-builder.constants';
 
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -52,14 +45,8 @@ import html2canvas from 'html2canvas';
 		MatFormFieldModule,
 		MatSelectModule,
 		MatChipsModule,
-		MatProgressBarModule,
 		MatSnackBarModule,
-		MatDialogModule,
-		MatListModule,
-		MatDividerModule,
-		MatBadgeModule,
 		MatTooltipModule,
-		MatProgressSpinnerModule,
 		DynamicFormComponent,
 		LoadingComponent,
 		FeatureGuardDirective
@@ -83,8 +70,6 @@ export class ResumeBuilderPage implements OnInit {
 	private resumeService = inject(ResumeService);
 	private fb = inject(FormBuilder);
 	private snackBar = inject(MatSnackBar);
-	private dialog = inject(MatDialog);
-	private http = inject(HttpClient);
 	private featureUsageService = inject(FeatureUsageService);
 	
 
@@ -99,15 +84,7 @@ export class ResumeBuilderPage implements OnInit {
 	certificationsForm!: FormGroup;
 
 	// Section definitions
-	readonly sections = [
-		{ id: 'personal_info', label: 'Personal Info', icon: 'person', required: true },
-		{ id: 'summary', label: 'Summary', icon: 'description', required: true },
-		{ id: 'experience', label: 'Experience', icon: 'work', required: true },
-		{ id: 'education', label: 'Education', icon: 'school', required: true },
-		{ id: 'skills', label: 'Skills', icon: 'build', required: true },
-		{ id: 'projects', label: 'Projects', icon: 'code', required: false },
-		{ id: 'certifications', label: 'Certifications', icon: 'verified', required: false }
-	];
+	readonly sections = RESUME_SECTIONS;
 
 	// Form configurations
 	readonly personalInfoConfig = RESUME_PERSONAL_INFO_CONFIG;
@@ -1013,12 +990,7 @@ export class ResumeBuilderPage implements OnInit {
 	// Layout management
 	isFormExpanded = signal(false);
 	
-	cvTemplates = [
-		{ id: 'modern', name: 'Modern', icon: 'article' },
-		{ id: 'classic', name: 'Classic', icon: 'description' },
-		{ id: 'creative', name: 'Creative', icon: 'palette' },
-		{ id: 'executive', name: 'Executive', icon: 'business_center' }
-	];
+	cvTemplates = CV_TEMPLATES;
 
 	getExperienceControls(): number[] {
 		return Array.from({length: this.experienceCount()}, (_, i) => i);

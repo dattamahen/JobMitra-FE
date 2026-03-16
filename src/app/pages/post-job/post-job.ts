@@ -1,29 +1,24 @@
 import { Component, signal, viewChild, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatStepperModule, MatStepper } from '@angular/material/stepper';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { Router } from '@angular/router';
 
-// import { HrService } from '../../services/hr.service';
-// import { AuthService } from '../../services/auth.service';
-// import { JobPostingForm, JobPostingConverter } from '../../interfaces/job-posting.interface';
-// import { JOB_VALIDATION } from '../../constants/validation.constants';
 import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
 import { POST_JOB_STEP1_CONFIG, POST_JOB_STEP2_CONFIG, POST_JOB_STEP3_CONFIG, POST_JOB_STEP5_CONFIG, POST_JOB_STEP6_CONFIG, POST_JOB_STEP7_CONFIG } from '../../shared/components/dynamic-form/form-configs';
 import { JOB_TYPES, EMPLOYMENT_TYPES, EXPERIENCE_LEVELS, CURRENCIES, SALARY_PERIODS, COMPANY_SIZES, INDUSTRIES, COMMON_SKILLS, COMMON_BENEFITS } from '../../data/post-job-options';
-import { HrService } from '../../services/hr.service';
 import { JOB_VALIDATION } from '../../constants/validation.constants';
+
+import { HrService } from '../../services/hr.service';
 
 @Component({
 	selector: 'app-post-job',
@@ -34,8 +29,6 @@ import { JOB_VALIDATION } from '../../constants/validation.constants';
 		MatButtonModule,
 		MatChipsModule,
 		MatIconModule,
-		MatDatepickerModule,
-		MatNativeDateModule,
 		MatSnackBarModule,
 		MatStepperModule,
 		MatDividerModule,

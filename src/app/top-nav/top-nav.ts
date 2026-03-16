@@ -1,18 +1,19 @@
 import { Component, OnInit, DestroyRef, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
-import { CommonModule } from '@angular/common';
+
+import { TOP_NAV_CONSTANTS } from './top-nav.constants';
+
 import { AuthService } from '../services/auth.service';
 import { UserService } from '../services/user.service';
-import { TOP_NAV_CONSTANTS } from './top-nav.constants';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
 	selector: 'app-top-nav',
-	imports: [MatToolbar, MatButton, MatMenuModule, MatIconModule, CommonModule],
+	imports: [MatToolbar, MatButtonModule, MatMenuModule, MatIconModule],
 	templateUrl: './top-nav.html',
 	styleUrl: './top-nav.css'
 })

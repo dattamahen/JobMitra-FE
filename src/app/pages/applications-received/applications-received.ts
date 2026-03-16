@@ -1,5 +1,8 @@
-import { Component, OnInit, OnDestroy, Input, signal, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Input, signal, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { trigger, state, style, transition, animate } from '@angular/animations';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
@@ -7,18 +10,16 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { LoadingComponent } from '../../shared/components/loading/loading.component';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatMenuModule } from '@angular/material/menu';
-import { FormsModule } from '@angular/forms';
-import { HrService } from '../../services/hr.service';
-import { ActivatedRoute } from '@angular/router';
-import { trigger, state, style, transition, animate } from '@angular/animations';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+
+import { LoadingComponent } from '../../shared/components/loading/loading.component';
+import { APPLICATION_RECEIVED_STATUS_COLORS } from './applications-received.constants';
+
+import { HrService } from '../../services/hr.service';
 
 export interface ApplicationReceived {
 	application_id?: string;
@@ -51,7 +52,6 @@ export interface JobOption {
 	selector: 'app-applications-received',
 	standalone: true,
 	imports: [
-		CommonModule,
 		MatCardModule,
 		MatTableModule,
 		MatSelectModule,
@@ -59,7 +59,6 @@ export interface JobOption {
 		MatButtonModule,
 		MatIconModule,
 		MatChipsModule,
-		MatProgressSpinnerModule,
 		MatSnackBarModule,
 		MatMenuModule,
 		MatTooltipModule,
@@ -198,14 +197,7 @@ export class ApplicationsReceivedPage implements OnInit {
 	}
 
 	getStatusColor(status: string): string {
-		const statusColors: { [key: string]: string } = {
-			'applied': 'primary',
-			'under_review': 'accent',
-			'shortlisted': 'success',
-			'rejected': 'warn',
-			'hired': 'success'
-		};
-		return statusColors[status] || 'primary';
+		return APPLICATION_RECEIVED_STATUS_COLORS[status] || 'primary';
 	}
 
 	updateStatus(application: ApplicationReceived, newStatus: string) {
