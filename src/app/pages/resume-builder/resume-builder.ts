@@ -1,7 +1,6 @@
-import { Component, OnInit, OnDestroy, signal, computed, effect, DestroyRef, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, effect, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,15 +8,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialogModule, MatDialog } from '@angular/material/dialog';
-import { MatListModule } from '@angular/material/list';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatBadgeModule } from '@angular/material/badge';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatChipInputEvent } from '@angular/material/chips';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ResumeService } from '../../services/resume.service';
@@ -53,14 +45,8 @@ import html2canvas from 'html2canvas';
 		MatFormFieldModule,
 		MatSelectModule,
 		MatChipsModule,
-		MatProgressBarModule,
 		MatSnackBarModule,
-		MatDialogModule,
-		MatListModule,
-		MatDividerModule,
-		MatBadgeModule,
 		MatTooltipModule,
-		MatProgressSpinnerModule,
 		DynamicFormComponent,
 		LoadingComponent,
 		FeatureGuardDirective
@@ -84,8 +70,6 @@ export class ResumeBuilderPage implements OnInit {
 	private resumeService = inject(ResumeService);
 	private fb = inject(FormBuilder);
 	private snackBar = inject(MatSnackBar);
-	private dialog = inject(MatDialog);
-	private http = inject(HttpClient);
 	private featureUsageService = inject(FeatureUsageService);
 	
 

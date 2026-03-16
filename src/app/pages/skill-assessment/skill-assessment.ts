@@ -1,13 +1,15 @@
 import { Component, OnInit, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
-import { SkillAssessmentService } from '../../services/skill-assessment.service';
-import { MockInterviewService } from '../../services/mock-interview.service';
+
 import { InterviewHistoryComponent } from '../../shared/components/interview-history/interview-history.component';
-import type { InterviewHistorySession } from '../../types/mock-interview.types';
-import { AuthService } from '../../services/auth.service';
 import { JobSearchDataService, LearningResource } from '../../data/job-search-data';
 import type { SkillAssessment } from '../../types/skill-assessment.types';
+import type { InterviewHistorySession } from '../../types/mock-interview.types';
+
+import { SkillAssessmentService } from '../../services/skill-assessment.service';
+import { MockInterviewService } from '../../services/mock-interview.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
 	selector: 'app-skill-assessment-page',

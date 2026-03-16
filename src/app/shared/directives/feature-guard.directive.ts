@@ -1,4 +1,4 @@
-import { Directive, input, Input, TemplateRef, ViewContainerRef, DestroyRef, inject } from '@angular/core';
+import { Directive, Input, TemplateRef, ViewContainerRef, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FeatureUsageService } from '../../services/feature-usage.service';
 import { PaidFeature } from '../../interfaces/feature-usage.interface';

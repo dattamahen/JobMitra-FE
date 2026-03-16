@@ -1,18 +1,19 @@
 import { Component, OnInit, signal, DestroyRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatDividerModule } from '@angular/material/divider';
-import { DashboardService } from '../../services/dashboard.service';
-import { DashboardData, DashboardStats, ActivityItem } from '../../types/dashboard.types';
+
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DashboardData, DashboardStats, ActivityItem } from '../../types/dashboard.types';
 import { ACTIVITY_TYPE_COLOR_MAP, ACTIVITY_STATUS_ICON_MAP } from './dashboard.constants';
+
+import { DashboardService } from '../../services/dashboard.service';
 
 @Component({
 	selector: 'app-dashboard-page',
@@ -23,7 +24,6 @@ import { ACTIVITY_TYPE_COLOR_MAP, ACTIVITY_STATUS_ICON_MAP } from './dashboard.c
 		MatGridListModule, 
 		MatListModule, 
 		MatIconModule,
-		MatProgressBarModule,
 		MatButtonModule,
 		MatBadgeModule,
 		MatDividerModule,

@@ -1,7 +1,8 @@
 import { Component, viewChild, AfterViewInit, OnInit, ElementRef, DestroyRef, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -14,27 +15,20 @@ import { MatListModule } from '@angular/material/list';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { finalize } from 'rxjs';
-import { UserService, UserProfile, UpdateUserRequest } from '../../services';
+
+import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
+import { ProfileShareComponent } from '../../shared/components/profile-share/profile-share.component';
+import { PROFILE_BASIC_INFO_CONFIG, PROFILE_PROFESSIONAL_CONFIG, PROFILE_SKILLS_CONFIG, PROFILE_EXPERIENCE_CONFIG, PROFILE_EDUCATION_CONFIG, PROFILE_PROJECTS_CONFIG, PROFILE_CERTIFICATIONS_CONFIG, PROFILE_JOB_PREFERENCES_CONFIG } from '../../shared/components/dynamic-form/form-configs';
+import { QUALIFICATION_DISPLAY_MAP, SALARY_RANGE_MAP, PROFILE_FIELD_DISPLAY_NAMES, PROFILE_PATTERN_ERROR_MESSAGES } from './profile.constants';
+import { ProfileSnapshot } from '../../services/profile-share.service';
+import type { UserProfile, UpdateUserRequest } from '../../services';
+
+import { UserService } from '../../services';
 import { AuthService } from '../../services/auth.service';
 import { ResumeIntegrationService } from '../../services/resume-integration.service';
 import { TestProfileService } from '../../test-profile.service';
-import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
-import { ProfileShareComponent } from '../../shared/components/profile-share/profile-share.component';
-import { ProfileShareService, ProfileSnapshot } from '../../services/profile-share.service';
+import { ProfileShareService } from '../../services/profile-share.service';
 import { ImageUploadService } from '../../services/image-upload.service';
-import { QUALIFICATION_DISPLAY_MAP, SALARY_RANGE_MAP, PROFILE_FIELD_DISPLAY_NAMES, PROFILE_PATTERN_ERROR_MESSAGES } from './profile.constants';
-
-import { 
-	PROFILE_BASIC_INFO_CONFIG, 
-	PROFILE_PROFESSIONAL_CONFIG, 
-	PROFILE_SKILLS_CONFIG,
-	PROFILE_EXPERIENCE_CONFIG,
-	PROFILE_EDUCATION_CONFIG,
-	PROFILE_PROJECTS_CONFIG,
-	PROFILE_CERTIFICATIONS_CONFIG,
-	PROFILE_JOB_PREFERENCES_CONFIG 
-} from '../../shared/components/dynamic-form/form-configs';
 
 @Component({
 	selector: 'app-profile',

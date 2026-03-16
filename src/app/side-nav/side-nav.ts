@@ -1,25 +1,20 @@
 import { Component, Output, EventEmitter, OnInit, DestroyRef, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+
+import { ConfirmationDialogComponent } from '../shared/components/confirmation-dialog/confirmation-dialog.component';
+
 import { AuthService } from '../services/auth.service';
 import { NavigationService, NavItem } from '../services/navigation.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ConfirmationDialogComponent } from '../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
 	selector: 'app-side-nav',
 	standalone: true,
 	imports: [
-		CommonModule,
-		MatSidenavModule,
 		MatListModule,
-		MatIconModule,
-		MatButtonModule
+		MatIconModule
 	],
 	templateUrl: './side-nav.html',
 	styleUrl: './side-nav.css'
@@ -34,7 +29,6 @@ export class SideNav implements OnInit {
 	private destroyRef = inject(DestroyRef);
 
 	constructor(
-		private router: Router,
 		private authService: AuthService,
 		private navigationService: NavigationService,
 		private dialog: MatDialog

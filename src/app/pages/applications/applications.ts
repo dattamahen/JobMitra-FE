@@ -1,15 +1,17 @@
 import { Component, DestroyRef, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { JobService } from '../../services/job.service';
-import { UserService } from '../../services/user.service';
+
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 import type { ApplicationData } from '../../types/application.types';
 import { APPLICATION_STATUS_CLASSES, APPLICATION_STATUS_LABELS, APPLICATION_PROGRESS_MAP } from './applications.constants';
+
+import { JobService } from '../../services/job.service';
+import { UserService } from '../../services/user.service';
 
 @Component({
 	selector: 'app-applications-page',

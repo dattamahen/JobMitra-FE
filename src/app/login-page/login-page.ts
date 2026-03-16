@@ -1,18 +1,20 @@
-import { Component, OnInit, signal, PLATFORM_ID, inject } from '@angular/core';
-import { isPlatformBrowser, CommonModule } from '@angular/common';
+import { Component, OnInit, PLATFORM_ID, inject, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { AuthService, LoginRequest, LoginResponse, RegisterRequest } from '../services/auth.service';
-import { GoogleAuthService } from '../services/google-auth.service';
+
 import { DynamicFormComponent } from '../shared/components/dynamic-form/dynamic-form.component';
 import { FormConfig } from '../shared/interfaces/form.interfaces';
 import { LOGIN_FORM_CONFIG, SIGNUP_FORM_CONFIG, FORGOT_PASSWORD_FORM_CONFIG, RESET_PASSWORD_FORM_CONFIG } from '../shared/components/dynamic-form/form-configs';
 import { LOGIN_FEATURES, ENTERPRISE_STATS, CERTIFICATIONS } from '../data/login-page-data';
 import { LOGIN_PAGE_CONSTANTS } from './login-page.constants';
 
+import { AuthService, LoginRequest, LoginResponse, RegisterRequest } from '../services/auth.service';
+import { GoogleAuthService } from '../services/google-auth.service';
+
 @Component({
 	selector: 'app-login-page',
-	imports: [CommonModule, MatIconModule, DynamicFormComponent],
+	imports: [MatIconModule, DynamicFormComponent],
 	templateUrl: './login-page.html',
 	styleUrl: './login-page.css'
 })

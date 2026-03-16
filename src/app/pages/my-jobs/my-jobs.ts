@@ -1,23 +1,17 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed, output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialogModule, MatDialog } from '@angular/material/dialog';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatDividerModule } from '@angular/material/divider';
-import { FormsModule } from '@angular/forms';
-import { HrService } from '../../services/hr.service';
-import { EMPLOYMENT_TYPE_DISPLAY, EXPERIENCE_LEVEL_DISPLAY, JOB_TYPE_DISPLAY } from './my-jobs.constants';
+
 import { JobFilterComponent, JobFilterConfig, JobFilterOptions } from '../../shared/components/job-filter/job-filter.component';
-import { Router } from '@angular/router';
+import { EMPLOYMENT_TYPE_DISPLAY, EXPERIENCE_LEVEL_DISPLAY, JOB_TYPE_DISPLAY } from './my-jobs.constants';
+
+import { HrService } from '../../services/hr.service';
 
 export interface HRJobListing {
 	_id?: string;
@@ -77,21 +71,13 @@ export interface FilterOptions {
 @Component({
 	selector: 'app-my-jobs',
 	imports: [
-		CommonModule,
 		MatCardModule,
 		MatButtonModule,
 		MatIconModule,
 		MatChipsModule,
 		MatProgressSpinnerModule,
-		MatFormFieldModule,
-		MatInputModule,
-		MatSelectModule,
 		MatTooltipModule,
 		MatSnackBarModule,
-		MatDialogModule,
-		MatMenuModule,
-		MatDividerModule,
-		FormsModule,
 		JobFilterComponent
 	],
 	templateUrl: './my-jobs.html',
@@ -101,7 +87,6 @@ export interface FilterOptions {
 export class MyJobsPage {
 	private hrService = inject(HrService);
 	private snackBar = inject(MatSnackBar);
-	private dialog = inject(MatDialog);
 	private router = inject(Router);
 	
 	navigateToPage = output<{page: string, params?: any}>();

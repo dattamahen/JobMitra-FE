@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { SideNav } from '../side-nav/side-nav';
 import { DashboardPage } from '../pages/dashboard/dashboard';
 import { JobSearchPage } from '../pages/job-search/job-search';
@@ -13,17 +13,17 @@ import { SettingsPage } from '../pages/settings/settings';
 import { PostJobPage } from '../pages/post-job/post-job';
 import { MyJobsPage } from '../pages/my-jobs/my-jobs';
 import { ApplicationsReceivedPage } from '../pages/applications-received/applications-received';
-import { AuthService } from '../services/auth.service';
-import { FeatureUsageService } from '../services/feature-usage.service';
 import { LoadingComponent } from '../shared/components/loading/loading.component';
 import { PAGE_LOADING_CONFIGS } from '../data/page-loading-config';
+
+import { AuthService } from '../services/auth.service';
+import { FeatureUsageService } from '../services/feature-usage.service';
 
 
 @Component({
 	selector: 'app-dashboard',
 	standalone: true,
 	imports: [
-		CommonModule,
 		SideNav,
 		DashboardPage,
 		JobSearchPage,

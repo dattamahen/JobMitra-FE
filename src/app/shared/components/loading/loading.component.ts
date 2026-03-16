@@ -1,12 +1,11 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
 	selector: 'app-loading',
 	standalone: true,
-	imports: [CommonModule, MatProgressBarModule, MatIconModule],
+	imports: [MatProgressBarModule, MatIconModule],
 	template: `
 		<div class="loading-container">
 			<mat-progress-bar mode="indeterminate" [color]="color"></mat-progress-bar>
