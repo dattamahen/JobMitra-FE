@@ -51,11 +51,16 @@ export class Dashboard implements OnInit {
 		private route: ActivatedRoute,
 		private authService: AuthService,
 		public featureUsageService: FeatureUsageService
-	) {}
+	) {
+		console.log('🏗️ Dashboard Constructor called');
+	}
 
 	ngOnInit() {
+		console.log('🏠 Dashboard Container: ngOnInit called');
+		console.log('🌐 Router URL:', this.router.url);
 		// Get user type to determine default page
 		this.userType = this.authService.getUserType();
+		console.log('👤 User Type:', this.userType);
 		
 		// Listen to route parameter changes
 		this.route.params.subscribe(params => {
@@ -64,6 +69,7 @@ export class Dashboard implements OnInit {
 			} else {
 				this.currentPage = 'dashboard';
 			}
+			console.log('📄 Current Page from params:', this.currentPage);
 		});
 
 		// Get the current page from URL if no params
@@ -73,6 +79,7 @@ export class Dashboard implements OnInit {
 		} else if (!this.currentPage) {
 			this.currentPage = 'dashboard';
 		}
+		console.log('📄 Final Current Page:', this.currentPage);
 	}
 
 	onPageSelected(pageId: string) {

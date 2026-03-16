@@ -76,302 +76,105 @@ export class DashboardService {
 	};
 
 	getDashboardData(): Observable<DashboardData> {
-		const userType = this.authService.getUserType();
-		
-		// Use unified dashboard endpoint for all user types
-		let endpoint = '/dashboard';
-		if (userType === 'hr' || userType === 'admin') {
-			endpoint = '/hr/dashboard';
-		}
-
-		return this.apiService.get<any>(endpoint).pipe(
+		console.log('🔍 DashboardService: getDashboardData() called');
+		console.log('🔍 DashboardService: About to call apiService.get(/dashboard)');
+		return this.apiService.get<any>('/dashboard').pipe(
 			map(data => {
-				// Both endpoints now return the same unified format
-				return this.transformUnifiedApiResponse(data, userType);
+				console.log('✅ DashboardService: API SUCCESS - Raw response:', data);
+				const transformed = {
+					stats: data.stats || [],
+					recentActivities: (data.recentActivities || []).map((activity: any) => ({
+						...activity,
+						timestamp: new Date(activity.timestamp)
+					})),
+					lastUpdated: new Date(data.lastUpdated || Date.now())
+				};
+				console.log('✅ DashboardService: Transformed data:', transformed);
+				return transformed;
 			}),
 			catchError(error => {
-				console.error('Dashboard API error:', error);
-				// Return mock data based on user type
-				const fallbackData = this.getMockDataForUserType(userType);
-				return of(fallbackData);
+				console.error('❌ DashboardService: API ERROR:', error);
+				console.error('❌ DashboardService: Error details:', error.message, error.status);
+				console.log('📊 DashboardService: Returning fallback data');
+				return of(this.getInitialDashboardData());
 			})
 		);
 	}
 
-	private transformUnifiedApiResponse(data: any, userType: string | null): DashboardData {
-		// Both endpoints now return unified format with stats array and recentActivities
-		if (data.stats && data.recentActivities) {
-			return {
-				stats: (data.stats || []).map((stat: any) => ({
-					id: stat.id,
-					label: stat.label,
-					value: stat.value,
-					icon: stat.icon,
-					color: stat.color,
-					trend: stat.trend ? {
-						direction: stat.trend.direction,
-						percentage: stat.trend.percentage,
-						period: stat.trend.period
-					} : undefined
-				})),
-				recentActivities: (data.recentActivities || []).map((activity: any) => ({
-					id: activity.id,
-					title: activity.title,
-					icon: activity.icon,
-					timestamp: new Date(activity.timestamp),
-					type: activity.type,
-					status: activity.status,
-					metadata: activity.metadata || {}
-				})),
-				lastUpdated: data.lastUpdated ? new Date(data.lastUpdated) : new Date()
-			};
-		}
-		
-		// Fallback to mock data if API doesn't return expected format
-		return this.getMockDataForUserType(userType);
-	}
 
-	private transformApiResponse(data: any, userType: string | null): DashboardData {
-		switch (userType) {
-			case 'hr':
-				return this.transformHRData(data);
-			case 'admin':
-				return this.transformAdminData(data);
-			case 'job_seeker':
-			default:
-				// Job seeker API already returns the correct format
-				if (data.stats && data.recentActivities) {
-					return this.transformJobSeekerData(data);
-				}
-				// Fallback to mock data if API doesn't return expected format
-				return this.getInitialDashboardData();
-		}
-	}
-
-	private transformHRData(data: any): DashboardData {
-		return {
-			stats: [
-				{ 
-					id: 'applications' as StatType, 
-					value: data.total_applications || 0, 
-					label: 'Total Applications', 
-					icon: 'description',
-					color: 'primary',
-					trend: { 
-						direction: data.recent_applications > (data.total_applications * 0.1) ? 'up' : 'neutral', 
-						percentage: Math.round((data.recent_applications / Math.max(data.total_applications - data.recent_applications, 1)) * 100), 
-						period: 'this week' 
-					}
-				},
-				{ 
-					id: 'interviews' as StatType, 
-					value: data.total_jobs || 0, 
-					label: 'Total Jobs', 
-					icon: 'work',
-					color: 'accent',
-					trend: { 
-						direction: data.active_jobs > data.draft_jobs ? 'up' : 'neutral', 
-						percentage: Math.round((data.active_jobs / Math.max(data.total_jobs, 1)) * 100), 
-						period: 'active now' 
-					}
-				},
-				{ 
-					id: 'profile-visits' as StatType, 
-					value: data.active_jobs || 0, 
-					label: 'Active Jobs', 
-					icon: 'trending_up',
-					color: 'success',
-					trend: { 
-						direction: data.active_jobs > 0 ? 'up' : 'neutral', 
-						percentage: Math.round((data.active_jobs / Math.max(data.total_jobs, 1)) * 100), 
-						period: 'currently' 
-					}
-				},
-				{ 
-					id: 'matching-jobs' as StatType, 
-					value: data.recent_applications || 0, 
-					label: 'Recent Applications', 
-					icon: 'person_add',
-					color: 'warn',
-					trend: { 
-						direction: data.recent_applications > 5 ? 'up' : 'neutral', 
-						percentage: Math.min(Math.round((data.recent_applications / 10) * 100), 100), 
-						period: 'this week' 
-					}
-				}
-			],
-			recentActivities: [
-				{
-					id: '1',
-					title: 'New Applications Received',
-					icon: 'person_add',
-					timestamp: new Date(Date.now() - 1000 * 60 * 30),
-					type: 'application',
-					status: 'completed',
-					metadata: { count: data.recent_applications || 0 }
-				},
-				{
-					id: '2',
-					title: 'Active Job Postings',
-					icon: 'work',
-					timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
-					type: 'other',
-					status: 'in-progress',
-					metadata: { count: data.active_jobs || 0 }
-				},
-				{
-					id: '3',
-					title: 'Draft Jobs Pending',
-					icon: 'draft',
-					timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4),
-					type: 'other',
-					status: 'pending',
-					metadata: { count: data.draft_jobs || 0 }
-				}
-			],
-			lastUpdated: new Date()
-		};
-	}
-
-	private transformAdminData(data: any): DashboardData {
-		return {
-			stats: [
-				{ 
-					id: 'applications' as StatType, 
-					value: data.total_users || 150, 
-					label: 'Total Users', 
-					trend: { direction: 'up', percentage: 18, period: 'this month' }
-				},
-				{ 
-					id: 'interviews' as StatType, 
-					value: data.total_jobs || 45, 
-					label: 'Total Jobs', 
-					trend: { direction: 'up', percentage: 12, period: 'this week' }
-				},
-				{ 
-					id: 'profile-visits' as StatType, 
-					value: data.total_companies || 20, 
-					label: 'Companies', 
-					trend: { direction: 'neutral', percentage: 2, period: 'this month' }
-				},
-				{ 
-					id: 'matching-jobs' as StatType, 
-					value: data.total_activities || 500, 
-					label: 'Platform Activities', 
-					trend: { direction: 'up', percentage: 35, period: 'this week' }
-				}
-			],
-			recentActivities: [
-				{
-					id: '1',
-					title: 'System maintenance completed',
-					icon: 'settings',
-					timestamp: new Date(Date.now() - 1000 * 60 * 45),
-					type: 'other',
-					metadata: { category: 'system' }
-				},
-				{
-					id: '2',
-					title: 'New user registrations',
-					icon: 'person_add',
-					timestamp: new Date(Date.now() - 1000 * 60 * 60 * 3),
-					type: 'other',
-					metadata: { category: 'growth' }
-				}
-			],
-			lastUpdated: data.lastUpdated ? new Date(data.lastUpdated) : new Date()
-		};
-	}
-
-	private transformJobSeekerData(data: any): DashboardData {
-		return {
-			stats: (data.stats || []).map((stat: any) => ({
-				id: stat.id,
-				label: stat.label,
-				value: stat.value,
-				icon: stat.icon,
-				color: stat.color,
-				trend: stat.trend ? {
-					direction: stat.trend.direction,
-					percentage: stat.trend.percentage,
-					period: stat.trend.period
-				} : undefined
-			})),
-			recentActivities: (data.recentActivities || []).map((activity: any) => ({
-				id: activity.id,
-				title: activity.title,
-				icon: activity.icon,
-				timestamp: new Date(activity.timestamp),
-				type: activity.type,
-				status: activity.status,
-				metadata: activity.metadata || {}
-			})),
-			lastUpdated: data.lastUpdated ? new Date(data.lastUpdated) : new Date()
-		};
-	}
-
-	private getMockDataForUserType(userType: string | null): DashboardData {
-		switch (userType) {
-			case 'hr':
-				return this.transformHRData({});
-			case 'admin':
-				return this.transformAdminData({});
-			case 'job_seeker':
-			default:
-				return this.getInitialDashboardData();
-		}
-	}
 
 	private getInitialDashboardData(): DashboardData {
 		return {
 			stats: [
 				{ 
 					id: 'applications', 
-					value: '12', 
-					label: 'Applications Sent', 
+					value: 12, 
+					label: 'Applications Sent',
+					icon: 'send',
+					color: 'primary',
 					trend: { direction: 'up', percentage: 15, period: 'this week' }
 				},
 				{ 
 					id: 'interviews', 
-					value: '3', 
-					label: 'Interviews Scheduled', 
+					value: 3, 
+					label: 'Interviews Scheduled',
+					icon: 'event',
+					color: 'accent',
 					trend: { direction: 'up', percentage: 33, period: 'this week' }
 				},
 				{ 
-					id: 'mock-interviews', 
-					value: '5', 
-					label: 'Mock Interviews', 
-					trend: { direction: 'neutral', percentage: 0, period: 'this week' }
+					id: 'matching-jobs', 
+					value: 45, 
+					label: 'Total Jobs Available',
+					icon: 'work',
+					color: 'warn',
+					trend: { direction: 'neutral', percentage: 0, period: 'today' }
 				},
 				{ 
 					id: 'profile-completion', 
 					value: '85%', 
-					label: 'Profile Completion', 
+					label: 'Profile Completion',
+					icon: 'person',
+					color: 'success',
 					trend: { direction: 'up', percentage: 5, period: 'this month' }
 				}
 			],
 			recentActivities: [
 				{
 					id: '1',
-					title: 'Application Submitted',
-					icon: 'description',
+					title: 'Applied to Senior Frontend Developer at TechCorp',
+					icon: 'send',
 					timestamp: new Date(Date.now() - 1000 * 60 * 30),
 					type: 'application',
-					metadata: { 
-						company: 'TechCorp',
-						position: 'Frontend Developer'
-					}
+					status: 'completed',
+					metadata: { company: 'TechCorp', position: 'Senior Frontend Developer' }
 				},
 				{
 					id: '2',
-					title: 'Profile Updated',
-					icon: 'person',
+					title: 'Interview scheduled with StartupXYZ',
+					icon: 'event',
 					timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
+					type: 'interview',
+					status: 'pending',
+					metadata: { company: 'StartupXYZ', date: 'Tomorrow 2 PM' }
+				},
+				{
+					id: '3',
+					title: 'Profile updated - Added new certification',
+					icon: 'person',
+					timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5),
 					type: 'profile',
-					metadata: { 
-						field: 'certifications',
-						value: 'React Development'
-					}
+					status: 'completed',
+					metadata: { field: 'certifications', value: 'AWS Solutions Architect' }
+				},
+				{
+					id: '4',
+					title: 'Completed mock interview for React Developer role',
+					icon: 'quiz',
+					timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24),
+					type: 'assessment',
+					status: 'completed',
+					metadata: { score: 85, role: 'React Developer' }
 				}
 			],
 			lastUpdated: new Date()
