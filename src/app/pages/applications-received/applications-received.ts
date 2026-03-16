@@ -13,8 +13,6 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatMenuModule } from '@angular/material/menu';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 import { APPLICATION_RECEIVED_STATUS_COLORS } from './applications-received.constants';
@@ -227,6 +225,11 @@ export class ApplicationsReceivedPage implements OnInit {
 	}
 
 	async downloadApplicantPDF(application: ApplicationReceived): Promise<void> {
+		const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
+			import('jspdf'),
+			import('html2canvas')
+		]);
+
 		const tempElement = document.createElement('div');
 		tempElement.style.position = 'absolute';
 		tempElement.style.left = '-9999px';

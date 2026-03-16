@@ -29,8 +29,7 @@ import {
 } from '../../shared/components/dynamic-form/form-configs';
 import { RESUME_SECTIONS, CV_TEMPLATES } from './resume-builder.constants';
 
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+
 
 
 @Component({
@@ -1207,13 +1206,14 @@ export class ResumeBuilderPage implements OnInit {
 	}
 
 	private async generatePDF(): Promise<void> {
-		// Save all current form data to resume before generating PDF
 		this.saveAllSections();
-		
 		const resume = this.currentResume();
 		if (!resume) return;
 
-
+		const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
+			import('jspdf'),
+			import('html2canvas')
+		]);
 
 		const tempElement = document.createElement('div');
 		tempElement.style.position = 'absolute';
