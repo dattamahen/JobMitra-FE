@@ -15,6 +15,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { FormsModule } from '@angular/forms';
 import { HrService } from '../../services/hr.service';
+import { EMPLOYMENT_TYPE_DISPLAY, EXPERIENCE_LEVEL_DISPLAY, JOB_TYPE_DISPLAY } from './my-jobs.constants';
 import { JobFilterComponent, JobFilterConfig, JobFilterOptions } from '../../shared/components/job-filter/job-filter.component';
 import { Router } from '@angular/router';
 
@@ -344,34 +345,15 @@ export class MyJobsPage {
 	}
 
 	getEmploymentTypeDisplay(type: string): string {
-		const types: { [key: string]: string } = {
-			'full_time': 'Full Time',
-			'part_time': 'Part Time',
-			'contract': 'Contract',
-			'freelance': 'Freelance',
-			'internship': 'Internship'
-		};
-		return types[type] || type;
+		return EMPLOYMENT_TYPE_DISPLAY[type] || type;
 	}
 
 	getExperienceLevelDisplay(level: string): string {
-		const levels: { [key: string]: string } = {
-			'entry': 'Entry Level',
-			'mid': 'Mid Level',
-			'senior': 'Senior Level',
-			'lead': 'Lead',
-			'executive': 'Executive'
-		};
-		return levels[level] || level;
+		return EXPERIENCE_LEVEL_DISPLAY[level] || level;
 	}
 
 	getJobTypeDisplay(type: string): string {
-		const types: { [key: string]: string } = {
-			'remote': 'Remote',
-			'onsite': 'On-site',
-			'hybrid': 'Hybrid'
-		};
-		return types[type] || type;
+		return JOB_TYPE_DISPLAY[type] || type;
 	}
 
 	formatDate(dateString: string): string {

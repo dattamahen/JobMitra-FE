@@ -35,6 +35,7 @@ import {
 	RESUME_PROJECTS_CONFIG,
 	RESUME_CERTIFICATIONS_CONFIG
 } from '../../shared/components/dynamic-form/form-configs';
+import { RESUME_SECTIONS, CV_TEMPLATES } from './resume-builder.constants';
 
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -99,15 +100,7 @@ export class ResumeBuilderPage implements OnInit {
 	certificationsForm!: FormGroup;
 
 	// Section definitions
-	readonly sections = [
-		{ id: 'personal_info', label: 'Personal Info', icon: 'person', required: true },
-		{ id: 'summary', label: 'Summary', icon: 'description', required: true },
-		{ id: 'experience', label: 'Experience', icon: 'work', required: true },
-		{ id: 'education', label: 'Education', icon: 'school', required: true },
-		{ id: 'skills', label: 'Skills', icon: 'build', required: true },
-		{ id: 'projects', label: 'Projects', icon: 'code', required: false },
-		{ id: 'certifications', label: 'Certifications', icon: 'verified', required: false }
-	];
+	readonly sections = RESUME_SECTIONS;
 
 	// Form configurations
 	readonly personalInfoConfig = RESUME_PERSONAL_INFO_CONFIG;
@@ -1013,12 +1006,7 @@ export class ResumeBuilderPage implements OnInit {
 	// Layout management
 	isFormExpanded = signal(false);
 	
-	cvTemplates = [
-		{ id: 'modern', name: 'Modern', icon: 'article' },
-		{ id: 'classic', name: 'Classic', icon: 'description' },
-		{ id: 'creative', name: 'Creative', icon: 'palette' },
-		{ id: 'executive', name: 'Executive', icon: 'business_center' }
-	];
+	cvTemplates = CV_TEMPLATES;
 
 	getExperienceControls(): number[] {
 		return Array.from({length: this.experienceCount()}, (_, i) => i);

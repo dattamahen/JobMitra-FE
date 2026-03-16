@@ -14,6 +14,7 @@ import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatMenuModule } from '@angular/material/menu';
 import { FormsModule } from '@angular/forms';
 import { HrService } from '../../services/hr.service';
+import { APPLICATION_RECEIVED_STATUS_COLORS } from './applications-received.constants';
 import { ActivatedRoute } from '@angular/router';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -198,14 +199,7 @@ export class ApplicationsReceivedPage implements OnInit {
 	}
 
 	getStatusColor(status: string): string {
-		const statusColors: { [key: string]: string } = {
-			'applied': 'primary',
-			'under_review': 'accent',
-			'shortlisted': 'success',
-			'rejected': 'warn',
-			'hired': 'success'
-		};
-		return statusColors[status] || 'primary';
+		return APPLICATION_RECEIVED_STATUS_COLORS[status] || 'primary';
 	}
 
 	updateStatus(application: ApplicationReceived, newStatus: string) {

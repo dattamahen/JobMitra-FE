@@ -1,6 +1,8 @@
+import { APP_CONSTANTS } from '../constants/app.constants';
+
 export const TOP_NAV_CONSTANTS = {
-  APP_NAME: 'JobMouka',
-  SIGN_IN: 'Sign In',
-  SIGN_UP: 'Sign Up',
-  LOGOUT: 'Logout'
+  APP_NAME: APP_CONSTANTS.APP_NAME,
+  SIGN_IN: APP_CONSTANTS.SIGN_IN,
+  SIGN_UP: APP_CONSTANTS.SIGN_UP,
+  LOGOUT: APP_CONSTANTS.LOGOUT
 };

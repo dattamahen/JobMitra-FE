@@ -23,6 +23,7 @@ import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynam
 import { ProfileShareComponent } from '../../shared/components/profile-share/profile-share.component';
 import { ProfileShareService, ProfileSnapshot } from '../../services/profile-share.service';
 import { ImageUploadService } from '../../services/image-upload.service';
+import { QUALIFICATION_DISPLAY_MAP, SALARY_RANGE_MAP, PROFILE_FIELD_DISPLAY_NAMES, PROFILE_PATTERN_ERROR_MESSAGES } from './profile.constants';
 
 import { 
 	PROFILE_BASIC_INFO_CONFIG, 
@@ -674,27 +675,10 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	// Helper function to convert salary range string to expected_salary object
 	private convertSalaryRangeToObject(salaryRange: string): { min: number; max: number; currency: 'INR'; period: 'yearly' } | undefined {
 		if (!salaryRange) return undefined;
-		
-		// Map dropdown values to LPA ranges
-		const rangeMap: { [key: string]: { min: number; max: number } } = {
-			'4-6': { min: 4, max: 6 },
-			'6-8': { min: 6, max: 8 },
-			'8-12': { min: 8, max: 12 },
-			'12-18': { min: 12, max: 18 },
-			'18-25': { min: 18, max: 25 },
-			'25+': { min: 25, max: 30 }
-		};
-		
-		const range = rangeMap[salaryRange];
+		const range = SALARY_RANGE_MAP[salaryRange];
 		if (range) {
-			return {
-				min: range.min,
-				max: range.max,
-				currency: 'INR' as const,
-				period: 'yearly' as const
-			};
+			return { min: range.min, max: range.max, currency: 'INR' as const, period: 'yearly' as const };
 		}
-		
 		return undefined;
 	}
 
@@ -1005,17 +989,7 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	getHighestQualification(): string {
 		const user = this.currentUser as any;
 		const qualification = user?.highest_qualification || '';
-		
-		// Convert backend values to display labels
-		const qualificationMap: { [key: string]: string } = {
-			'high_school': 'High School',
-			'diploma': 'Diploma',
-			'bachelors': 'Bachelor\'s Degree',
-			'masters': 'Master\'s Degree',
-			'phd': 'PhD'
-		};
-		
-		return qualificationMap[qualification] || qualification;
+		return QUALIFICATION_DISPLAY_MAP[qualification] || qualification;
 	}
 
 	getJobPreferences(): string {
@@ -1196,18 +1170,7 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	}
 
 	private getPatternErrorMessage(fieldName: string): string {
-		switch (fieldName) {
-			case 'phone':
-				return 'Please enter a valid phone number (e.g., +1 (555) 123-4567)';
-			case 'githubLink':
-				return 'Please enter a valid GitHub URL (e.g., https://github.com/username)';
-			case 'portfolioLink':
-				return 'Please enter a valid URL (e.g., https://yourportfolio.com)';
-			case 'youtubeChannel':
-				return 'Please enter a valid YouTube channel URL (e.g., https://youtube.com/@username)';
-			default:
-				return 'Please enter a valid format';
-		}
+		return PROFILE_PATTERN_ERROR_MESSAGES[fieldName] || 'Please enter a valid format';
 	}
 
 	togglePanel(panel: string): void {
@@ -1238,27 +1201,7 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	}
 
 	private getFieldDisplayName(fieldName: string): string {
-		const fieldNames: { [key: string]: string } = {
-			'fullName': 'Full Name',
-			'email': 'Email',
-			'phone': 'Phone Number',
-			'location': 'Location',
-			'currentJobTitle': 'Current Job Title',
-			'experience': 'Years of Experience',
-			'desiredJobTitle': 'Desired Job Title',
-			'salaryRange': 'Expected Salary Range',
-			'skills': 'Skills',
-			'summary': 'Professional Summary',
-			'certifications': 'Certifications',
-			'areaOfExpertise': 'Area of Expertise',
-			'githubLink': 'GitHub Profile',
-			'portfolioLink': 'Portfolio Link',
-			'youtubeChannel': 'YouTube Channel',
-			'contributions': 'Key Contributions',
-			'workType': 'Work Type',
-			'employmentType': 'Employment Type'
-		};
-		return fieldNames[fieldName] || fieldName;
+		return PROFILE_FIELD_DISPLAY_NAMES[fieldName] || fieldName;
 	}
 
 	// Self-testing methods

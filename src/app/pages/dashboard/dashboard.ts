@@ -12,6 +12,7 @@ import { DashboardService } from '../../services/dashboard.service';
 import { DashboardData, DashboardStats, ActivityItem } from '../../types/dashboard.types';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ACTIVITY_TYPE_COLOR_MAP, ACTIVITY_STATUS_ICON_MAP } from './dashboard.constants';
 
 @Component({
 	selector: 'app-dashboard-page',
@@ -93,24 +94,10 @@ export class DashboardPage implements OnInit {
 	}
 
 	getActivityStatusIcon(status?: string): string {
-		switch (status) {
-			case 'completed': return 'check_circle';
-			case 'pending': return 'schedule';
-			case 'in-progress': return 'hourglass_empty';
-			case 'cancelled': return 'cancel';
-			default: return 'info';
-		}
+		return ACTIVITY_STATUS_ICON_MAP[status ?? ''] ?? 'info';
 	}
 
 	getActivityTypeColor(type: ActivityItem['type']): string {
-		const colorMap: Record<ActivityItem['type'], string> = {
-			'application': 'primary',
-			'interview': 'accent', 
-			'assessment': 'warn',
-			'profile': 'success',
-			'resume': 'info',
-			'other': 'primary'
-		};
-		return colorMap[type] || 'primary';
+		return ACTIVITY_TYPE_COLOR_MAP[type] || 'primary';
 	}
 }
