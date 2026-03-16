@@ -7,11 +7,7 @@
 			
 			@switch (currentPage) {
 				@case ('dashboard') {
-					@defer (on immediate) {
-						<app-dashboard-page />
-					} @placeholder {
-						<ng-container *ngTemplateOutlet="pageLoading; context: { $implicit: 'dashboard' }"></ng-container>
-					}
+					<app-dashboard-page />
 				}
 				@case ('job-search') {
 					@defer (on immediate) {

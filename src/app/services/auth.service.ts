@@ -585,6 +585,14 @@ export class AuthService {
 	}
 
 	/**
+	* Get current user ID
+	*/
+	getCurrentUserId(): string | null {
+		const user = this.getCurrentUserValue();
+		return user?.user_id || user?.email || null;
+	}
+
+	/**
 	* Forgot password - send reset link
 	*/
 	forgotPassword(email: string): Observable<{message: string, token?: string}> {

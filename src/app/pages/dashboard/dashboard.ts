@@ -37,27 +37,38 @@ export class DashboardPage implements OnInit {
 	isLoading = signal(true);
 	private destroyRef = inject(DestroyRef);
 
-	constructor(private dashboardService: DashboardService) {}
+	constructor(private dashboardService: DashboardService) {
+		console.log('🏗️ DashboardPage: Constructor called');
+	}
 
 	ngOnInit(): void {
+		console.log('📊 DashboardPage: ngOnInit START');
+		console.log('📊 DashboardPage: About to call loadDashboardData()');
 		this.loadDashboardData();
+		console.log('📊 DashboardPage: ngOnInit END');
 	}
 
 	private loadDashboardData(): void {
+		console.log('📊 DashboardPage: loadDashboardData START');
 		this.isLoading.set(true);
+		console.log('📊 DashboardPage: isLoading set to true');
 		
+		console.log('📊 DashboardPage: Calling dashboardService.getDashboardData()');
 		this.dashboardService.getDashboardData()
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 			next: (data) => {
+				console.log('✅ DashboardPage: Received data:', data);
 				this.dashboardData.set(data);
 				this.isLoading.set(false);
+				console.log('✅ DashboardPage: Data set, isLoading = false');
 			},
 			error: (err) => {
-				console.error('Dashboard load error:', err);
+				console.error('❌ DashboardPage: Error loading dashboard:', err);
 				this.isLoading.set(false);
 			}
 		});
+		console.log('📊 DashboardPage: loadDashboardData END (subscription created)');
 	}
 
 	refreshDashboard(): void {
