@@ -1,12 +1,12 @@
 .dynamic-form {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: 4px;
 	
 	// Form labels
 	.mat-mdc-form-field-label,
 	.mat-mdc-floating-label {
-		font-size: 1.125rem !important;
+		font-size: 14px !important;
 	}
 	
 	// Form input values
@@ -19,12 +19,12 @@
 	
 	// Buttons
 	button {
-		font-size: 1.125rem !important;
+		font-size: 14px !important;
 	}
 	
 	// Section headers
 	h2 {
-		font-size: 1.5rem !important;
+		font-size: 16px !important;
 	}
 }
 
@@ -35,8 +35,8 @@
 .form-row {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 16px;
-	margin-bottom: 16px;
+	row-gap: 4px;
+	column-gap: 12px;
 	align-items: flex-start;
 }
 
@@ -143,10 +143,8 @@ mat-spinner {
 }
 
 .array-item {
-	border: 1px solid #e0e0e0;
-	border-radius: 8px;
-	padding: 16px;
-	margin-bottom: 16px;
+	padding: 0;
+	margin-bottom: 8px;
 }
 
 .dynamic-array-item {
@@ -175,7 +173,7 @@ mat-spinner {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 16px;
+	margin-bottom: 4px;
 	font-weight: 500;
 }
 

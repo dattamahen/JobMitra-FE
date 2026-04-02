@@ -35,6 +35,13 @@ import { CommonModule } from '@angular/common';
 			}
 		</mat-form-field>
 	`,
+	styles: [`
+		:host { display: block; width: 100%; }
+		.mat-datepicker-toggle { transform: scale(0.8); }
+		.mat-mdc-form-field { font-size: 14px; }
+		input { color: #65697b !important; }
+		.mat-mdc-floating-label { color: #65697b !important; }
+	`],
 	providers: [
 		{
 			provide: NG_VALUE_ACCESSOR,
