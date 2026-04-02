@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, OnInit, DestroyRef, inject } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit, DestroyRef, inject, ViewEncapsulation } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,7 +17,8 @@ import { NavigationService, NavItem } from '../services/navigation.service';
 		MatIconModule
 	],
 	templateUrl: './side-nav.html',
-	styleUrl: './side-nav.css'
+	styleUrl: './side-nav.css',
+	encapsulation: ViewEncapsulation.None
 })
 export class SideNav implements OnInit {
 	@Output() pageSelected = new EventEmitter<string>();

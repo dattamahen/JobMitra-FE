@@ -10,7 +10,8 @@
 			<mat-list-item 
 				[class.active]="activeItem === item.id"
 				(click)="selectItem(item.id)"
-				class="nav-item">
+				class="nav-item"
+				style="height:2.5rem !important">
 				<mat-icon matListItemIcon class="nav-icon">{{ item.matIcon }}</mat-icon>
 				<span matListItemTitle>{{ item.label }}</span>
 			</mat-list-item>

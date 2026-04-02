@@ -1,5 +1,5 @@
 .side-nav-container {
-	width: 250px;
+	width: 200px;
 	height: 100vh;
 	background-color: #4831af;
 	color: #fff;
@@ -104,9 +104,9 @@
 	font-size: 0.875rem;
 	font-weight: 600;
 	color: #fff !important;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	white-space: normal;
 }
 
 .user-email {
@@ -154,7 +154,15 @@
 }
 
 .nav-item:hover .nav-icon {
-	color: #1976d2 !important;
+	color: #4831af !important;
+}
+
+.nav-item:hover .mdc-list-item__primary-text {
+	color: #4831af !important;
+}
+
+.nav-item:hover .mat-mdc-list-item-content {
+	color: #4831af !important;
 }
 
 .nav-icon {
@@ -171,6 +179,7 @@
 
 mat-list-item {
 	font-family: 'Inter', sans-serif !important;
+	font-size: 14px !important;
 	color: #fff !important;
 }
 
@@ -180,13 +189,23 @@ mat-list-item {
 
 .mdc-list-item__primary-text {
 	color: #fff !important;
+	font-size: 14px !important;
 }
 
 .mat-mdc-list-item {
 	padding-left: 8px !important;
 	padding-right: 8px !important;
-	height: 2.5rem !important;
-	min-height: 2.5rem !important;
+	height: 2rem !important;
+	min-height: 2rem !important;
+}
+
+.side-nav-container .mat-mdc-list-item .mdc-list-item__content {
+	padding-left: 0 !important;
+}
+
+.side-nav-container .mat-mdc-list-item .mdc-list-item__start {
+	margin-left: 0 !important;
+	margin-right: 8px !important;
 }
 
 .logout-item {
@@ -210,8 +229,14 @@ mat-list-item {
 	color: #ef5350 !important;
 }
 
+.side-nav-container .mat-mdc-list-item .mdc-list-item__primary-text {
+	white-space: normal !important;
+	word-wrap: break-word !important;
+	overflow-wrap: break-word !important;
+}
+
 @media (max-width: 768px) {
 	.side-nav-container {
-		width: 200px;
+		width: 160px;
 	}
 }
