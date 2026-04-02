@@ -201,21 +201,6 @@
 	color: #fff !important;
 	border-top: none;
 	margin: 0;
-	padding-bottom: 0.5rem;
-}
-
-.side-nav-container .logout-item.mat-mdc-list-item:hover {
-	background-color: rgba(211, 47, 47, 0.2) !important;
-	color: #fff !important;
-	border-left-color: #ef5350 !important;
-}
-
-.side-nav-container .logout-item .nav-icon {
-	color: #fff !important;
-}
-
-.side-nav-container .logout-item:hover .nav-icon {
-	color: #ef5350 !important;
 }
 
 @media (max-width: 768px) {
