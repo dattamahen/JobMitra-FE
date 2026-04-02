@@ -154,7 +154,15 @@
 }
 
 .nav-item:hover .nav-icon {
-	color: #1976d2 !important;
+	color: #4831af !important;
+}
+
+.nav-item:hover .mdc-list-item__primary-text {
+	color: #4831af !important;
+}
+
+.nav-item:hover .mat-mdc-list-item-content {
+	color: #4831af !important;
 }
 
 .nav-icon {
@@ -171,6 +179,7 @@
 
 mat-list-item {
 	font-family: 'Inter', sans-serif !important;
+	font-size: 14px !important;
 	color: #fff !important;
 }
 
@@ -180,13 +189,14 @@ mat-list-item {
 
 .mdc-list-item__primary-text {
 	color: #fff !important;
+	font-size: 14px !important;
 }
 
 .mat-mdc-list-item {
 	padding-left: 8px !important;
 	padding-right: 8px !important;
-	height: 2.5rem !important;
-	min-height: 2.5rem !important;
+	height: 2rem !important;
+	min-height: 2rem !important;
 }
 
 .logout-item {
