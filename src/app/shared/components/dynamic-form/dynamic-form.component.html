@@ -39,7 +39,7 @@
 													[hint]="subField.hint || ''">
 												</app-date-field>
 											} @else {
-												<mat-form-field appearance="outline" class="full-width" [class.readonly]="readonly">
+												<mat-form-field appearance="fill" class="full-width" [class.readonly]="readonly">
 													<mat-label>{{ subField.label }}{{ subField.required ? ' *' : '' }}</mat-label>
 													@switch (subField.type) {
 														@case ('select') {
@@ -103,7 +103,7 @@
 					</app-date-field>
 				}
 				@default {
-					<mat-form-field appearance="outline" class="full-width" [class.readonly]="readonly || !!field.readonly">
+					<mat-form-field appearance="fill" class="full-width" [class.readonly]="readonly || !!field.readonly">
 						<mat-label>{{ field.label }}{{ field.required ? ' *' : '' }}</mat-label>
 						
 						@switch (field.type) {

@@ -19,7 +19,7 @@ import { CommonModule } from '@angular/common';
 		MatIconModule
 	],
 	template: `
-		<mat-form-field appearance="outline" class="full-width" [class.disabled-field]="disabled || readonly">
+		<mat-form-field appearance="fill" class="full-width" [class.disabled-field]="disabled || readonly">
 			<mat-label>{{ label }}{{ required ? ' *' : '' }}</mat-label>
 			<input 
 				matInput 

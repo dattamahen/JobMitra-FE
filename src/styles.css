@@ -61,7 +61,7 @@ button {
 /* Form elements */
 input:not([type="checkbox"]):not([type="radio"]), textarea, select {
 	font-family: 'Inter', sans-serif;
-	font-size: 0.875rem;
+	font-size: 14px;
 }
 
 /* Labels */
@@ -103,47 +103,31 @@ small, .text-small {
 .mat-mdc-form-field-hint, .mat-hint {
 	font-size: 0.75rem;
 }
-/* Angular Material Form Field Height Override */
+/* Angular Material Form Field - Fill Appearance */
 .mat-mdc-form-field:not(:has(textarea)) {
-	--mdc-filled-text-field-container-height: 40px;
-	--mdc-outlined-text-field-container-height: 40px;
+	--mdc-filled-text-field-container-height: 44px;
+	--mdc-filled-text-field-container-color: #fff;
+	--mdc-filled-text-field-disabled-container-color: #f5f5f5;
+	--mdc-filled-text-field-hover-container-color: #fff;
+	--mdc-filled-text-field-focus-container-color: #fff;
 }
 
-.mat-mdc-form-field:not(:has(textarea)) .mat-mdc-text-field-wrapper {
-	height: 40px !important;
+.mat-mdc-form-field:has(textarea) {
+	--mdc-filled-text-field-container-color: #fff;
+	--mdc-filled-text-field-disabled-container-color: #f5f5f5;
+	--mdc-filled-text-field-hover-container-color: #fff;
+	--mdc-filled-text-field-focus-container-color: #fff;
 }
 
-.mat-mdc-form-field:not(:has(textarea)) .mdc-text-field {
-	height: 40px !important;
+.mat-mdc-text-field-wrapper {
+	background-color: #fff !important;
 }
 
-.mat-mdc-form-field .mdc-text-field__input:not(textarea) {
-	height: 40px !important;
-	padding-top: 8px !important;
-	padding-bottom: 8px !important;
+.mat-mdc-form-field.readonly .mat-mdc-text-field-wrapper,
+.disabled-field .mat-mdc-text-field-wrapper {
+	background-color: #f5f5f5 !important;
 }
 
-.mat-mdc-form-field:not(:has(textarea)) .mdc-notched-outline {
-	height: 40px !important;
-}
-
-.mat-mdc-form-field:not(:has(textarea)) .mdc-notched-outline__leading,
-.mat-mdc-form-field:not(:has(textarea)) .mdc-notched-outline__notch,
-.mat-mdc-form-field:not(:has(textarea)) .mdc-notched-outline__trailing {
-	height: 40px !important;
-}
-/* Fix Form Field Height to 40px */
-.mat-mdc-form-field .mdc-text-field__input:not(textarea) {
-	height: 24px !important;
-	padding: 8px 12px !important;
-	line-height: 24px !important;
-}
-
-.mat-mdc-form-field-infix:not(:has(textarea)) {
-	height: 24px !important;
-	padding: 8px 0 !important;
-	min-height: 24px !important;
-}
 /* Global Font Color Override */
 h1, h2, h3, h4, h5, h6 {
 	color: #65697b !important;
@@ -156,17 +140,6 @@ p, span, div, label, input, textarea, select {
 .mat-mdc-form-field-label, .mat-mdc-floating-label {
 	color: #65697b !important;
 	font-size: 0.875rem;
-}
-
-.mat-mdc-form-field:not(:has(textarea)) .mdc-floating-label,
-.mat-mdc-form-field:not(:has(textarea)) .mat-mdc-floating-label {
-	top: 50% !important;
-	transform: translateY(-50%) !important;
-}
-
-.mat-mdc-form-field:not(:has(textarea)) .mdc-floating-label--float-above,
-.mat-mdc-form-field:not(:has(textarea)) .mat-mdc-floating-label.mdc-floating-label--float-above {
-	transform: translateY(-106%) scale(0.75) !important;
 }
 
 .mat-mdc-input-element {
@@ -187,12 +160,3 @@ mat-nav-list .mat-mdc-list-item {
 	color: #fff !important;
 }
 
-
-/* Disabled Date Field Styling */
-.disabled-field .mat-mdc-text-field-wrapper {
-	background-color: #f5f5f5 !important;
-}
-
-.disabled-field input {
-	background-color: #f5f5f5 !important;
-}
