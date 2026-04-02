@@ -14,9 +14,7 @@
 				}
 				@case ('dynamic-array') {
 					<div class="dynamic-array-field">
-						<div class="array-header">
-							<h4>{{ field.label }}</h4>
-						</div>
+						
 						@for (itemId of getArrayItems(field.name); track itemId; let i = $index) {
 							<div class="array-item">
 								<div class="array-item-header">
@@ -39,7 +37,7 @@
 													[hint]="subField.hint || ''">
 												</app-date-field>
 											} @else {
-												<mat-form-field appearance="outline" class="full-width" [class.readonly]="readonly">
+												<mat-form-field appearance="fill" class="full-width" [class.readonly]="readonly">
 													<mat-label>{{ subField.label }}{{ subField.required ? ' *' : '' }}</mat-label>
 													@switch (subField.type) {
 														@case ('select') {
@@ -103,7 +101,7 @@
 					</app-date-field>
 				}
 				@default {
-					<mat-form-field appearance="outline" class="full-width" [class.readonly]="readonly || !!field.readonly">
+					<mat-form-field appearance="fill" class="full-width" [class.readonly]="readonly || !!field.readonly">
 						<mat-label>{{ field.label }}{{ field.required ? ' *' : '' }}</mat-label>
 						
 						@switch (field.type) {

@@ -19,7 +19,7 @@ import { CommonModule } from '@angular/common';
 		MatIconModule
 	],
 	template: `
-		<mat-form-field appearance="outline" class="full-width" [class.disabled-field]="disabled || readonly">
+		<mat-form-field appearance="fill" class="full-width" [class.disabled-field]="disabled || readonly">
 			<mat-label>{{ label }}{{ required ? ' *' : '' }}</mat-label>
 			<input 
 				matInput 
@@ -35,6 +35,13 @@ import { CommonModule } from '@angular/common';
 			}
 		</mat-form-field>
 	`,
+	styles: [`
+		:host { display: block; width: 100%; }
+		.mat-datepicker-toggle { transform: scale(0.8); }
+		.mat-mdc-form-field { font-size: 14px; }
+		input { color: #65697b !important; }
+		.mat-mdc-floating-label { color: #65697b !important; }
+	`],
 	providers: [
 		{
 			provide: NG_VALUE_ACCESSOR,
