@@ -1,5 +1,5 @@
 .side-nav-container {
-	width: 250px;
+	width: 200px;
 	height: 100vh;
 	background-color: #4831af;
 	color: #fff;
@@ -104,9 +104,9 @@
 	font-size: 0.875rem;
 	font-weight: 600;
 	color: #fff !important;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	white-space: normal;
 }
 
 .user-email {
@@ -229,8 +229,14 @@ mat-list-item {
 	color: #ef5350 !important;
 }
 
+.side-nav-container .mat-mdc-list-item .mdc-list-item__primary-text {
+	white-space: normal !important;
+	word-wrap: break-word !important;
+	overflow-wrap: break-word !important;
+}
+
 @media (max-width: 768px) {
 	.side-nav-container {
-		width: 200px;
+		width: 160px;
 	}
 }

@@ -6,7 +6,7 @@
 
 .main-content {
 	flex: 1;
-	margin-left: 250px; /* Width of side nav */
+	margin-left: 200px; /* Width of side nav */
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
