@@ -199,6 +199,15 @@ mat-list-item {
 	min-height: 2rem !important;
 }
 
+.side-nav-container .mat-mdc-list-item .mdc-list-item__content {
+	padding-left: 0 !important;
+}
+
+.side-nav-container .mat-mdc-list-item .mdc-list-item__start {
+	margin-left: 0 !important;
+	margin-right: 8px !important;
+}
+
 .logout-item {
 	color: #fff !important;
 	border-top: none !important;
