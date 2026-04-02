@@ -13,6 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ResumeService } from '../../services/resume.service';
+import { ResumeTemplateService } from '../../services/resume-template.service';
 import type { Resume, ResumeTemplate, Experience, Education, Project, Certification } from '../../types/resume.types';
 import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
@@ -67,6 +68,7 @@ export class ResumeBuilderPage implements OnInit {
 	
 	private destroyRef = inject(DestroyRef);
 	private resumeService = inject(ResumeService);
+	private resumeTemplateService = inject(ResumeTemplateService);
 	private fb = inject(FormBuilder);
 	private snackBar = inject(MatSnackBar);
 	private featureUsageService = inject(FeatureUsageService);
@@ -1265,192 +1267,17 @@ export class ResumeBuilderPage implements OnInit {
 	}
 
 	private generateResumeHTML(resume: Resume): string {
-		// Use form values instead of resume sections for actual data
-		const personalInfo = this.personalInfoValues;
-		const summary = this.summaryValues?.summary || '';
-		const experience = this.convertExperienceValues();
-		const education = this.convertEducationValues();
-		const skills = this.convertSkillsValues();
-		const projects = this.convertProjectsValues();
-		const certifications = this.convertCertificationsValues();
-		
+		const data = {
+			personalInfo: this.personalInfoValues,
+			summary: this.summaryValues?.summary || '',
+			experience: this.convertExperienceValues(),
+			education: this.convertEducationValues(),
+			skills: this.convertSkillsValues(),
+			projects: this.convertProjectsValues(),
+			certifications: this.convertCertificationsValues()
+		};
 
-
-		return `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Resume Template</title>
-		<style>
-				body {
-						font-family: Arial, sans-serif;
-						margin: 1in;
-						line-height: 1.4;
-						color: #333;
-						max-width: 8.5in;
-				}
-				header {
-						text-align: center;
-						border-bottom: 1px solid #ccc;
-						padding-bottom: 10px;
-						margin-bottom: 20px;
-				}
-				h1 {
-						margin: 0;
-						font-size: 24pt;
-				}
-				header p {
-						margin: 5px 0 0;
-						font-size: 12pt;
-				}
-				h2 {
-						font-size: 14pt;
-						text-transform: uppercase;
-						border-bottom: 1px solid #ccc;
-						padding-bottom: 5px;
-						margin-top: 20px;
-				}
-				.section-content {
-						margin-top: 10px;
-				}
-				.entry {
-						margin-bottom: 15px;
-				}
-				.entry-header {
-						display: flex;
-						justify-content: space-between;
-						font-weight: bold;
-				}
-				.entry-subheader {
-						display: flex;
-						justify-content: space-between;
-						margin-top: 5px;
-				}
-				.entry-location-date {
-						text-align: right;
-				}
-				ul {
-						list-style-type: disc;
-						padding-left: 20px;
-						margin: 5px 0;
-				}
-				.skills-category {
-						font-weight: bold;
-						margin-top: 10px;
-				}
-				.skills-list {
-						margin-top: 5px;
-				}
-		</style>
-</head>
-<body>
-
-		<header>
-				<h1>${personalInfo?.full_name || 'Your Name'}</h1>
-				<p>${personalInfo?.phone || ''} | ${personalInfo?.email || ''} | ${personalInfo?.linkedin ? 'LinkedIn' : ''}</p>
-		</header>
-
-		${summary ? `
-		<section id="summary">
-				<h2>Summary</h2>
-				<div class="section-content">
-						<p>${summary}</p>
-				</div>
-		</section>
-		` : ''}
-
-		${education.length ? `
-		<section id="education">
-				<h2>Education</h2>
-				<div class="section-content">
-						${education.map((edu: any) => `
-						<div class="entry">
-								<div class="entry-header">
-										<span>${edu.institution || ''}</span>
-										<span class="entry-location-date">${edu.location || ''}</span>
-								</div>
-								<div class="entry-subheader">
-										<span>${edu.degree || edu.education_type || ''}</span>
-										<span class="entry-location-date">${edu.year || (edu.start_date && edu.end_date ? `${edu.start_date} – ${edu.end_date}` : '')}</span>
-								</div>
-								${edu.gpa ? `<p>CGPA: ${edu.gpa}</p>` : ''}
-						</div>
-						`).join('')}
-				</div>
-		</section>
-		` : ''}
-
-		${experience.length ? `
-		<section id="experience">
-				<h2>Experience</h2>
-				<div class="section-content">
-						${experience.map((exp: any) => `
-						<div class="entry">
-								<div class="entry-header">
-										<span>${exp.position || ''}</span>
-										<span class="entry-location-date">${exp.location || ''}</span>
-								</div>
-								<div class="entry-subheader">
-										<span>${exp.company || ''}</span>
-										<span class="entry-location-date">${exp.duration || (exp.start_date && exp.end_date ? `${exp.start_date} - ${exp.end_date}` : '')}</span>
-								</div>
-								${exp.description ? `<ul><li>${exp.description.split('\n').filter((line: string) => line.trim()).join('</li><li>')}</li></ul>` : ''}
-						</div>
-						`).join('')}
-				</div>
-		</section>
-		` : ''}
-
-		${projects.length ? `
-		<section id="projects">
-				<h2>Projects</h2>
-				<div class="section-content">
-						${projects.map((proj: any) => `
-						<div class="entry">
-								<div class="entry-header">
-										<span>${proj.name || ''}</span>
-								</div>
-								${proj.description ? `<ul><li>${proj.description.split('\n').filter((line: string) => line.trim()).join('</li><li>')}</li></ul>` : ''}
-						</div>
-						`).join('')}
-				</div>
-		</section>
-		` : ''}
-
-		${certifications.length ? `
-		<section id="certifications">
-				<h2>Certifications</h2>
-				<div class="section-content">
-						<ul>
-								${certifications.map((cert: any) => `
-								<li>${cert.name || cert} ${cert.issuer ? `(${cert.issuer})` : ''} ${cert.date ? `- ${cert.date}` : ''}</li>
-								`).join('')}
-						</ul>
-				</div>
-		</section>
-		` : ''}
-
-		${skills?.technical?.length || skills?.soft?.length ? `
-		<section id="skills">
-				<h2>Skills</h2>
-				<div class="section-content">
-						${skills.technical?.length ? `
-						<div class="skills-category">Programming:</div>
-						<div class="skills-list">${skills.technical.map((skill: any) => typeof skill === 'string' ? skill : skill.name).join(', ')}</div>
-						` : ''}
-						${skills.soft?.length ? `
-						<div class="skills-category">Soft Skills:</div>
-						<div class="skills-list">${skills.soft.join(', ')}</div>
-						` : ''}
-				</div>
-		</section>
-		` : ''}
-
-</body>
-</html>
-		`;
+		return this.resumeTemplateService.getTemplateHTML(this.selectedTemplate(), data);
 	}
 
 
