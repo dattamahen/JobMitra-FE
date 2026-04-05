@@ -58,6 +58,12 @@ export class NavigationService {
 			matIcon: 'record_voice_over',
 			userTypes: ['job_seeker', 'candidate']
 		},
+		{ 
+			id: 'subscription', 
+			label: 'Subscription', 
+			matIcon: 'card_membership',
+			userTypes: ['job_seeker', 'candidate']
+		},
 
 		// HR Navigation
 		{ 

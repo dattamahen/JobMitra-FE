@@ -1,0 +1,92 @@
+.credits-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+	margin-bottom: 24px;
+}
+
+.credit-card mat-card-content {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding: 24px !important;
+}
+
+.credit-icon {
+	font-size: 40px;
+	width: 40px;
+	height: 40px;
+}
+
+.credit-icon.cv {
+	color: #4831af !important;
+}
+
+.credit-icon.interview {
+	color: #1976d2 !important;
+}
+
+.credit-info {
+	display: flex;
+	flex-direction: column;
+}
+
+.credit-value {
+	font-size: 28px;
+	font-weight: 700;
+	line-height: 1;
+}
+
+.credit-label {
+	font-size: 13px;
+	margin-top: 4px;
+}
+
+.buy-card {
+	margin-bottom: 16px;
+}
+
+.buy-section {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 8px 0;
+}
+
+.buy-info h3 {
+	margin: 0 0 4px;
+	font-size: 16px;
+}
+
+.buy-info p {
+	margin: 0;
+	font-size: 13px;
+}
+
+.status-card mat-card-content {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 16px !important;
+}
+
+.paid-icon {
+	color: #4caf50 !important;
+}
+
+.paid-text {
+	font-weight: 500;
+	font-size: 14px;
+}
+
+@media (max-width: 768px) {
+	.credits-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.buy-section {
+		flex-direction: column;
+		gap: 12px;
+		text-align: center;
+	}
+}
