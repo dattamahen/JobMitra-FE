@@ -1,0 +1,59 @@
+<div class="page-container">
+	<div class="section-header">
+		<h2>Subscription & Credits</h2>
+		<p>Manage your credits for CV downloads and mock interviews</p>
+	</div>
+
+	@if (loading()) {
+		<div class="loading-container">
+			<mat-spinner diameter="40"></mat-spinner>
+			<p>Loading credits...</p>
+		</div>
+	} @else if (credits()) {
+		<div class="credits-grid">
+			<mat-card class="credit-card">
+				<mat-card-content>
+					<mat-icon class="credit-icon cv">description</mat-icon>
+					<div class="credit-info">
+						<span class="credit-value">{{ credits()!.cv_downloads_remaining }}</span>
+						<span class="credit-label">CV Downloads Remaining</span>
+					</div>
+				</mat-card-content>
+			</mat-card>
+
+			<mat-card class="credit-card">
+				<mat-card-content>
+					<mat-icon class="credit-icon interview">record_voice_over</mat-icon>
+					<div class="credit-info">
+						<span class="credit-value">{{ credits()!.mock_interviews_remaining }}</span>
+						<span class="credit-label">Mock Interviews Remaining</span>
+					</div>
+				</mat-card-content>
+			</mat-card>
+		</div>
+
+		<mat-card class="buy-card">
+			<mat-card-content>
+				<div class="buy-section">
+					<div class="buy-info">
+						<h3>Need more credits?</h3>
+						<p>Get <strong>10 CV Downloads</strong> + <strong>10 Mock Interviews</strong> for just <strong>₹149</strong> (incl. GST)</p>
+					</div>
+					<button mat-raised-button color="primary" (click)="openBuyDialog()">
+						<mat-icon>shopping_cart</mat-icon>
+						Buy Credits
+					</button>
+				</div>
+			</mat-card-content>
+		</mat-card>
+
+		@if (credits()!.is_paid_user) {
+			<mat-card class="status-card">
+				<mat-card-content>
+					<mat-icon class="paid-icon">verified</mat-icon>
+					<span class="paid-text">Pro User — Total spent: ₹{{ credits()!.total_paid }}</span>
+				</mat-card-content>
+			</mat-card>
+		}
+	}
+</div>

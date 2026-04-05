@@ -10,6 +10,7 @@ import type { InterviewHistorySession } from '../../types/mock-interview.types';
 
 import { MockInterviewService } from '../../services/mock-interview.service';
 import { FeatureUsageService } from '../../services/feature-usage.service';
+import { CreditsService } from '../../services/credits.service';
 import { InterviewService } from '../../services/interview.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -26,6 +27,7 @@ export class MockInterviewsPage {
 	private readonly destroyRef = inject(DestroyRef);
 	private readonly mockInterviewService = inject(MockInterviewService);
 	private readonly featureUsageService = inject(FeatureUsageService);
+	private readonly creditsService = inject(CreditsService);
 	private readonly interviewService = inject(InterviewService);
 	private readonly authService = inject(AuthService);
 
@@ -56,21 +58,13 @@ export class MockInterviewsPage {
 			});
 	}
 
-	onStartInterview(type: string = 'technical'): void {
-		this.featureUsageService.useFeature('mock_interview')
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-			next: (response) => {
-				if (response.success) {
-					this.startInterviewWithPrompt(type);
-				} else {
-					alert(response.message || 'Unable to start interview');
-				}
-			},
-			error: () => {
-				alert('Error starting interview. Please try again.');
-			}
-		});
+	async onStartInterview(type: string = 'technical'): Promise<void> {
+		const allowed = await this.creditsService.gate('mock_interview');
+		if (!allowed) {
+			alert('No mock interview credits remaining. Please purchase more.');
+			return;
+		}
+		this.startInterviewWithPrompt(type);
 	}
 
 	onUsePaidVersion(): void {

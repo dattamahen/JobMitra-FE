@@ -18,6 +18,7 @@ import type { Resume, ResumeTemplate, Experience, Education, Project, Certificat
 import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 import { FeatureUsageService } from '../../services/feature-usage.service';
+import { CreditsService } from '../../services/credits.service';
 import { FeatureGuardDirective } from '../../shared/directives/feature-guard.directive';
 import { 
 	RESUME_PERSONAL_INFO_CONFIG, 
@@ -72,6 +73,7 @@ export class ResumeBuilderPage implements OnInit {
 	private fb = inject(FormBuilder);
 	private snackBar = inject(MatSnackBar);
 	private featureUsageService = inject(FeatureUsageService);
+	private creditsService = inject(CreditsService);
 	
 
 
@@ -1184,27 +1186,13 @@ export class ResumeBuilderPage implements OnInit {
 	}
 
 	async downloadPDF(): Promise<void> {
-		// Check feature usage before proceeding
-		if (!this.featureUsageService.canUsePaidFeatures()) {
-			this.snackBar.open('You have reached your limit for resume downloads. Please upgrade your plan.', 'Close', { duration: 5000 });
+		// Check credits via backend
+		const allowed = await this.creditsService.gate('cv_download');
+		if (!allowed) {
+			this.snackBar.open('No CV download credits remaining. Please purchase more.', 'Close', { duration: 5000 });
 			return;
 		}
-
-		// Use the feature
-		this.featureUsageService.useFeature('resume_download')
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-			next: (response) => {
-				if (response.success) {
-					this.generatePDF();
-				} else {
-					this.snackBar.open(response.message || 'Unable to download resume', 'Close', { duration: 3000 });
-				}
-			},
-			error: () => {
-				this.snackBar.open('Error downloading resume. Please try again.', 'Close', { duration: 3000 });
-			}
-		});
+		this.generatePDF();
 	}
 
 	private async generatePDF(): Promise<void> {

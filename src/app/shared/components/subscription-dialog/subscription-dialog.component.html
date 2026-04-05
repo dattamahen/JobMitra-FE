@@ -1,0 +1,90 @@
+<div class="subscription-dialog">
+	@switch (step()) {
+		@case ('plans') {
+			<h2 mat-dialog-title>Choose Your Plan</h2>
+			<mat-dialog-content>
+				<div class="plans-grid">
+					<div class="plan-card free">
+						<div class="plan-badge">Current</div>
+						<h3>Free</h3>
+						<p class="plan-price">₹0</p>
+						<ul>
+							<li><mat-icon>check</mat-icon> 3 CV Downloads</li>
+							<li><mat-icon>check</mat-icon> 2 Mock Interviews</li>
+						</ul>
+					</div>
+					<div class="plan-card paid">
+						<div class="plan-badge popular">Recommended</div>
+						<h3>Pro</h3>
+						<p class="plan-price">₹149 <span class="gst-note">incl. GST</span></p>
+						<ul>
+							<li><mat-icon>check</mat-icon> +10 CV Downloads</li>
+							<li><mat-icon>check</mat-icon> +10 Mock Interviews</li>
+						</ul>
+						<button mat-raised-button color="primary" (click)="selectPaid()">
+							Buy Now
+						</button>
+					</div>
+				</div>
+			</mat-dialog-content>
+			<mat-dialog-actions align="end">
+				<button mat-button (click)="close()">Close</button>
+			</mat-dialog-actions>
+		}
+
+		@case ('payment') {
+			<h2 mat-dialog-title>Complete Payment</h2>
+			<mat-dialog-content>
+				<div class="payment-section">
+					<div class="upi-info">
+						<p class="pay-to">Pay <strong>₹{{AMOUNT}}</strong> to:</p>
+						<div class="upi-id-box">
+							<mat-icon>account_balance</mat-icon>
+							<span class="upi-id">{{UPI_ID}}</span>
+						</div>
+						<p class="payment-instruction">
+							Scan or pay using any UPI app (GPay, PhonePe, Paytm), then enter the transaction ID below.
+						</p>
+					</div>
+					<mat-form-field appearance="fill" class="full-width">
+						<mat-label>UPI Transaction ID</mat-label>
+						<input matInput [(ngModel)]="upiTransactionId" placeholder="e.g. 412345678901">
+						<mat-hint>Found in your UPI app payment receipt</mat-hint>
+					</mat-form-field>
+				</div>
+			</mat-dialog-content>
+			<mat-dialog-actions align="end">
+				<button mat-button (click)="step.set('plans')">Back</button>
+				<button mat-raised-button color="primary" (click)="confirmPayment()" [disabled]="loading()">
+					@if (loading()) {
+						<mat-spinner diameter="20"></mat-spinner>
+					}
+					Confirm Payment
+				</button>
+			</mat-dialog-actions>
+		}
+
+		@case ('confirm') {
+			<h2 mat-dialog-title>Payment Successful!</h2>
+			<mat-dialog-content>
+				<div class="success-section">
+					<mat-icon class="success-icon">check_circle</mat-icon>
+					<p>Your credits have been added successfully.</p>
+					<div class="credits-added">
+						<div class="credit-item">
+							<mat-icon>description</mat-icon>
+							<span>+10 CV Downloads</span>
+						</div>
+						<div class="credit-item">
+							<mat-icon>record_voice_over</mat-icon>
+							<span>+10 Mock Interviews</span>
+						</div>
+					</div>
+				</div>
+			</mat-dialog-content>
+			<mat-dialog-actions align="end">
+				<button mat-raised-button color="primary" (click)="close()">Done</button>
+			</mat-dialog-actions>
+		}
+	}
+</div>
