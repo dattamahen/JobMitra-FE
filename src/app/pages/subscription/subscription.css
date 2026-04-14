@@ -5,17 +5,35 @@
 	margin-bottom: 24px;
 }
 
+.credit-card {
+	transition: all 0.3s ease;
+	overflow: hidden;
+}
+
+.credit-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+.credit-card.cv-card {
+	border-left: 4px solid #4831af;
+}
+
+.credit-card.interview-card {
+	border-left: 4px solid #1976d2;
+}
+
 .credit-card mat-card-content {
 	display: flex;
 	align-items: center;
-	gap: 16px;
-	padding: 24px !important;
+	gap: 12px;
+	padding: 20px !important;
 }
 
 .credit-icon {
-	font-size: 40px;
-	width: 40px;
-	height: 40px;
+	font-size: 24px;
+	width: 24px;
+	height: 24px;
 }
 
 .credit-icon.cv {
@@ -32,14 +50,16 @@
 }
 
 .credit-value {
-	font-size: 28px;
-	font-weight: 700;
+	font-size: 1rem;
+	font-weight: 600;
 	line-height: 1;
 }
 
 .credit-label {
-	font-size: 13px;
+	font-size: 0.875rem;
 	margin-top: 4px;
+	color: #666;
+	line-height: 1.2;
 }
 
 .buy-card {
@@ -55,12 +75,14 @@
 
 .buy-info h3 {
 	margin: 0 0 4px;
-	font-size: 16px;
+	font-size: 1rem;
+	font-weight: 500;
 }
 
 .buy-info p {
 	margin: 0;
-	font-size: 13px;
+	font-size: 0.875rem;
+	color: #666;
 }
 
 .status-card mat-card-content {
@@ -76,7 +98,7 @@
 
 .paid-text {
 	font-weight: 500;
-	font-size: 14px;
+	font-size: 0.875rem;
 }
 
 @media (max-width: 768px) {

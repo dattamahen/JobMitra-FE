@@ -298,7 +298,7 @@
 	font-weight: 600;
 	color: #1976d2;
 	margin: 0 0 8px 0;
-	font-size: 28px;
+	font-size: 1rem;
 }
 
 .section-header h3 {
@@ -320,7 +320,7 @@
 .section-header p {
 	color: #666;
 	margin: 0;
-	font-size: 16px;
+	font-size: 0.875rem;
 }
 
 /* Section Icons */

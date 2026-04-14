@@ -166,6 +166,7 @@
 	</div>
 	
 	<!-- Form Actions Section -->
+	@if (config.showActions !== false) {
 	<div class="form-actions">
 		@if (readonly) {
 			<button mat-raised-button color="primary" type="button" (click)="onToggleEdit()" class="edit-btn">
@@ -190,5 +191,6 @@
 			}
 		}
 	</div>
+	}
 
 </form>
