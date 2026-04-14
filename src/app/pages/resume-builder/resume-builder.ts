@@ -1209,25 +1209,34 @@ export class ResumeBuilderPage implements OnInit {
 		tempElement.style.position = 'absolute';
 		tempElement.style.left = '-9999px';
 		tempElement.style.width = '210mm';
-		tempElement.style.padding = '20mm';
+		tempElement.style.padding = '0';
 		tempElement.style.fontFamily = 'Arial, sans-serif';
 		tempElement.style.fontSize = '12px';
 		tempElement.style.lineHeight = '1.4';
 		tempElement.style.color = '#000';
 		tempElement.style.backgroundColor = '#fff';
+		tempElement.style.overflow = 'wrap';
 
 		tempElement.innerHTML = this.generateResumeHTML(resume);
 		document.body.appendChild(tempElement);
 
 		try {
 			const canvas = await html2canvas(tempElement, {
-				scale: 2,
+				scale: 4,
 				useCORS: true,
-				backgroundColor: '#ffffff'
+				backgroundColor: '#ffffff',
+				logging: false,
+				imageTimeout: 0,
+				allowTaint: true,
 			});
 
-			const imgData = canvas.toDataURL('image/png');
-			const pdf = new jsPDF('p', 'mm', 'a4');
+			const imgData = canvas.toDataURL('image/png', 1.0);
+			const pdf = new jsPDF({
+				orientation: 'p',
+				unit: 'mm',
+				format: 'a4',
+				compress: true,
+			});
 			
 			const imgWidth = 210;
 			const pageHeight = 297;
@@ -1235,13 +1244,13 @@ export class ResumeBuilderPage implements OnInit {
 			let heightLeft = imgHeight;
 			let position = 0;
 
-			pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+			pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
 			heightLeft -= pageHeight;
 
 			while (heightLeft >= 0) {
 				position = heightLeft - imgHeight;
 				pdf.addPage();
-				pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+				pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
 				heightLeft -= pageHeight;
 			}
 
