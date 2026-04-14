@@ -1209,12 +1209,13 @@ export class ResumeBuilderPage implements OnInit {
 		tempElement.style.position = 'absolute';
 		tempElement.style.left = '-9999px';
 		tempElement.style.width = '210mm';
-		tempElement.style.padding = '20mm';
+		tempElement.style.padding = '0';
 		tempElement.style.fontFamily = 'Arial, sans-serif';
 		tempElement.style.fontSize = '12px';
 		tempElement.style.lineHeight = '1.4';
 		tempElement.style.color = '#000';
 		tempElement.style.backgroundColor = '#fff';
+		tempElement.style.overflow = 'wrap';
 
 		tempElement.innerHTML = this.generateResumeHTML(resume);
 		document.body.appendChild(tempElement);
