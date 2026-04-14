@@ -26,31 +26,37 @@
 
 /* Sidebar Sections */
 .section-list {
-	padding: 20px;
+	padding: 12px;
 }
 
 .section-list h4 {
 	display: flex;
 	align-items: center;
-	gap: 8px;
-	margin: 0 0 16px 0;
+	gap: 6px;
+	margin: 0 0 10px 0;
 	font-size: 1rem;
 	font-weight: 600;
 	color: #333;
+}
+
+.section-list h4 mat-icon {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
 }
 
 .section-item {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 8px 16px;
+	padding: 6px 8px;
 	margin: 0;
-	border-radius: 8px;
+	border-radius: 6px;
 	cursor: pointer;
 	transition: all 0.2s ease;
 	border: 2px solid transparent;
-	height: 40px;
-	min-height: 40px;
+	height: 36px;
+	min-height: 36px;
 	box-sizing: border-box;
 }
 
@@ -67,40 +73,52 @@
 .section-info {
 	display: flex;
 	align-items: center;
-	gap: 12px;
+	gap: 8px;
+}
+
+.section-icon {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
 }
 
 /* Template Section */
 .template-section {
-	padding: 20px;
+	padding: 12px;
 	border-top: 1px solid #e0e0e0;
 }
 
 .template-section h4 {
 	display: flex;
 	align-items: center;
-	gap: 8px;
-	margin: 0 0 16px 0;
+	gap: 6px;
+	margin: 0 0 10px 0;
 	font-size: 1rem;
 	font-weight: 600;
 	color: #333;
 }
 
+.template-section h4 mat-icon {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+}
+
 .template-grid {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	gap: 12px;
+	gap: 6px;
 }
 
 .template-card {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding: 12px;
-	border: 2px solid #e0e0e0;
-	border-radius: 8px;
+	padding: 8px 6px;
+	border: 1.5px solid #e0e0e0;
+	border-radius: 6px;
 	cursor: pointer;
-	transition: all 0.3s ease;
+	transition: all 0.2s ease;
 	background: white;
 }
 
@@ -114,14 +132,20 @@
 }
 
 .template-preview {
-	width: 40px;
-	height: 40px;
+	width: 28px;
+	height: 28px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	background: #f5f5f5;
-	border-radius: 6px;
-	margin-bottom: 8px;
+	border-radius: 4px;
+	margin-bottom: 4px;
+}
+
+.template-preview mat-icon {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
 }
 
 .template-card.active .template-preview {
@@ -130,7 +154,7 @@
 }
 
 .template-name {
-	font-size: 0.875rem;
+	font-size: 0.75rem;
 	font-weight: 500;
 	text-align: center;
 }
