@@ -1222,13 +1222,21 @@ export class ResumeBuilderPage implements OnInit {
 
 		try {
 			const canvas = await html2canvas(tempElement, {
-				scale: 2,
+				scale: 4,
 				useCORS: true,
-				backgroundColor: '#ffffff'
+				backgroundColor: '#ffffff',
+				logging: false,
+				imageTimeout: 0,
+				allowTaint: true,
 			});
 
-			const imgData = canvas.toDataURL('image/png');
-			const pdf = new jsPDF('p', 'mm', 'a4');
+			const imgData = canvas.toDataURL('image/png', 1.0);
+			const pdf = new jsPDF({
+				orientation: 'p',
+				unit: 'mm',
+				format: 'a4',
+				compress: true,
+			});
 			
 			const imgWidth = 210;
 			const pageHeight = 297;
@@ -1236,13 +1244,13 @@ export class ResumeBuilderPage implements OnInit {
 			let heightLeft = imgHeight;
 			let position = 0;
 
-			pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+			pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
 			heightLeft -= pageHeight;
 
 			while (heightLeft >= 0) {
 				position = heightLeft - imgHeight;
 				pdf.addPage();
-				pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+				pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
 				heightLeft -= pageHeight;
 			}
 
