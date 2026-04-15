@@ -235,17 +235,18 @@ export class MockInterviewModalComponent {
 
 	loadQuestions(aiResponse: any): void {
 		if (aiResponse?.questions && aiResponse?.session_id) {
+			const interviewType = this.data?.interviewType || 'technical';
 			const mockSession: InterviewSession = {
 				session_id: aiResponse.session_id,
 				questions: Array.isArray(aiResponse.questions) 
 					? aiResponse.questions.map((q: string, i: number) => ({
 							id: `q_${i + 1}`,
 							question: q,
-							type: 'technical'
+							type: interviewType
 						}))
 					: this.parseAIQuestions(aiResponse.questions),
 				created_at: new Date().toISOString(),
-				interview_type: 'technical',
+				interview_type: interviewType,
 				overall_score: 0,
 				completed_at: new Date().toISOString(),
 				questions_count: 0

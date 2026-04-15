@@ -1,0 +1,17 @@
+<div class="motivation-banner" role="region" aria-label="Career motivation">
+	<div class="banner-glow"></div>
+	<div class="banner-content">
+		<div class="banner-header">
+			<mat-icon class="banner-icon">{{ group.icon }}</mat-icon>
+			<h3 class="banner-headline">{{ group.headline }}</h3>
+		</div>
+		<ul class="motivation-lines">
+			@for (line of group.lines; track line) {
+				<li>
+					<mat-icon class="line-icon">arrow_right</mat-icon>
+					<span>{{ line }}</span>
+				</li>
+			}
+		</ul>
+	</div>
+</div>

@@ -40,12 +40,6 @@
 	position: relative;
 }
 
-.share-button-container {
-	position: absolute;
-	top: 16px;
-	right: 16px;
-	z-index: 10;
-}
 
 .profile-cover {
 	height: 120px;
@@ -58,41 +52,84 @@
 
 .cover-gradient {
 	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
+	inset: 0;
 	background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+}
+
+.cover-actions {
+	position: absolute;
+	top: 12px;
+	right: 12px;
+	z-index: 2;
 }
 
 .profile-avatar-section {
 	position: absolute;
-	bottom: -40px;
+	bottom: -50px;
 	left: 24px;
 }
 
 .avatar-wrapper {
-	width: 80px;
-	height: 80px;
+	width: 100px;
+	height: 100px;
 	border-radius: 50%;
-	background: white;
+	background: #e0e0e0;
+	border: 4px solid #fff;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+	box-shadow: 0 2px 12px rgba(0,0,0,0.15);
 	position: relative;
 	overflow: hidden;
+	cursor: pointer;
 }
 
 .profile-avatar {
-	font-size: 48px;
-	width: 48px;
-	height: 48px;
-	color: #1976d2;
+	font-size: 60px;
+	width: 60px;
+	height: 60px;
+	color: #bdbdbd;
+}
+
+.avatar-overlay {
+	position: absolute;
+	inset: 0;
+	background: rgba(0,0,0,0.45);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 1;
+	cursor: pointer;
+}
+
+.avatar-overlay mat-icon {
+	color: #fff !important;
+	font-size: 28px;
+	width: 28px;
+	height: 28px;
+}
+
+
+.avatar-remove {
+	position: absolute;
+	bottom: -4px;
+	left: 76px;
+	width: 24px;
+	height: 24px;
+	background: #fff;
+	box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+	color: #f44336 !important;
+}
+
+.avatar-remove mat-icon {
+	font-size: 14px;
+	width: 14px;
+	height: 14px;
+	color: #f44336 !important;
 }
 
 .profile-content {
-	padding: 50px 24px 24px 24px !important;
+	padding: 60px 24px 24px 24px !important;
 }
 
 .profile-header {
@@ -106,13 +143,13 @@
 }
 
 .profile-headline {
-	font-size: 0.825rem;
+	font-size: 0.875rem;
 	margin: 0 0 8px 0;
 	font-weight: 400;
 }
 
 .profile-location {
-	font-size: 0.825rem;
+	font-size: 0.875rem;
 	margin: 0;
 }
 
@@ -150,7 +187,7 @@
 
 .stat-label {
 	display: block;
-	font-size: 0.825rem;
+	font-size: 0.875rem;
 	margin-top: 4px;
 	letter-spacing: 0.5px;
 }
@@ -175,7 +212,7 @@
 }
 
 .skills-count {
-	font-size: 0.825rem;
+	font-size: 0.875rem;
 	color: #666;
 	font-weight: 400;
 }
@@ -185,7 +222,7 @@
 }
 
 .about-text {
-	font-size: 0.825rem;
+	font-size: 0.875rem;
 	line-height: 1.6;
 	margin: 0;
 }
@@ -197,7 +234,7 @@
 
 .empty-text {
 	margin: 0 0 16px 0;
-	font-size: 0.825rem;
+	font-size: 0.875rem;
 }
 
 .add-btn {
@@ -215,7 +252,7 @@
 	background: #f0f2f5;
 	padding: 8px 12px;
 	border-radius: 16px;
-	font-size: 0.825rem;
+	font-size: 0.875rem;
 	font-weight: 500;
 }
 
@@ -238,13 +275,13 @@
 }
 
 .pref-label {
-	font-size: 0.825rem;
+	font-size: 0.875rem;
 	color: #666;
 	font-weight: 500;
 }
 
 .pref-value {
-	font-size: 0.825rem;
+	font-size: 0.875rem;
 	color: #333;
 	font-weight: 500;
 }
@@ -269,13 +306,13 @@
 }
 
 .contact-text {
-	font-size: 0.825rem;
+	font-size: 0.875rem;
 }
 
 .contact-link {
 	color: #1976d2;
 	text-decoration: none;
-	font-size: 0.825rem;
+	font-size: 0.875rem;
 	font-weight: 500;
 }
 
@@ -303,7 +340,7 @@
 
 .qualification-text {
 	font-weight: 500;
-	font-size: 0.825rem;
+	font-size: 0.875rem;
 }
 
 /* Responsive Design */

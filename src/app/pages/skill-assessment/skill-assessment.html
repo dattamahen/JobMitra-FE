@@ -1,23 +1,5 @@
 <div class="page-container">
 	<div class="assessment-content">
-		<!-- Mock Interview Usage Status -->
-		<div class="usage-status-card">
-			<div class="usage-info">
-				<h2><mat-icon>smart_toy</mat-icon> AI Mock Interview Status</h2>
-				<div class="usage-details">
-					<span class="usage-count">{{ getUsageStatus() }}</span>
-					@if (canTakeMockInterview()) {
-						<span class="available-now">
-							<mat-icon>check_circle</mat-icon> Available now!
-						</span>
-					}
-				</div>
-			</div>
-			<div class="usage-limits">
-				<small>5 interviews per week • 30 min sessions • {{ getCurrentPlanName() }}</small>
-			</div>
-		</div>
-
 		@if (hasSkills()) {
 			<div class="skill-categories">
 				<div class="category-card">
@@ -35,7 +17,7 @@
 								<div class="skill-actions">
 									<button class="interview-btn" 
 													(click)="startMockInterview(skill)">
-										<mat-icon>mic</mat-icon> Mock Interview
+										<mat-icon>mic</mat-icon> Practice Interview
 									</button>
 								</div>
 							</div>
@@ -58,7 +40,7 @@
 								<div class="skill-actions">
 									<button class="interview-btn" 
 													(click)="startMockInterview(skill)">
-										<mat-icon>mic</mat-icon> Mock Interview
+										<mat-icon>mic</mat-icon> Practice Interview
 									</button>
 								</div>
 							</div>

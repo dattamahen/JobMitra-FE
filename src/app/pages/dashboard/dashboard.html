@@ -11,7 +11,8 @@
 				<mat-grid-list cols="4" rowHeight="140px" gutterSize="20px" class="stats-grid">
 					@for (stat of data.stats; track stat.id) {
 						<mat-grid-tile>
-							<mat-card class="stat-card" [class]="'stat-card-' + stat.color" role="button" tabindex="0">
+							<mat-card class="stat-card" [class]="'stat-card-' + stat.color" role="button" tabindex="0"
+								(click)="onStatClick(stat.id)" (keydown.enter)="onStatClick(stat.id)">
 								<mat-card-content>
 									<div class="stat-header">
 										<mat-icon class="stat-icon">{{ stat.icon }}</mat-icon>
@@ -41,11 +42,6 @@
 							<mat-icon>timeline</mat-icon>
 							Recent Activity
 						</mat-card-title>
-						<div class="activity-badge">
-							<mat-icon [matBadge]="data.recentActivities.length" matBadgeColor="accent">
-								notifications
-							</mat-icon>
-						</div>
 					</mat-card-header>
 					
 					<mat-card-content>

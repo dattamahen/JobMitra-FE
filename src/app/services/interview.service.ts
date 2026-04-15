@@ -26,11 +26,12 @@ export class InterviewService {
 
 	constructor(private http: HttpClient) {}
 
-	startInterview(userProfile: UserProfile, generateQuestions: boolean = true, aiProvider: string = 'openai'): Observable<any> {
+	startInterview(userProfile: UserProfile, generateQuestions: boolean = true, aiProvider: string = 'openai', interviewType: string = 'technical'): Observable<any> {
 		const payload = {
 			...userProfile,
 			generate_questions: generateQuestions,
-			ai_provider: aiProvider
+			ai_provider: aiProvider,
+			interview_type: interviewType
 		};
 		return this.http.post<any>(`${this.apiUrl}/get-interview-prompt`, payload);
 	}
