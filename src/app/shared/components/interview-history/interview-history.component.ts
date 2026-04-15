@@ -37,6 +37,7 @@ import type { InterviewHistorySession } from '../../../types/mock-interview.type
 		}
 
 		h2 {
+			font-size: 1rem;
 			font-weight: 600;
 			margin-bottom: 20px;
 		}

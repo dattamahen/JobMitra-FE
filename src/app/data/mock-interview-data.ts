@@ -15,21 +15,21 @@ export interface InterviewType {
 export const INTERVIEW_TYPES: InterviewType[] = [
 	{
 		id: 'technical',
-		title: '🎯 Technical Interview',
+		title: 'Technical Interview',
 		icon: 'code',
 		description: 'Practice coding problems and system design questions',
 		badges: ['Easy', 'Medium']
 	},
 	{
 		id: 'behavioral',
-		title: '💼 Behavioral Interview', 
+		title: 'Behavioral Interview', 
 		icon: 'psychology',
-		description: 'Practice common behavioral questions and STAR method',
-		topics: ['Leadership', 'Teamwork', 'Problem Solving']
+		description: 'Practice STAR method, conflict resolution, and confidence building',
+		topics: ['STAR Method', 'Job Switch', 'Conflict', 'Pressure Test']
 	},
 	{
 		id: 'company',
-		title: '🏢 Company-Specific',
+		title: 'Company-Specific',
 		icon: 'business',
 		description: 'Tailored questions based on company culture and role',
 		hasCompanySelect: true,

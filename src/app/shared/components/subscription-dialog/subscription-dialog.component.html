@@ -1,34 +1,30 @@
 <div class="subscription-dialog">
 	@switch (step()) {
 		@case ('plans') {
-			<h2 mat-dialog-title>Choose Your Plan</h2>
+			<h2 mat-dialog-title>Invest in Your Career</h2>
 			<mat-dialog-content>
-				<div class="plans-grid">
-					<div class="plan-card free">
-						<div class="plan-badge">Current</div>
-						<h3>Free</h3>
-						<p class="plan-price">₹0</p>
-						<ul>
-							<li><mat-icon>check</mat-icon> 3 CV Downloads</li>
-							<li><mat-icon>check</mat-icon> 2 Mock Interviews</li>
-						</ul>
+				<app-motivation-banner />
+
+				<div class="invest-card">
+					<div class="invest-benefits">
+						<div class="benefit-row">
+							<mat-icon>record_voice_over</mat-icon>
+							<span><strong>10 AI Mock Interviews</strong> — practice until you're confident</span>
+						</div>
+						<div class="benefit-row">
+							<mat-icon>description</mat-icon>
+							<span><strong>10 CV Downloads</strong> — apply to more companies, faster</span>
+						</div>
 					</div>
-					<div class="plan-card paid">
-						<div class="plan-badge popular">Recommended</div>
-						<h3>Pro</h3>
-						<p class="plan-price">₹149 <span class="gst-note">incl. GST</span></p>
-						<ul>
-							<li><mat-icon>check</mat-icon> +10 CV Downloads</li>
-							<li><mat-icon>check</mat-icon> +10 Mock Interviews</li>
-						</ul>
-						<button mat-raised-button color="primary" (click)="selectPaid()">
-							Buy Now
-						</button>
-					</div>
+					<p class="invest-result">💰 One better interview = Bigger salary jump</p>
+					<button mat-raised-button color="primary" class="invest-cta" (click)="selectPaid()">
+						<mat-icon>bolt</mat-icon>
+						Get Interview Ready — ₹{{AMOUNT}}
+					</button>
 				</div>
 			</mat-dialog-content>
 			<mat-dialog-actions align="end">
-				<button mat-button (click)="close()">Close</button>
+				<button mat-button (click)="close()">Maybe Later</button>
 			</mat-dialog-actions>
 		}
 

@@ -8,6 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
 import { CreditsService } from '../../../services/credits.service';
+import { MotivationBannerComponent } from '../motivation-banner/motivation-banner.component';
 
 @Component({
 	selector: 'app-subscription-dialog',
@@ -15,7 +16,7 @@ import { CreditsService } from '../../../services/credits.service';
 	imports: [
 		MatDialogModule, MatButtonModule, MatIconModule,
 		MatInputModule, MatFormFieldModule, MatProgressSpinnerModule,
-		MatSnackBarModule, FormsModule
+		MatSnackBarModule, FormsModule, MotivationBannerComponent
 	],
 	templateUrl: './subscription-dialog.component.html',
 	styleUrl: './subscription-dialog.component.css'

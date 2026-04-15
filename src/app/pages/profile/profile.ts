@@ -1048,7 +1048,8 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	}
 
 	getProfileAvatarImage(): string | null {
-		return localStorage.getItem('profileAvatarImage');
+		const url = this.currentUser?.avatar_url;
+		return this.imageUploadService.getFullAvatarUrl(url as string | null | undefined);
 	}
 
 	onFileSelected(event: Event): void {
@@ -1098,16 +1099,23 @@ export class ProfilePage implements OnInit, AfterViewInit {
 				return;
 			}
 
-			const reader = new FileReader();
-			reader.onload = () => {
-				const base64String = reader.result as string;
-				localStorage.setItem('profileAvatarImage', base64String);
-				this.snackBar.open('Avatar updated successfully!', 'Close', {
-					duration: 3000,
-					panelClass: ['success-snackbar']
+			this.imageUploadService.uploadAvatar(file)
+				.pipe(takeUntilDestroyed(this.destroyRef))
+				.subscribe({
+					next: () => {
+						this.loadUserProfile();
+						this.snackBar.open('Avatar updated successfully!', 'Close', {
+							duration: 3000,
+							panelClass: ['success-snackbar']
+						});
+					},
+					error: () => {
+						this.snackBar.open('Failed to upload avatar', 'Close', {
+							duration: 3000,
+							panelClass: ['error-snackbar']
+						});
+					}
 				});
-			};
-			reader.readAsDataURL(file);
 		}
 	}
 
@@ -1120,11 +1128,23 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	}
 
 	removeAvatarImage(): void {
-		localStorage.removeItem('profileAvatarImage');
-		this.snackBar.open('Avatar removed', 'Close', {
-			duration: 2000,
-			panelClass: ['info-snackbar']
-		});
+		this.imageUploadService.removeAvatar()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: () => {
+					this.loadUserProfile();
+					this.snackBar.open('Avatar removed', 'Close', {
+						duration: 2000,
+						panelClass: ['info-snackbar']
+					});
+				},
+				error: () => {
+					this.snackBar.open('Failed to remove avatar', 'Close', {
+						duration: 3000,
+						panelClass: ['error-snackbar']
+					});
+				}
+			});
 	}
 
 	isBasicInfoComplete(): boolean {

@@ -1,10 +1,12 @@
 import { Component, ChangeDetectionStrategy, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 
 import { FeatureGuardDirective } from '../../shared/directives/feature-guard.directive';
 import { InterviewHistoryComponent } from '../../shared/components/interview-history/interview-history.component';
+import { MotivationBannerComponent } from '../../shared/components/motivation-banner/motivation-banner.component';
 import { INTERVIEW_TYPES } from '../../data/mock-interview-data';
 import type { InterviewHistorySession } from '../../types/mock-interview.types';
 
@@ -16,7 +18,7 @@ import { AuthService } from '../../services/auth.service';
 
 @Component({
 	selector: 'app-mock-interviews-page',
-	imports: [MatButtonModule, MatIconModule, FeatureGuardDirective, InterviewHistoryComponent],
+	imports: [MatButtonModule, MatCardModule, MatIconModule, FeatureGuardDirective, InterviewHistoryComponent, MotivationBannerComponent],
 	templateUrl: './mock-interviews.html',
 	styleUrl: './mock-interviews.css',
 	changeDetection: ChangeDetectionStrategy.OnPush
@@ -86,7 +88,7 @@ export class MockInterviewsPage {
 
 				const dialogRef = this.mockInterviewService.startInterviewWithLoading(type, userProfile);
 
-				this.interviewService.startInterview(userProfile)
+				this.interviewService.startInterview(userProfile, true, 'openai', type)
 					.pipe(takeUntilDestroyed(this.destroyRef))
 					.subscribe({
 						next: (response) => dialogRef.componentInstance.loadQuestions(response),

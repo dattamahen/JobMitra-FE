@@ -1,5 +1,6 @@
-import { Component, OnInit, signal, DestroyRef, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, signal, DestroyRef, inject, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -37,6 +38,18 @@ export class DashboardPage implements OnInit {
 	dashboardData = signal<DashboardData | null>(null);
 	isLoading = signal(true);
 	private destroyRef = inject(DestroyRef);
+	private router = inject(Router);
+
+	@Output() navigateToPage = new EventEmitter<{ page: string }>();
+
+	private readonly statRouteMap: Record<string, string> = {
+		'applications': 'applications',
+		'applications-sent': 'applications',
+		'interviews': 'mock-interviews',
+		'mock-interviews': 'mock-interviews',
+		'matching-jobs': 'job-search',
+		'profile-completion': 'profile'
+	};
 
 	constructor(private dashboardService: DashboardService) {
 		console.log('🏗️ DashboardPage: Constructor called');
@@ -70,6 +83,14 @@ export class DashboardPage implements OnInit {
 			}
 		});
 		console.log('📊 DashboardPage: loadDashboardData END (subscription created)');
+	}
+
+	onStatClick(statId: string): void {
+		const page = this.statRouteMap[statId];
+		if (page) {
+			this.navigateToPage.emit({ page });
+			this.router.navigate(['/dashboard', page]);
+		}
 	}
 
 	refreshDashboard(): void {

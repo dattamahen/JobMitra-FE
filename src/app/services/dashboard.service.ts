@@ -117,8 +117,8 @@ export class DashboardService {
 				{ 
 					id: 'interviews', 
 					value: 3, 
-					label: 'Interviews Scheduled',
-					icon: 'event',
+					label: 'Mock Interview',
+					icon: 'record_voice_over',
 					color: 'accent',
 					trend: { direction: 'up', percentage: 33, period: 'this week' }
 				},
