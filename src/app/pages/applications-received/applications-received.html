@@ -4,7 +4,7 @@
 			<mat-card-title>{{pageTitle()}}</mat-card-title>
 		</mat-card-header>
 		<mat-card-content>
-			<mat-form-field appearance="outline" class="job-filter">
+			<mat-form-field appearance="fill" class="job-filter">
 				<mat-label>Filter by Job</mat-label>
 				<mat-select [value]="selectedJobId()" (selectionChange)="onJobFilterChange($event.value)">
 					<mat-option value="all">All Jobs</mat-option>

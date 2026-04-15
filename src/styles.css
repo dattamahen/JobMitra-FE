@@ -177,3 +177,10 @@ mat-nav-list .mat-mdc-list-item {
 	color: #fff !important;
 }
 
+/* Compact dropdown options */
+.mat-mdc-option {
+	min-height: 36px !important;
+	padding: 4px 16px !important;
+	font-size: 0.875rem !important;
+}
+

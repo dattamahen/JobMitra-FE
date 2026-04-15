@@ -127,6 +127,7 @@ export const POST_JOB_STEP1_CONFIG: FormConfig = {
 			placeholder: 'e.g. Senior Software Engineer',
 			required: true,
 			hint: '10-100 characters required',
+			width: 'quarter',
 			validators: { minLength: 10, maxLength: 100 }
 		},
 		{
@@ -135,7 +136,7 @@ export const POST_JOB_STEP1_CONFIG: FormConfig = {
 			label: 'Company',
 			placeholder: 'Company name',
 			required: true,
-			width: 'half'
+			width: 'quarter'
 		},
 		{
 			name: 'department',
@@ -143,14 +144,14 @@ export const POST_JOB_STEP1_CONFIG: FormConfig = {
 			label: 'Department',
 			placeholder: 'e.g. Engineering',
 			required: true,
-			width: 'half'
+			width: 'quarter'
 		},
 		{
 			name: 'employment_type',
 			type: 'select',
 			label: 'Employment Type',
 			required: true,
-			width: 'half',
+			width: 'quarter',
 			options: [
 				{ value: 'full-time', label: 'Full-time' },
 				{ value: 'part-time', label: 'Part-time' },
@@ -164,7 +165,7 @@ export const POST_JOB_STEP1_CONFIG: FormConfig = {
 			type: 'select',
 			label: 'Experience Level',
 			required: true,
-			width: 'half',
+			width: 'quarter',
 			options: [
 				{ value: 'entry', label: 'Entry Level' },
 				{ value: 'junior', label: 'Junior' },
@@ -186,7 +187,7 @@ export const POST_JOB_STEP2_CONFIG: FormConfig = {
 			label: 'City',
 			placeholder: 'e.g. Bangalore',
 			required: true,
-			width: 'half'
+			width: 'quarter'
 		},
 		{
 			name: 'location.state',
@@ -194,26 +195,27 @@ export const POST_JOB_STEP2_CONFIG: FormConfig = {
 			label: 'State',
 			placeholder: 'e.g. Karnataka',
 			required: true,
-			width: 'half'
+			width: 'quarter'
 		},
 		{
 			name: 'location.country',
 			type: 'text',
 			label: 'Country',
 			required: true,
-			width: 'half'
+			width: 'quarter'
 		},
 		{
 			name: 'location.timezone',
 			type: 'text',
 			label: 'Timezone',
 			required: true,
-			width: 'half'
+			width: 'quarter'
 		},
 		{
 			name: 'job_type',
 			type: 'select',
 			label: 'Work Type',
+			width: 'quarter',
 			required: true,
 			options: [
 				{ value: 'remote', label: 'Remote' },
@@ -249,7 +251,7 @@ export const POST_JOB_STEP5_CONFIG: FormConfig = {
 			label: 'Min Salary',
 			placeholder: '0',
 			required: true,
-			width: 'half'
+			width: 'quarter'
 		},
 		{
 			name: 'salary.max',
@@ -257,14 +259,14 @@ export const POST_JOB_STEP5_CONFIG: FormConfig = {
 			label: 'Max Salary',
 			placeholder: '0',
 			required: true,
-			width: 'half'
+			width: 'quarter'
 		},
 		{
 			name: 'salary.currency',
 			type: 'select',
 			label: 'Currency',
 			required: true,
-			width: 'half',
+			width: 'quarter',
 			options: [
 				{ value: 'INR', label: 'INR (₹)' }
 			]
@@ -274,7 +276,7 @@ export const POST_JOB_STEP5_CONFIG: FormConfig = {
 			type: 'select',
 			label: 'Period',
 			required: true,
-			width: 'half',
+			width: 'quarter',
 			options: [
 				{ value: 'yearly', label: 'Per Year' },
 				{ value: 'monthly', label: 'Per Month' },
@@ -297,7 +299,7 @@ export const POST_JOB_STEP6_CONFIG: FormConfig = {
 			type: 'select',
 			label: 'Company Size',
 			required: true,
-			width: 'half',
+			width: 'quarter',
 			options: [
 				{ value: '1-10', label: '1-10 employees' },
 				{ value: '11-50', label: '11-50 employees' },
@@ -312,7 +314,7 @@ export const POST_JOB_STEP6_CONFIG: FormConfig = {
 			type: 'select',
 			label: 'Industry',
 			required: true,
-			width: 'half',
+			width: 'quarter',
 			options: [
 				{ value: 'Technology', label: 'Technology' },
 				{ value: 'Healthcare', label: 'Healthcare' },
@@ -334,6 +336,7 @@ export const POST_JOB_STEP6_CONFIG: FormConfig = {
 			name: 'company_info.website',
 			type: 'text',
 			label: 'Company Website',
+			width: 'quarter',
 			placeholder: 'https://company.com'
 		},
 		{
@@ -355,7 +358,7 @@ export const POST_JOB_STEP7_CONFIG: FormConfig = {
 			label: 'Contact Name',
 			placeholder: 'HR Contact Name',
 			required: true,
-			width: 'half'
+			width: 'quarter'
 		},
 		{
 			name: 'hr_contact.email',
@@ -363,7 +366,7 @@ export const POST_JOB_STEP7_CONFIG: FormConfig = {
 			label: 'Contact Email',
 			placeholder: 'hr@company.com',
 			required: true,
-			width: 'half'
+			width: 'quarter'
 		},
 		{
 			name: 'hr_contact.phone',
@@ -371,7 +374,7 @@ export const POST_JOB_STEP7_CONFIG: FormConfig = {
 			label: 'Phone Number',
 			placeholder: '+91 98765 43210',
 			required: true,
-			width: 'half'
+			width: 'quarter'
 		},
 		{
 			name: 'hr_contact.title',
@@ -379,7 +382,7 @@ export const POST_JOB_STEP7_CONFIG: FormConfig = {
 			label: 'Job Title',
 			placeholder: 'HR Manager',
 			required: true,
-			width: 'half'
+			width: 'quarter'
 		},
 		{
 			name: 'application_instructions',

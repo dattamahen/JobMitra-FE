@@ -4,26 +4,82 @@
 	padding: 20px;
 }
 
+/* Card styling - aligned with profile .form-card */
 .job-form-card {
-	margin-bottom: 20px;
-	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	margin-bottom: 24px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	transition: box-shadow 0.3s ease;
+	overflow: hidden;
+	max-width: 100%;
 }
 
+.job-form-card:hover {
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
 
+/* ===== Typography overrides ===== */
+/* Card title & subtitle */
+:host ::ng-deep .job-form-card mat-card-title {
+	font-size: 1rem !important;
+	font-weight: 600 !important;
+}
 
+:host ::ng-deep .job-form-card mat-card-subtitle {
+	font-size: 0.875rem !important;
+}
 
+/* Stepper header - wrap when too wide */
+:host ::ng-deep .mat-horizontal-stepper-header-container {
+	font-size: 0.875rem !important;
+	flex-wrap: wrap !important;
+	gap: 4px 0;
+}
 
+:host ::ng-deep .mat-step-label,
+:host ::ng-deep .mat-step-text-label {
+	font-size: 0.875rem !important;
+	font-weight: 500 !important;
+}
 
+/* All headings inside the card (including inside dynamic-form) */
+:host ::ng-deep .job-form-card h2 {
+	font-size: 1rem !important;
+	font-weight: 600 !important;
+}
 
+:host ::ng-deep .job-form-card h4 {
+	font-size: 0.875rem !important;
+	font-weight: 500 !important;
+	margin: 0 0 12px 0;
+}
 
+/* Form labels */
+:host ::ng-deep .job-form-card .mat-mdc-form-field-label,
+:host ::ng-deep .job-form-card .mat-mdc-floating-label,
+:host ::ng-deep .job-form-card mat-label {
+	font-size: 0.875rem !important;
+}
 
+/* Form input values */
+:host ::ng-deep .job-form-card input,
+:host ::ng-deep .job-form-card textarea,
+:host ::ng-deep .job-form-card .mat-mdc-input-element,
+:host ::ng-deep .job-form-card .mat-mdc-select-value-text,
+:host ::ng-deep .job-form-card .mat-mdc-select-min-line {
+	font-size: 0.875rem !important;
+}
 
+/* Chip text */
+:host ::ng-deep .job-form-card mat-chip {
+	font-size: 0.875rem !important;
+}
 
+/* Buttons */
+:host ::ng-deep .job-form-card button {
+	font-size: 0.875rem !important;
+}
 
-
-
-
-
+/* ===== Layout ===== */
 
 /* Array items styling */
 .array-item {
@@ -60,8 +116,6 @@
 	gap: 8px;
 }
 
-.skills-chips 
-
 /* Benefits section */
 .benefits-section {
 	margin-top: 24px;
@@ -85,93 +139,32 @@
 	gap: 8px;
 }
 
-.benefits-chips 
-
 /* Navigation buttons */
-
-
 .navigation-buttons button {
 	min-width: 100px;
 }
 
 /* Stepper customization */
-::ng-deep .mat-stepper-horizontal {
+:host ::ng-deep .mat-stepper-horizontal {
 	margin-bottom: 24px;
+	overflow: hidden;
 }
 
-::ng-deep .mat-step-header {
-	padding: 12px 24px;
+:host ::ng-deep .mat-step-header {
+	padding: 8px 12px;
+	flex-shrink: 0;
 }
 
-::ng-deep .mat-step-label {
-	font-weight: 500;
+:host ::ng-deep .mat-stepper-horizontal-line {
+	min-width: 16px !important;
+	flex-shrink: 1;
 }
 
-/* Form field customization */
-.mat-form-field {
-	margin-bottom: 8px;
+/* Divider styling */
+mat-divider {
+	margin: 24px 0;
+	border-top-color: #e0e0e0;
 }
-
-.mat-form-field-appearance-outline .mat-form-field-outline {
-	border-radius: 8px;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-	.post-job-container {
-		margin: 10px;
-		padding: 10px;
-	}
-	
-	
-	
-	.half-width,
-	.quarter-width,
-	
-	
-	.skill-select,
-	.benefit-select {
-		width: 100%;
-	}
-	
-	
-	
-	.navigation-buttons button {
-		width: 100%;
-	}
-}
-
-@media (max-width: 480px) {
-	.job-form-card {
-		margin: 0;
-		border-radius: 0;
-	}
-	
-	::ng-deep .mat-stepper-horizontal {
-		margin-bottom: 16px;
-	}
-	
-	::ng-deep .mat-step-header {
-		padding: 8px 16px;
-	}
-	
-	
-	
-	
-	
-	
-}
-
-/* Error states */
-.mat-form-field.mat-form-field-invalid .mat-form-field-outline-thick {
-	color: #f44336;
-}
-
-/* Success snackbar */
-
-
-/* Error snackbar */
-
 
 /* Loading state */
 .loading-overlay {
@@ -187,57 +180,36 @@
 	z-index: 1000;
 }
 
-/* Custom chip styling */
+/* Responsive design */
+@media (max-width: 768px) {
+	.post-job-container {
+		margin: 10px;
+		padding: 10px;
+	}
 
+	.half-width,
+	.quarter-width,
+	.skill-select,
+	.benefit-select {
+		width: 100%;
+	}
 
-
-
-
-
-/* Form validation styling */
-.mat-form-field.ng-invalid.ng-touched .mat-form-field-outline-thick {
-	border-color: #f44336;
+	.navigation-buttons button {
+		width: 100%;
+	}
 }
 
-.mat-form-field.ng-valid.ng-touched .mat-form-field-outline-thick {
-	border-color: #4caf50;
-}
+@media (max-width: 480px) {
+	.job-form-card {
+		margin: 0;
+		border-radius: 0;
+	}
 
-/* Divider styling */
-mat-divider {
-	margin: 24px 0;
-	border-top-color: #e0e0e0;
-}
+	:host ::ng-deep .mat-stepper-horizontal {
+		margin-bottom: 16px;
+	}
 
-/* Checkbox styling */
-.mat-checkbox {
-	margin: 8px 0;
-}
-
-/* Date picker styling */
-.mat-datepicker-toggle {
-	color: #666;
-}
-
-/* Step content animation */
-.mat-step-text-label {
-	transition: all 0.3s ease;
-}
-
-/* Focus states */
-.mat-form-field.mat-focused .mat-form-field-outline-thick {
-	border-color: #1976d2;
-	border-width: 2px;
-}
-
-/* Button hover effects */
-.mat-raised-button:hover {
-	transform: translateY(-1px);
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-	transition: all 0.2s ease;
-}
-
-.mat-stroked-button:hover {
-	background-color: rgba(25, 118, 210, 0.04);
-	transition: all 0.2s ease;
+	:host ::ng-deep .mat-step-header {
+		padding: 8px 16px;
+	}
 }
