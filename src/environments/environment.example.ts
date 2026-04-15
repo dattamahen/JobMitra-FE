@@ -1,16 +1,17 @@
-// Local development environment (localhost)
+// Environment template - copy to environment.ts, environment.dev.ts, or environment.prod.ts
+// DO NOT commit actual environment files with real keys
 export const environment = {
 	production: false,
 	envName: 'local',
 
-	// Backend API
+	// Backend API URL
 	apiUrl: 'http://localhost:8000',
 
-	// Google OAuth
-	googleClientId: '<your-local-google-client-id>',
+	// Google OAuth Client ID
+	googleClientId: '<your-google-client-id>',
 
 	// Gemini AI (Voice AI feature)
-	geminiApiKey: '<your-local-gemini-api-key>',
+	geminiApiKey: '<your-gemini-api-key>',
 	geminiApiBaseUrl: 'https://generativelanguage.googleapis.com/v1beta/models',
 	geminiModel: 'gemini-2.5-flash-preview-05-20',
 

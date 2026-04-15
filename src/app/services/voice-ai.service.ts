@@ -33,8 +33,8 @@ export interface VoiceResponse {
 	providedIn: 'root'
 })
 export class VoiceAiService {
-	private readonly API_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
-	private readonly MODEL_NAME = 'gemini-2.5-flash-preview-05-20';
+	private readonly API_BASE_URL: string;
+	private readonly MODEL_NAME: string;
 	private readonly apiKey: string;
 
 	// Speech recognition and synthesis
@@ -54,6 +54,8 @@ export class VoiceAiService {
 		private envService: EnvironmentService
 	) {
 		this.apiKey = this.envService.getGeminiApiKey();
+		this.API_BASE_URL = this.envService.getGeminiApiBaseUrl();
+		this.MODEL_NAME = this.envService.getGeminiModel();
 		if (isPlatformBrowser(this.platformId)) {
 			this.synthesis = window.speechSynthesis;
 			this.initSpeechRecognition();

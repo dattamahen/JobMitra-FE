@@ -4,12 +4,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { MockInterviewModalComponent } from '../components/mock-interview-modal/mock-interview-modal.component';
 import type { InterviewEvaluation } from '../types/mock-interview.types';
+import { environment } from '../../environments/environment';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class MockInterviewService {
-	private readonly baseUrl = 'http://localhost:8000/api/v1/mock-interview';
+	private readonly baseUrl = `${environment.apiUrl}/api/v1/mock-interview`;
 
 	constructor(
 		private dialog: MatDialog,

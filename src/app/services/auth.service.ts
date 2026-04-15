@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, throwError, of } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 // Interfaces for authentication
 export interface PreviousOrganization {
@@ -236,7 +237,7 @@ export interface AuthState {
 	providedIn: 'root'
 })
 export class AuthService {
-	private readonly API_URL = 'http://localhost:8000/api/v1/auth';
+	private readonly API_URL = `${environment.apiUrl}/api/v1/auth`;
 	private readonly TOKEN_KEY = 'jobmitra_token';
 	private readonly USER_KEY = 'jobmitra_user';
 

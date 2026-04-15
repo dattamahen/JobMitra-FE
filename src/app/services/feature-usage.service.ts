@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 import { 
 	FeatureUsage, 
 	UserFeatureInfo, 
@@ -17,7 +18,7 @@ import {
 	providedIn: 'root'
 })
 export class FeatureUsageService {
-	private readonly API_URL = 'http://localhost:8000/api/v1/features';
+	private readonly API_URL = `${environment.apiUrl}/api/v1/features`;
 	
 	private featureUsageSubject = new BehaviorSubject<FeatureUsage | null>(null);
 	public featureUsage$ = this.featureUsageSubject.asObservable();

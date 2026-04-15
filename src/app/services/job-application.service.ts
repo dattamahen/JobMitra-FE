@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 
 export interface ProfileMatchAnalysis {
 	overall_match_percentage: number;
@@ -42,7 +43,7 @@ export interface JobApplicationsResponse {
 	providedIn: 'root'
 })
 export class JobApplicationService {
-	private readonly API_URL = 'http://localhost:8000/api/v1';
+	private readonly API_URL = `${environment.apiUrl}/api/v1`;
 
 	constructor(
 		private http: HttpClient,

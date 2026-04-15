@@ -39,7 +39,24 @@
                   "maximumError": "20kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
+            },
+            "dev": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.dev.ts"
+                }
+              ]
             },
             "development": {
               "optimization": false,
@@ -54,6 +71,9 @@
           "configurations": {
             "production": {
               "buildTarget": "tech-profile:build:production"
+            },
+            "dev": {
+              "buildTarget": "tech-profile:build:dev"
             },
             "development": {
               "buildTarget": "tech-profile:build:development"
