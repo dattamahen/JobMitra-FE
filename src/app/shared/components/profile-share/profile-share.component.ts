@@ -1,5 +1,4 @@
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input, ChangeDetectionStrategy, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -10,89 +9,52 @@ import { ProfileShareService, ProfileSnapshot } from '../../../services/profile-
 
 @Component({
 	selector: 'app-profile-share',
-	standalone: true,
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	imports: [
-		CommonModule,
-		MatButtonModule,
-		MatIconModule,
-		MatMenuModule,
-		MatTooltipModule,
-		MatSnackBarModule,
-		MatDividerModule
+		MatButtonModule, MatIconModule, MatMenuModule,
+		MatTooltipModule, MatSnackBarModule, MatDividerModule
 	],
 	template: `
 		<button mat-icon-button [matMenuTriggerFor]="shareMenu" 
-				matTooltip="Share Profile" 
-				class="share-button">
+				matTooltip="Share Profile" class="share-trigger">
 			<mat-icon>share</mat-icon>
 		</button>
 
-		<mat-menu #shareMenu="matMenu" class="share-menu">
-			<button mat-menu-item (click)="shareViaEmail()" class="share-option">
-				<mat-icon class="email-icon">email</mat-icon>
+		<mat-menu #shareMenu="matMenu" xPosition="before">
+			<button mat-menu-item (click)="copyLink()">
+				<mat-icon>link</mat-icon>
+				<span>Copy link</span>
+			</button>
+			<button mat-menu-item (click)="shareViaEmail()">
+				<mat-icon>email</mat-icon>
 				<span>Email</span>
 			</button>
-			
-			<button mat-menu-item (click)="shareViaWhatsApp()" class="share-option">
-				<mat-icon class="whatsapp-icon">chat</mat-icon>
+			<button mat-menu-item (click)="shareViaWhatsApp()">
+				<mat-icon>chat</mat-icon>
 				<span>WhatsApp</span>
 			</button>
-			
-			<button mat-menu-item (click)="shareViaLinkedIn()" class="share-option">
-				<mat-icon class="linkedin-icon">business</mat-icon>
+			<button mat-menu-item (click)="shareViaLinkedIn()">
+				<mat-icon>business</mat-icon>
 				<span>LinkedIn</span>
 			</button>
-			
 			<mat-divider></mat-divider>
-			
-			<button mat-menu-item (click)="downloadProfileCard()" class="share-option">
-				<mat-icon class="download-icon">download</mat-icon>
-				<span>Download Card</span>
+			<button mat-menu-item (click)="downloadProfileCard()">
+				<mat-icon>download</mat-icon>
+				<span>Download as PDF</span>
 			</button>
 		</mat-menu>
 	`,
 	styles: [`
-		.share-button {
-			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-			color: white;
-			border-radius: 50%;
-			width: 40px;
-			height: 40px;
-			box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-			transition: all 0.3s ease;
+		.share-trigger {
+			width: 36px;
+			height: 36px;
+			line-height: 36px;
 		}
-
-		.share-button:hover {
-			transform: translateY(-2px);
-			box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
-		}
-
-		.share-menu {
-			border-radius: 12px;
-			box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-		}
-
-		.share-option {
-			padding: 12px 16px;
-			display: flex;
-			align-items: center;
-			gap: 12px;
-			transition: background-color 0.2s ease;
-		}
-
-		.share-option:hover {
-			background-color: rgba(102, 126, 234, 0.08);
-		}
-
-		.email-icon { color: #ea4335; }
-		.whatsapp-icon { color: #25d366; }
-		.linkedin-icon { color: #0077b5; }
-		.download-icon { color: #6c757d; }
-
-		mat-icon {
+		.share-trigger mat-icon {
 			font-size: 20px;
 			width: 20px;
 			height: 20px;
+			color: #fff !important;
 		}
 	`]
 })
@@ -100,54 +62,41 @@ export class ProfileShareComponent {
 	@Input() profileData!: ProfileSnapshot;
 	@Input() targetElement!: HTMLElement;
 
-	constructor(
-		private profileShareService: ProfileShareService,
-		private snackBar: MatSnackBar
-	) {}
+	private profileShareService = inject(ProfileShareService);
+	private snackBar = inject(MatSnackBar);
+
+	copyLink(): void {
+		const url = window.location.href;
+		navigator.clipboard.writeText(url).then(() => {
+			this.snackBar.open('Link copied to clipboard', 'OK', { duration: 2000 });
+		});
+	}
 
 	shareViaEmail(): void {
 		this.profileShareService.shareViaEmail(this.profileData);
-		this.showSuccessMessage('Email client opened');
 	}
 
 	shareViaWhatsApp(): void {
 		this.profileShareService.shareViaWhatsApp(this.profileData);
-		this.showSuccessMessage('WhatsApp opened');
 	}
 
 	shareViaLinkedIn(): void {
 		this.profileShareService.shareViaLinkedIn(this.profileData);
-		this.showSuccessMessage('LinkedIn opened');
 	}
 
 	async downloadProfileCard(): Promise<void> {
 		if (!this.targetElement) {
-			this.showErrorMessage('Profile element not found');
+			this.snackBar.open('Profile element not found', 'Close', { duration: 3000 });
 			return;
 		}
-
 		try {
 			await this.profileShareService.downloadProfileCard(
-				this.targetElement, 
+				this.targetElement,
 				`${this.profileData.name.replace(/\s+/g, '-').toLowerCase()}-profile`
 			);
-			this.showSuccessMessage('Profile card downloaded');
-		} catch (error) {
-			this.showErrorMessage('Failed to download profile card');
+			this.snackBar.open('Profile card downloaded', 'OK', { duration: 2000 });
+		} catch {
+			this.snackBar.open('Failed to download', 'Close', { duration: 3000 });
 		}
-	}
-
-	private showSuccessMessage(message: string): void {
-		this.snackBar.open(message, 'Close', {
-			duration: 3000,
-			panelClass: ['success-snackbar']
-		});
-	}
-
-	private showErrorMessage(message: string): void {
-		this.snackBar.open(message, 'Close', {
-			duration: 3000,
-			panelClass: ['error-snackbar']
-		});
 	}
 }

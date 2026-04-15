@@ -63,7 +63,6 @@ export class MockInterviewsPage {
 	async onStartInterview(type: string = 'technical'): Promise<void> {
 		const allowed = await this.creditsService.gate('mock_interview');
 		if (!allowed) {
-			alert('No mock interview credits remaining. Please purchase more.');
 			return;
 		}
 		this.startInterviewWithPrompt(type);

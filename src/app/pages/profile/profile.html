@@ -131,61 +131,33 @@
 		<div class="profile-summary-section" #profileSummarySection>
 			<!-- Main Profile Card -->
 			<mat-card class="linkedin-profile-card">
-				<!-- Share Button -->
-				<div class="share-button-container">
-					<app-profile-share 
-						[profileData]="getProfileSnapshot()">
-					</app-profile-share>
-				</div>
 				<!-- Cover & Avatar Section -->
-				<div class="profile-cover" [style.background-image]="getProfileCoverImage() ? 'url(' + getProfileCoverImage() + ')' : null">
-					@if (!getProfileCoverImage()) {
-						<div class="cover-gradient"></div>
-					}
-					
-					<!-- Upload Controls -->
-					<div class="cover-upload-controls">
-						<input type="file" #fileInput (change)="onFileSelected($event)" 
-							   accept="image/*" style="display: none;">
-						
-						<button mat-icon-button (click)="fileInput.click()" 
-								matTooltip="Upload cover image" class="upload-btn">
-							<mat-icon>camera_alt</mat-icon>
-						</button>
-						
-						@if (getProfileCoverImage()) {
-							<button mat-icon-button (click)="removeProfileImage()" 
-									matTooltip="Remove cover image" class="remove-btn">
-								<mat-icon>delete</mat-icon>
-							</button>
-						}
+				<div class="profile-cover">
+					<div class="cover-gradient"></div>
+					<div class="cover-actions">
+						<app-profile-share 
+							[profileData]="getProfileSnapshot()">
+						</app-profile-share>
 					</div>
 					<div class="profile-avatar-section">
-						<div class="avatar-wrapper" [style.background-image]="getProfileAvatarImage() ? 'url(' + getProfileAvatarImage() + ')' : null"
-							 [style.background-size]="getProfileAvatarImage() ? 'cover' : null"
-							 [style.background-position]="getProfileAvatarImage() ? 'center' : null">
+						<div class="avatar-wrapper" 
+							[style.background-image]="getProfileAvatarImage() ? 'url(' + getProfileAvatarImage() + ')' : null"
+							[style.background-size]="getProfileAvatarImage() ? 'cover' : null"
+							[style.background-position]="getProfileAvatarImage() ? 'center' : null">
 							@if (!getProfileAvatarImage()) {
 								<mat-icon class="profile-avatar">account_circle</mat-icon>
 							}
-							
-							<!-- Avatar Upload Controls -->
-							<div class="avatar-upload-controls">
-								<input type="file" #avatarFileInput (change)="onAvatarFileSelected($event)" 
-									   accept="image/*" style="display: none;">
-								
-								<button mat-icon-button (click)="avatarFileInput.click()" 
-										matTooltip="Upload avatar" class="avatar-upload-btn">
-									<mat-icon>camera_alt</mat-icon>
-								</button>
-								
-								@if (getProfileAvatarImage()) {
-									<button mat-icon-button (click)="removeAvatarImage()" 
-											matTooltip="Remove avatar" class="avatar-remove-btn">
-										<mat-icon>delete</mat-icon>
-									</button>
-								}
+							<div class="avatar-overlay" (click)="avatarFileInput.click()">
+								<mat-icon>camera_alt</mat-icon>
 							</div>
+							<input type="file" #avatarFileInput (change)="onAvatarFileSelected($event)" 
+								   accept="image/*" style="display: none;">
 						</div>
+						@if (getProfileAvatarImage()) {
+							<button mat-icon-button class="avatar-remove" (click)="removeAvatarImage()" matTooltip="Remove photo">
+								<mat-icon>close</mat-icon>
+							</button>
+						}
 					</div>
 				</div>
 				

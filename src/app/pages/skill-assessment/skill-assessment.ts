@@ -9,6 +9,8 @@ import type { InterviewHistorySession } from '../../types/mock-interview.types';
 
 import { SkillAssessmentService } from '../../services/skill-assessment.service';
 import { MockInterviewService } from '../../services/mock-interview.service';
+import { InterviewService } from '../../services/interview.service';
+import { CreditsService } from '../../services/credits.service';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -30,6 +32,8 @@ export class SkillAssessmentPage implements OnInit {
 	private cdr = inject(ChangeDetectorRef);
 	private skillAssessmentService = inject(SkillAssessmentService);
 	private mockInterviewService = inject(MockInterviewService);
+	private interviewService = inject(InterviewService);
+	private creditsService = inject(CreditsService);
 	private authService = inject(AuthService);
 
 	ngOnInit(): void {
@@ -139,8 +143,43 @@ export class SkillAssessmentPage implements OnInit {
 		return 'linear-gradient(90deg, #6c757d, #495057)';
 	}
 
-	startMockInterview(skill: SkillAssessment): void {
-		this.mockInterviewService.startInterview('technical');
+	async startMockInterview(skill: SkillAssessment): Promise<void> {
+		const allowed = await this.creditsService.gate('mock_interview');
+		if (!allowed) {
+			return;
+		}
+
+		this.authService.getCurrentUser()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe(user => {
+				if (!user) return;
+
+				const interviewType = skill.category === 'soft-skills' ? 'behavioral' : 'technical';
+				const userProfile = {
+					role: user.professional_info?.current_role || 'Software Engineer',
+					experience_years: user.overall_experience_years || 3,
+					skills: [skill.name],
+					user_id: user.user_id
+				};
+
+				const dialogRef = this.mockInterviewService.startInterviewWithLoading(interviewType, userProfile);
+
+				this.interviewService.startInterview(userProfile, true, 'openai', interviewType)
+					.pipe(takeUntilDestroyed(this.destroyRef))
+					.subscribe({
+						next: (response) => dialogRef.componentInstance.loadQuestions(response),
+						error: () => {
+							dialogRef.close();
+							alert('Error generating questions. Please try again.');
+						}
+					});
+
+				dialogRef.afterClosed()
+					.pipe(takeUntilDestroyed(this.destroyRef))
+					.subscribe((result: any) => {
+						if (result?.success) this.loadInterviewHistory();
+					});
+			});
 	}
 
 	startLearning(skill: SkillAssessment): void {
@@ -238,15 +277,5 @@ export class SkillAssessmentPage implements OnInit {
 		return Array(Math.floor(rating)).fill(0);
 	}
 
-	getUsageStatus(): string {
-		return '0/5 used this week';
-	}
 
-	canTakeMockInterview(): boolean {
-		return true;
-	}
-
-	getCurrentPlanName(): string {
-		return 'Free Plan';
-	}
 }

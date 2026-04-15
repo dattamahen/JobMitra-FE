@@ -28,7 +28,7 @@ h1, h2 {
 
 .category-card h2 {
 	margin: 0 0 20px 0;
-	font-size: 1.25rem;
+	font-size: 1rem;
 	font-weight: 600;
 	display: flex;
 	align-items: center;
@@ -47,6 +47,7 @@ h1, h2 {
 	min-width: 100px;
 	font-weight: 500;
 	flex-shrink: 0;
+	font-size: 0.875rem;
 }
 
 .skill-level {
@@ -73,7 +74,7 @@ h1, h2 {
 
 .level-text {
 	min-width: 80px;
-	font-size: 0.9em;
+	font-size: 0.875rem;
 	flex-shrink: 0;
 }
 
@@ -85,7 +86,7 @@ h1, h2 {
 }
 
 .interview-btn {
-	background: #8b5cf6;
+	background: #1976d2;
 	color: white;
 	border: none;
 	padding: 8px 12px;
@@ -103,7 +104,7 @@ h1, h2 {
 }
 
 .interview-btn:hover:not(:disabled) {
-	background: #7c3aed;
+	background: #1565c0;
 	transform: translateY(-1px);
 }
 
@@ -111,68 +112,6 @@ h1, h2 {
 	background: #94a3b8;
 	cursor: not-allowed;
 	opacity: 0.6;
-}
-
-.usage-status-card {
-	background: white;
-	padding: 24px;
-	border-radius: 12px;
-	margin-bottom: 24px;
-	box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-	border: 1px solid #e2e8f0;
-	border-left: 4px solid #3b82f6;
-}
-
-.usage-info {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 10px;
-}
-
-.usage-info h2 {
-	margin: 0;
-	font-size: 1.25rem;
-	font-weight: 600;
-	display: flex;
-	align-items: center;
-	gap: 8px;
-}
-
-.usage-details {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-end;
-	gap: 5px;
-}
-
-.usage-count {
-	font-weight: 600;
-	font-size: 1.1rem;
-}
-
-.available-now {
-	font-weight: 600;
-	font-size: 1rem;
-	display: flex;
-	align-items: center;
-	gap: 4px;
-}
-
-.available-now mat-icon {
-	font-size: 1rem;
-	width: 1rem;
-	height: 1rem;
-	color: #10b981;
-}
-
-.usage-limits {
-	font-size: 0.875rem;
-	color: #64748b;
-	text-align: center;
-	border-top: 1px solid #e2e8f0;
-	padding-top: 12px;
-	margin-top: 12px;
 }
 
 .recommendation-item {
@@ -197,10 +136,11 @@ h1, h2 {
 	display: flex;
 	flex-direction: column;
 	gap: 5px;
+	font-size: 0.875rem;
 }
 
 .relevance {
-	font-size: 0.9em;
+	font-size: 0.875rem;
 	color: #64748b;
 }
 
@@ -235,6 +175,7 @@ h1, h2 {
 	display: flex;
 	align-items: center;
 	gap: 8px;
+	font-size: 1rem;
 }
 
 .assessment-history {
@@ -811,16 +752,6 @@ mat-icon {
 		width: 100%;
 		margin-top: 10px;
 		justify-content: flex-start;
-	}
-
-	.usage-info {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 10px;
-	}
-
-	.usage-details {
-		align-items: flex-start;
 	}
 
 	.modal-overlay {
