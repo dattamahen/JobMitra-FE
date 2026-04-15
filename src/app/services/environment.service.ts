@@ -1,11 +1,19 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class EnvironmentService {
 	getGeminiApiKey(): string {
-		// In production, use environment variables or secure config
-		return 'YOUR_GEMINI_API_KEY_HERE'; // Replace with your actual Gemini API key
+		return environment.geminiApiKey;
+	}
+
+	getGeminiApiBaseUrl(): string {
+		return environment.geminiApiBaseUrl;
+	}
+
+	getGeminiModel(): string {
+		return environment.geminiModel;
 	}
 }
