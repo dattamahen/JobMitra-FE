@@ -1,6 +1,6 @@
-import { Component, signal, viewChild, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, signal, computed, viewChild, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,6 +12,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
 import { POST_JOB_STEP1_CONFIG, POST_JOB_STEP2_CONFIG, POST_JOB_STEP3_CONFIG, POST_JOB_STEP5_CONFIG, POST_JOB_STEP6_CONFIG, POST_JOB_STEP7_CONFIG } from '../../shared/components/dynamic-form/form-configs';
@@ -35,6 +36,7 @@ import { HrService } from '../../services/hr.service';
 		MatFormFieldModule,
 		MatInputModule,
 		MatSelectModule,
+		MatAutocompleteModule,
 		DynamicFormComponent
 	],
 	templateUrl: './post-job.html',
@@ -76,6 +78,24 @@ export class PostJobPage {
 	commonBenefits = COMMON_BENEFITS;
 
 	validationErrors = signal<Map<string, string>>(new Map());
+
+	// Skill autocomplete
+	requiredSkillInput = new FormControl('');
+	preferredSkillInput = new FormControl('');
+	requiredSkillFilter = signal('');
+	preferredSkillFilter = signal('');
+
+	filteredRequiredSkills = computed(() => {
+		const filter = this.requiredSkillFilter().toLowerCase();
+		const existing = this.skillsRequired?.value || [];
+		return this.commonSkills.filter(s => !existing.includes(s) && (!filter || s.toLowerCase().includes(filter)));
+	});
+
+	filteredPreferredSkills = computed(() => {
+		const filter = this.preferredSkillFilter().toLowerCase();
+		const existing = this.skillsPreferred?.value || [];
+		return this.commonSkills.filter(s => !existing.includes(s) && (!filter || s.toLowerCase().includes(filter)));
+	});
 
 	constructor() {
 		this.jobForm = this.createForm();
@@ -284,6 +304,37 @@ export class PostJobPage {
 		
 		if (!skillExists) {
 			skillsArray.push(this.formBuilder.control(skill));
+		}
+
+		// Clear input and refresh filter
+		if (type === 'required') {
+			this.requiredSkillInput.setValue('');
+			this.requiredSkillFilter.set('');
+		} else {
+			this.preferredSkillInput.setValue('');
+			this.preferredSkillFilter.set('');
+		}
+	}
+
+	onSkillSelected(type: 'required' | 'preferred', event: MatAutocompleteSelectedEvent): void {
+		this.addSkill(type, event.option.value);
+	}
+
+	onSkillInputKeydown(type: 'required' | 'preferred', event: KeyboardEvent): void {
+		if (event.key !== 'Enter') return;
+		event.preventDefault();
+		const input = type === 'required' ? this.requiredSkillInput : this.preferredSkillInput;
+		const value = (input.value || '').trim();
+		if (value) {
+			this.addSkill(type, value);
+		}
+	}
+
+	onSkillFilterChange(type: 'required' | 'preferred', value: string): void {
+		if (type === 'required') {
+			this.requiredSkillFilter.set(value);
+		} else {
+			this.preferredSkillFilter.set(value);
 		}
 	}
 

@@ -60,7 +60,7 @@
 							<div formArrayName="responsibilities">
 								@for (responsibility of responsibilities.controls; track $index; let i = $index) {
 									<div class="array-item">
-										<mat-form-field appearance="outline" class="array-input">
+										<mat-form-field appearance="fill" class="array-input">
 											<mat-label>Responsibility {{ i + 1 }}</mat-label>
 											<input matInput [formControlName]="i" placeholder="Describe a key responsibility">
 											<mat-error>This field is required</mat-error>
@@ -82,7 +82,7 @@
 							<div formArrayName="requirements">
 								@for (requirement of requirements.controls; track $index; let i = $index) {
 									<div class="array-item">
-										<mat-form-field appearance="outline" class="array-input">
+										<mat-form-field appearance="fill" class="array-input">
 											<mat-label>Requirement {{ i + 1 }}</mat-label>
 											<input matInput [formControlName]="i" placeholder="Describe a requirement">
 											<mat-error>This field is required</mat-error>
@@ -109,13 +109,19 @@
 						<div class="skills-section">
 							<h4>Required Skills <span style="color: red;">(Minimum {{JOB_VALIDATION.SKILLS_REQUIRED.MIN_ITEMS}} required)</span></h4>
 							<div class="skills-input">
-								<mat-form-field appearance="outline" class="skill-select">
+								<mat-form-field appearance="fill" class="skill-select">
 									<mat-label>Add Required Skill</mat-label>
-									<mat-select #requiredSkillSelect (selectionChange)="addSkill('required', requiredSkillSelect.value); requiredSkillSelect.value = ''">
-										@for (skill of commonSkills; track skill) {
+									<input matInput
+										[formControl]="requiredSkillInput"
+										[matAutocomplete]="requiredAuto"
+										(input)="onSkillFilterChange('required', requiredSkillInput.value || '')"
+										(keydown)="onSkillInputKeydown('required', $event)"
+										placeholder="Type to search or add a skill">
+									<mat-autocomplete #requiredAuto="matAutocomplete" (optionSelected)="onSkillSelected('required', $event)">
+										@for (skill of filteredRequiredSkills(); track skill) {
 											<mat-option [value]="skill">{{ skill }}</mat-option>
 										}
-									</mat-select>
+									</mat-autocomplete>
 								</mat-form-field>
 							</div>
 							
@@ -134,13 +140,19 @@
 						<div class="skills-section">
 							<h4>Preferred Skills</h4>
 							<div class="skills-input">
-								<mat-form-field appearance="outline" class="skill-select">
+								<mat-form-field appearance="fill" class="skill-select">
 									<mat-label>Add Preferred Skill</mat-label>
-									<mat-select #preferredSkillSelect (selectionChange)="addSkill('preferred', preferredSkillSelect.value); preferredSkillSelect.value = ''">
-										@for (skill of commonSkills; track skill) {
+									<input matInput
+										[formControl]="preferredSkillInput"
+										[matAutocomplete]="preferredAuto"
+										(input)="onSkillFilterChange('preferred', preferredSkillInput.value || '')"
+										(keydown)="onSkillInputKeydown('preferred', $event)"
+										placeholder="Type to search or add a skill">
+									<mat-autocomplete #preferredAuto="matAutocomplete" (optionSelected)="onSkillSelected('preferred', $event)">
+										@for (skill of filteredPreferredSkills(); track skill) {
 											<mat-option [value]="skill">{{ skill }}</mat-option>
 										}
-									</mat-select>
+									</mat-autocomplete>
 								</mat-form-field>
 							</div>
 							
@@ -178,7 +190,7 @@
 					<div class="benefits-section">
 						<h4>Benefits</h4>
 						<div class="benefits-input">
-							<mat-form-field appearance="outline" class="benefit-select">
+							<mat-form-field appearance="fill" class="benefit-select">
 								<mat-label>Add Benefit</mat-label>
 								<mat-select #benefitSelect (selectionChange)="addBenefit(benefitSelect.value); benefitSelect.value = ''">
 									@for (benefit of commonBenefits; track benefit) {

@@ -8,6 +8,11 @@
 	margin-bottom: 24px;
 }
 
+:host ::ng-deep .filter-card mat-card-title {
+	font-size: 1rem !important;
+	font-weight: 600 !important;
+}
+
 .table-footer {
 	padding: 16px;
 	display: flex;
@@ -30,6 +35,11 @@
 .no-applications {
 	text-align: center;
 	padding: 60px 20px;
+}
+
+:host ::ng-deep .no-applications h2 {
+	font-size: 1rem !important;
+	font-weight: 600 !important;
 }
 
 .no-data-icon {
