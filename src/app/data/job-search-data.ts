@@ -234,3 +234,97 @@ export class JobSearchDataService {
 		return `${formatter.format(plan.price)}/${plan.period}`;
 	}
 }
+
+
+// ── Job Search Page UI Text Constants ──
+
+export const JOB_SEARCH_TEXT = {
+	loading: {
+		title: 'Loading Jobs...',
+		message: 'Searching for the best opportunities for you',
+		icon: 'work',
+	},
+	emptyState: {
+		icon: 'work_off',
+		title: 'No Jobs Found',
+		message: 'Try adjusting your search filters to find more opportunities.',
+	},
+	tooltips: {
+		matchAnalysis: 'Analyze profile match',
+		tailorResume: 'Tailor resume for this role',
+		mockInterview: 'Practice interview for this role',
+	},
+	chips: {
+		mockInterview: 'Mock Interview',
+		matchSuffix: '% Match',
+		levelSuffix: 'Level',
+		daysLeftSuffix: 'days left',
+		deadlineSoon: 'Deadline Soon',
+	},
+	labels: {
+		posted: 'Posted',
+		requiredSkills: 'Required Skills:',
+		requirements: 'Requirements:',
+		responsibilities: 'Responsibilities',
+		preferredSkills: 'Preferred Skills',
+		benefitsAndPerks: 'Benefits & Perks',
+		aboutCompany: 'About',
+		industry: 'Industry:',
+		companySize: 'Company Size:',
+		employeesSuffix: 'employees',
+		website: 'Website:',
+		hrContact: 'HR Contact',
+		getHRDetails: 'Get HR Details',
+		applyBy: 'Apply by',
+	},
+	buttons: {
+		applied: 'Applied',
+		applyNow: 'Apply Now',
+		showLess: 'Show Less',
+		knowMore: 'Know More...',
+	},
+	snackbar: {
+		close: 'Close',
+		matchAnalysisDone: 'Match analysis already completed',
+		matchAnalysisFailed: 'Failed to perform match analysis',
+		resumeTailored: 'Resume already tailored',
+		appliedWithTailor: 'Applied successfully with tailored resume!',
+		applyFailed: 'Failed to apply',
+		loginRequired: 'Please login to apply for jobs',
+		jobNotFound: 'Job not found',
+		applyJobFailed: 'Failed to apply for job',
+		appliedSuccess: 'Applied successfully!',
+		upgradeMockInterview: 'Upgrade to access mock interviews',
+		upgradeHRDetails: 'Upgrade to view HR contact details',
+	},
+	formatLocation: {
+		notSpecified: 'Location not specified',
+		remoteSuffix: ' (Remote)',
+	},
+	formatSalary: {
+		notDisclosed: 'Salary not disclosed',
+		fromPrefix: 'From',
+		upToPrefix: 'Up to',
+	},
+	matchAnalysis: {
+		default: 'Match Analysis',
+		analysisPrefix: 'Analysis:',
+		matchSuffix: '% Match',
+	},
+	tailorResume: {
+		default: 'Tailor Resume',
+		done: 'Resume Tailored',
+	},
+	postedDate: {
+		dayAgo: '1 day ago',
+		daysAgo: 'days ago',
+		weeksAgo: 'weeks ago',
+		monthsAgo: 'months ago',
+	},
+	dialog: {
+		title: 'Apply for Job',
+		message: 'Apply without matching your CV with actual job description?',
+		cancel: 'Cancel',
+		continueApplying: 'Continue Applying',
+	},
+} as const;

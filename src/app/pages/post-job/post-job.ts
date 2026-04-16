@@ -18,6 +18,7 @@ import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynam
 import { POST_JOB_STEP1_CONFIG, POST_JOB_STEP2_CONFIG, POST_JOB_STEP3_CONFIG, POST_JOB_STEP5_CONFIG, POST_JOB_STEP6_CONFIG, POST_JOB_STEP7_CONFIG } from '../../shared/components/dynamic-form/form-configs';
 import { JOB_TYPES, EMPLOYMENT_TYPES, EXPERIENCE_LEVELS, CURRENCIES, SALARY_PERIODS, COMPANY_SIZES, INDUSTRIES, COMMON_SKILLS, COMMON_BENEFITS } from '../../data/post-job-options';
 import { JOB_VALIDATION } from '../../constants/validation.constants';
+import { POST_JOB_TEXT } from '../../data/post-job-data';
 
 import { HrService } from '../../services/hr.service';
 
@@ -65,6 +66,8 @@ export class PostJobPage {
 	
 	// Make validation constants available to template
 	public readonly JOB_VALIDATION = JOB_VALIDATION;
+
+	readonly TEXT = POST_JOB_TEXT;
 	
 	// Form options from data file
 	jobTypes = JOB_TYPES;
@@ -405,7 +408,7 @@ export class PostJobPage {
 				: 'Please fill in all required fields';
 			
 			console.error('Validation failed:', errorMessage);
-			this.snackBar.open(errorMessage, 'Close', {
+			this.snackBar.open(errorMessage, this.TEXT.snackbar.close, {
 				duration: 10000,
 				panelClass: ['error-snackbar']
 			});
@@ -433,7 +436,7 @@ export class PostJobPage {
 			const result = await this.hrService.createJob(jobData);
 			console.log('Job created successfully:', result);
 			
-			this.snackBar.open('Job posted successfully!', 'Close', {
+			this.snackBar.open(this.TEXT.snackbar.jobPosted, this.TEXT.snackbar.close, {
 				duration: 3000,
 				panelClass: ['success-snackbar']
 			});
@@ -448,8 +451,8 @@ export class PostJobPage {
 			if (error.error?.errors && Array.isArray(error.error.errors)) {
 				this.handleBackendValidationErrors(error.error);
 			} else {
-				const errorMsg = error.message || error.error?.detail || 'Failed to post job. Please try again.';
-				this.snackBar.open(errorMsg, 'Close', {
+				const errorMsg = error.message || error.error?.detail || this.TEXT.snackbar.postFailed;
+				this.snackBar.open(errorMsg, this.TEXT.snackbar.close, {
 					duration: 5000,
 					panelClass: ['error-snackbar']
 				});
@@ -490,7 +493,7 @@ export class PostJobPage {
 		this.validationErrors.set(errorMap);
 		
 		const message = `Validation failed (${errorResponse.error_count} errors):\n${errorMessages.join('\n')}`;
-		this.snackBar.open(message, 'Close', {
+		this.snackBar.open(message, this.TEXT.snackbar.close, {
 			duration: 10000,
 			panelClass: ['error-snackbar']
 		});
@@ -562,17 +565,17 @@ export class PostJobPage {
 			: this.jobForm.get(controlName);
 		
 		if (control?.hasError('required')) {
-			return 'This field is required';
+			return this.TEXT.errorMessages.fieldRequired;
 		}
 		if (control?.hasError('email')) {
-			return 'Please enter a valid email';
+			return this.TEXT.errorMessages.invalidEmail;
 		}
 		if (control?.hasError('minlength')) {
 			const requiredLength = control.errors?.['minlength']?.requiredLength;
-			return `Minimum ${requiredLength} characters required`;
+			return `${this.TEXT.errorMessages.minCharPrefix} ${requiredLength} ${this.TEXT.errorMessages.minCharSuffix}`;
 		}
 		if (control?.hasError('min')) {
-			return 'Value must be greater than 0';
+			return this.TEXT.errorMessages.greaterThanZero;
 		}
 		return '';
 	}

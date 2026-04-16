@@ -29,7 +29,7 @@
 					
 					@if (interview.hasCompanySelect) {
 						<select class="company-select">
-							<option>Select Company</option>
+							<option>{{TEXT.selectCompany}}</option>
 							@for (company of interview.companies; track company) {
 								<option [value]="company">{{ company }}</option>
 							}
@@ -39,14 +39,14 @@
 					@if (interview.disabled) {
 						<button mat-raised-button color="accent" class="start-btn" disabled>
 							<mat-icon>schedule</mat-icon>
-							{{ interview.disabledMessage || 'Coming Soon' }}
+							{{ interview.disabledMessage || TEXT.buttons.comingSoon }}
 						</button>
 					} @else {
 						<ng-container *appFeatureGuard="'mock_interview'; showWhenDisabled: true; let canUse = canUseFeature">
 							<button mat-raised-button [color]="canUse ? 'primary' : 'warn'" class="start-btn" 
 											(click)="canUse ? onStartInterview(interview.id) : onUsePaidVersion()">
 								<mat-icon>{{ canUse ? 'play_arrow' : 'diamond' }}</mat-icon>
-								{{ canUse ? 'Start Interview' : 'Use Paid Version' }}
+								{{ canUse ? TEXT.buttons.startInterview : TEXT.buttons.usePaidVersion }}
 							</button>
 						</ng-container>
 					}
@@ -57,6 +57,6 @@
 	
 	<app-interview-history 
 		[sessions]="interviewHistory()" 
-		[title]="'Recent Interview Sessions'"
-		[emptyMessage]="'No interview sessions yet. Start your first interview above!'" />
+		[title]="TEXT.history.title"
+		[emptyMessage]="TEXT.history.emptyMessage" />
 </div>

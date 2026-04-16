@@ -11,6 +11,7 @@ import type { InterviewSession, InterviewQuestion, InterviewEvaluation } from '.
 import { INTERVIEW_INSTRUCTIONS } from '../../data/mock-interview-instructions';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { MOCK_INTERVIEW_MODAL_TEXT } from '../../data/mock-interview-modal-data';
 
 @Component({
 	selector: 'app-mock-interview-modal',
@@ -30,6 +31,7 @@ import { ConfirmationDialogComponent } from '../../shared/components/confirmatio
 	}
 })
 export class MockInterviewModalComponent {
+	readonly TEXT = MOCK_INTERVIEW_MODAL_TEXT;
 	// Signals for reactive state management
 	readonly currentQuestionIndex = signal(0);
 	readonly isRecording = signal(false);

@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { VoiceAiService } from '../../services/voice-ai.service';
+import { VOICE_AI_TEXT } from '../../data/voice-ai-data';
 
 @Component({
 	selector: 'app-voice-ai',
@@ -22,6 +23,7 @@ import { VoiceAiService } from '../../services/voice-ai.service';
 	styleUrl: './voice-ai.component.css'
 })
 export class VoiceAiComponent {
+	readonly TEXT = VOICE_AI_TEXT;
 	constructor(
 		public voiceService: VoiceAiService,
 		private snackBar: MatSnackBar

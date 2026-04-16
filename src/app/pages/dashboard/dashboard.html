@@ -2,9 +2,9 @@
 	<div class="dashboard-content">
 		@if (isLoading()) {
 			<app-loading 
-				title="Loading Dashboard..."
-				message="Fetching your latest stats and activities"
-				icon="dashboard">
+				[title]="TEXT.loading.title"
+				[message]="TEXT.loading.message"
+				[icon]="TEXT.loading.icon">
 			</app-loading>
 		} @else {
 			@if (dashboardData(); as data) {
@@ -40,7 +40,7 @@
 					<mat-card-header>
 						<mat-card-title>
 							<mat-icon>timeline</mat-icon>
-							Recent Activity
+							{{TEXT.recentActivity}}
 						</mat-card-title>
 					</mat-card-header>
 					
@@ -77,9 +77,9 @@
 							</mat-list>
 						} @else {
 							<div class="no-activity">
-								<mat-icon class="no-activity-icon">inbox</mat-icon>
-								<p>No recent activity</p>
-								<small>Your activities will appear here as you use the platform</small>
+								<mat-icon class="no-activity-icon">{{TEXT.noActivity.icon}}</mat-icon>
+								<p>{{TEXT.noActivity.title}}</p>
+								<small>{{TEXT.noActivity.message}}</small>
 							</div>
 						}
 					</mat-card-content>
@@ -88,7 +88,7 @@
 				<div class="dashboard-footer">
 					<small class="last-updated">
 						<mat-icon>schedule</mat-icon>
-						Last updated: {{ data.lastUpdated | date:'medium' }}
+						{{TEXT.lastUpdated}} {{ data.lastUpdated | date:'medium' }}
 					</small>
 				</div>
 			}

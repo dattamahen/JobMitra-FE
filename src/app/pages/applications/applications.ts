@@ -9,6 +9,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 import type { ApplicationData } from '../../types/application.types';
 import { APPLICATION_STATUS_CLASSES, APPLICATION_STATUS_LABELS, APPLICATION_PROGRESS_MAP } from './applications.constants';
+import { APPLICATIONS_TEXT } from '../../data/applications-data';
 
 import { JobService } from '../../services/job.service';
 import { UserService } from '../../services/user.service';
@@ -37,6 +38,8 @@ export class ApplicationsPage {
 	private userService = inject(UserService);
 	private snackBar = inject(MatSnackBar);
 
+	readonly TEXT = APPLICATIONS_TEXT;
+
 	constructor() {
 		this.loadApplications();
 	}
@@ -46,14 +49,14 @@ export class ApplicationsPage {
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe(currentUser => {
 				if (!currentUser) {
-					this.error.set('Please login to view your applications');
+					this.error.set(this.TEXT.snackbar.loginRequired);
 					this.isLoading.set(false);
 					return;
 				}
 
 				const token = localStorage.getItem('jobmitra_token');
 				if (!token) {
-					this.error.set('Please login to view your applications');
+					this.error.set(this.TEXT.snackbar.loginRequired);
 					this.isLoading.set(false);
 					return;
 				}
@@ -73,12 +76,12 @@ export class ApplicationsPage {
 								this.isLoading.set(false);
 							},
 							error: (error) => {
-								this.error.set(error.error?.detail || 'Failed to load applications');
+								this.error.set(error.error?.detail || this.TEXT.snackbar.loadFailed);
 								this.isLoading.set(false);
 							}
 						});
 				} catch (e) {
-					this.error.set('Invalid authentication. Please login again.');
+					this.error.set(this.TEXT.snackbar.invalidAuth);
 					this.isLoading.set(false);
 				}
 			});
@@ -139,6 +142,6 @@ export class ApplicationsPage {
 	}
 
 	prepareForInterview(applicationId: string): void {
-		this.snackBar.open('Interview preparation feature coming soon', 'Close', { duration: 3000 });
+		this.snackBar.open(this.TEXT.snackbar.interviewPrepComingSoon, this.TEXT.snackbar.close, { duration: 3000 });
 	}
 }

@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { DynamicFormComponent } from '../shared/components/dynamic-form/dynamic-form.component';
 import { FormConfig } from '../shared/interfaces/form.interfaces';
 import { LOGIN_FORM_CONFIG, SIGNUP_FORM_CONFIG, FORGOT_PASSWORD_FORM_CONFIG, RESET_PASSWORD_FORM_CONFIG } from '../shared/components/dynamic-form/form-configs';
-import { LOGIN_FEATURES, ENTERPRISE_STATS, CERTIFICATIONS } from '../data/login-page-data';
+import { LOGIN_FEATURES, ENTERPRISE_STATS, CERTIFICATIONS, LOGIN_PAGE_TEXT } from '../data/login-page-data';
 import { LOGIN_PAGE_CONSTANTS } from './login-page.constants';
 
 import { AuthService, LoginRequest, LoginResponse, RegisterRequest } from '../services/auth.service';
@@ -19,6 +19,7 @@ import { GoogleAuthService } from '../services/google-auth.service';
 	styleUrl: './login-page.css'
 })
 export class LoginPage implements OnInit {
+	readonly TEXT = LOGIN_PAGE_TEXT;
 	readonly isSignupMode = signal(false);
 	readonly isForgotPasswordMode = signal(false);
 	readonly isResetPasswordMode = signal(false);

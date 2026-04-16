@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { OfflineService } from '../../../services/offline.service';
+import { OFFLINE_INDICATOR_TEXT } from '../../../data/shared-components-data';
 
 @Component({
   selector: 'app-offline-indicator',
@@ -11,5 +12,6 @@ import { OfflineService } from '../../../services/offline.service';
   styleUrls: ['./offline-indicator.component.css']
 })
 export class OfflineIndicatorComponent {
+  readonly TEXT = OFFLINE_INDICATOR_TEXT;
   constructor(public offlineService: OfflineService) {}
 }

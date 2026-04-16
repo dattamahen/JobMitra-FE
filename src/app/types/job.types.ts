@@ -37,6 +37,8 @@ export type JobListing = {
 	posted_date: string;
 	updated_date: string;
 	is_active: boolean;
+	status?: 'active' | 'expired' | 'closed' | 'filled';
+	days_remaining?: number;
 	external_apply_url?: string;
 	application_instructions?: string;
 	tags: string[];

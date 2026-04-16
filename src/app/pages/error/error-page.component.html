@@ -1,8 +1,8 @@
 <div class="error-container">
   <mat-icon class="error-icon">error_outline</mat-icon>
-  <h1>Oops! Something went wrong</h1>
-  <p>We're sorry for the inconvenience. Please try again.</p>
+  <h1>{{TEXT.title}}</h1>
+  <p>{{TEXT.message}}</p>
   <button mat-raised-button color="primary" (click)="goHome()">
-    Go to Dashboard
+    {{TEXT.button}}
   </button>
 </div>

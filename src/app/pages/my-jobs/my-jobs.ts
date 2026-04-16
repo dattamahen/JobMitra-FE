@@ -10,6 +10,7 @@ import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 
 import { JobFilterComponent, JobFilterConfig, JobFilterOptions } from '../../shared/components/job-filter/job-filter.component';
 import { EMPLOYMENT_TYPE_DISPLAY, EXPERIENCE_LEVEL_DISPLAY, JOB_TYPE_DISPLAY } from './my-jobs.constants';
+import { MY_JOBS_TEXT } from '../../data/my-jobs-data';
 
 import { HrService } from '../../services/hr.service';
 
@@ -90,6 +91,8 @@ export class MyJobsPage {
 	private router = inject(Router);
 	
 	navigateToPage = output<{page: string, params?: any}>();
+
+	readonly TEXT = MY_JOBS_TEXT;
 	
 	jobListings = signal<HRJobListing[]>([]);
 	filteredJobs = signal<HRJobListing[]>([]);
@@ -139,7 +142,7 @@ export class MyJobsPage {
 				this.filteredJobs.set([]);
 			}
 		} catch (error: any) {
-			this.snackBar.open(error.message || 'Failed to load your job postings', 'Close', { duration: 5000 });
+			this.snackBar.open(error.message || 'Failed to load your job postings', this.TEXT.snackbar.close, { duration: 5000 });
 			this.jobListings.set([]);
 			this.filteredJobs.set([]);
 		} finally {
@@ -377,25 +380,25 @@ export class MyJobsPage {
 			job.is_active = !job.is_active;
 			this.snackBar.open(
 				`Job ${job.is_active ? 'activated' : 'deactivated'} successfully`,
-				'Close',
+				this.TEXT.snackbar.close,
 				{ duration: 3000 }
 			);
 		} catch (error: any) {
-			this.snackBar.open(error.message || 'Failed to update job status', 'Close', { duration: 5000 });
+			this.snackBar.open(error.message || 'Failed to update job status', this.TEXT.snackbar.close, { duration: 5000 });
 		}
 	}
 
 	editJob(job: HRJobListing) {
-		this.snackBar.open('Edit job functionality coming soon', 'Close', { duration: 3000 });
+		this.snackBar.open('Edit job functionality coming soon', this.TEXT.snackbar.close, { duration: 3000 });
 	}
 
 	viewJobStats(job: HRJobListing) {
-		this.snackBar.open('Job statistics functionality coming soon', 'Close', { duration: 3000 });
+		this.snackBar.open('Job statistics functionality coming soon', this.TEXT.snackbar.close, { duration: 3000 });
 	}
 
 	viewApplications(job: HRJobListing) {
 		if (job.applications_count === 0) {
-			this.snackBar.open('No applications received for this job yet', 'Close', { duration: 3000 });
+			this.snackBar.open('No applications received for this job yet', this.TEXT.snackbar.close, { duration: 3000 });
 			return;
 		}
 		
@@ -412,21 +415,21 @@ export class MyJobsPage {
 				const updated = this.jobListings().filter(j => j.job_id !== job.job_id);
 				this.jobListings.set(updated);
 				this.applyFilters();
-				this.snackBar.open('Job deleted successfully', 'Close', { duration: 3000 });
+				this.snackBar.open('Job deleted successfully', this.TEXT.snackbar.close, { duration: 3000 });
 			} catch (error: any) {
-				this.snackBar.open(error.message || 'Failed to delete job', 'Close', { duration: 5000 });
+				this.snackBar.open(error.message || 'Failed to delete job', this.TEXT.snackbar.close, { duration: 5000 });
 			}
 		}
 	}
 
 	duplicateJob(job: HRJobListing) {
-		this.snackBar.open('Duplicate job functionality coming soon', 'Close', { duration: 3000 });
+		this.snackBar.open('Duplicate job functionality coming soon', this.TEXT.snackbar.close, { duration: 3000 });
 	}
 
 	copyJobLink(job: HRJobListing) {
 		const jobUrl = `${window.location.origin}/jobs/${job.job_id}`;
 		navigator.clipboard.writeText(jobUrl).then(() => {
-			this.snackBar.open('Job link copied to clipboard', 'Close', { duration: 3000 });
+			this.snackBar.open('Job link copied to clipboard', this.TEXT.snackbar.close, { duration: 3000 });
 		});
 	}
 }

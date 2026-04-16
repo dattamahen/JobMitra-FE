@@ -7,6 +7,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatChipsModule } from '@angular/material/chips';
 import { ResumeTailorService, TailorPreviewData } from '../../services/resume-tailor.service';
+import { RESUME_TAILOR_MODAL_TEXT } from '../../data/resume-tailor-modal-data';
 
 @Component({
 	selector: 'app-resume-tailor-modal',
@@ -24,6 +25,7 @@ import { ResumeTailorService, TailorPreviewData } from '../../services/resume-ta
 	styleUrls: ['./resume-tailor-modal.css']
 })
 export class ResumeTailorModalComponent implements OnInit {
+	readonly TEXT = RESUME_TAILOR_MODAL_TEXT;
 	isLoading = false;
 	previewData: TailorPreviewData | null = null;
 	private hasLoaded = false;

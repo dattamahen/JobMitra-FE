@@ -53,7 +53,7 @@
 
 .app-title {
 	font-family: 'Poppins', sans-serif;
-	font-size: clamp(2.5rem, 5vw, 4rem);
+	font-size: clamp(1rem, 5vw, 1rem);
 	font-weight: 800;
 	margin: 0 0 1vh 0;
 	background: linear-gradient(135deg, #ffffff 0%, #78dbff 100%);
@@ -64,14 +64,14 @@
 }
 
 .app-subtitle {
-	font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+	font-size: clamp(1rem, 2.5vw, 1rem);
 	font-weight: 600;
 	margin: 0 0 1.5vh 0;
 	color: rgba(255, 255, 255, 0.9);
 }
 
 .app-description {
-	font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+	font-size: clamp(0.9rem, 1.8vw, 1rem);
 	font-weight: 400;
 	margin: 0;
 	color: rgba(255, 255, 255, 0.8);
@@ -158,7 +158,7 @@
 .stat-number {
 	display: block;
 	font-family: 'Poppins', sans-serif;
-	font-size: clamp(1.5rem, 3vw, 2rem);
+	font-size: clamp(1rem, 3vw, 1rem);
 	font-weight: 700;
 	line-height: 1;
 	background: linear-gradient(135deg, #78dbff 0%, #ffffff 100%);
@@ -222,7 +222,7 @@
 
 .auth-title {
 	font-family: 'Poppins', sans-serif;
-	font-size: 2rem;
+	font-size: 1rem;
 	font-weight: 700;
 	margin: 0 0 6px 0;
 	letter-spacing: -0.02em;
@@ -338,7 +338,7 @@
 	}
 	
 	.app-title {
-		font-size: 2.5rem;
+		font-size: 1rem;
 	}
 	
 	.feature-grid {
@@ -351,7 +351,7 @@
 	}
 	
 	.stat-number {
-		font-size: 1.8rem;
+		font-size: 1rem;
 	}
 }
 
@@ -365,7 +365,7 @@
 	}
 	
 	.app-title {
-		font-size: 2rem;
+		font-size: 1rem;
 	}
 	
 	.stats-grid {

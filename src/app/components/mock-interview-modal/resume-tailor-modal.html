@@ -1,27 +1,25 @@
 <h2 mat-dialog-title>
 	<mat-icon>auto_fix_high</mat-icon>
-	Tailor Resume for {{data.jobTitle}}
+	{{TEXT.title}} {{data.jobTitle}}
 </h2>
 
 <mat-dialog-content>
 	@if (isLoading) {
 		<div class="loading-container">
 			<mat-spinner diameter="50"></mat-spinner>
-			<p>Analyzing job requirements and tailoring your resume...</p>
+			<p>{{TEXT.loading}}</p>
 		</div>
 	} @else if (previewData) {
 		<div class="tailor-preview">
-			<!-- Match Improvement -->
 			<div class="match-improvement">
-				<h3>Match Improvement</h3>
+				<h3>{{TEXT.matchImprovement}}</h3>
 				<div class="improvement-bar">
-					<span class="before">Before: {{previewData.match_improvement - 15}}%</span>
+					<span class="before">{{TEXT.before}} {{previewData.match_improvement - 15}}%</span>
 					<mat-icon>arrow_forward</mat-icon>
-					<span class="after">After: {{previewData.match_improvement}}%</span>
+					<span class="after">{{TEXT.after}} {{previewData.match_improvement}}%</span>
 				</div>
 			</div>
 
-			<!-- Changes Tabs -->
 			<mat-tab-group>
 				<mat-tab label="Changes ({{previewData.changes.length}})">
 					<div class="changes-list">
@@ -37,13 +35,13 @@
 								<div class="change-content">
 									@if (change.original) {
 										<div class="original">
-											<strong>Original:</strong>
+											<strong>{{TEXT.labels.original}}</strong>
 											<p>{{change.original}}</p>
 										</div>
 									}
 									@if (change.modified) {
 										<div class="modified">
-											<strong>Tailored:</strong>
+											<strong>{{TEXT.labels.tailored}}</strong>
 											<p>{{change.modified}}</p>
 										</div>
 									}
@@ -57,11 +55,11 @@
 					</div>
 				</mat-tab>
 
-				<mat-tab label="Preview">
+				<mat-tab [label]="TEXT.labels.preview">
 					<div class="resume-preview">
-						<h4>Tailored Resume Preview</h4>
+						<h4>{{TEXT.labels.tailoredResumePreview}}</h4>
 						<div class="preview-content">
-							<p>Your resume has been optimized for this position with {{previewData.changes.length}} improvements.</p>
+							<p>{{TEXT.labels.improvementsMessage}} {{previewData.changes.length}} {{TEXT.labels.improvementsSuffix}}</p>
 						</div>
 					</div>
 				</mat-tab>
@@ -71,12 +69,12 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-	<button mat-button (click)="onCancel()">Cancel</button>
+	<button mat-button (click)="onCancel()">{{TEXT.buttons.cancel}}</button>
 	<button mat-button (click)="onApplyWithoutTailoring()" color="accent">
-		Apply Without Tailoring
+		{{TEXT.buttons.applyWithoutTailoring}}
 	</button>
 	<button mat-raised-button (click)="onApplyWithTailoring()" color="primary" [disabled]="isLoading">
 		<mat-icon>check</mat-icon>
-		Apply with Tailored Resume
+		{{TEXT.buttons.applyWithTailoredResume}}
 	</button>
 </mat-dialog-actions>

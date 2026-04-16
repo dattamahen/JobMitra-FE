@@ -15,6 +15,7 @@ import { FeatureUsageService } from '../../services/feature-usage.service';
 import { CreditsService } from '../../services/credits.service';
 import { InterviewService } from '../../services/interview.service';
 import { AuthService } from '../../services/auth.service';
+import { MOCK_INTERVIEWS_TEXT } from '../../data/mock-interviews-page-data';
 
 @Component({
 	selector: 'app-mock-interviews-page',
@@ -24,6 +25,7 @@ import { AuthService } from '../../services/auth.service';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MockInterviewsPage {
+	readonly TEXT = MOCK_INTERVIEWS_TEXT;
 	interviewTypes = INTERVIEW_TYPES;
 	interviewHistory = signal<InterviewHistorySession[]>([]);
 	private readonly destroyRef = inject(DestroyRef);

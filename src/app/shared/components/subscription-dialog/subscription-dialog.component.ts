@@ -9,6 +9,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
 import { CreditsService } from '../../../services/credits.service';
 import { MotivationBannerComponent } from '../motivation-banner/motivation-banner.component';
+import { SUBSCRIPTION_DIALOG_TEXT } from '../../../data/shared-components-data';
 
 @Component({
 	selector: 'app-subscription-dialog',
@@ -22,6 +23,7 @@ import { MotivationBannerComponent } from '../motivation-banner/motivation-banne
 	styleUrl: './subscription-dialog.component.css'
 })
 export class SubscriptionDialogComponent {
+	readonly TEXT = SUBSCRIPTION_DIALOG_TEXT;
 	private dialogRef = inject(MatDialogRef<SubscriptionDialogComponent>);
 	private creditsService = inject(CreditsService);
 	private snackBar = inject(MatSnackBar);

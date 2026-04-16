@@ -223,7 +223,7 @@ th.mat-column-applied_date {
 
 
 .detail-section h4 {
-	font-size: 1.125rem !important;
+	font-size: 1rem !important;
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -238,7 +238,7 @@ th.mat-column-applied_date {
 
 .detail-section h4 mat-icon {
 	font-size: 1.125rem !important;
-	width: 1.25rem;
+	width: 1rem;
 	height: 1.25rem;
 	color: #1976d2;
 }
