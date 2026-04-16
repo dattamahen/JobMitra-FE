@@ -13,6 +13,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 import { DashboardData, DashboardStats, ActivityItem } from '../../types/dashboard.types';
 import { ACTIVITY_TYPE_COLOR_MAP, ACTIVITY_STATUS_ICON_MAP } from './dashboard.constants';
+import { DASHBOARD_TEXT } from '../../data/dashboard-data';
 
 import { DashboardService } from '../../services/dashboard.service';
 
@@ -41,6 +42,8 @@ export class DashboardPage implements OnInit {
 	private router = inject(Router);
 
 	@Output() navigateToPage = new EventEmitter<{ page: string }>();
+
+	readonly TEXT = DASHBOARD_TEXT;
 
 	private readonly statRouteMap: Record<string, string> = {
 		'applications': 'applications',

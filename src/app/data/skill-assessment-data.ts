@@ -1,0 +1,53 @@
+export const SKILL_ASSESSMENT_TEXT = {
+	categories: {
+		technicalSkills: 'Technical Skills',
+		softSkills: 'Soft Skills',
+	},
+	buttons: {
+		practiceInterview: 'Practice Interview',
+		updateProfile: 'Update Profile',
+		startLearning: 'Start Learning',
+		watchOnYouTube: 'Watch on YouTube',
+		shareKnowledge: 'Share Your Knowledge',
+		addMoreResources: 'Add More Resources',
+		cancel: 'Cancel',
+		submitContribution: 'Submit Contribution',
+	},
+	emptyState: {
+		noSkillsTitle: 'No Skills Found',
+		noSkillsMessage: 'Update your profile to see your skills here and start taking assessments.',
+	},
+	history: {
+		title: 'Recent Assessments',
+		emptyMessage: 'No assessments yet. Start a mock interview to see your results here!',
+	},
+	recommended: {
+		title: 'AI Recommended Skills',
+		description: 'Based on your profile and target roles, we recommend improving these skills:',
+	},
+	modal: {
+		learningResourcesFor: 'Learning Resources for',
+		noResourcesTitle: 'No Learning Resources Found',
+		noResourcesPrefix: "We don't have learning resources for",
+		noResourcesSuffix: 'yet.',
+		helpCommunity: 'Help the community by sharing your knowledge!',
+		shareKnowledgeFor: 'Share Your Knowledge for',
+		shareDescription: 'Help others learn by sharing valuable learning resources!',
+	},
+	form: {
+		resourceTitle: 'Resource Title*',
+		titlePlaceholderPrefix: 'e.g., Complete',
+		titlePlaceholderSuffix: 'Tutorial for Beginners',
+		description: 'Description*',
+		descriptionPlaceholder: 'Brief description of what this resource covers...',
+		youtubeUrl: 'YouTube URL*',
+		youtubeUrlPlaceholder: 'https://www.youtube.com/watch?v=...',
+		difficultyLevel: 'Difficulty Level*',
+		selectLevel: 'Select Level',
+		beginner: 'Beginner',
+		intermediate: 'Intermediate',
+		advanced: 'Advanced',
+		yourName: 'Your Name*',
+		yourNamePlaceholder: 'Your name',
+	},
+} as const;

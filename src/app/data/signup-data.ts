@@ -1,0 +1,42 @@
+export const SIGNUP_TEXT = {
+	hero: {
+		tagline: 'Start Your Career Journey',
+		description: 'Join thousands of professionals who found their dream jobs through our AI-powered platform',
+	},
+	benefits: [
+		{ icon: '✨', text: 'AI-powered job matching' },
+		{ icon: '🎯', text: 'Personalized recommendations' },
+		{ icon: '🚀', text: 'Fast-track your applications' },
+		{ icon: '🔒', text: 'Secure and private' },
+	],
+	form: {
+		title: 'Create Your Account',
+		firstName: 'First Name',
+		firstNameRequired: 'First name is required',
+		lastName: 'Last Name',
+		lastNameRequired: 'Last name is required',
+		email: 'Email Address',
+		emailRequired: 'Email is required',
+		emailInvalid: 'Please enter a valid email',
+		password: 'Password',
+		passwordRequired: 'Password is required',
+		passwordMinLength: 'Password must be at least 8 characters',
+		confirmPassword: 'Confirm Password',
+		confirmPasswordRequired: 'Confirm password is required',
+		passwordMismatch: 'Passwords do not match',
+		userType: 'I am a',
+		jobSeeker: 'Job Seeker',
+		hrRecruiter: 'HR/Recruiter',
+		creatingAccount: 'Creating Account...',
+		createAccount: 'Create Account',
+	},
+	toggle: {
+		alreadyHaveAccount: 'Already have an account?',
+		signIn: 'Sign in',
+	},
+	snackbar: {
+		close: 'Close',
+		accountCreated: 'Account created successfully!',
+		registrationFailed: 'Registration failed',
+	},
+} as const;

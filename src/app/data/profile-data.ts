@@ -210,3 +210,57 @@ export const PROFILE_FORM_FIELDS: { [section: string]: FormFieldConfig[] } = {
 		}
 	]
 };
+
+
+// ── Profile Page UI Text Constants ──
+
+export const PROFILE_TEXT = {
+	formButtons: {
+		updateBasicInfo: 'Update Basic Info',
+		updateProfessionalInfo: 'Update Professional Info',
+		updateSkills: 'Update Skills',
+		updateExperience: 'Update Experience',
+		updateEducation: 'Update Education',
+		updateProjects: 'Update Projects',
+		updateCertifications: 'Update Certifications',
+		updateJobPreferences: 'Update Job Preferences',
+	},
+	placeholders: {
+		yourName: 'Your Name',
+		addHeadline: 'Add your professional headline',
+		addLocation: 'Add your location',
+		addEmail: 'Add email',
+	},
+	labels: {
+		contactInfo: 'Contact info',
+		yearsExperience: 'Years Experience',
+		percentComplete: '% Complete',
+	},
+	sections: {
+		about: 'About',
+		skills: 'Skills',
+		skillsSuffix: 'skills',
+		careerPreferences: 'Career Preferences',
+		education: 'Education',
+		contact: 'Contact',
+	},
+	emptyStates: {
+		addSummary: 'Add a summary to help people discover you and your professional interests.',
+		addSummaryBtn: 'Add summary',
+		addSkills: 'Add skills to showcase your expertise to potential employers.',
+		addSkillsBtn: 'Add skills',
+		showAllPrefix: 'Show all',
+		showAllSuffix: 'skills',
+	},
+	preferences: {
+		jobTypes: 'Job types',
+		workArrangement: 'Work arrangement',
+		salaryExpectation: 'Salary expectation',
+		notSpecified: 'Not specified',
+	},
+	contactLinks: {
+		githubProfile: 'GitHub Profile',
+		linkedinProfile: 'LinkedIn Profile',
+		portfolioWebsite: 'Portfolio Website',
+	},
+} as const;

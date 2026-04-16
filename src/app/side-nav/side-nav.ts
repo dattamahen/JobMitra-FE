@@ -8,6 +8,7 @@ import { ConfirmationDialogComponent } from '../shared/components/confirmation-d
 
 import { AuthService } from '../services/auth.service';
 import { NavigationService, NavItem } from '../services/navigation.service';
+import { SIDE_NAV_TEXT } from '../data/nav-data';
 
 @Component({
 	selector: 'app-side-nav',
@@ -21,6 +22,7 @@ import { NavigationService, NavItem } from '../services/navigation.service';
 	encapsulation: ViewEncapsulation.None
 })
 export class SideNav implements OnInit {
+	readonly TEXT = SIDE_NAV_TEXT;
 	@Output() pageSelected = new EventEmitter<string>();
 
 	activeItem: string = '';

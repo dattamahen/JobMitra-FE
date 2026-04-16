@@ -56,3 +56,25 @@ export const CERTIFICATIONS: Certification[] = [
 	{ badge: 'ISO 27001' },
 	{ badge: 'SOC 2 Type II' }
 ];
+
+
+export const LOGIN_PAGE_TEXT = {
+	subtitle: 'Intelligent Recruitment Platform',
+	description: 'Revolutionize your hiring process with AI-driven recruitment solutions that connect talent with opportunity seamlessly.',
+	welcome: 'Welcome',
+	subtitles: {
+		signup: 'Create your account to get started',
+		forgotPassword: 'Reset your password',
+		resetPassword: 'Enter your new password',
+		login: 'Please sign in to continue',
+	},
+	divider: 'or',
+	toggle: {
+		noAccount: "Don't have an account?",
+		createAccount: 'Create account',
+		forgotPassword: 'Forgot Password?',
+		alreadyHaveAccount: 'Already have an account?',
+		signIn: 'Sign in',
+		backToSignIn: 'Back to Sign in',
+	},
+} as const;

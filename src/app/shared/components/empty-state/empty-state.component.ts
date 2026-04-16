@@ -1,6 +1,7 @@
 import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { EMPTY_STATE_DEFAULTS } from '../../../data/shared-components-data';
 
 @Component({
 	selector: 'app-empty-state',
@@ -34,21 +35,21 @@ import { MatIconModule } from '@angular/material/icon';
 
 		h3 {
 			margin: 0 0 0.5rem 0;
-			font-size: 1.25rem;
+			font-size: 1rem;
 			font-weight: 500;
 			color: #333;
 		}
 
 		p {
 			margin: 0;
-			font-size: 0.95rem;
+			font-size: 0.875rem;
 			color: #666;
 		}
 	`],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EmptyStateComponent {
-	icon = input<string>('inbox');
-	title = input<string>('No Data Available');
-	message = input<string>('There is nothing to display at the moment.');
+	icon = input<string>(EMPTY_STATE_DEFAULTS.icon);
+	title = input<string>(EMPTY_STATE_DEFAULTS.title);
+	message = input<string>(EMPTY_STATE_DEFAULTS.message);
 }

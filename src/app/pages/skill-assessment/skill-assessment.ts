@@ -12,6 +12,7 @@ import { MockInterviewService } from '../../services/mock-interview.service';
 import { InterviewService } from '../../services/interview.service';
 import { CreditsService } from '../../services/credits.service';
 import { AuthService } from '../../services/auth.service';
+import { SKILL_ASSESSMENT_TEXT } from '../../data/skill-assessment-data';
 
 @Component({
 	selector: 'app-skill-assessment-page',
@@ -21,6 +22,7 @@ import { AuthService } from '../../services/auth.service';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SkillAssessmentPage implements OnInit {
+	readonly TEXT = SKILL_ASSESSMENT_TEXT;
 	skillAssessments: SkillAssessment[] = [];
 	interviewHistory = signal<InterviewHistorySession[]>([]);
 	selectedSkillResources: readonly LearningResource[] = [];

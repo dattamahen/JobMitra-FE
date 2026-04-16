@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { SETTINGS_TEXT } from '../../data/settings-data';
 
 @Component({
 	selector: 'app-settings',
@@ -7,4 +8,6 @@ import { Component } from '@angular/core';
 	templateUrl: './settings.html',
 	styleUrls: ['./settings.css']
 })
-export class SettingsPage {}
+export class SettingsPage {
+	readonly TEXT = SETTINGS_TEXT;
+}

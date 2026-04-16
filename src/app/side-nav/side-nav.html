@@ -1,7 +1,7 @@
 <nav class="side-nav-container">
 	<div class="app-header">
-		<img src="favicon.svg" alt="JobMouka logo" class="app-logo-img" width="48" height="48">
-		<h1 class="app-name">JobMouka</h1>
+		<img src="favicon.svg" [alt]="TEXT.logoAlt" class="app-logo-img" width="48" height="48">
+		<h1 class="app-name">{{TEXT.appName}}</h1>
 	</div>
 	<mat-nav-list class="nav-menu-scrollable">
 		@for (item of navItems; track item.id) {
@@ -28,7 +28,7 @@
 			(click)="logout()"
 			class="nav-item logout-item">
 			<mat-icon matListItemIcon class="nav-icon">logout</mat-icon>
-			<span matListItemTitle>Logout</span>
+			<span matListItemTitle>{{TEXT.logout}}</span>
 		</mat-list-item>
 	</div>
 </nav>

@@ -2,9 +2,9 @@
 	<!-- Loading indicator -->
 	@if (isLoading()) {
 		<app-loading 
-			title="Loading Applications..."
-			message="Fetching your job application status"
-			icon="assignment">
+			[title]="TEXT.loading.title"
+			[message]="TEXT.loading.message"
+			[icon]="TEXT.loading.icon">
 		</app-loading>
 	}
 
@@ -16,9 +16,9 @@
 			<mat-card>
 				<mat-card-content>
 					<div class="empty-state">
-						<mat-icon>work_off</mat-icon>
-						<h2>No Applications Yet</h2>
-						<p>Start applying for jobs to see your applications here.</p>
+						<mat-icon>{{TEXT.emptyState.icon}}</mat-icon>
+						<h2>{{TEXT.emptyState.title}}</h2>
+						<p>{{TEXT.emptyState.message}}</p>
 					</div>
 				</mat-card-content>
 			</mat-card>
@@ -32,18 +32,18 @@
 				<div class="header-actions">
 					<button mat-raised-button color="primary" (click)="prepareForInterview(application.application_id)">
 						<mat-icon>mic</mat-icon>
-						Prepare Interview
+						{{TEXT.labels.prepareInterview}}
 					</button>
 				</div>
 			</mat-card-header>
 			<mat-card-content>
-				<p class="applied-date">Applied: {{formatDate(application.applied_date)}}</p>
+				<p class="applied-date">{{TEXT.labels.applied}} {{formatDate(application.applied_date)}}</p>
 
 				<!-- Interview date for scheduled interviews -->
 				@if (application.status === 'interview_scheduled' && getNextInterviewStage(application)?.scheduled_date) {
 				<p class="interview-date">
 					<mat-icon>event</mat-icon>
-					Interview: {{formatDateTime(getNextInterviewStage(application)!.scheduled_date!)}}
+					{{TEXT.labels.interview}} {{formatDateTime(getNextInterviewStage(application)!.scheduled_date!)}}
 				</p>
 				}
 
@@ -52,12 +52,12 @@
 				<div class="offer-details">
 					<p class="offer-salary">
 						<mat-icon>attach_money</mat-icon>
-						Offer: {{formatSalary(application.offer_details.salary, application.offer_details.currency)}}
+						{{TEXT.labels.offer}} {{formatSalary(application.offer_details.salary, application.offer_details.currency)}}
 					</p>
 					@if (application.offer_details.start_date) {
 					<p class="start-date">
 						<mat-icon>schedule</mat-icon>
-						Start Date: {{formatDate(application.offer_details.start_date)}}
+						{{TEXT.labels.startDate}} {{formatDate(application.offer_details.start_date)}}
 					</p>
 					}
 				</div>
@@ -66,7 +66,7 @@
 				<!-- Notes -->
 				@if (application.notes) {
 				<div class="application-notes">
-					<p><strong>Notes:</strong> {{application.notes}}</p>
+					<p><strong>{{TEXT.labels.notes}}</strong> {{application.notes}}</p>
 				</div>
 				}
 

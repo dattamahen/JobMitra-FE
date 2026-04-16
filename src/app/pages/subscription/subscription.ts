@@ -6,6 +6,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CreditsService, UserCredits } from '../../services/credits.service';
 import { SubscriptionDialogComponent } from '../../shared/components/subscription-dialog/subscription-dialog.component';
+import { SUBSCRIPTION_TEXT } from '../../data/subscription-data';
 
 @Component({
 	selector: 'app-subscription-page',
@@ -18,6 +19,7 @@ import { SubscriptionDialogComponent } from '../../shared/components/subscriptio
 	styleUrl: './subscription.css'
 })
 export class SubscriptionPage implements OnInit {
+	readonly TEXT = SUBSCRIPTION_TEXT;
 	private creditsService = inject(CreditsService);
 	private dialog = inject(MatDialog);
 

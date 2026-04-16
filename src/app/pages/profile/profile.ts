@@ -20,6 +20,7 @@ import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynam
 import { ProfileShareComponent } from '../../shared/components/profile-share/profile-share.component';
 import { PROFILE_BASIC_INFO_CONFIG, PROFILE_PROFESSIONAL_CONFIG, PROFILE_SKILLS_CONFIG, PROFILE_EXPERIENCE_CONFIG, PROFILE_EDUCATION_CONFIG, PROFILE_PROJECTS_CONFIG, PROFILE_CERTIFICATIONS_CONFIG, PROFILE_JOB_PREFERENCES_CONFIG } from '../../shared/components/dynamic-form/form-configs';
 import { QUALIFICATION_DISPLAY_MAP, SALARY_RANGE_MAP, PROFILE_FIELD_DISPLAY_NAMES, PROFILE_PATTERN_ERROR_MESSAGES } from './profile.constants';
+import { PROFILE_TEXT } from '../../data/profile-data';
 import { ProfileSnapshot } from '../../services/profile-share.service';
 import type { UserProfile, UpdateUserRequest } from '../../services';
 
@@ -56,6 +57,7 @@ import { ImageUploadService } from '../../services/image-upload.service';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProfilePage implements OnInit, AfterViewInit {
+	readonly TEXT = PROFILE_TEXT;
 	basicForm = viewChild<DynamicFormComponent>('basicForm');
 	professionalForm = viewChild<DynamicFormComponent>('professionalForm');
 	skillsForm = viewChild<DynamicFormComponent>('skillsForm');

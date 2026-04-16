@@ -16,6 +16,7 @@ import { MatMenuModule } from '@angular/material/menu';
 
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 import { APPLICATION_RECEIVED_STATUS_COLORS } from './applications-received.constants';
+import { APPLICATIONS_RECEIVED_TEXT } from '../../data/applications-received-data';
 
 import { HrService } from '../../services/hr.service';
 
@@ -102,6 +103,8 @@ export class ApplicationsReceivedPage implements OnInit {
 	private cdr = inject(ChangeDetectorRef);
 	private destroyRef = inject(DestroyRef);
 
+	readonly TEXT = APPLICATIONS_RECEIVED_TEXT;
+
 	ngOnInit() {
 		
 		// Check for specific job ID from route or input
@@ -110,13 +113,13 @@ export class ApplicationsReceivedPage implements OnInit {
 			.subscribe(params => {
 			if (params['jobId']) {
 				this.specificJobId = params['jobId'];
-				this.pageTitle.set('Job Applications');
+				this.pageTitle.set(this.TEXT.pageTitle.jobApplications);
 			}
 		});
 		
 		if (this.specificJobId) {
 			this.selectedJobId.set(this.specificJobId);
-			this.pageTitle.set('Job Applications');
+			this.pageTitle.set(this.TEXT.pageTitle.jobApplications);
 		}
 		
 		this.loadJobOptions();
@@ -162,7 +165,7 @@ export class ApplicationsReceivedPage implements OnInit {
 			this.applications.set(applications);
 		} catch (error: any) {
 			console.error('Error loading applications:', error);
-			this.snackBar.open(error.message || 'Failed to load applications', 'Close', { duration: 5000 });
+				this.snackBar.open(error.message || this.TEXT.snackbar.loadFailed, this.TEXT.snackbar.close, { duration: 5000 });
 			this.applications.set([]);
 		}
 		
@@ -175,7 +178,7 @@ export class ApplicationsReceivedPage implements OnInit {
 		
 		// Update page title based on selection
 		if (value === 'all') {
-			this.pageTitle.set('Applications Received');
+			this.pageTitle.set(this.TEXT.pageTitle.default);
 		} else {
 			const selectedJob = this.jobOptions().find(job => job.job_id === value);
 			if (selectedJob) {
@@ -205,10 +208,10 @@ export class ApplicationsReceivedPage implements OnInit {
 			.then(() => {
 				application.status = newStatus;
 				this.cdr.markForCheck();
-				this.snackBar.open(`Status updated to ${newStatus} for ${application.full_name}`, 'Close', { duration: 3000 });
+				this.snackBar.open(`${this.TEXT.snackbar.statusUpdatedTo} ${newStatus} ${this.TEXT.snackbar.forSuffix} ${application.full_name}`, this.TEXT.snackbar.close, { duration: 3000 });
 			})
 			.catch((error) => {
-				this.snackBar.open(error.message || 'Failed to update status', 'Close', { duration: 3000 });
+				this.snackBar.open(error.message || this.TEXT.snackbar.statusUpdateFailed, this.TEXT.snackbar.close, { duration: 3000 });
 			});
 	}
 
@@ -268,9 +271,9 @@ export class ApplicationsReceivedPage implements OnInit {
 			}
 
 			pdf.save(`${application.full_name.replace(/\s+/g, '-')}-application.pdf`);
-			this.snackBar.open('PDF downloaded successfully', 'Close', { duration: 3000 });
+			this.snackBar.open(this.TEXT.snackbar.pdfDownloaded, this.TEXT.snackbar.close, { duration: 3000 });
 		} catch (error) {
-			this.snackBar.open('Error generating PDF', 'Close', { duration: 3000 });
+			this.snackBar.open(this.TEXT.snackbar.pdfError, this.TEXT.snackbar.close, { duration: 3000 });
 		} finally {
 			document.body.removeChild(tempElement);
 		}
@@ -325,7 +328,7 @@ export class ApplicationsReceivedPage implements OnInit {
 	downloadCSV(): void {
 		const apps = this.applications();
 		if (apps.length === 0) {
-			this.snackBar.open('No applications to download', 'Close', { duration: 3000 });
+			this.snackBar.open(this.TEXT.snackbar.noApplications, this.TEXT.snackbar.close, { duration: 3000 });
 			return;
 		}
 
@@ -359,6 +362,6 @@ export class ApplicationsReceivedPage implements OnInit {
 		document.body.appendChild(link);
 		link.click();
 		document.body.removeChild(link);
-		this.snackBar.open('CSV downloaded successfully', 'Close', { duration: 3000 });
+		this.snackBar.open(this.TEXT.snackbar.csvDownloaded, this.TEXT.snackbar.close, { duration: 3000 });
 	}
 }

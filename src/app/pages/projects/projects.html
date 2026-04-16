@@ -1,39 +1,20 @@
 <div class="page-container">
 	<div class="content">
 		<div class="projects-list">
+			@for (project of projects; track project.title) {
 			<div class="project-card">
 				<div class="project-header">
-					<h2>E-commerce Website</h2>
-					<span class="status active">Active</span>
+					<h2>{{project.title}}</h2>
+					<span class="status" [class]="project.statusClass">{{project.status}}</span>
 				</div>
-				<p>Building a modern e-commerce platform with Angular and Node.js</p>
+				<p>{{project.description}}</p>
 				<div class="project-meta">
-					<span>Due: Dec 31, 2025</span>
-					<span>Team: 5 members</span>
+					@for (item of project.meta; track item) {
+					<span>{{item}}</span>
+					}
 				</div>
 			</div>
-			<div class="project-card">
-				<div class="project-header">
-					<h2>Mobile App</h2>
-					<span class="status pending">Pending</span>
-				</div>
-				<p>Cross-platform mobile application using React Native</p>
-				<div class="project-meta">
-					<span>Due: Mar 15, 2026</span>
-					<span>Team: 3 members</span>
-				</div>
-			</div>
-			<div class="project-card">
-				<div class="project-header">
-					<h2>Data Analytics Dashboard</h2>
-					<span class="status completed">Completed</span>
-				</div>
-				<p>Real-time analytics dashboard for business intelligence</p>
-				<div class="project-meta">
-					<span>Completed: Nov 20, 2025</span>
-					<span>Team: 4 members</span>
-				</div>
-			</div>
+			}
 		</div>
 	</div>
 </div>

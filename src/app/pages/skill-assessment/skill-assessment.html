@@ -3,7 +3,7 @@
 		@if (hasSkills()) {
 			<div class="skill-categories">
 				<div class="category-card">
-					<h2><mat-icon>computer</mat-icon> Technical Skills</h2>
+					<h2><mat-icon>computer</mat-icon> {{TEXT.categories.technicalSkills}}</h2>
 					<div class="skills-list">
 						@for (skill of getTechnicalSkills(); track skill.id) {
 							<div class="skill-item">
@@ -15,9 +15,8 @@
 									<span class="level-text">{{ skill.levelText }}</span>
 								</div>
 								<div class="skill-actions">
-									<button class="interview-btn" 
-													(click)="startMockInterview(skill)">
-										<mat-icon>mic</mat-icon> Practice Interview
+									<button class="interview-btn" (click)="startMockInterview(skill)">
+										<mat-icon>mic</mat-icon> {{TEXT.buttons.practiceInterview}}
 									</button>
 								</div>
 							</div>
@@ -26,7 +25,7 @@
 				</div>
 				
 				<div class="category-card">
-					<h2><mat-icon>psychology</mat-icon> Soft Skills</h2>
+					<h2><mat-icon>psychology</mat-icon> {{TEXT.categories.softSkills}}</h2>
 					<div class="skills-list">
 						@for (skill of getSoftSkills(); track skill.id) {
 							<div class="skill-item">
@@ -38,9 +37,8 @@
 									<span class="level-text">{{ skill.levelText }}</span>
 								</div>
 								<div class="skill-actions">
-									<button class="interview-btn" 
-													(click)="startMockInterview(skill)">
-										<mat-icon>mic</mat-icon> Practice Interview
+									<button class="interview-btn" (click)="startMockInterview(skill)">
+										<mat-icon>mic</mat-icon> {{TEXT.buttons.practiceInterview}}
 									</button>
 								</div>
 							</div>
@@ -52,10 +50,10 @@
 			<div class="no-skills-message">
 				<div class="no-skills-content">
 					<mat-icon class="no-skills-icon">psychology</mat-icon>
-					<h2>No Skills Found</h2>
-					<p>Update your profile to see your skills here and start taking assessments.</p>
+					<h2>{{TEXT.emptyState.noSkillsTitle}}</h2>
+					<p>{{TEXT.emptyState.noSkillsMessage}}</p>
 					<button class="update-profile-btn" (click)="navigateToProfile()">
-						<mat-icon>person</mat-icon> Update Profile
+						<mat-icon>person</mat-icon> {{TEXT.buttons.updateProfile}}
 					</button>
 				</div>
 			</div>
@@ -65,15 +63,15 @@
 			<div class="history-list">
 				<app-interview-history 
 			[sessions]="interviewHistory()" 
-			[title]="'Recent Assessments'"
-			[emptyMessage]="'No assessments yet. Start a mock interview to see your results here!'" />
+			[title]="TEXT.history.title"
+			[emptyMessage]="TEXT.history.emptyMessage" />
 			</div>
 		</div>
 		
 		@if (getRecommendedSkills().length > 0) {
 			<div class="recommended-skills">
-				<h2><mat-icon>auto_awesome</mat-icon> AI Recommended Skills</h2>
-				<p>Based on your profile and target roles, we recommend improving these skills:</p>
+				<h2><mat-icon>auto_awesome</mat-icon> {{TEXT.recommended.title}}</h2>
+				<p>{{TEXT.recommended.description}}</p>
 				<div class="recommendation-list">
 					@for (skill of getRecommendedSkills(); track skill.id) {
 						<div class="recommendation-item">
@@ -81,24 +79,22 @@
 								<span class="skill-name">{{ skill.name }}</span>
 								<span class="relevance">{{ skill.relevanceReason }}</span>
 							</div>
-							<button class="learn-btn" (click)="startLearning(skill)">Start Learning</button>
+							<button class="learn-btn" (click)="startLearning(skill)">{{TEXT.buttons.startLearning}}</button>
 						</div>
 					}
 				</div>
 			</div>
 		}
 
-		<!-- Learning Resources Modal -->
 		@if (showLearningModal) {
 			<div class="modal-overlay" (click)="hideLearningModal()">
 				<div class="modal-content" (click)="$event.stopPropagation()">
 					<div class="modal-header">
-						<h2><mat-icon>school</mat-icon> Learning Resources for {{ selectedSkill }}</h2>
+						<h2><mat-icon>school</mat-icon> {{TEXT.modal.learningResourcesFor}} {{ selectedSkill }}</h2>
 						<button class="close-btn" (click)="hideLearningModal()">×</button>
 					</div>
 					
 					<div class="modal-body">
-						<!-- Learning Resources List -->
 						@if (selectedSkillResources.length > 0 && !showContributeForm) {
 							<div class="learning-resources-list">
 								@for (resource of selectedSkillResources; track resource.id) {
@@ -137,7 +133,7 @@
 											</div>
 											
 											<button class="watch-btn" (click)="openVideo(resource.youtubeUrl)">
-												Watch on YouTube
+												{{TEXT.buttons.watchOnYouTube}}
 											</button>
 										</div>
 									</div>
@@ -145,83 +141,80 @@
 							</div>
 						}
 						
-						<!-- No Resources Found -->
 						@if (selectedSkillResources.length === 0 && !showContributeForm) {
 							<div class="no-resources">
 								<div class="no-resources-content">
 									<div class="no-resources-icon"><mat-icon>school</mat-icon></div>
-									<h2>No Learning Resources Found</h2>
-									<p>We don't have learning resources for <strong>{{ selectedSkill }}</strong> yet.</p>
-									<p>Help the community by sharing your knowledge!</p>
+									<h2>{{TEXT.modal.noResourcesTitle}}</h2>
+									<p>{{TEXT.modal.noResourcesPrefix}} <strong>{{ selectedSkill }}</strong> {{TEXT.modal.noResourcesSuffix}}</p>
+									<p>{{TEXT.modal.helpCommunity}}</p>
 									<button class="contribute-btn" (click)="showContributeKnowledge()">
-										Share Your Knowledge
+										{{TEXT.buttons.shareKnowledge}}
 									</button>
 								</div>
 							</div>
 						}
 
-						<!-- Contribute Knowledge Form -->
 						@if (showContributeForm) {
 							<div class="contribute-form">
 								<div class="form-header">
-									<h2><mat-icon>share</mat-icon> Share Your Knowledge for {{ selectedSkill }}</h2>
-									<p>Help others learn by sharing valuable learning resources!</p>
+									<h2><mat-icon>share</mat-icon> {{TEXT.modal.shareKnowledgeFor}} {{ selectedSkill }}</h2>
+									<p>{{TEXT.modal.shareDescription}}</p>
 								</div>
 								
 								<form (submit)="submitContribution($event)">
 									<div class="form-group">
-										<label for="title">Resource Title*</label>
+										<label for="title">{{TEXT.form.resourceTitle}}</label>
 										<input type="text" id="title" name="title" required 
-													placeholder="e.g., Complete {{ selectedSkill }} Tutorial for Beginners">
+												placeholder="{{TEXT.form.titlePlaceholderPrefix}} {{ selectedSkill }} {{TEXT.form.titlePlaceholderSuffix}}">
 									</div>
 									
 									<div class="form-group">
-										<label for="description">Description*</label>
+										<label for="description">{{TEXT.form.description}}</label>
 										<textarea id="description" name="description" required rows="3"
-															placeholder="Brief description of what this resource covers..."></textarea>
+														[placeholder]="TEXT.form.descriptionPlaceholder"></textarea>
 									</div>
 									
 									<div class="form-group">
-										<label for="youtubeUrl">YouTube URL*</label>
+										<label for="youtubeUrl">{{TEXT.form.youtubeUrl}}</label>
 										<input type="url" id="youtubeUrl" name="youtubeUrl" required 
-													placeholder="https://www.youtube.com/watch?v=...">
+												[placeholder]="TEXT.form.youtubeUrlPlaceholder">
 									</div>
 									
 									<div class="form-row">
 										<div class="form-group">
-											<label for="level">Difficulty Level*</label>
+											<label for="level">{{TEXT.form.difficultyLevel}}</label>
 											<select id="level" name="level" required>
-												<option value="">Select Level</option>
-												<option value="beginner">Beginner</option>
-												<option value="intermediate">Intermediate</option>
-												<option value="advanced">Advanced</option>
+												<option value="">{{TEXT.form.selectLevel}}</option>
+												<option value="beginner">{{TEXT.form.beginner}}</option>
+												<option value="intermediate">{{TEXT.form.intermediate}}</option>
+												<option value="advanced">{{TEXT.form.advanced}}</option>
 											</select>
 										</div>
 										
 										<div class="form-group">
-											<label for="submitterName">Your Name*</label>
+											<label for="submitterName">{{TEXT.form.yourName}}</label>
 											<input type="text" id="submitterName" name="submitterName" required 
-														placeholder="Your name">
+													[placeholder]="TEXT.form.yourNamePlaceholder">
 										</div>
 									</div>
 									
 									<div class="form-actions">
 										<button type="button" class="cancel-btn" (click)="hideContributeForm()">
-											Cancel
+											{{TEXT.buttons.cancel}}
 										</button>
 										<button type="submit" class="submit-btn">
-											Submit Contribution
+											{{TEXT.buttons.submitContribution}}
 										</button>
 									</div>
 								</form>
 							</div>
 						}
 
-						<!-- Add Resources Button (when resources exist) -->
 						@if (selectedSkillResources.length > 0 && !showContributeForm) {
 							<div class="modal-footer">
 								<button class="add-resource-btn" (click)="showContributeKnowledge()">
-									<mat-icon>add</mat-icon> Add More Resources
+									<mat-icon>add</mat-icon> {{TEXT.buttons.addMoreResources}}
 								</button>
 							</div>
 						}

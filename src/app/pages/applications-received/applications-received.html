@@ -5,9 +5,9 @@
 		</mat-card-header>
 		<mat-card-content>
 			<mat-form-field appearance="fill" class="job-filter">
-				<mat-label>Filter by Job</mat-label>
+				<mat-label>{{TEXT.filter.label}}</mat-label>
 				<mat-select [value]="selectedJobId()" (selectionChange)="onJobFilterChange($event.value)">
-					<mat-option value="all">All Jobs</mat-option>
+					<mat-option value="all">{{TEXT.filter.allJobs}}</mat-option>
 					@for (job of jobOptions(); track $index) {
 						<mat-option [value]="job.job_id">{{job.title}}</mat-option>
 					}
@@ -15,23 +15,23 @@
 			</mat-form-field>
 			
 			<div class="summary">
-				{{applications().length}} application{{applications().length !== 1 ? 's' : ''}} found
+				{{applications().length}} {{applications().length !== 1 ? TEXT.filter.applicationsFound : TEXT.filter.applicationFound}} {{TEXT.filter.found}}
 			</div>
 		</mat-card-content>
 	</mat-card>
 
 	@if (isLoading()) {
 		<app-loading 
-			title="Loading Applications..."
-			message="Fetching received applications"
-			icon="inbox">
+			[title]="TEXT.loading.title"
+			[message]="TEXT.loading.message"
+			[icon]="TEXT.loading.icon">
 		</app-loading>
 	} @else if (applications().length === 0) {
 		<mat-card class="no-applications">
 			<mat-card-content>
-				<mat-icon class="no-data-icon">inbox</mat-icon>
-				<h2>No Applications Received</h2>
-				<p>You haven't received any applications yet. Applications will appear here once candidates apply to your job postings.</p>
+				<mat-icon class="no-data-icon">{{TEXT.emptyState.icon}}</mat-icon>
+				<h2>{{TEXT.emptyState.title}}</h2>
+				<p>{{TEXT.emptyState.message}}</p>
 			</mat-card-content>
 		</mat-card>
 	} @else {
@@ -48,7 +48,7 @@
 					</ng-container>
 					
 					<ng-container matColumnDef="full_name">
-						<th mat-header-cell *matHeaderCellDef>Candidate Name</th>
+						<th mat-header-cell *matHeaderCellDef>{{TEXT.table.candidateName}}</th>
 						<td mat-cell *matCellDef="let app">
 							<div class="candidate-info">
 								<div class="candidate-name-row">
@@ -63,7 +63,7 @@
 					</ng-container>
 
 					<ng-container matColumnDef="email">
-						<th mat-header-cell *matHeaderCellDef>Contact</th>
+						<th mat-header-cell *matHeaderCellDef>{{TEXT.table.contact}}</th>
 						<td mat-cell *matCellDef="let app">
 							<div class="contact-info">
 								<div>{{app.email}}</div>
@@ -75,30 +75,30 @@
 					</ng-container>
 
 					<ng-container matColumnDef="experience_years">
-						<th mat-header-cell *matHeaderCellDef>Experience</th>
-						<td mat-cell *matCellDef="let app">{{app.experience_years}} years</td>
+						<th mat-header-cell *matHeaderCellDef>{{TEXT.table.experience}}</th>
+						<td mat-cell *matCellDef="let app">{{app.experience_years}} {{TEXT.table.yearsSuffix}}</td>
 					</ng-container>
 
 					<ng-container matColumnDef="current_role">
-						<th mat-header-cell *matHeaderCellDef>Current Role</th>
-						<td mat-cell *matCellDef="let app">{{app.current_role || 'Not specified'}}</td>
+						<th mat-header-cell *matHeaderCellDef>{{TEXT.table.currentRole}}</th>
+						<td mat-cell *matCellDef="let app">{{app.current_role || TEXT.table.notSpecified}}</td>
 					</ng-container>
 
 					<ng-container matColumnDef="ats_score">
-						<th mat-header-cell *matHeaderCellDef>Skills Score</th>
+						<th mat-header-cell *matHeaderCellDef>{{TEXT.table.skillsScore}}</th>
 						<td mat-cell *matCellDef="let app">
 							@if (app.ats_score > 0) {
 								<mat-chip [class]="app.ats_score >= 70 ? 'high-match' : app.ats_score >= 50 ? 'medium-match' : 'low-match'">
 									{{app.ats_score}}%
 								</mat-chip>
 							} @else {
-								<mat-chip class="low-match">N/A</mat-chip>
+								<mat-chip class="low-match">{{TEXT.table.na}}</mat-chip>
 							}
 						</td>
 					</ng-container>
 
 					<ng-container matColumnDef="match_percentage">
-						<th mat-header-cell *matHeaderCellDef>JD Match Score</th>
+						<th mat-header-cell *matHeaderCellDef>{{TEXT.table.jdMatchScore}}</th>
 						<td mat-cell *matCellDef="let app">
 							@if (app.resume_tailored && app.match_score) {
 								<mat-chip class="high-match">
@@ -110,18 +110,18 @@
 									{{app.match_percentage}}%
 								</mat-chip>
 							} @else {
-								<mat-chip class="low-match">N/A</mat-chip>
+								<mat-chip class="low-match">{{TEXT.table.na}}</mat-chip>
 							}
 						</td>
 					</ng-container>
 
 					<ng-container matColumnDef="applied_date">
-						<th mat-header-cell *matHeaderCellDef>Applied Date</th>
+						<th mat-header-cell *matHeaderCellDef>{{TEXT.table.appliedDate}}</th>
 						<td mat-cell *matCellDef="let app">{{formatDate(app.applied_date)}}</td>
 					</ng-container>
 
 					<ng-container matColumnDef="actions">
-						<th mat-header-cell *matHeaderCellDef>Actions</th>
+						<th mat-header-cell *matHeaderCellDef>{{TEXT.table.actions}}</th>
 						<td mat-cell *matCellDef="let app" (click)="$event.stopPropagation()">
 							<button mat-icon-button (click)="downloadApplicantPDF(app)" matTooltip="Download PDF">
 								<mat-icon>download</mat-icon>
@@ -132,11 +132,11 @@
 							<mat-menu #statusMenu="matMenu">
 								<button mat-menu-item (click)="updateStatus(app, 'shortlisted')">
 									<mat-icon>star</mat-icon>
-									<span>Shortlist</span>
+									<span>{{TEXT.actions.shortlist}}</span>
 								</button>
 								<button mat-menu-item (click)="updateStatus(app, 'rejected')">
 									<mat-icon>close</mat-icon>
-									<span>Reject</span>
+									<span>{{TEXT.actions.reject}}</span>
 								</button>
 							</mat-menu>
 						</td>
@@ -148,11 +148,11 @@
 							<div class="expanded-detail" [@detailExpand]="isExpanded(app.application_id || app.user_id) ? 'expanded' : 'collapsed'">
 								<div class="detail-content">
 									<div class="detail-header">
-										<h3>Details - {{app.full_name}}
+										<h3>{{TEXT.detail.detailsPrefix}} {{app.full_name}}
 											@if (app.resume_tailored) {
 												<mat-chip class="tailored-badge">
 													<mat-icon>auto_fix_high</mat-icon>
-													Tailored Resume
+													{{TEXT.detail.tailoredResume}}
 												</mat-chip>
 											}
 										</h3>
@@ -161,7 +161,7 @@
 									<!-- Skills -->
 									@if (app.skills && app.skills.length > 0) {
 										<div class="detail-section">
-											<h4><mat-icon>code</mat-icon> Skills</h4>
+											<h4><mat-icon>code</mat-icon> {{TEXT.detail.skills}}</h4>
 											<div class="skills-list">
 												@for (skill of app.skills; track $index) {
 													<mat-chip>{{skill}}</mat-chip>
@@ -173,7 +173,7 @@
 									<!-- Professional Summary -->
 									@if (app.professional_summary) {
 										<div class="detail-section">
-											<h4><mat-icon>description</mat-icon> Professional Summary</h4>
+											<h4><mat-icon>description</mat-icon> {{TEXT.detail.professionalSummary}}</h4>
 											<p>{{app.professional_summary}}</p>
 										</div>
 									}
@@ -181,17 +181,17 @@
 									<!-- Education -->
 									@if (app.highest_qualification) {
 										<div class="detail-section">
-											<h4><mat-icon>school</mat-icon> Education</h4>
+											<h4><mat-icon>school</mat-icon> {{TEXT.detail.education}}</h4>
 											<p>{{app.highest_qualification}}</p>
 										</div>
 									}
 
 									<!-- Contact Info -->
 									<div class="detail-section">
-										<h4><mat-icon>contact_mail</mat-icon> Contact Information</h4>
-										<p><strong>Email:</strong> {{app.email}}</p>
+										<h4><mat-icon>contact_mail</mat-icon> {{TEXT.detail.contactInformation}}</h4>
+										<p><strong>{{TEXT.detail.email}}</strong> {{app.email}}</p>
 										@if (app.phone) {
-											<p><strong>Phone:</strong> {{app.phone}}</p>
+											<p><strong>{{TEXT.detail.phone}}</strong> {{app.phone}}</p>
 										}
 									</div>
 								</div>
@@ -206,7 +206,7 @@
 				<div class="table-footer">
 					<button mat-raised-button color="primary" (click)="downloadCSV()">
 						<mat-icon>file_download</mat-icon>
-						Download CSV
+						{{TEXT.actions.downloadCSV}}
 					</button>
 				</div>
 			</mat-card-content>

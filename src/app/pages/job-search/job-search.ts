@@ -15,6 +15,7 @@ import { JobFilterComponent, JobFilterConfig } from '../../shared/components/job
 import { ResumeTailorModalComponent } from '../../components/mock-interview-modal/resume-tailor-modal.component';
 import type { JobListing, JobSearchFilters } from '../../types/job.types';
 import { maskEmail, maskPhone } from '../../utils/mask.util';
+import { JOB_SEARCH_TEXT } from '../../data/job-search-data';
 
 import { JobService } from '../../services/job.service';
 import { UserService } from '../../services/user.service';
@@ -53,6 +54,8 @@ export class JobSearchPage {
 	private readonly mockInterviewService = inject(MockInterviewService);
 	private readonly tailorService = inject(ResumeTailorService);
 
+	readonly TEXT = JOB_SEARCH_TEXT;
+
 	expandedJobs: { [key: string]: boolean } = {};
 	unmaskedHRDetails: { [key: string]: boolean } = {};
 	jobListings: JobListing[] = [];
@@ -74,6 +77,9 @@ export class JobSearchPage {
 		if (!jobs || jobs.length === 0) return [];
 		
 		return jobs.filter(job => {
+			// Safety net: hide expired/closed/filled jobs client-side
+			if (job.status && ['expired', 'closed', 'filled'].includes(job.status)) return false;
+
 			if (config.searchQuery) {
 				const query = config.searchQuery.toLowerCase();
 				const matchesSearch = 
@@ -144,13 +150,21 @@ export class JobSearchPage {
 		if (job.location.state) parts.push(job.location.state);
 		if (job.location.country) parts.push(job.location.country);
 		
-		let location = parts.join(', ') || 'Location not specified';
+		let location = parts.join(', ') || this.TEXT.formatLocation.notSpecified;
 		
 		if (job.location.is_remote) {
-			location += ' (Remote)';
+			location += this.TEXT.formatLocation.remoteSuffix;
 		}
 		
 		return location;
+	}
+
+	getDaysRemaining(job: JobListing): number | null {
+		if (job.days_remaining != null) return job.days_remaining;
+		if (!job.application_deadline) return null;
+		const now = new Date();
+		const deadline = new Date(job.application_deadline);
+		return Math.max(0, Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
 	}
 
 	getFormattedPostedDate(job: JobListing): string {
@@ -159,10 +173,10 @@ export class JobSearchPage {
 		const diffTime = Math.abs(now.getTime() - postedDate.getTime());
 		const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 		
-		if (diffDays === 1) return '1 day ago';
-		if (diffDays < 7) return `${diffDays} days ago`;
-		if (diffDays < 30) return `${Math.ceil(diffDays / 7)} weeks ago`;
-		return `${Math.ceil(diffDays / 30)} months ago`;
+		if (diffDays === 1) return this.TEXT.postedDate.dayAgo;
+		if (diffDays < 7) return `${diffDays} ${this.TEXT.postedDate.daysAgo}`;
+		if (diffDays < 30) return `${Math.ceil(diffDays / 7)} ${this.TEXT.postedDate.weeksAgo}`;
+		return `${Math.ceil(diffDays / 30)} ${this.TEXT.postedDate.monthsAgo}`;
 	}
 
 	isDeadlineApproaching(job: JobListing): boolean {
@@ -196,7 +210,7 @@ export class JobSearchPage {
 
 	formatSalary(job: JobListing): string {
 		if (!job.salary || (!job.salary.min && !job.salary.max)) {
-			return 'Salary not disclosed';
+			return this.TEXT.formatSalary.notDisclosed;
 		}
 		
 		const formatAmount = (amount: number) => {
@@ -212,11 +226,11 @@ export class JobSearchPage {
 		if (job.salary.min && job.salary.max) {
 			return `${formatAmount(job.salary.min)} - ${formatAmount(job.salary.max)}`;
 		} else if (job.salary.min) {
-			return `From ${formatAmount(job.salary.min)}`;
+			return `${this.TEXT.formatSalary.fromPrefix} ${formatAmount(job.salary.min)}`;
 		} else if (job.salary.max) {
-			return `Up to ${formatAmount(job.salary.max)}`;
+			return `${this.TEXT.formatSalary.upToPrefix} ${formatAmount(job.salary.max)}`;
 		} else {
-			return 'Salary not disclosed';
+			return this.TEXT.formatSalary.notDisclosed;
 		}
 	}
 
@@ -224,7 +238,7 @@ export class JobSearchPage {
 		const job = this.getJobById(jobId);
 		if (!job) return;
 		if (job.match_analysis_done) {
-			this.snackBar.open('Match analysis already completed', 'Close', { duration: 3000 });
+			this.snackBar.open(this.TEXT.snackbar.matchAnalysisDone, this.TEXT.snackbar.close, { duration: 3000 });
 			return;
 		}
 		this.jobService.performMatchAnalysis(jobId)
@@ -233,11 +247,11 @@ export class JobSearchPage {
 			next: (response) => {
 				job.match_percentage = response.match_percentage;
 				job.match_analysis_done = response.analysis_done;
-				this.snackBar.open(response.message, 'Close', { duration: 3000 });
+				this.snackBar.open(response.message, this.TEXT.snackbar.close, { duration: 3000 });
 			},
 			error: (error) => {
-				const errorMessage = error.error?.detail || 'Failed to perform match analysis';
-				this.snackBar.open(errorMessage, 'Close', { duration: 3000 });
+				const errorMessage = error.error?.detail || this.TEXT.snackbar.matchAnalysisFailed;
+				this.snackBar.open(errorMessage, this.TEXT.snackbar.close, { duration: 3000 });
 			}
 		});
 	}
@@ -247,7 +261,7 @@ export class JobSearchPage {
 		if (!job) return;
 		
 		if (job.tailor_resume_done) {
-			this.snackBar.open('Resume already tailored', 'Close', { duration: 3000 });
+			this.snackBar.open(this.TEXT.snackbar.resumeTailored, this.TEXT.snackbar.close, { duration: 3000 });
 			return;
 		}
 
@@ -281,11 +295,11 @@ export class JobSearchPage {
 					}
 				}
 				this.cdr.markForCheck();
-				this.snackBar.open('Applied successfully with tailored resume!', 'Close', { duration: 3000 });
+				this.snackBar.open(this.TEXT.snackbar.appliedWithTailor, this.TEXT.snackbar.close, { duration: 3000 });
 			},
 			error: (error) => {
-				const errorMessage = error.error?.detail || 'Failed to apply';
-				this.snackBar.open(errorMessage, 'Close', { duration: 3000 });
+				const errorMessage = error.error?.detail || this.TEXT.snackbar.applyFailed;
+				this.snackBar.open(errorMessage, this.TEXT.snackbar.close, { duration: 3000 });
 			}
 		});
 	}
@@ -302,7 +316,7 @@ export class JobSearchPage {
 
 	takeMockInterview(jobId: string): void {
 		if (!this.featureUsageService.canUsePaidFeatures()) {
-			this.snackBar.open('Upgrade to access mock interviews', 'Close', { duration: 3000 });
+			this.snackBar.open(this.TEXT.snackbar.upgradeMockInterview, this.TEXT.snackbar.close, { duration: 3000 });
 			return;
 		}
 
@@ -327,13 +341,13 @@ export class JobSearchPage {
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe(currentUser => {
 			if (!currentUser) {
-				this.snackBar.open('Please login to apply for jobs', 'Close', { duration: 3000 });
+				this.snackBar.open(this.TEXT.snackbar.loginRequired, this.TEXT.snackbar.close, { duration: 3000 });
 				return;
 			}
 
 			const job = this.getJobById(jobId);
 			if (!job) {
-				this.snackBar.open('Job not found', 'Close', { duration: 3000 });
+				this.snackBar.open(this.TEXT.snackbar.jobNotFound, this.TEXT.snackbar.close, { duration: 3000 });
 				return;
 			}
 
@@ -348,12 +362,12 @@ export class JobSearchPage {
 						job.match_analysis_done = true;
 						job.tailor_resume_done = true;
 						this.cdr.markForCheck();
-						this.snackBar.open(response.message, 'Close', { duration: 3000 });
+						this.snackBar.open(response.message, this.TEXT.snackbar.close, { duration: 3000 });
 					}
 				},
 				error: (error) => {
-					const errorMessage = error.error?.detail || 'Failed to apply for job';
-					this.snackBar.open(errorMessage, 'Close', { duration: 3000 });
+					const errorMessage = error.error?.detail || this.TEXT.snackbar.applyJobFailed;
+					this.snackBar.open(errorMessage, this.TEXT.snackbar.close, { duration: 3000 });
 				}
 			});
 		});
@@ -387,11 +401,11 @@ export class JobSearchPage {
 					}
 				}
 				this.cdr.markForCheck();
-				this.snackBar.open(response.message || 'Applied successfully!', 'Close', { duration: 3000 });
+				this.snackBar.open(response.message || this.TEXT.snackbar.appliedSuccess, this.TEXT.snackbar.close, { duration: 3000 });
 			},
 			error: (error) => {
-				const errorMessage = error.error?.detail || 'Failed to apply for job';
-				this.snackBar.open(errorMessage, 'Close', { duration: 3000 });
+				const errorMessage = error.error?.detail || this.TEXT.snackbar.applyJobFailed;
+				this.snackBar.open(errorMessage, this.TEXT.snackbar.close, { duration: 3000 });
 			}
 		});
 	}
@@ -399,17 +413,17 @@ export class JobSearchPage {
 	getMatchAnalysisText(jobId: string): string {
 		const job = this.getJobById(jobId);
 		if (job?.match_analysis_done && job.match_percentage) {
-			return `Analysis: ${job.match_percentage}% Match`;
+			return `${this.TEXT.matchAnalysis.analysisPrefix} ${job.match_percentage}${this.TEXT.matchAnalysis.matchSuffix}`;
 		}
-		return 'Match Analysis';
+		return this.TEXT.matchAnalysis.default;
 	}
 
 	getTailorResumeText(jobId: string): string {
 		const job = this.getJobById(jobId);
 		if (job?.tailor_resume_done) {
-			return 'Resume Tailored';
+			return this.TEXT.tailorResume.done;
 		}
-		return 'Tailor Resume';
+		return this.TEXT.tailorResume.default;
 	}
 
 	getMaskedEmail(email: string, jobId: string): string {
@@ -422,7 +436,7 @@ export class JobSearchPage {
 
 	getHRDetails(jobId: string): void {
 		if (!this.featureUsageService.canUsePaidFeatures()) {
-			this.snackBar.open('Upgrade to view HR contact details', 'Close', { duration: 3000 });
+			this.snackBar.open(this.TEXT.snackbar.upgradeHRDetails, this.TEXT.snackbar.close, { duration: 3000 });
 			return;
 		}
 		this.unmaskedHRDetails[jobId] = true;
@@ -436,18 +450,20 @@ export class JobSearchPage {
 @Component({
 	selector: 'apply-confirmation-dialog',
 	template: `
-		<h2 mat-dialog-title>Apply for Job</h2>
+		<h2 mat-dialog-title>{{TEXT.dialog.title}}</h2>
 		<mat-dialog-content>
-			<p>Apply without matching your CV with actual job description?</p>
+			<p>{{TEXT.dialog.message}}</p>
 		</mat-dialog-content>
 		<mat-dialog-actions align="end">
-			<button mat-button (click)="onCancel()">Cancel</button>
-			<button mat-raised-button color="primary" (click)="onApply()">Continue Applying</button>
+			<button mat-button (click)="onCancel()">{{TEXT.dialog.cancel}}</button>
+			<button mat-raised-button color="primary" (click)="onApply()">{{TEXT.dialog.continueApplying}}</button>
 		</mat-dialog-actions>
 	`,
 	imports: [MatDialogModule, MatButtonModule]
 })
 export class ApplyConfirmationDialog {
+	readonly TEXT = JOB_SEARCH_TEXT;
+
 	constructor(
 		public dialogRef: MatDialogRef<ApplyConfirmationDialog>,
 		@Inject(MAT_DIALOG_DATA) public data: { jobId: string }

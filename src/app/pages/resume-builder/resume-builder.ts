@@ -19,6 +19,7 @@ import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynam
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 import { FeatureUsageService } from '../../services/feature-usage.service';
 import { CreditsService } from '../../services/credits.service';
+import { RESUME_BUILDER_TEXT } from '../../data/resume-builder-data';
 import { FeatureGuardDirective } from '../../shared/directives/feature-guard.directive';
 import { 
 	RESUME_PERSONAL_INFO_CONFIG, 
@@ -56,6 +57,7 @@ import { RESUME_SECTIONS, CV_TEMPLATES } from './resume-builder.constants';
 	styleUrls: ['./resume-builder.css']
 })
 export class ResumeBuilderPage implements OnInit {
+	readonly TEXT = RESUME_BUILDER_TEXT;
 	// Reactive signals - initialized after constructor
 	readonly currentResume = computed(() => this.resumeService.currentResume());
 	readonly isLoading = computed(() => this.resumeService.isLoading());

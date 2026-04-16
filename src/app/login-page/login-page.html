@@ -1,13 +1,12 @@
 <div class="login-container">
-	<!-- Left side - Application Information (66%) -->
 	<div class="app-info-section">
 		<div class="background-pattern"></div>
 				
 		<div class="app-info-content">
 			<div class="logo-section">
 				<h1 class="app-title">{{CONSTANTS.APP_NAME}}</h1>
-				<p class="app-subtitle">Intelligent Recruitment Platform</p>
-				<p class="app-description">Revolutionize your hiring process with AI-driven recruitment solutions that connect talent with opportunity seamlessly.</p>
+				<p class="app-subtitle">{{TEXT.subtitle}}</p>
+				<p class="app-description">{{TEXT.description}}</p>
 			</div>
 			
 			<div class="features-section">
@@ -43,20 +42,18 @@
 		</div>
 	</div>
 
-	<!-- Right side - Login/Signup Form (34%) -->
 	<div class="login-form-section">
 		<div class="auth-container">
 			<div class="auth-header">
-				<h1 class="auth-title">Welcome</h1>
+				<h1 class="auth-title">{{TEXT.welcome}}</h1>
 				<p class="auth-subtitle">
-					{{ isSignupMode() ? 'Create your account to get started' : 
-					   isForgotPasswordMode() ? 'Reset your password' :
-					   isResetPasswordMode() ? 'Enter your new password' :
-					   'Please sign in to continue' }}
+					{{ isSignupMode() ? TEXT.subtitles.signup : 
+					   isForgotPasswordMode() ? TEXT.subtitles.forgotPassword :
+					   isResetPasswordMode() ? TEXT.subtitles.resetPassword :
+					   TEXT.subtitles.login }}
 				</p>
 			</div>
 			
-			<!-- Error Message Display -->
 			@if (errorMessage) {
 				<div class="error-message">
 					<mat-icon>error</mat-icon>
@@ -64,7 +61,6 @@
 				</div>
 			}
 
-			<!-- Success Message Display -->
 			@if (successMessage) {
 				<div class="success-message">
 					<mat-icon>check_circle</mat-icon>
@@ -72,16 +68,13 @@
 				</div>
 			}
 
-			<!-- Google Sign-in Button - Only show in login mode -->
 			@if (!isSignupMode() && !isForgotPasswordMode() && !isResetPasswordMode()) {
 				<div id="google-signin-button" class="google-signin-container"></div>
-
 				<div class="divider">
-					<span>or</span>
+					<span>{{TEXT.divider}}</span>
 				</div>
 			}
 
-			<!-- Dynamic Forms -->
 			@if (!isSignupMode() && !isForgotPasswordMode() && !isResetPasswordMode()) {
 				<div class="auth-form">
 					<app-dynamic-form 
@@ -120,17 +113,17 @@
 			
 			<div class="auth-toggle">
 				@if (!isSignupMode() && !isForgotPasswordMode() && !isResetPasswordMode()) {
-					<p>Don't have an account? <a (click)="toggleSignupMode()" class="toggle-link">Create account</a></p>
-					<p><a (click)="toggleForgotPasswordMode()" class="toggle-link">Forgot Password?</a></p>
+					<p>{{TEXT.toggle.noAccount}} <a (click)="toggleSignupMode()" class="toggle-link">{{TEXT.toggle.createAccount}}</a></p>
+					<p><a (click)="toggleForgotPasswordMode()" class="toggle-link">{{TEXT.toggle.forgotPassword}}</a></p>
 				}
 				@if (isSignupMode()) {
-					<p>Already have an account? <a (click)="toggleSignupMode()" class="toggle-link">Sign in</a></p>
+					<p>{{TEXT.toggle.alreadyHaveAccount}} <a (click)="toggleSignupMode()" class="toggle-link">{{TEXT.toggle.signIn}}</a></p>
 				}
 				@if (isForgotPasswordMode()) {
-					<p><a (click)="toggleForgotPasswordMode()" class="toggle-link">Back to Sign in</a></p>
+					<p><a (click)="toggleForgotPasswordMode()" class="toggle-link">{{TEXT.toggle.backToSignIn}}</a></p>
 				}
 				@if (isResetPasswordMode()) {
-					<p><a (click)="toggleResetPasswordMode()" class="toggle-link">Back to Sign in</a></p>
+					<p><a (click)="toggleResetPasswordMode()" class="toggle-link">{{TEXT.toggle.backToSignIn}}</a></p>
 				}
 			</div>
 		</div>

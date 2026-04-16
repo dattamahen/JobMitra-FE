@@ -44,10 +44,10 @@ h1, h2, h3, h4, h5, h6 {
 	color: #65697b !important;
 }
 
-h1 { font-size: 2rem; }      /* Page titles */
-h2 { font-size: 1.5rem; }    /* Section titles */
-h3 { font-size: 1.25rem; }   /* Card titles */
-h4 { font-size: 1rem; }      /* Subsection titles */
+h1 { font-size: 1rem; }      /* Page titles */
+h2 { font-size: 0.875rem; }    /* Section titles */
+h3 { font-size: 0.875rem; }   /* Card titles */
+h4 { font-size: 0.875rem; }      /* Subsection titles */
 h5 { font-size: 0.875rem; }  /* Small headings */
 h6 { font-size: 0.75rem; }   /* Tiny headings */
 

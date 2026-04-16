@@ -2,10 +2,10 @@
 <div mat-dialog-title class="modal-header">
 	<div class="header-content">
 		<mat-icon>psychology</mat-icon>
-		<span>{{ phase() === 'generating' ? 'Preparing Your Interview' :
-			phase() === 'instructions' ? 'Mock Interview Instructions' : 
-			phase() === 'interview' ? 'Mock Interview in Progress' : 
-			phase() === 'evaluation' ? 'Interview Results' : 'Interview Completed' }}</span>
+		<span>{{ phase() === 'generating' ? TEXT.phases.generating :
+			phase() === 'instructions' ? TEXT.phases.instructions : 
+			phase() === 'interview' ? TEXT.phases.interview : 
+			phase() === 'evaluation' ? TEXT.phases.evaluation : TEXT.phases.completed }}</span>
 	</div>
 	@if (phase() === 'interview' && interviewSession()) {
 		<div class="progress-indicator">
@@ -16,32 +16,30 @@
 
 <!-- Modal Body -->
 <mat-dialog-content class="modal-body">
-	<!-- Generating Questions Phase -->
 	@if (phase() === 'generating') {
 		<div class="generating-section">
 			<div class="generating-content">
 				<mat-spinner diameter="60"></mat-spinner>
-				<h2>Generating Interview Questions</h2>
-				<p>Our AI is creating personalized questions based on your profile...</p>
+				<h2>{{TEXT.generating.title}}</h2>
+				<p>{{TEXT.generating.message}}</p>
 				<div class="generating-info">
 					<div class="info-item">
 						<mat-icon>person</mat-icon>
-						<span>Role: {{ data?.userProfile?.role }}</span>
+						<span>{{TEXT.generating.role}} {{ data?.userProfile?.role }}</span>
 					</div>
 					<div class="info-item">
 						<mat-icon>work</mat-icon>
-						<span>Experience: {{ data?.userProfile?.experience_years }} years</span>
+						<span>{{TEXT.generating.experience}} {{ data?.userProfile?.experience_years }} {{TEXT.generating.yearsSuffix}}</span>
 					</div>
 					<div class="info-item">
 						<mat-icon>code</mat-icon>
-						<span>Skills: {{ data?.userProfile?.skills?.join(', ') }}</span>
+						<span>{{TEXT.generating.skills}} {{ data?.userProfile?.skills?.join(', ') }}</span>
 					</div>
 				</div>
 			</div>
 		</div>
 	}
 
-	<!-- Instructions Phase -->
 	@if (phase() === 'instructions') {
 		<div class="instructions-section">
 			<div class="instructions-content">
@@ -55,26 +53,22 @@
 		</div>
 	}
 
-	<!-- Loading State -->
 	@if (phase() === 'loading') {
 		<app-loading 
-			title="Preparing Interview..."
-			message="Generating personalized questions for you"
-			icon="psychology">
+			[title]="TEXT.loading.title"
+			[message]="TEXT.loading.message"
+			[icon]="TEXT.loading.icon">
 		</app-loading>
 	}
 
-	<!-- Interview Phase -->
 	@if (phase() === 'interview' && interviewSession()) {
 		<div class="interview-room">
-			<!-- Question Section -->
 			<div class="question-section">
 				<div class="question-card">
 					<p class="question-text">{{currentQuestion()?.question}}</p>
 				</div>
 			</div>
 
-			<!-- Answer Section -->
 			<div class="answer-section">
 				@if (currentAnswer()) {
 					<div class="answer-display">
@@ -90,7 +84,7 @@
 						(click)="isRecording() ? stopRecording() : startRecording()"
 						class="record-btn">
 						<mat-icon>{{isRecording() ? 'stop' : 'mic'}}</mat-icon>
-						{{isRecording() ? 'Stop Recording' : 'Record Answer'}}
+						{{isRecording() ? TEXT.interview.stopRecording : TEXT.interview.recordAnswer}}
 					</button>
 					
 					<button 
@@ -99,7 +93,7 @@
 						[disabled]="!canGoNext() || isLoading()"
 						(click)="nextQuestion()"
 						class="next-btn">
-						{{isLastQuestion() ? 'Submit Interview' : 'Next Question'}}
+						{{isLastQuestion() ? TEXT.interview.submitInterview : TEXT.interview.nextQuestion}}
 						<mat-icon>{{isLastQuestion() ? 'send' : 'arrow_forward'}}</mat-icon>
 					</button>
 				</div>
@@ -107,24 +101,22 @@
 		</div>
 	}
 
-	<!-- End Screen -->
 	@if (phase() === 'completed') {
 		<div class="completion-section">
 			@if (isLoading()) {
 				<mat-spinner diameter="60"></mat-spinner>
-				<h2>Evaluating Your Performance...</h2>
-				<p>Our AI is analyzing your answers. This may take a moment.</p>
+				<h2>{{TEXT.completed.evaluating}}</h2>
+				<p>{{TEXT.completed.evaluatingMessage}}</p>
 			} @else {
 				<div class="completion-header">
 					<mat-icon class="success-icon">check_circle</mat-icon>
-					<h2>Interview Completed!</h2>
-					<p>Thank you for participating in the mock interview.</p>
+					<h2>{{TEXT.completed.title}}</h2>
+					<p>{{TEXT.completed.message}}</p>
 				</div>
 			}
 		</div>
 	}
 
-	<!-- Evaluation Phase -->
 	@if (phase() === 'evaluation' && evaluation()) {
 		<div class="evaluation-content">
 			<mat-card class="evaluation-card">
@@ -135,17 +127,17 @@
 								<span class="score-number">{{evaluation()!.overall_score}}</span>
 								<span class="score-percent">%</span>
 							</div>
-							<p>Overall Performance</p>
+							<p>{{TEXT.evaluation.overallPerformance}}</p>
 						</div>
 					</div>
 					
 					<div class="feedback-section">
-						<h2>Detailed Feedback</h2>
+						<h2>{{TEXT.evaluation.detailedFeedback}}</h2>
 						<p>{{evaluation()!.feedback}}</p>
 					</div>
 
 					<div class="question-scores">
-						<h2>Question Analysis</h2>
+						<h2>{{TEXT.evaluation.questionAnalysis}}</h2>
 						@for (score of evaluation()!.question_scores; track score.question_id) {
 							<div class="question-score">
 								<div class="score-badge">{{score.score}}%</div>
@@ -162,26 +154,26 @@
 <!-- Modal Footer -->
 <mat-dialog-actions class="modal-footer">
 	@if (phase() === 'instructions') {
-		<button mat-button (click)="closeModal()">Cancel</button>
-		<button mat-raised-button color="primary" (click)="startInterview()">Start Interview</button>
+		<button mat-button (click)="closeModal()">{{TEXT.buttons.cancel}}</button>
+		<button mat-raised-button color="primary" (click)="startInterview()">{{TEXT.buttons.startInterview}}</button>
 	}
 	
 	@if (phase() === 'interview') {
 		<button mat-button color="warn" (click)="terminateInterview()">
 			<mat-icon>close</mat-icon>
-			Terminate Interview
+			{{TEXT.buttons.terminateInterview}}
 		</button>
 	}
 	
 	@if (phase() === 'completed') {
 		@if (!isLoading() && evaluation()) {
-			<button mat-raised-button color="primary" (click)="viewResults()">View Results</button>
+			<button mat-raised-button color="primary" (click)="viewResults()">{{TEXT.buttons.viewResults}}</button>
 		} @else if (!isLoading()) {
-			<button mat-button (click)="closeModal()">Close</button>
+			<button mat-button (click)="closeModal()">{{TEXT.buttons.close}}</button>
 		}
 	}
 	
 	@if (phase() === 'evaluation') {
-		<button mat-raised-button color="primary" (click)="closeModal()">Done</button>
+		<button mat-raised-button color="primary" (click)="closeModal()">{{TEXT.buttons.done}}</button>
 	}
 </mat-dialog-actions>

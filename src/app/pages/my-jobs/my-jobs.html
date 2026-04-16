@@ -4,35 +4,32 @@
 		[filterConfig]="filterConfig()"
 		[filterOptions]="filterOptionsForComponent()"
 		[resultsCount]="filteredJobs().length"
-		searchLabel="Search your jobs"
-		searchPlaceholder="Enter job title, skills, or description"
-		searchButtonLabel="Search Jobs"
-		resultsLabel="job"
+		[searchLabel]="TEXT.filter.searchLabel"
+		[searchPlaceholder]="TEXT.filter.searchPlaceholder"
+		[searchButtonLabel]="TEXT.filter.searchButtonLabel"
+		[resultsLabel]="TEXT.filter.resultsLabel"
 		[showEmploymentType]="false"
 		[showStatus]="true"
 		(filterChange)="onFilterChange($event)">
 	</app-job-filter>
 
 	<div class="job-listings">
-		<!-- Loading indicator -->
 		@if (isLoading()) {
 		<div class="loading-container">
 			<mat-spinner></mat-spinner>
-			<p>Loading your job postings...</p>
+			<p>{{TEXT.loading}}</p>
 		</div>
 		} @else if (filteredJobs().length === 0) {
-		<!-- No jobs found -->
 		<div class="no-jobs-container">
-			<mat-icon class="no-jobs-icon">work_off</mat-icon>
-			<h2>No job postings found</h2>
+			<mat-icon class="no-jobs-icon">{{TEXT.emptyState.icon}}</mat-icon>
+			<h2>{{TEXT.emptyState.title}}</h2>
 			@if (jobListings().length === 0) {
-			<p>You haven't posted any jobs yet. Create your first job posting to get started!</p>
+			<p>{{TEXT.emptyState.noJobsMessage}}</p>
 			} @else {
-			<p>Try adjusting your search filters to find the jobs you're looking for.</p>
+			<p>{{TEXT.emptyState.filterMessage}}</p>
 			}
 		</div>
 		} @else {
-		<!-- Job cards -->
 		@for (job of filteredJobs(); track job.job_id) {
 		<mat-card class="job-card" [class.inactive-job]="!job.is_active">
 			<mat-card-header>
@@ -43,14 +40,14 @@
 						<mat-chip class="action-chip applications-chip" 
 										(click)="viewApplications(job)" 
 										[class.has-applications]="job.applications_count > 0"
-										matTooltip="View applications">
+										[matTooltip]="TEXT.tooltips.viewApplications">
 							<mat-icon matChipIcon>people</mat-icon>
-							{{job.applications_count}} Applications
+							{{job.applications_count}} {{TEXT.labels.applications}}
 						</mat-chip>
 					</div>
 					<div class="status-badge">
 						<mat-chip [class]="job.is_active ? 'status-active' : 'status-inactive'">
-							{{job.is_active ? 'Active' : 'Inactive'}}
+							{{job.is_active ? TEXT.labels.active : TEXT.labels.inactive}}
 						</mat-chip>
 					</div>
 				</div>
@@ -84,7 +81,7 @@
 
 					@if (job.skills_required.length > 0) {
 					<div class="skills-section">
-						<h4>Required Skills:</h4>
+						<h4>{{TEXT.labels.requiredSkills}}</h4>
 						<mat-chip-set>
 							@for (skill of job.skills_required; track skill) {
 							<mat-chip class="skill-chip">{{skill}}</mat-chip>
@@ -95,7 +92,7 @@
 
 					@if (job.requirements.length > 0) {
 					<div class="requirements-section">
-						<h4>Requirements:</h4>
+						<h4>{{TEXT.labels.requirements}}</h4>
 						<ul>
 							@for (requirement of job.requirements; track requirement) {
 							<li>{{requirement}}</li>
@@ -107,16 +104,16 @@
 					<div class="job-stats">
 						<div class="stat-item clickable-stat" (click)="viewApplications(job)" 
 								[class.has-applications]="job.applications_count > 0"
-								matTooltip="Click to view applications">
+								[matTooltip]="TEXT.tooltips.clickToViewApplications">
 							<mat-icon>people</mat-icon>
-							<span>{{job.applications_count}} applications</span>
+							<span>{{job.applications_count}} {{TEXT.labels.applicationsSuffix}}</span>
 							@if (job.applications_count > 0) {
 								<mat-icon class="arrow-icon">arrow_forward</mat-icon>
 							}
 						</div>
 						<div class="stat-item">
 							<mat-icon>schedule</mat-icon>
-							<span>Posted {{getDaysAgo(job.posted_date)}} days ago</span>
+							<span>{{TEXT.labels.posted}} {{getDaysAgo(job.posted_date)}} {{TEXT.labels.daysAgoSuffix}}</span>
 						</div>
 					</div>
 				</div>
@@ -130,18 +127,17 @@
 		}
 	</div>
 
-	<!-- Pagination (if needed) -->
 	@if (totalJobs() > itemsPerPage()) {
 	<div class="pagination-container">
 		<button mat-raised-button [disabled]="currentPage() === 1" (click)="previousPage()">
 			<mat-icon>chevron_left</mat-icon>
-			Previous
+			{{TEXT.pagination.previous}}
 		</button>
 		<span class="page-info">
-			Page {{currentPage()}} of {{totalPages()}}
+			{{TEXT.pagination.page}} {{currentPage()}} {{TEXT.pagination.of}} {{totalPages()}}
 		</span>
 		<button mat-raised-button [disabled]="currentPage() * itemsPerPage() >= totalJobs()" (click)="nextPage()">
-			Next
+			{{TEXT.pagination.next}}
 			<mat-icon>chevron_right</mat-icon>
 		</button>
 	</div>

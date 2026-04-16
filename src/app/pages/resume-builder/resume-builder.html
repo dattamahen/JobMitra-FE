@@ -1,19 +1,17 @@
 <div class="page-container">
 	@if (isLoading()) {
 		<app-loading 
-			title="Loading Resume Builder..."
-			message="Setting up your resume workspace"
-			icon="description">
+			[title]="TEXT.loading.title"
+			[message]="TEXT.loading.message"
+			[icon]="TEXT.loading.icon">
 		</app-loading>
 	} @else {
 		<div class="resume-builder-content full-width">
-			<!-- Sidebar with sections and AI suggestions -->
 			<div class="builder-sidebar">
-
 				<div class="section-list">
 					<h4>
 						<mat-icon>list</mat-icon>
-						Resume Sections
+						{{TEXT.sidebar.resumeSections}}
 					</h4>
 					@for (section of sections; track section.id) {
 						<div class="section-item" 
@@ -31,11 +29,10 @@
 				</div>
 				
 				@if (currentResume(); as resume) {
-
 					<div class="template-section">
 						<h4>
 							<mat-icon>palette</mat-icon>
-							CV Templates
+							{{TEXT.sidebar.cvTemplates}}
 						</h4>
 						<div class="template-grid">
 							@for (template of cvTemplates; track template.id) {
@@ -53,15 +50,13 @@
 				}
 			</div>
 			
-			<!-- Main content area -->
 			<div class="builder-main">
 				<div class="form-header-actions">
-					<button mat-icon-button (click)="toggleFormExpansion()" matTooltip="{{ isFormExpanded() ? 'Collapse Form' : 'Expand Form' }}">
+					<button mat-icon-button (click)="toggleFormExpansion()" [matTooltip]="isFormExpanded() ? TEXT.buttons.collapseForm : TEXT.buttons.expandForm">
 						<mat-icon>{{ isFormExpanded() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
 					</button>
 				</div>
 				@if (currentResume(); as resume) {
-					<!-- Personal Information Section -->
 					@if (activeSection() === 'personal_info') {
 						<div class="resume-form">
 							<app-dynamic-form
@@ -73,7 +68,6 @@
 						</div>
 					}
 
-					<!-- Summary Section -->
 					@if (activeSection() === 'summary') {
 						<div class="resume-form">
 							<app-dynamic-form
@@ -86,13 +80,12 @@
 							<div class="form-actions">
 								<button mat-stroked-button type="button">
 									<mat-icon>psychology</mat-icon>
-									AI Enhance
+									{{TEXT.buttons.aiEnhance}}
 								</button>
 							</div>
 						</div>
 					}
 
-					<!-- Skills Section -->
 					@if (activeSection() === 'skills') {
 						<div class="resume-form">
 							<app-dynamic-form
@@ -104,7 +97,6 @@
 						</div>
 					}
 
-					<!-- Experience Section -->
 					@if (activeSection() === 'experience') {
 						<div class="resume-form">
 							<app-dynamic-form
@@ -116,7 +108,6 @@
 						</div>
 					}
 
-					<!-- Education Section -->
 					@if (activeSection() === 'education') {
 						<div class="resume-form">
 							<app-dynamic-form
@@ -128,7 +119,6 @@
 						</div>
 					}
 
-					<!-- Projects Section -->
 					@if (activeSection() === 'projects') {
 						<div class="resume-form">
 							<app-dynamic-form
@@ -140,7 +130,6 @@
 						</div>
 					}
 
-					<!-- Certifications Section -->
 					@if (activeSection() === 'certifications') {
 						<div class="resume-form">
 							<app-dynamic-form
@@ -153,13 +142,12 @@
 					}
 				}
 				
-				<!-- Action buttons -->
 				<div class="resume-actions">
 					<div *appFeatureGuard="'resume_download'; showWhenDisabled: true; let canUse = canUseFeature">
 						<button mat-raised-button [color]="canUse ? 'primary' : 'warn'" 
 										(click)="downloadPDF()" [disabled]="!canUse">
 							<mat-icon>download</mat-icon>
-							{{ canUse ? 'Download PDF' : 'Upgrade Required' }}
+							{{ canUse ? TEXT.buttons.downloadPDF : TEXT.buttons.upgradeRequired }}
 						</button>
 					</div>
 				</div>

@@ -16,6 +16,7 @@ import { JobApplicationService, JobApplicationsResponse, ApplicantProfile } from
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { JOB_APPLICATIONS_TEXT } from '../../data/job-applications-data';
 
 @Component({
 	selector: 'app-job-applications',
@@ -40,6 +41,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class JobApplicationsComponent {
+	readonly TEXT = JOB_APPLICATIONS_TEXT;
+
 	jobId = signal('');
 	applicationsData = signal<JobApplicationsResponse | null>(null);
 	isLoading = signal(false);
@@ -72,7 +75,7 @@ export class JobApplicationsComponent {
 				this.isLoading.set(false);
 			},
 			error: (error) => {
-				this.error.set(error.userMessage || 'Failed to load applications');
+				this.error.set(error.userMessage || this.TEXT.snackbar.loadFailed);
 				this.isLoading.set(false);
 			}
 		});
@@ -83,11 +86,11 @@ export class JobApplicationsComponent {
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 			next: () => {
-				this.snackBar.open('Application status updated', 'Close', { duration: 3000 });
+				this.snackBar.open(this.TEXT.snackbar.statusUpdated, this.TEXT.snackbar.close, { duration: 3000 });
 				this.loadApplications(); // Reload to get updated data
 			},
 			error: (error) => {
-				this.snackBar.open(error.userMessage || 'Failed to update status', 'Close', { duration: 3000 });
+				this.snackBar.open(error.userMessage || this.TEXT.snackbar.statusUpdateFailed, this.TEXT.snackbar.close, { duration: 3000 });
 			}
 		});
 	}

@@ -1,10 +1,10 @@
 <div class="applications-container">
 	<mat-card class="header-card">
 		<mat-card-header>
-			<mat-card-title>Job Applications</mat-card-title>
+			<mat-card-title>{{TEXT.pageTitle}}</mat-card-title>
 			@if (applicationsData()) {
 				<mat-card-subtitle>
-					{{applicationsData()!.job_title}} - {{applicationsData()!.total_applications}} Applications
+					{{applicationsData()!.job_title}} - {{applicationsData()!.total_applications}} {{TEXT.applicationsSuffix}}
 				</mat-card-subtitle>
 			}
 		</mat-card-header>
@@ -12,9 +12,9 @@
 
 	@if (isLoading()) {
 		<app-loading 
-			title="Loading Applications..."
-			message="Fetching job applications"
-			icon="description">
+			[title]="TEXT.loading.title"
+			[message]="TEXT.loading.message"
+			[icon]="TEXT.loading.icon">
 		</app-loading>
 	}
 
@@ -31,7 +31,7 @@
 							</mat-chip>
 							@if (applicant.profile_match) {
 								<span class="match-score">
-									{{applicant.profile_match.overall_match_percentage}}% Match
+									{{applicant.profile_match.overall_match_percentage}}{{TEXT.labels.matchSuffix}}
 								</span>
 							}
 						</div>
@@ -40,15 +40,15 @@
 					<mat-card-content>
 						<div class="applicant-info">
 							<div class="basic-info">
-								<p><strong>Experience:</strong> {{applicant.overall_experience_years || 'Not specified'}} years</p>
-								<p><strong>Current Role:</strong> {{applicant.current_role || 'Not specified'}}</p>
-								<p><strong>Education:</strong> {{applicant.highest_qualification || 'Not specified'}}</p>
-								<p><strong>Applied:</strong> {{applicant.applied_date | date:'medium'}}</p>
+								<p><strong>{{TEXT.labels.experience}}</strong> {{applicant.overall_experience_years || TEXT.labels.notSpecified}} {{TEXT.labels.yearsSuffix}}</p>
+								<p><strong>{{TEXT.labels.currentRole}}</strong> {{applicant.current_role || TEXT.labels.notSpecified}}</p>
+								<p><strong>{{TEXT.labels.education}}</strong> {{applicant.highest_qualification || TEXT.labels.notSpecified}}</p>
+								<p><strong>{{TEXT.labels.applied}}</strong> {{applicant.applied_date | date:'medium'}}</p>
 							</div>
 
 							@if (applicant.skills.length > 0) {
 								<div class="skills-section">
-									<h4>Skills</h4>
+									<h4>{{TEXT.labels.skills}}</h4>
 									<mat-chip-set>
 										@for (skill of applicant.skills; track skill) {
 											<mat-chip>{{skill}}</mat-chip>
@@ -60,31 +60,31 @@
 							@if (applicant.profile_match) {
 								<mat-expansion-panel class="match-analysis">
 									<mat-expansion-panel-header>
-										<mat-panel-title>Profile Match Analysis</mat-panel-title>
+										<mat-panel-title>{{TEXT.labels.profileMatchAnalysis}}</mat-panel-title>
 										<mat-panel-description>
-											{{applicant.profile_match.overall_match_percentage}}% Overall Match
+											{{applicant.profile_match.overall_match_percentage}}{{TEXT.labels.overallMatch}}
 										</mat-panel-description>
 									</mat-expansion-panel-header>
 
 									<div class="match-details">
 										<div class="match-scores">
 											<div class="score-item">
-												<span class="score-label">Skills Match:</span>
+												<span class="score-label">{{TEXT.labels.skillsMatch}}</span>
 												<span class="score-value">{{applicant.profile_match.skills_match_percentage}}%</span>
 											</div>
 											<div class="score-item">
-												<span class="score-label">Experience Match:</span>
+												<span class="score-label">{{TEXT.labels.experienceMatch}}</span>
 												<span class="score-value">{{applicant.profile_match.experience_match_percentage}}%</span>
 											</div>
 											<div class="score-item">
-												<span class="score-label">Education Match:</span>
+												<span class="score-label">{{TEXT.labels.educationMatch}}</span>
 												<span class="score-value">{{applicant.profile_match.education_match_percentage}}%</span>
 											</div>
 										</div>
 
 										@if (applicant.profile_match.matched_skills.length > 0) {
 											<div class="matched-skills">
-												<h5>Matched Skills</h5>
+												<h5>{{TEXT.labels.matchedSkills}}</h5>
 												<mat-chip-set>
 													@for (skill of applicant.profile_match.matched_skills; track skill) {
 														<mat-chip color="primary">{{skill}}</mat-chip>
@@ -95,7 +95,7 @@
 
 										@if (applicant.profile_match.missing_skills.length > 0) {
 											<div class="missing-skills">
-												<h5>Missing Skills</h5>
+												<h5>{{TEXT.labels.missingSkills}}</h5>
 												<mat-chip-set>
 													@for (skill of applicant.profile_match.missing_skills; track skill) {
 														<mat-chip color="warn">{{skill}}</mat-chip>
@@ -105,7 +105,7 @@
 										}
 
 										<div class="recommendation">
-											<h5>Recommendation</h5>
+											<h5>{{TEXT.labels.recommendation}}</h5>
 											<p>{{applicant.profile_match.recommendation}}</p>
 										</div>
 									</div>
@@ -116,20 +116,20 @@
 
 					<mat-card-actions>
 						<mat-form-field appearance="outline">
-							<mat-label>Update Status</mat-label>
+							<mat-label>{{TEXT.labels.updateStatus}}</mat-label>
 							<mat-select [value]="applicant.status" (selectionChange)="updateStatus(applicant.application_id, $event.value)">
-								<mat-option value="applied">Applied</mat-option>
-								<mat-option value="under_review">Under Review</mat-option>
-								<mat-option value="shortlisted">Shortlisted</mat-option>
-								<mat-option value="interview_scheduled">Interview Scheduled</mat-option>
-								<mat-option value="interview_completed">Interview Completed</mat-option>
-								<mat-option value="offer_extended">Offer Extended</mat-option>
-								<mat-option value="hired">Hired</mat-option>
-								<mat-option value="rejected">Rejected</mat-option>
+								<mat-option value="applied">{{TEXT.statuses.applied}}</mat-option>
+								<mat-option value="under_review">{{TEXT.statuses.underReview}}</mat-option>
+								<mat-option value="shortlisted">{{TEXT.statuses.shortlisted}}</mat-option>
+								<mat-option value="interview_scheduled">{{TEXT.statuses.interviewScheduled}}</mat-option>
+								<mat-option value="interview_completed">{{TEXT.statuses.interviewCompleted}}</mat-option>
+								<mat-option value="offer_extended">{{TEXT.statuses.offerExtended}}</mat-option>
+								<mat-option value="hired">{{TEXT.statuses.hired}}</mat-option>
+								<mat-option value="rejected">{{TEXT.statuses.rejected}}</mat-option>
 							</mat-select>
 						</mat-form-field>
 						<button mat-raised-button color="primary" (click)="contactApplicant(applicant)">
-							Contact
+							{{TEXT.labels.contact}}
 						</button>
 					</mat-card-actions>
 				</mat-card>
@@ -137,9 +137,9 @@
 
 			@if (applicationsData()!.applications.length === 0) {
 				<app-empty-state
-					icon="inbox"
-					title="No Applications Yet"
-					message="No one has applied for this job yet.">
+					[icon]="TEXT.emptyState.icon"
+					[title]="TEXT.emptyState.title"
+					[message]="TEXT.emptyState.message">
 				</app-empty-state>
 			}
 		</div>

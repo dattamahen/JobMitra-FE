@@ -11,6 +11,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../services/auth.service';
 import { SIGNUP_PAGE_CONSTANTS } from './signup.constants';
+import { SIGNUP_TEXT } from '../../data/signup-data';
 import { emailValidator } from '../../validators/email.validator';
 
 @Component({
@@ -46,27 +47,17 @@ import { emailValidator } from '../../validators/email.validator';
 							<div class="logo-icon">🚀</div>
 							<h1 class="brand-title">{{CONSTANTS.APP_NAME}}</h1>
 						</div>
-						<p class="brand-tagline">Start Your Career Journey</p>
-						<p class="brand-description">Join thousands of professionals who found their dream jobs through our AI-powered platform</p>
+						<p class="brand-tagline">{{TEXT.hero.tagline}}</p>
+						<p class="brand-description">{{TEXT.hero.description}}</p>
 					</div>
 					
 					<div class="benefits-list">
-						<div class="benefit-item">
-							<div class="benefit-icon">✨</div>
-							<span>AI-powered job matching</span>
-						</div>
-						<div class="benefit-item">
-							<div class="benefit-icon">🎯</div>
-							<span>Personalized recommendations</span>
-						</div>
-						<div class="benefit-item">
-							<div class="benefit-icon">🚀</div>
-							<span>Fast-track your applications</span>
-						</div>
-						<div class="benefit-item">
-							<div class="benefit-icon">🔒</div>
-							<span>Secure and private</span>
-						</div>
+						@for (benefit of TEXT.benefits; track benefit.icon) {
+							<div class="benefit-item">
+								<div class="benefit-icon">{{benefit.icon}}</div>
+								<span>{{benefit.text}}</span>
+							</div>
+						}
 					</div>
 				</div>
 			</div>
@@ -75,7 +66,7 @@ import { emailValidator } from '../../validators/email.validator';
 			<div class="auth-form-section">
 				<div class="form-container">
 					<div class="form-header">
-						<h2 class="form-title">Create Your Account</h2>
+						<h2 class="form-title">{{TEXT.form.title}}</h2>
 						<p class="form-subtitle">{{CONSTANTS.GET_STARTED}}</p>
 					</div>
 					
@@ -83,60 +74,60 @@ import { emailValidator } from '../../validators/email.validator';
 						<form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
 							<div class="name-fields">
 								<mat-form-field appearance="outline">
-									<mat-label>First Name</mat-label>
+									<mat-label>{{TEXT.form.firstName}}</mat-label>
 									<input matInput formControlName="first_name" required>
 									@if (signupForm.get('first_name')?.hasError('required')) {
-										<mat-error>First name is required</mat-error>
+										<mat-error>{{TEXT.form.firstNameRequired}}</mat-error>
 									}
 								</mat-form-field>
 
 								<mat-form-field appearance="outline">
-									<mat-label>Last Name</mat-label>
+									<mat-label>{{TEXT.form.lastName}}</mat-label>
 									<input matInput formControlName="last_name" required>
 									@if (signupForm.get('last_name')?.hasError('required')) {
-										<mat-error>Last name is required</mat-error>
+										<mat-error>{{TEXT.form.lastNameRequired}}</mat-error>
 									}
 								</mat-form-field>
 							</div>
 
 							<mat-form-field appearance="outline">
-								<mat-label>Email Address</mat-label>
+								<mat-label>{{TEXT.form.email}}</mat-label>
 								<input matInput type="email" formControlName="email" required>
 								@if (signupForm.get('email')?.hasError('required')) {
-									<mat-error>Email is required</mat-error>
+									<mat-error>{{TEXT.form.emailRequired}}</mat-error>
 								}
 								@if (signupForm.get('email')?.hasError('email')) {
-									<mat-error>Please enter a valid email</mat-error>
+									<mat-error>{{TEXT.form.emailInvalid}}</mat-error>
 								}
 							</mat-form-field>
 
 							<mat-form-field appearance="outline">
-								<mat-label>Password</mat-label>
+								<mat-label>{{TEXT.form.password}}</mat-label>
 								<input matInput type="password" formControlName="password" required>
 								@if (signupForm.get('password')?.hasError('required')) {
-									<mat-error>Password is required</mat-error>
+									<mat-error>{{TEXT.form.passwordRequired}}</mat-error>
 								}
 								@if (signupForm.get('password')?.hasError('minlength')) {
-									<mat-error>Password must be at least 8 characters</mat-error>
+									<mat-error>{{TEXT.form.passwordMinLength}}</mat-error>
 								}
 							</mat-form-field>
 
 							<mat-form-field appearance="outline">
-								<mat-label>Confirm Password</mat-label>
+								<mat-label>{{TEXT.form.confirmPassword}}</mat-label>
 								<input matInput type="password" formControlName="confirmPassword" required>
 								@if (signupForm.get('confirmPassword')?.hasError('required')) {
-									<mat-error>Confirm password is required</mat-error>
+									<mat-error>{{TEXT.form.confirmPasswordRequired}}</mat-error>
 								}
 								@if (signupForm.get('confirmPassword')?.hasError('passwordMismatch')) {
-									<mat-error>Passwords do not match</mat-error>
+									<mat-error>{{TEXT.form.passwordMismatch}}</mat-error>
 								}
 							</mat-form-field>
 
 							<mat-form-field appearance="outline">
-								<mat-label>I am a</mat-label>
+								<mat-label>{{TEXT.form.userType}}</mat-label>
 								<mat-select formControlName="user_type">
-									<mat-option value="candidate">Job Seeker</mat-option>
-									<mat-option value="hire">HR/Recruiter</mat-option>
+									<mat-option value="candidate">{{TEXT.form.jobSeeker}}</mat-option>
+									<mat-option value="hire">{{TEXT.form.hrRecruiter}}</mat-option>
 								</mat-select>
 							</mat-form-field>
 
@@ -146,13 +137,13 @@ import { emailValidator } from '../../validators/email.validator';
 									<mat-spinner diameter="20"></mat-spinner>
 									Creating Account...
 								} @else {
-									Create Account
+									{{TEXT.form.createAccount}}
 								}
 							</button>
 						</form>
 						
 						<div class="auth-toggle">
-							<p class="toggle-text">Already have an account? <a routerLink="/login" class="toggle-link">Sign in</a></p>
+							<p class="toggle-text">{{TEXT.toggle.alreadyHaveAccount}} <a routerLink="/login" class="toggle-link">{{TEXT.toggle.signIn}}</a></p>
 						</div>
 					</div>
 				</div>
@@ -448,6 +439,7 @@ import { emailValidator } from '../../validators/email.validator';
 export class SignupPage {
 	signupForm: FormGroup;
 	isLoading = signal(false);
+	readonly TEXT = SIGNUP_TEXT;
 	readonly CONSTANTS = SIGNUP_PAGE_CONSTANTS;
 
 	private fb = inject(FormBuilder);
@@ -474,11 +466,11 @@ export class SignupPage {
 				const formValue = this.signupForm.value;
 				const { confirmPassword, ...signupData } = formValue;
 				const result = await this.authService.register(signupData);
-				this.snackBar.open('Account created successfully!', 'Close', { duration: 3000 });
+				this.snackBar.open(this.TEXT.snackbar.accountCreated, this.TEXT.snackbar.close, { duration: 3000 });
 				this.router.navigate(['/login']);
 			} catch (error: unknown) {
-				const message = error instanceof Error ? error.message : 'Registration failed';
-				this.snackBar.open(message, 'Close', { duration: 5000 });
+				const message = error instanceof Error ? error.message : this.TEXT.snackbar.registrationFailed;
+				this.snackBar.open(message, this.TEXT.snackbar.close, { duration: 5000 });
 			} finally {
 				this.isLoading.set(false);
 			}

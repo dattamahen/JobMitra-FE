@@ -3,7 +3,6 @@
 		<!-- Profile Form -->
 		<div class="profile-form-section">
 			<form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
-				<!-- Basic Information Card -->
 				<mat-card class="form-card">
 					<mat-card-content>
 						<app-dynamic-form 
@@ -13,12 +12,11 @@
 							[readonly]="!isBasicInfoEditing()"
 							(formSubmit)="onBasicInfoSubmit($event)"
 							(toggleEdit)="onBasicInfoToggleEdit()"
-							submitButtonText="Update Basic Info">
+							[submitButtonText]="TEXT.formButtons.updateBasicInfo">
 						</app-dynamic-form>
 					</mat-card-content>
 				</mat-card>
 
-				<!-- Professional Information Card -->
 				<mat-card class="form-card">
 					<mat-card-content>
 						<app-dynamic-form 
@@ -28,12 +26,11 @@
 							[readonly]="!isProfessionalEditing()"
 							(formSubmit)="onProfessionalSubmit($event)"
 							(toggleEdit)="onProfessionalToggleEdit()"
-							submitButtonText="Update Professional Info">
+							[submitButtonText]="TEXT.formButtons.updateProfessionalInfo">
 						</app-dynamic-form>
 					</mat-card-content>
 				</mat-card>
 
-				<!-- Skills Card -->
 				<mat-card class="form-card">
 					<mat-card-content>
 						<app-dynamic-form 
@@ -43,12 +40,11 @@
 							[readonly]="!isSkillsEditing()"
 							(formSubmit)="onSkillsSubmit($event)"
 							(toggleEdit)="onSkillsToggleEdit()"
-							submitButtonText="Update Skills">
+							[submitButtonText]="TEXT.formButtons.updateSkills">
 						</app-dynamic-form>
 					</mat-card-content>
 				</mat-card>
 
-				<!-- Experience Card -->
 				<mat-card class="form-card">
 					<mat-card-content>
 						<app-dynamic-form 
@@ -58,12 +54,11 @@
 							[readonly]="!isExperienceEditing()"
 							(formSubmit)="onExperienceSubmit($event)"
 							(toggleEdit)="onExperienceToggleEdit()"
-							submitButtonText="Update Experience">
+							[submitButtonText]="TEXT.formButtons.updateExperience">
 						</app-dynamic-form>
 					</mat-card-content>
 				</mat-card>
 
-				<!-- Education Card -->
 				<mat-card class="form-card">
 					<mat-card-content>
 						<app-dynamic-form 
@@ -73,12 +68,11 @@
 							[readonly]="!isEducationEditing()"
 							(formSubmit)="onEducationSubmit($event)"
 							(toggleEdit)="onEducationToggleEdit()"
-							submitButtonText="Update Education">
+							[submitButtonText]="TEXT.formButtons.updateEducation">
 						</app-dynamic-form>
 					</mat-card-content>
 				</mat-card>
 
-				<!-- Projects Card -->
 				<mat-card class="form-card">
 					<mat-card-content>
 						<app-dynamic-form 
@@ -88,12 +82,11 @@
 							[readonly]="!isProjectsEditing()"
 							(formSubmit)="onProjectsSubmit($event)"
 							(toggleEdit)="onProjectsToggleEdit()"
-							submitButtonText="Update Projects">
+							[submitButtonText]="TEXT.formButtons.updateProjects">
 						</app-dynamic-form>
 					</mat-card-content>
 				</mat-card>
 
-				<!-- Certifications Card -->
 				<mat-card class="form-card">
 					<mat-card-content>
 						<app-dynamic-form 
@@ -103,12 +96,11 @@
 							[readonly]="!isCertificationsEditing()"
 							(formSubmit)="onCertificationsSubmit($event)"
 							(toggleEdit)="onCertificationsToggleEdit()"
-							submitButtonText="Update Certifications">
+							[submitButtonText]="TEXT.formButtons.updateCertifications">
 						</app-dynamic-form>
 					</mat-card-content>
 				</mat-card>
 
-				<!-- Job Preferences Card -->
 				<mat-card class="form-card">
 					<mat-card-content>
 						<app-dynamic-form 
@@ -118,20 +110,17 @@
 							[readonly]="!isJobPreferencesEditing()"
 							(formSubmit)="onJobPreferencesSubmit($event)"
 							(toggleEdit)="onJobPreferencesToggleEdit()"
-							submitButtonText="Update Job Preferences">
+							[submitButtonText]="TEXT.formButtons.updateJobPreferences">
 						</app-dynamic-form>
 					</mat-card-content>
 				</mat-card>
-
 
 			</form>
 		</div>
 
 		<!-- Right Side - LinkedIn-style Profile Preview -->
 		<div class="profile-summary-section" #profileSummarySection>
-			<!-- Main Profile Card -->
 			<mat-card class="linkedin-profile-card">
-				<!-- Cover & Avatar Section -->
 				<div class="profile-cover">
 					<div class="cover-gradient"></div>
 					<div class="cover-actions">
@@ -161,58 +150,54 @@
 					</div>
 				</div>
 				
-				<!-- Profile Info Section -->
 				<mat-card-content class="profile-content">
 					<div class="profile-header">
-						<h1 class="profile-name">{{getFullName() || 'Your Name'}}</h1>
-						<p class="profile-headline">{{getCurrentRole() || 'Add your professional headline'}}</p>
+						<h1 class="profile-name">{{getFullName() || TEXT.placeholders.yourName}}</h1>
+						<p class="profile-headline">{{getCurrentRole() || TEXT.placeholders.addHeadline}}</p>
 						<div class="profile-location">
-							{{getLocation() || 'Add your location'}} • 
-							<span class="contact-info">Contact info</span>
+							{{getLocation() || TEXT.placeholders.addLocation}} • 
+							<span class="contact-info">{{TEXT.labels.contactInfo}}</span>
 						</div>
 					</div>
 					
-					<!-- Profile Stats -->
 					<div class="profile-stats">
 						<div class="stat-item">
 							<span class="stat-number">{{getExperience() || '0'}}</span>
-							<span class="stat-label">Years Experience</span>
+							<span class="stat-label">{{TEXT.labels.yearsExperience}}</span>
 						</div>
 						<div class="stat-divider"></div>
 						<div class="stat-item">
 							<span class="stat-number">{{getCompletionPercentage()}}</span>
-							<span class="stat-label">% Complete</span>
+							<span class="stat-label">{{TEXT.labels.percentComplete}}</span>
 						</div>
 					</div>
 				</mat-card-content>
 			</mat-card>
 			
-			<!-- About Section -->
 			<mat-card class="section-card">
 				<div class="section-header">
-					<h2>About</h2>
+					<h2>{{TEXT.sections.about}}</h2>
 				</div>
 				<mat-card-content>
 					@if (getProfessionalSummary()) {
 						<p class="about-text">{{getProfessionalSummary()}}</p>
 					} @else {
 						<div class="empty-section">
-							<p class="empty-text">Add a summary to help people discover you and your professional interests.</p>
+							<p class="empty-text">{{TEXT.emptyStates.addSummary}}</p>
 							<button mat-button color="primary" class="add-btn">
 								<mat-icon>add</mat-icon>
-								Add summary
+								{{TEXT.emptyStates.addSummaryBtn}}
 							</button>
 						</div>
 					}
 				</mat-card-content>
 			</mat-card>
 			
-			<!-- Skills Section -->
 			<mat-card class="section-card">
 				<div class="section-header">
-					<h2>Skills</h2>
+					<h2>{{TEXT.sections.skills}}</h2>
 					@if (getSkills().length > 0) {
-						<span class="skills-count">{{getSkills().length}} skills</span>
+						<span class="skills-count">{{getSkills().length}} {{TEXT.sections.skillsSuffix}}</span>
 					}
 				</div>
 				<mat-card-content>
@@ -225,41 +210,40 @@
 							}
 							@if (getSkills().length > 6) {
 								<button mat-button class="show-more-btn">
-									Show all {{getSkills().length}} skills
+									{{TEXT.emptyStates.showAllPrefix}} {{getSkills().length}} {{TEXT.emptyStates.showAllSuffix}}
 									<mat-icon>arrow_forward</mat-icon>
 								</button>
 							}
 						</div>
 					} @else {
 						<div class="empty-section">
-							<p class="empty-text">Add skills to showcase your expertise to potential employers.</p>
+							<p class="empty-text">{{TEXT.emptyStates.addSkills}}</p>
 							<button mat-button color="primary" class="add-btn">
 								<mat-icon>add</mat-icon>
-								Add skills
+								{{TEXT.emptyStates.addSkillsBtn}}
 							</button>
 						</div>
 					}
 				</mat-card-content>
 			</mat-card>
 			
-			<!-- Career Preferences -->
 			<mat-card class="section-card">
 				<div class="section-header">
-					<h2>Career Preferences</h2>
+					<h2>{{TEXT.sections.careerPreferences}}</h2>
 				</div>
 				<mat-card-content>
 					<div class="preferences-list">
 						<div class="preference-row">
-							<span class="pref-label">Job types</span>
-							<span class="pref-value">{{getEmploymentType() || 'Not specified'}}</span>
+							<span class="pref-label">{{TEXT.preferences.jobTypes}}</span>
+							<span class="pref-value">{{getEmploymentType() || TEXT.preferences.notSpecified}}</span>
 						</div>
 						<div class="preference-row">
-							<span class="pref-label">Work arrangement</span>
-							<span class="pref-value">{{getJobPreferences() || 'Not specified'}}</span>
+							<span class="pref-label">{{TEXT.preferences.workArrangement}}</span>
+							<span class="pref-value">{{getJobPreferences() || TEXT.preferences.notSpecified}}</span>
 						</div>
 						@if (getExpectedSalary()) {
 							<div class="preference-row">
-								<span class="pref-label">Salary expectation</span>
+								<span class="pref-label">{{TEXT.preferences.salaryExpectation}}</span>
 								<span class="pref-value">{{getExpectedSalary()}}</span>
 							</div>
 						}
@@ -267,11 +251,10 @@
 				</mat-card-content>
 			</mat-card>
 			
-			<!-- Education & Qualification -->
 			@if (getHighestQualification()) {
 				<mat-card class="section-card">
 					<div class="section-header">
-						<h2>Education</h2>
+						<h2>{{TEXT.sections.education}}</h2>
 					</div>
 					<mat-card-content>
 						<div class="qualification-info">
@@ -284,16 +267,15 @@
 				</mat-card>
 			}
 			
-			<!-- Contact Info -->
 			<mat-card class="section-card">
 				<div class="section-header">
-					<h2>Contact</h2>
+					<h2>{{TEXT.sections.contact}}</h2>
 				</div>
 				<mat-card-content>
 					<div class="contact-list">
 						<div class="contact-row">
 							<mat-icon class="contact-icon">email</mat-icon>
-							<span class="contact-text">{{getEmail() || 'Add email'}}</span>
+							<span class="contact-text">{{getEmail() || TEXT.placeholders.addEmail}}</span>
 						</div>
 						@if (getPhone()) {
 							<div class="contact-row">
@@ -304,19 +286,19 @@
 						@if (getGithubLink()) {
 							<div class="contact-row">
 								<mat-icon class="contact-icon">code</mat-icon>
-								<a [href]="getGithubLink()" target="_blank" class="contact-link">GitHub Profile</a>
+								<a [href]="getGithubLink()" target="_blank" class="contact-link">{{TEXT.contactLinks.githubProfile}}</a>
 							</div>
 						}
 						@if (getLinkedinLink()) {
 							<div class="contact-row">
 								<mat-icon class="contact-icon">business</mat-icon>
-								<a [href]="getLinkedinLink()" target="_blank" class="contact-link">LinkedIn Profile</a>
+								<a [href]="getLinkedinLink()" target="_blank" class="contact-link">{{TEXT.contactLinks.linkedinProfile}}</a>
 							</div>
 						}
 						@if (getPortfolioLink()) {
 							<div class="contact-row">
 								<mat-icon class="contact-icon">web</mat-icon>
-								<a [href]="getPortfolioLink()" target="_blank" class="contact-link">Portfolio Website</a>
+								<a [href]="getPortfolioLink()" target="_blank" class="contact-link">{{TEXT.contactLinks.portfolioWebsite}}</a>
 							</div>
 						}
 					</div>
