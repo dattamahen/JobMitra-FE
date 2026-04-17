@@ -40,24 +40,29 @@ export class ResumeTailorModalComponent implements OnInit {
 	ngOnInit(): void {
 		if (!this.hasLoaded) {
 			this.hasLoaded = true;
-			this.isLoading = false;
 			this.loadPreview();
 		}
 	}
 
 	private loadPreview(): void {
-		console.log('Calling getTailorPreview...');
+		this.isLoading = true;
+		this.cdr.detectChanges();
 		this.tailorService.getTailorPreview(this.data.jobId).subscribe({
 			next: (preview) => {
-				console.log('Preview received:', preview);
-				if (preview && preview.changes && preview.changes.length > 0) {
-					this.previewData = preview;
-					console.log('previewData set:', this.previewData);
-					this.cdr.detectChanges();
-				}
+				this.previewData = preview;
+				this.isLoading = false;
+				this.cdr.detectChanges();
 			},
-			error: (error) => {
-				console.error('Error loading tailor preview:', error);
+			error: () => {
+				this.previewData = {
+					original_resume: {} as any,
+					tailored_resume: {} as any,
+					changes: [],
+					match_before: 0,
+					match_improvement: 0
+				};
+				this.isLoading = false;
+				this.cdr.detectChanges();
 			}
 		});
 	}

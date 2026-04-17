@@ -19,6 +19,7 @@ export interface TailorPreviewData {
 	original_resume: OriginalResume;
 	tailored_resume: TailoredResume;
 	changes: TailorChange[];
+	match_before: number;
 	match_improvement: number;
 }
 
@@ -97,10 +98,18 @@ export class ResumeTailorService {
 	}
 
 	applyWithTailoredResume(jobId: string): Observable<ApplyJobResponse> {
-		return this.apiService.post<ApplyJobResponse>(`/jobs/${jobId}/apply?use_tailored=true`, {});
+		return this.apiService.post<ApplyJobResponse>('/api/v1/apply-job', {
+			job_id: jobId,
+			force_apply: true,
+			use_tailored: true
+		});
 	}
 
 	applyWithoutTailoring(jobId: string): Observable<ApplyJobResponse> {
-		return this.apiService.post<ApplyJobResponse>(`/jobs/${jobId}/apply?use_tailored=false`, {});
+		return this.apiService.post<ApplyJobResponse>('/api/v1/apply-job', {
+			job_id: jobId,
+			force_apply: true,
+			use_tailored: false
+		});
 	}
 }

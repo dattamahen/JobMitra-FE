@@ -306,12 +306,12 @@ export class JobSearchPage {
 
 	isMatchAnalysisDisabled(jobId: string): boolean {
 		const job = this.getJobById(jobId);
-		return job?.match_analysis_done || job?.already_applied || false;
+		return job?.match_analysis_done || false;
 	}
 
 	isTailorResumeDisabled(jobId: string): boolean {
 		const job = this.getJobById(jobId);
-		return job?.tailor_resume_done || job?.already_applied || false;
+		return job?.tailor_resume_done || false;
 	}
 
 	takeMockInterview(jobId: string): void {
