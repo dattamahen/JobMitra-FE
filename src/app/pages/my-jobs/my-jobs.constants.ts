@@ -1,6 +1,8 @@
 export const EMPLOYMENT_TYPE_DISPLAY: Record<string, string> = {
-	full_time: 'Full Time',
-	part_time: 'Part Time',
+	'full-time': 'Full Time',
+	'full_time': 'Full Time',
+	'part-time': 'Part Time',
+	'part_time': 'Part Time',
 	contract: 'Contract',
 	freelance: 'Freelance',
 	internship: 'Internship'
@@ -8,8 +10,9 @@ export const EMPLOYMENT_TYPE_DISPLAY: Record<string, string> = {
 
 export const EXPERIENCE_LEVEL_DISPLAY: Record<string, string> = {
 	entry: 'Entry Level',
+	junior: 'Junior',
 	mid: 'Mid Level',
-	senior: 'Senior Level',
+	senior: 'Senior',
 	lead: 'Lead',
 	executive: 'Executive'
 } as const;

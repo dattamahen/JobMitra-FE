@@ -89,7 +89,7 @@ export class MyJobsPage {
 	private hrService = inject(HrService);
 	private snackBar = inject(MatSnackBar);
 	private router = inject(Router);
-	
+
 	navigateToPage = output<{page: string, params?: any}>();
 
 	readonly TEXT = MY_JOBS_TEXT;
@@ -107,8 +107,10 @@ export class MyJobsPage {
 		searchQuery: '',
 		selectedLocation: 'all',
 		selectedExperience: 'all',
-		selectedStatus: 'all'
+		selectedStatus: 'active'
 	});
+
+	private expandedJobs: Record<string, boolean> = {};
 	
 	filterOptionsForComponent = computed<JobFilterOptions>(() => ({
 		locations: this.filterOptions().locations,
@@ -135,8 +137,8 @@ export class MyJobsPage {
 			if (Array.isArray(response)) {
 				const transformed = this.transformJobsToHRFormat(response);
 				this.jobListings.set(transformed);
-				this.filteredJobs.set([...transformed]);
 				this.buildFilterOptions();
+				this.applyFilters();
 			} else {
 				this.jobListings.set([]);
 				this.filteredJobs.set([]);
@@ -254,6 +256,7 @@ export class MyJobsPage {
 
 	onFilterChange(config: JobFilterConfig) {
 		this.filterConfig.set(config);
+		this.applyFilters();
 	}
 
 	private applyFilters() {
@@ -277,8 +280,8 @@ export class MyJobsPage {
 			}
 
 			if (location !== 'all') {
-				const jobLocation = this.formatLocation(job);
-				if (jobLocation !== location.replace('-', ' ')) return false;
+				const jobLocation = this.formatLocation(job).toLowerCase().replace(/\s+/g, '-');
+				if (!jobLocation.includes(location)) return false;
 			}
 
 			if (experience !== 'all') {
@@ -397,15 +400,17 @@ export class MyJobsPage {
 	}
 
 	viewApplications(job: HRJobListing) {
-		if (job.applications_count === 0) {
-			this.snackBar.open('No applications received for this job yet', this.TEXT.snackbar.close, { duration: 3000 });
-			return;
-		}
-		
-		this.navigateToPage.emit({
-			page: 'applications-received',
-			params: { jobId: job.job_id }
+		this.router.navigate(['/dashboard', 'applications-received'], {
+			queryParams: { jobId: job.job_id }
 		});
+	}
+
+	toggleJobExpansion(jobId: string): void {
+		this.expandedJobs[jobId] = !this.expandedJobs[jobId];
+	}
+
+	isJobExpanded(jobId: string): boolean {
+		return this.expandedJobs[jobId] || false;
 	}
 
 	async deleteJob(job: HRJobListing) {

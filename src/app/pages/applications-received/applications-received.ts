@@ -106,22 +106,26 @@ export class ApplicationsReceivedPage implements OnInit {
 	readonly TEXT = APPLICATIONS_RECEIVED_TEXT;
 
 	ngOnInit() {
-		
-		// Check for specific job ID from route or input
-		this.route.queryParams
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe(params => {
-			if (params['jobId']) {
-				this.specificJobId = params['jobId'];
-				this.pageTitle.set(this.TEXT.pageTitle.jobApplications);
-			}
-		});
-		
+		// Check for specific job ID from @Input first
 		if (this.specificJobId) {
 			this.selectedJobId.set(this.specificJobId);
 			this.pageTitle.set(this.TEXT.pageTitle.jobApplications);
 		}
-		
+
+		// Then check queryParams (fires async, will reload if jobId found)
+		this.route.queryParams
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe(params => {
+			const jobId = params['jobId'];
+			if (jobId) {
+				this.specificJobId = jobId;
+				this.selectedJobId.set(jobId);
+				this.pageTitle.set(this.TEXT.pageTitle.jobApplications);
+				this.loadJobOptions();
+				this.loadApplications();
+			}
+		});
+
 		this.loadJobOptions();
 		this.loadApplications();
 	}
@@ -131,7 +135,7 @@ export class ApplicationsReceivedPage implements OnInit {
 		try {
 			const jobs = await this.hrService.getMyJobs();
 			const jobOptions = jobs.map(job => ({
-				job_id: job.id,
+				job_id: (job as any).job_id || job.id,
 				title: job.title
 			}));
 			this.jobOptions.set(jobOptions);

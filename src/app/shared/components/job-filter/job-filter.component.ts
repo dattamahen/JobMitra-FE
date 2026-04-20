@@ -38,7 +38,7 @@ export interface JobFilterOptions {
 		<mat-card class="search-filters">
 			<mat-card-content>
 				<div class="filter-row">
-					<mat-form-field appearance="outline" class="search-field">
+					<mat-form-field appearance="fill" class="search-field">
 						<mat-label>{{searchLabel()}}</mat-label>
 						<input matInput [placeholder]="searchPlaceholder()" 
 							[ngModel]="filterConfig().searchQuery"
@@ -47,26 +47,26 @@ export interface JobFilterOptions {
 						<mat-icon matSuffix>search</mat-icon>
 					</mat-form-field>
 
-					<mat-form-field appearance="outline">
+					<mat-form-field appearance="fill">
 						<mat-label>Location</mat-label>
 						<mat-select [value]="filterConfig().selectedLocation" 
 							(selectionChange)="onLocationChange($event.value)">
 							<mat-option value="all">All Locations</mat-option>
 							@for (location of filterOptions().locations; track location) {
-								<mat-option [value]="location.toLowerCase().replace(' ', '-')">
+								<mat-option [value]="location.toLowerCase().replaceAll(' ', '-')">
 									{{location}}
 								</mat-option>
 							}
 						</mat-select>
 					</mat-form-field>
 
-					<mat-form-field appearance="outline">
+					<mat-form-field appearance="fill">
 						<mat-label>Experience Level</mat-label>
 						<mat-select [value]="filterConfig().selectedExperience" 
 							(selectionChange)="onExperienceChange($event.value)">
 							<mat-option value="all">All Experience Levels</mat-option>
 							@for (experience of filterOptions().experience_levels; track experience) {
-								<mat-option [value]="experience.toLowerCase().replace(' ', '-')">
+								<mat-option [value]="experience.toLowerCase().replaceAll(' ', '-')">
 									{{experience | titlecase}}
 								</mat-option>
 							}
@@ -74,13 +74,13 @@ export interface JobFilterOptions {
 					</mat-form-field>
 
 					@if (showEmploymentType()) {
-						<mat-form-field appearance="outline">
+						<mat-form-field appearance="fill">
 							<mat-label>Employment Type</mat-label>
 							<mat-select [value]="filterConfig().selectedEmploymentType || 'all'" 
 								(selectionChange)="onEmploymentTypeChange($event.value)">
 								<mat-option value="all">All Employment Types</mat-option>
 								@for (type of filterOptions().employment_types || []; track type) {
-									<mat-option [value]="type.toLowerCase().replace(' ', '-')">
+									<mat-option [value]="type.toLowerCase().replaceAll(' ', '-')">
 										{{type | titlecase}}
 									</mat-option>
 								}
@@ -89,7 +89,7 @@ export interface JobFilterOptions {
 					}
 
 					@if (showStatus()) {
-						<mat-form-field appearance="outline">
+						<mat-form-field appearance="fill">
 							<mat-label>Job Status</mat-label>
 							<mat-select [value]="filterConfig().selectedStatus || 'all'" 
 								(selectionChange)="onStatusChange($event.value)">

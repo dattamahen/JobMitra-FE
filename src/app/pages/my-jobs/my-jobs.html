@@ -32,96 +32,96 @@
 		} @else {
 		@for (job of filteredJobs(); track job.job_id) {
 		<mat-card class="job-card" [class.inactive-job]="!job.is_active">
-			<mat-card-header>
-				<mat-card-title>{{job.title}}</mat-card-title>
-				<mat-card-subtitle class="company">{{job.company}}</mat-card-subtitle>
-				<div class="header-badges">
-					<div class="action-badges">
+			<mat-card-content>
+				<div class="job-card-layout">
+					<div class="job-card-main">
+						<div class="job-card-header">
+							<div class="job-title-row">
+								<h3 class="job-title">{{job.title}}</h3>
+								<mat-chip [class]="job.is_active ? 'status-active' : 'status-inactive'" class="status-chip">
+									{{job.is_active ? TEXT.labels.active : TEXT.labels.inactive}}
+								</mat-chip>
+							</div>
+							<span class="job-company">{{job.company}}</span>
+						</div>
+
+						<div class="job-meta-row">
+							<span class="meta-item"><mat-icon>location_on</mat-icon>{{formatLocation(job)}}</span>
+							<span class="meta-item"><mat-icon>work</mat-icon>{{getEmploymentTypeDisplay(job.employment_type)}}</span>
+							<span class="meta-item"><mat-icon>trending_up</mat-icon>{{getExperienceLevelDisplay(job.experience_level)}}</span>
+							@if (job.salary) {
+								<span class="meta-item"><mat-icon>payments</mat-icon>{{formatSalary(job)}}</span>
+							}
+							<span class="meta-item"><mat-icon>schedule</mat-icon>{{getDaysAgo(job.posted_date)}}d ago</span>
+						</div>
+
+						@if (job.skills_required.length > 0) {
+							<div class="job-skills-row">
+								@for (skill of job.skills_required.slice(0, 5); track skill) {
+									<mat-chip class="skill-chip-sm">{{skill}}</mat-chip>
+								}
+								@if (job.skills_required.length > 5) {
+									<mat-chip class="skill-chip-sm">+{{job.skills_required.length - 5}}</mat-chip>
+								}
+							</div>
+						}
+					</div>
+
+					<div class="job-card-actions">
 						<mat-chip class="action-chip applications-chip" 
-										(click)="viewApplications(job)" 
-										[class.has-applications]="job.applications_count > 0"
-										[matTooltip]="TEXT.tooltips.viewApplications">
+							(click)="viewApplications(job)" 
+							[class.has-applications]="job.applications_count > 0"
+							[matTooltip]="TEXT.tooltips.viewApplications">
 							<mat-icon matChipIcon>people</mat-icon>
 							{{job.applications_count}} {{TEXT.labels.applications}}
 						</mat-chip>
-					</div>
-					<div class="status-badge">
-						<mat-chip [class]="job.is_active ? 'status-active' : 'status-inactive'">
-							{{job.is_active ? TEXT.labels.active : TEXT.labels.inactive}}
-						</mat-chip>
+						<button mat-icon-button (click)="toggleJobExpansion(job.job_id)" matTooltip="Show details">
+							<mat-icon>{{isJobExpanded(job.job_id) ? 'expand_less' : 'expand_more'}}</mat-icon>
+						</button>
 					</div>
 				</div>
-			</mat-card-header>
-			<mat-card-content>
-				<div class="job-details">
-					<mat-chip-set>
-						<mat-chip>
-							<mat-icon matChipIcon>location_on</mat-icon>
-							{{formatLocation(job)}}
-						</mat-chip>
-						<mat-chip>
-							<mat-icon matChipIcon>work</mat-icon>
-							{{getEmploymentTypeDisplay(job.employment_type)}}
-						</mat-chip>
-						<mat-chip>
-							<mat-icon matChipIcon>trending_up</mat-icon>
-							{{getExperienceLevelDisplay(job.experience_level)}}
-						</mat-chip>
-						@if (job.salary) {
-						<mat-chip>
-							<mat-icon matChipIcon>payments</mat-icon>
-							{{formatSalary(job)}}
-						</mat-chip>
+
+				@if (isJobExpanded(job.job_id)) {
+					<div class="job-expanded">
+						@if (job.description) {
+							<div class="expanded-section">
+								<h4>Description</h4>
+								<p>{{job.description}}</p>
+							</div>
 						}
-					</mat-chip-set>
-
-					<div class="job-description">
-						<p>{{job.description}}</p>
+						@if (job.requirements.length > 0) {
+							<div class="expanded-section">
+								<h4>Requirements</h4>
+								<ul>
+									@for (req of job.requirements; track req) {
+										<li>{{req}}</li>
+									}
+								</ul>
+							</div>
+						}
+						@if (job.responsibilities.length > 0) {
+							<div class="expanded-section">
+								<h4>Responsibilities</h4>
+								<ul>
+									@for (resp of job.responsibilities; track resp) {
+										<li>{{resp}}</li>
+									}
+								</ul>
+							</div>
+						}
+						@if (job.skills_required.length > 5) {
+							<div class="expanded-section">
+								<h4>All Skills</h4>
+								<div class="job-skills-row">
+									@for (skill of job.skills_required; track skill) {
+										<mat-chip class="skill-chip-sm">{{skill}}</mat-chip>
+									}
+								</div>
+							</div>
+						}
 					</div>
-
-					@if (job.skills_required.length > 0) {
-					<div class="skills-section">
-						<h4>{{TEXT.labels.requiredSkills}}</h4>
-						<mat-chip-set>
-							@for (skill of job.skills_required; track skill) {
-							<mat-chip class="skill-chip">{{skill}}</mat-chip>
-							}
-						</mat-chip-set>
-					</div>
-					}
-
-					@if (job.requirements.length > 0) {
-					<div class="requirements-section">
-						<h4>{{TEXT.labels.requirements}}</h4>
-						<ul>
-							@for (requirement of job.requirements; track requirement) {
-							<li>{{requirement}}</li>
-							}
-						</ul>
-					</div>
-					}
-
-					<div class="job-stats">
-						<div class="stat-item clickable-stat" (click)="viewApplications(job)" 
-								[class.has-applications]="job.applications_count > 0"
-								[matTooltip]="TEXT.tooltips.clickToViewApplications">
-							<mat-icon>people</mat-icon>
-							<span>{{job.applications_count}} {{TEXT.labels.applicationsSuffix}}</span>
-							@if (job.applications_count > 0) {
-								<mat-icon class="arrow-icon">arrow_forward</mat-icon>
-							}
-						</div>
-						<div class="stat-item">
-							<mat-icon>schedule</mat-icon>
-							<span>{{TEXT.labels.posted}} {{getDaysAgo(job.posted_date)}} {{TEXT.labels.daysAgoSuffix}}</span>
-						</div>
-					</div>
-				</div>
+				}
 			</mat-card-content>
-			<mat-card-actions>
-				<div class="card-actions">
-				</div>
-			</mat-card-actions>
 		</mat-card>
 		}
 		}
