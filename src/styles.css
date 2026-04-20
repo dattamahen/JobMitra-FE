@@ -61,7 +61,7 @@ button {
 /* Form elements */
 input:not([type="checkbox"]):not([type="radio"]), textarea, select {
 	font-family: 'Inter', sans-serif;
-	font-size: 14px;
+	font-size: 0.875rem;
 }
 
 /* Labels */
@@ -151,7 +151,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 p, span, div, label, input, textarea, select {
-	color: #65697b !important;
+	color: #65697b;
 }
 
 .mat-mdc-form-field-label, .mat-mdc-floating-label {
@@ -181,6 +181,22 @@ mat-nav-list .mat-mdc-list-item {
 .mat-mdc-option {
 	min-height: 36px !important;
 	padding: 4px 16px !important;
+	font-size: 0.875rem !important;
+}
+
+/* Consistent font size for select and datepicker values */
+.mat-mdc-select-value-text,
+.mat-mdc-select-value,
+.mat-mdc-select,
+.mat-date-range-input-inner,
+.mat-datepicker-input {
+	font-size: 0.875rem !important;
+}
+
+/* Placeholder text */
+.mat-mdc-input-element::placeholder,
+.mat-mdc-form-field input::placeholder,
+.mdc-text-field__input::placeholder {
 	font-size: 0.875rem !important;
 }
 
