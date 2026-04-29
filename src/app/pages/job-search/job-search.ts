@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, DestroyRef, inject, ChangeDetectionStrategy, computed, Inject } from '@angular/core';
+import { Component, ChangeDetectorRef, DestroyRef, inject, ChangeDetectionStrategy, computed, signal, Inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
@@ -58,26 +58,26 @@ export class JobSearchPage {
 
 	expandedJobs: { [key: string]: boolean } = {};
 	unmaskedHRDetails: { [key: string]: boolean } = {};
-	jobListings: JobListing[] = [];
+	jobListings = signal<JobListing[]>([]);
 	filterOptions: any = {};
 	isLoading = true;
 	totalJobs = 0;
-	
-	filterConfig: JobFilterConfig = {
+	currentPage = signal(1);
+	perPage = 5;
+	filterConfig = signal<JobFilterConfig>({
 		searchQuery: '',
 		selectedLocation: 'all',
 		selectedExperience: 'all',
 		selectedEmploymentType: 'all'
-	};
+	});
 
 	filteredJobListings = computed(() => {
-		const jobs = this.jobListings;
-		const config = this.filterConfig;
+		const jobs = this.jobListings();
+		const config = this.filterConfig();
 		
 		if (!jobs || jobs.length === 0) return [];
 		
-		return jobs.filter(job => {
-			// Safety net: hide expired/closed/filled jobs client-side
+		const filtered = jobs.filter(job => {
 			if (job.status && ['expired', 'closed', 'filled'].includes(job.status)) return false;
 
 			if (config.searchQuery) {
@@ -105,6 +105,25 @@ export class JobSearchPage {
 			
 			return true;
 		});
+
+		// Sort: match score desc, then posted date desc
+		return filtered.sort((a, b) => {
+			const scoreA = (a as any).match_score || 0;
+			const scoreB = (b as any).match_score || 0;
+			if (scoreB !== scoreA) return scoreB - scoreA;
+			return new Date(b.posted_date).getTime() - new Date(a.posted_date).getTime();
+		});
+	});
+
+	paginatedJobs = computed(() => {
+		const all = this.filteredJobListings();
+		const page = this.currentPage();
+		const start = (page - 1) * this.perPage;
+		return all.slice(start, start + this.perPage);
+	});
+
+	totalPages = computed(() => {
+		return Math.ceil(this.filteredJobListings().length / this.perPage) || 1;
 	});
 
 	constructor() {
@@ -123,12 +142,13 @@ export class JobSearchPage {
 		this.isLoading = true;
 		const filters: JobSearchFilters = {};
 		
-		this.jobService.searchJobs(filters, 1, 10)
+		this.jobService.searchJobs(filters, 1, 100)
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: (response) => {
-					this.jobListings = response.jobs || [];
+					this.jobListings.set(response.jobs || []);
 					this.totalJobs = this.filteredJobListings().length;
+					this.currentPage.set(1);
 					
 					if (response.filters) {
 						this.filterOptions = response.filters;
@@ -191,8 +211,15 @@ export class JobSearchPage {
 	}
 
 	onFilterChange(config: JobFilterConfig): void {
-		this.filterConfig = config;
+		this.filterConfig.set(config);
+		this.currentPage.set(1);
 		this.totalJobs = this.filteredJobListings().length;
+		this.cdr.markForCheck();
+	}
+
+	goToPage(page: number): void {
+		if (page < 1 || page > this.totalPages()) return;
+		this.currentPage.set(page);
 		this.cdr.markForCheck();
 	}
 
@@ -205,7 +232,7 @@ export class JobSearchPage {
 	}
 
 	getJobById(jobId: string): JobListing | undefined {
-		return this.jobListings.find(job => job.job_id === jobId);
+		return this.jobListings().find(job => job.job_id === jobId);
 	}
 
 	formatSalary(job: JobListing): string {
