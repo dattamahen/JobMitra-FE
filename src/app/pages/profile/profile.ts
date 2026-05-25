@@ -1,4 +1,4 @@
-import { Component, viewChild, AfterViewInit, OnInit, ElementRef, DestroyRef, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, viewChild, AfterViewInit, OnInit, ElementRef, DestroyRef, inject, signal, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -77,6 +77,7 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	private testProfileService = inject(TestProfileService);
 	private profileShareService = inject(ProfileShareService);
 	private imageUploadService = inject(ImageUploadService);
+	private cdr = inject(ChangeDetectorRef);
 	
 	profileForm!: FormGroup;
 	currentUser: UserProfile | null = null;
@@ -692,6 +693,7 @@ export class ProfilePage implements OnInit, AfterViewInit {
 					this.currentUser = user as any;
 					this.updateFormValues();
 					this.updateDynamicForms();
+					this.cdr.markForCheck();
 				},
 				error: (error: any) => {
 					this.isLoading.set(false);
