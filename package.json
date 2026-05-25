@@ -9,7 +9,10 @@
     "test": "ng test",
     "serve:ssr:tech-profile": "node dist/tech-profile/server/server.mjs",
     "format": "prettier --write \"src/**/*.{ts,html,css,scss,json}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,html,css,scss,json}\""
+    "format:check": "prettier --check \"src/**/*.{ts,html,css,scss,json}\"",
+    "e2e": "npx playwright test",
+    "e2e:headed": "npx playwright test --headed",
+    "e2e:report": "npx playwright show-report e2e/reports/html-report"
   },
   "private": true,
   "dependencies": {
@@ -43,6 +46,7 @@
     "@angular/build": "^20.0.2",
     "@angular/cli": "^20.0.2",
     "@angular/compiler-cli": "^20.0.0",
+    "@playwright/test": "^1.60.0",
     "@types/express": "^5.0.1",
     "@types/jasmine": "~5.1.0",
     "@types/node": "^20.17.19",
