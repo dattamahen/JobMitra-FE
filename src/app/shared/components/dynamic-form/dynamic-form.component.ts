@@ -87,6 +87,16 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 			this.buildForm();
 		}
 		
+		// Rebuild form when initialValues change (for dynamic-array population)
+		if (changes['initialValues'] && this.form && !changes['initialValues'].firstChange) {
+			const newValues = changes['initialValues'].currentValue;
+			if (newValues && Object.keys(newValues).length > 0) {
+				this.initialValues = { ...newValues };
+				this.buildForm();
+				this.cdr.detectChanges();
+			}
+		}
+		
 		// Handle readonly state changes
 		if (changes['readonly'] && this.form) {
 			if (this.readonly) {
