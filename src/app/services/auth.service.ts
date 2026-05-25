@@ -53,6 +53,7 @@ export interface User {
 	// Professional Information
 	overall_experience_years?: number;
 	highest_qualification?: string;
+	professional_summary?: string;
 	previous_organizations?: PreviousOrganization[];
 	skills?: string[];
 	certifications?: Certification[];
