@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { OfflineIndicatorComponent } from './shared/components/offline-indicator/offline-indicator.component';
+import { ErrorToastComponent } from './shared/components/error-toast/error-toast.component';
 import { filter } from 'rxjs';
 
 @Component({
 	selector: 'app-root',
-	imports: [RouterOutlet, CommonModule, OfflineIndicatorComponent],
+	imports: [RouterOutlet, CommonModule, OfflineIndicatorComponent, ErrorToastComponent],
 	templateUrl: './app.html',
 	styleUrl: './app.css'
 })
