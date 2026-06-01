@@ -30,6 +30,7 @@ import { ResumeIntegrationService } from '../../services/resume-integration.serv
 import { TestProfileService } from '../../test-profile.service';
 import { ProfileShareService } from '../../services/profile-share.service';
 import { ImageUploadService } from '../../services/image-upload.service';
+import { ApiService } from '../../services/api.service';
 
 @Component({
 	selector: 'app-profile',
@@ -78,6 +79,8 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	private profileShareService = inject(ProfileShareService);
 	private imageUploadService = inject(ImageUploadService);
 	private cdr = inject(ChangeDetectorRef);
+	private apiService = inject(ApiService);
+	isGeneratingSummary = signal(false);
 	
 	profileForm!: FormGroup;
 	currentUser: UserProfile | null = null;
@@ -180,6 +183,42 @@ export class ProfilePage implements OnInit, AfterViewInit {
 
 	onProfessionalToggleEdit(): void {
 		this.isProfessionalEditing.update(v => !v);
+	}
+
+	generateProfessionalSummary(): void {
+		this.isGeneratingSummary.set(true);
+		const user = this.currentUser as any;
+
+		const payload = {
+			current_role: user?.current_role || '',
+			current_company: user?.current_company || '',
+			experience_years: user?.overall_experience_years || 0,
+			skills: user?.skills || [],
+			highest_qualification: user?.highest_qualification || '',
+			desired_job_title: user?.desired_job_title || '',
+			work_experience: user?.work_experience || []
+		};
+
+		this.apiService.post<{ summary: string }>('/profile/generate-summary', payload)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (response) => {
+					this.isGeneratingSummary.set(false);
+					const professionalFormRef = this.professionalForm();
+					if (professionalFormRef) {
+						professionalFormRef.patchValue({ professional_summary: response.summary });
+					}
+					this.isProfessionalEditing.set(true);
+					this.cdr.markForCheck();
+				},
+				error: () => {
+					this.isGeneratingSummary.set(false);
+					this.snackBar.open('Failed to generate summary. Please try again.', 'Close', {
+						duration: 3000,
+						panelClass: ['error-snackbar']
+					});
+				}
+			});
 	}
 
 	onJobPreferencesSubmit(formData: any): void {

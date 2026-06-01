@@ -19,6 +19,19 @@
 
 				<mat-card class="form-card">
 					<mat-card-content>
+						<div class="ai-generate-row">
+							@if (isGeneratingSummary()) {
+								<button mat-stroked-button color="primary" disabled>
+									<mat-icon class="spin">sync</mat-icon>
+									Generating...
+								</button>
+							} @else {
+								<button mat-stroked-button color="primary" (click)="generateProfessionalSummary()">
+									<mat-icon>auto_awesome</mat-icon>
+									Generate Summary with AI
+								</button>
+							}
+						</div>
 						<app-dynamic-form 
 							#professionalForm
 							[config]="professionalConfig" 
