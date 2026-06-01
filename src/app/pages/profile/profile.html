@@ -19,6 +19,20 @@
 
 				<mat-card class="form-card">
 					<mat-card-content>
+						<app-dynamic-form 
+							#skillsForm
+							[config]="skillsConfig" 
+							[initialValues]="skillsValues"
+							[readonly]="!isSkillsEditing()"
+							(formSubmit)="onSkillsSubmit($event)"
+							(toggleEdit)="onSkillsToggleEdit()"
+							[submitButtonText]="TEXT.formButtons.updateSkills">
+						</app-dynamic-form>
+					</mat-card-content>
+				</mat-card>
+
+				<mat-card class="form-card">
+					<mat-card-content>
 						<div class="ai-generate-row">
 							@if (isGeneratingSummary()) {
 								<button mat-stroked-button color="primary" disabled>
@@ -47,20 +61,6 @@
 				<mat-card class="form-card">
 					<mat-card-content>
 						<app-dynamic-form 
-							#skillsForm
-							[config]="skillsConfig" 
-							[initialValues]="skillsValues"
-							[readonly]="!isSkillsEditing()"
-							(formSubmit)="onSkillsSubmit($event)"
-							(toggleEdit)="onSkillsToggleEdit()"
-							[submitButtonText]="TEXT.formButtons.updateSkills">
-						</app-dynamic-form>
-					</mat-card-content>
-				</mat-card>
-
-				<mat-card class="form-card">
-					<mat-card-content>
-						<app-dynamic-form 
 							#experienceForm
 							[config]="experienceConfig" 
 							[initialValues]="experienceValues"
@@ -69,6 +69,19 @@
 							(toggleEdit)="onExperienceToggleEdit()"
 							[submitButtonText]="TEXT.formButtons.updateExperience">
 						</app-dynamic-form>
+						<div class="ai-generate-row ai-generate-inline">
+							@if (isGeneratingJobDesc()) {
+								<button mat-stroked-button color="primary" disabled>
+									<mat-icon class="spin">sync</mat-icon>
+									Generating...
+								</button>
+							} @else {
+								<button mat-stroked-button color="primary" (click)="generateJobDescriptionForLatest()">
+									<mat-icon>auto_awesome</mat-icon>
+									Generate Roles and Responsibilities and Achievements with AI
+								</button>
+							}
+						</div>
 					</mat-card-content>
 				</mat-card>
 

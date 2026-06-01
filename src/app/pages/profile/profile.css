@@ -399,3 +399,9 @@
 .spin {
 	animation: spin 1s linear infinite;
 }
+
+.ai-generate-inline {
+	justify-content: flex-start;
+	margin-top: -8px;
+	margin-bottom: 0;
+}

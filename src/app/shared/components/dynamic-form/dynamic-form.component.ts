@@ -341,14 +341,13 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 			return;
 		}
 		
-		// Store values and rebuild form to ensure correct structure
-		this.initialValues = { ...values };
-		
 		if (this.form) {
-			this.buildForm();
+			// Merge new values into existing initialValues (don't replace)
+			this.initialValues = { ...this.initialValues, ...values };
+			// Patch only the provided fields without rebuilding the form
+			this.form.patchValue(values, { emitEvent: false });
+			this.cdr.detectChanges();
 		}
-		
-		this.cdr.detectChanges();
 	}
 	
 	getArrayItems(fieldName: string): string[] {
