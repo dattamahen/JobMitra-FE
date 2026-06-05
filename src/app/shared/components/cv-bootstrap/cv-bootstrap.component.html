@@ -54,11 +54,18 @@
 			<div class="preview-header">
 				<div class="sample-badge">
 					<mat-icon>info</mat-icon>
-					AI-Generated Sample — Fill real details to make it yours
+					AI-Generated Preview — Fill real details to make it yours
 				</div>
 			</div>
 
 			<div class="resume-preview">
+				<!-- User Info -->
+				<div class="preview-user-header">
+					<h2 class="user-name">{{ getUserName() || 'Your Name' }}</h2>
+					<p class="user-role">{{ desiredRole }}</p>
+					<p class="user-email">{{ getUserEmail() }}</p>
+				</div>
+
 				<div class="preview-section">
 					<h3>Professional Summary</h3>
 					<p>{{ generatedCV()!.professional_summary }}</p>
@@ -94,14 +101,31 @@
 						</div>
 					}
 				</div>
+
+				@if (generatedCV()!.certifications.length) {
+					<div class="preview-section">
+						<h3>Certifications</h3>
+						@for (cert of generatedCV()!.certifications; track cert.name) {
+							<div class="cert-item">{{ cert.name }} — <em>{{ cert.issuer }}</em></div>
+						}
+					</div>
+				}
 			</div>
 
 			<div class="preview-actions">
-				<button mat-raised-button color="primary" (click)="useThisData()">
+				<button mat-raised-button color="primary" (click)="downloadPDF()" [disabled]="isDownloading()">
+					@if (isDownloading()) {
+						<mat-spinner diameter="18"></mat-spinner>
+					} @else {
+						<mat-icon>download</mat-icon>
+					}
+					Download Resume (Creative Template)
+				</button>
+				<button mat-stroked-button color="primary" (click)="useThisData()">
 					<mat-icon>edit</mat-icon>
 					Use This as Starting Point
 				</button>
-				<button mat-stroked-button (click)="dismiss()">
+				<button mat-button (click)="dismiss()">
 					I'll fill from scratch
 				</button>
 			</div>

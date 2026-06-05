@@ -102,6 +102,33 @@
 	background: #fafbfc;
 }
 
+.preview-user-header {
+	text-align: center;
+	margin-bottom: 20px;
+	padding-bottom: 16px;
+	border-bottom: 2px solid #4831af;
+}
+
+.user-name {
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: #1a1a2e;
+	margin: 0 0 4px;
+}
+
+.user-role {
+	font-size: 1rem;
+	color: #4831af;
+	font-weight: 500;
+	margin: 0 0 4px;
+}
+
+.user-email {
+	font-size: 0.85rem;
+	color: #6b7280;
+	margin: 0;
+}
+
 .preview-section {
 	margin-bottom: 20px;
 }
