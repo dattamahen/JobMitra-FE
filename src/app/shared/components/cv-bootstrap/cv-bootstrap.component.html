@@ -1,0 +1,110 @@
+@if (step() === 'input') {
+	<mat-card class="bootstrap-card">
+		<mat-card-content>
+			<div class="bootstrap-header">
+				<mat-icon class="header-icon">auto_awesome</mat-icon>
+				<h2>See Your Resume in 30 Seconds</h2>
+				<p>Tell us your role and skills — we'll generate a professional resume preview instantly.</p>
+			</div>
+
+			<div class="bootstrap-form">
+				<mat-form-field appearance="fill" class="full-width">
+					<mat-label>Your Desired Role</mat-label>
+					<input matInput [(ngModel)]="desiredRole" placeholder="e.g. Senior React Developer">
+				</mat-form-field>
+
+				<mat-form-field appearance="fill" class="full-width">
+					<mat-label>Your Top Skills (comma-separated)</mat-label>
+					<input matInput [(ngModel)]="skillsInput" placeholder="e.g. React, TypeScript, Node.js, AWS">
+				</mat-form-field>
+
+				<mat-form-field appearance="fill" class="full-width">
+					<mat-label>Years of Experience</mat-label>
+					<input matInput type="number" [(ngModel)]="experienceYears" min="0" max="30">
+				</mat-form-field>
+
+				<div class="bootstrap-actions">
+					<button mat-raised-button color="primary" (click)="generatePreview()"
+						[disabled]="!desiredRole.trim() || !skillsInput.trim()">
+						<mat-icon>auto_awesome</mat-icon>
+						Generate My Resume Preview
+					</button>
+					<button mat-button (click)="dismiss()">Skip for now</button>
+				</div>
+			</div>
+		</mat-card-content>
+	</mat-card>
+}
+
+@if (step() === 'loading') {
+	<mat-card class="bootstrap-card loading-card">
+		<mat-card-content>
+			<div class="loading-state">
+				<mat-spinner diameter="48"></mat-spinner>
+				<h3>Crafting your resume...</h3>
+				<p>Our AI is building a professional resume based on your skills</p>
+			</div>
+		</mat-card-content>
+	</mat-card>
+}
+
+@if (step() === 'preview' && generatedCV()) {
+	<mat-card class="bootstrap-card preview-card">
+		<mat-card-content>
+			<div class="preview-header">
+				<div class="sample-badge">
+					<mat-icon>info</mat-icon>
+					AI-Generated Sample — Fill real details to make it yours
+				</div>
+			</div>
+
+			<div class="resume-preview">
+				<div class="preview-section">
+					<h3>Professional Summary</h3>
+					<p>{{ generatedCV()!.professional_summary }}</p>
+				</div>
+
+				<div class="preview-section">
+					<h3>Skills</h3>
+					<div class="skills-chips">
+						@for (skill of generatedCV()!.skills; track skill) {
+							<span class="skill-chip">{{ skill }}</span>
+						}
+					</div>
+				</div>
+
+				<div class="preview-section">
+					<h3>Experience</h3>
+					@for (exp of generatedCV()!.work_experience; track exp.company) {
+						<div class="exp-item">
+							<strong>{{ exp.position }}</strong> — {{ exp.company }}
+							<div class="exp-date">{{ exp.start_date }} – {{ exp.end_date }}</div>
+							<p class="exp-desc">{{ exp.description }}</p>
+						</div>
+					}
+				</div>
+
+				<div class="preview-section">
+					<h3>Projects</h3>
+					@for (proj of generatedCV()!.projects; track proj.name) {
+						<div class="proj-item">
+							<strong>{{ proj.name }}</strong>
+							<span class="proj-tech">{{ proj.technologies }}</span>
+							<p>{{ proj.description }}</p>
+						</div>
+					}
+				</div>
+			</div>
+
+			<div class="preview-actions">
+				<button mat-raised-button color="primary" (click)="useThisData()">
+					<mat-icon>edit</mat-icon>
+					Use This as Starting Point
+				</button>
+				<button mat-stroked-button (click)="dismiss()">
+					I'll fill from scratch
+				</button>
+			</div>
+		</mat-card-content>
+	</mat-card>
+}
