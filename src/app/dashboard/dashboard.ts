@@ -1,6 +1,7 @@
-import { Component, OnInit, signal, Type } from '@angular/core';
+import { Component, OnInit, signal, Type, DestroyRef, inject } from '@angular/core';
 import { NgComponentOutlet } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { SideNav } from '../side-nav/side-nav';
 import { LoadingComponent } from '../shared/components/loading/loading.component';
@@ -42,6 +43,8 @@ export class Dashboard implements OnInit {
 		navigateToPage: (event: { page: string; params?: any }) => this.onNavigateToPage(event)
 	};
 
+	private readonly destroyRef = inject(DestroyRef);
+
 	constructor(
 		private router: Router,
 		private route: ActivatedRoute,
@@ -52,7 +55,7 @@ export class Dashboard implements OnInit {
 	ngOnInit() {
 		this.userType = this.authService.getUserType();
 
-		this.route.params.subscribe(params => {
+		this.route.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
 			const page = params['page'] || 'dashboard';
 			this.navigateToPage(page);
 		});
