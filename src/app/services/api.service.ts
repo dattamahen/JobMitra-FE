@@ -42,7 +42,6 @@ export class ApiService {
 	* GET request
 	*/
 	get<T>(endpoint: string, params?: any, responseType?: 'json' | 'blob'): Observable<T> {
-		console.log('🌐 ApiService: GET request to:', endpoint);
 		let httpParams = new HttpParams();
 		
 		if (params) {
@@ -54,8 +53,6 @@ export class ApiService {
 		}
 
 		const url = endpoint.startsWith('/api/v1') ? `${this.baseUrl}${endpoint}` : `${this.apiBaseUrl}${endpoint}`;
-		console.log('🌐 ApiService: Full URL:', url);
-		console.log('🌐 ApiService: Headers:', this.createHeaders());
 		
 		if (responseType === 'blob') {
 			return this.http.get(url, {
