@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, DestroyRef, inject, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, signal, DestroyRef, inject, input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -46,7 +46,7 @@ export class DashboardPage implements OnInit {
 	private router = inject(Router);
 	private authService = inject(AuthService);
 
-	@Output() navigateToPage = new EventEmitter<{ page: string }>();
+	navigateToPage = input<(event: { page: string }) => void>();
 
 	readonly TEXT = DASHBOARD_TEXT;
 
@@ -80,7 +80,7 @@ export class DashboardPage implements OnInit {
 	onBootstrapData(cv: any): void {
 		// Navigate to profile to fill data
 		this.showBootstrap.set(false);
-		this.navigateToPage.emit({ page: 'profile' });
+		this.navigateToPage()?.({ page: 'profile' });
 		this.router.navigate(['/dashboard', 'profile']);
 	}
 
@@ -106,7 +106,7 @@ export class DashboardPage implements OnInit {
 	onStatClick(statId: string): void {
 		const page = this.statRouteMap[statId];
 		if (page) {
-			this.navigateToPage.emit({ page });
+			this.navigateToPage()?.({ page });
 			this.router.navigate(['/dashboard', page]);
 		}
 	}

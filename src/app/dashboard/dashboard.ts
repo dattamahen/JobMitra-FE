@@ -39,7 +39,7 @@ export class Dashboard implements OnInit {
 		'subscription':          () => import('../pages/subscription/subscription').then(m => m.SubscriptionPage),
 	};
 
-	readonly pageOutputs = {
+	readonly pageInputs = {
 		navigateToPage: (event: { page: string; params?: any }) => this.onNavigateToPage(event)
 	};
 
