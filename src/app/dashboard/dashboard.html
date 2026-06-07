@@ -10,7 +10,9 @@
 					[icon]="loadingConfigs[currentPage()]?.icon || 'hourglass_empty'">
 				</app-loading>
 			} @else if (currentComponent()) {
-				<ng-container *ngComponentOutlet="currentComponent()!; outputs: pageOutputs" />
+				<ng-container
+					[ngComponentOutlet]="currentComponent()!"
+					[ngComponentOutletInputs]="pageInputs" />
 			}
 		</div>
 	</div>

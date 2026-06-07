@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { SETTINGS_TEXT } from '../../data/settings-data';
 
 @Component({
@@ -6,7 +6,8 @@ import { SETTINGS_TEXT } from '../../data/settings-data';
 	standalone: true,
 	imports: [],
 	templateUrl: './settings.html',
-	styleUrls: ['./settings.css']
+	styleUrls: ['./settings.css'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SettingsPage {
 	readonly TEXT = SETTINGS_TEXT;

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, output } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -90,7 +90,7 @@ export class MyJobsPage {
 	private snackBar = inject(MatSnackBar);
 	private router = inject(Router);
 
-	navigateToPage = output<{page: string, params?: any}>();
+	navigateToPage = input<(event: {page: string, params?: any}) => void>();
 
 	readonly TEXT = MY_JOBS_TEXT;
 	
