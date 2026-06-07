@@ -361,3 +361,47 @@
 		padding: 16px;
 	}
 }
+
+
+/* AI Generate Button */
+.ai-generate-row {
+	display: flex;
+	justify-content: flex-end;
+	margin-bottom: 8px;
+}
+
+.ai-generate-row button {
+	font-size: 0.8rem;
+	border-color: #4831af;
+	color: #4831af;
+}
+
+.ai-generate-row button:hover:not(:disabled) {
+	background-color: rgba(72, 49, 175, 0.05);
+}
+
+.ai-generate-row button:disabled {
+	opacity: 0.6;
+}
+
+.ai-generate-row mat-icon {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+	margin-right: 4px;
+}
+
+@keyframes spin {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}
+
+.spin {
+	animation: spin 1s linear infinite;
+}
+
+.ai-generate-inline {
+	justify-content: flex-start;
+	margin-top: -8px;
+	margin-bottom: 0;
+}

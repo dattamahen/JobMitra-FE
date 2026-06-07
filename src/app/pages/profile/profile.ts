@@ -1,4 +1,4 @@
-import { Component, viewChild, AfterViewInit, OnInit, ElementRef, DestroyRef, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, viewChild, AfterViewInit, OnInit, ElementRef, DestroyRef, inject, signal, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -30,6 +30,7 @@ import { ResumeIntegrationService } from '../../services/resume-integration.serv
 import { TestProfileService } from '../../test-profile.service';
 import { ProfileShareService } from '../../services/profile-share.service';
 import { ImageUploadService } from '../../services/image-upload.service';
+import { ApiService } from '../../services/api.service';
 
 @Component({
 	selector: 'app-profile',
@@ -77,6 +78,10 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	private testProfileService = inject(TestProfileService);
 	private profileShareService = inject(ProfileShareService);
 	private imageUploadService = inject(ImageUploadService);
+	private cdr = inject(ChangeDetectorRef);
+	private apiService = inject(ApiService);
+	isGeneratingSummary = signal(false);
+	isGeneratingJobDesc = signal<string | null>(null);
 	
 	profileForm!: FormGroup;
 	currentUser: UserProfile | null = null;
@@ -179,6 +184,92 @@ export class ProfilePage implements OnInit, AfterViewInit {
 
 	onProfessionalToggleEdit(): void {
 		this.isProfessionalEditing.update(v => !v);
+	}
+
+	generateProfessionalSummary(): void {
+		this.isGeneratingSummary.set(true);
+		const user = this.currentUser as any;
+
+		const payload = {
+			current_role: user?.current_role || '',
+			current_company: user?.current_company || '',
+			experience_years: user?.overall_experience_years || 0,
+			skills: user?.skills || [],
+			highest_qualification: user?.highest_qualification || '',
+			desired_job_title: user?.desired_job_title || '',
+			work_experience: user?.work_experience || [],
+			projects: user?.projects || [],
+			certifications: user?.certifications || []
+		};
+
+		this.apiService.post<{ content: string }>('/profile/generate-ai-content', payload)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (response) => {
+					this.isGeneratingSummary.set(false);
+					const professionalFormRef = this.professionalForm();
+					if (professionalFormRef) {
+						professionalFormRef.patchValue({ professional_summary: response.content });
+					}
+					this.isProfessionalEditing.set(true);
+					this.cdr.markForCheck();
+				},
+				error: () => {
+					this.isGeneratingSummary.set(false);
+					this.snackBar.open('Failed to generate summary. Please try again.', 'Close', {
+						duration: 3000,
+						panelClass: ['error-snackbar']
+					});
+				}
+			});
+	}
+
+	generateJobDescriptionForLatest(): void {
+		const experienceFormRef = this.experienceForm();
+		if (!experienceFormRef) return;
+		const items = experienceFormRef.getArrayItems('experiences');
+		if (items.length > 0) {
+			this.generateJobDescription(items[items.length - 1]);
+		}
+	}
+
+	generateJobDescription(itemId: string): void {
+		this.isGeneratingJobDesc.set(itemId);
+		const user = this.currentUser as any;
+		const experienceFormRef = this.experienceForm();
+		if (!experienceFormRef) return;
+
+		const formValue = experienceFormRef.formValue;
+		const position = formValue[`experiences_${itemId}_position`] || '';
+		const company = formValue[`experiences_${itemId}_company`] || '';
+
+		const payload = {
+			type: 'job_description' as const,
+			position,
+			company,
+			skills: user?.skills || [],
+			experience_years: user?.overall_experience_years || 0,
+			is_current: !formValue[`experiences_${itemId}_end_date`]
+		};
+
+		this.apiService.post<{ content: string }>('/profile/generate-ai-content', payload)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (response) => {
+					this.isGeneratingJobDesc.set(null);
+					const controlName = `experiences_${itemId}_description`;
+					experienceFormRef.patchValue({ [controlName]: response.content });
+					this.isExperienceEditing.set(true);
+					this.cdr.markForCheck();
+				},
+				error: () => {
+					this.isGeneratingJobDesc.set(null);
+					this.snackBar.open('Failed to generate job description. Please try again.', 'Close', {
+						duration: 3000,
+						panelClass: ['error-snackbar']
+					});
+				}
+			});
 	}
 
 	onJobPreferencesSubmit(formData: any): void {
@@ -692,6 +783,7 @@ export class ProfilePage implements OnInit, AfterViewInit {
 					this.currentUser = user as any;
 					this.updateFormValues();
 					this.updateDynamicForms();
+					this.cdr.markForCheck();
 				},
 				error: (error: any) => {
 					this.isLoading.set(false);

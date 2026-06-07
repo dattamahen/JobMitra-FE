@@ -100,12 +100,7 @@
 					<ng-container matColumnDef="match_percentage">
 						<th mat-header-cell *matHeaderCellDef>{{TEXT.table.jdMatchScore}}</th>
 						<td mat-cell *matCellDef="let app">
-							@if (app.resume_tailored && app.match_score) {
-								<mat-chip class="high-match">
-									<mat-icon>auto_fix_high</mat-icon>
-									{{app.match_score}}%
-								</mat-chip>
-							} @else if (app.match_percentage > 0) {
+							@if (app.match_percentage > 0) {
 								<mat-chip [class]="app.match_percentage >= 70 ? 'high-match' : app.match_percentage >= 50 ? 'medium-match' : 'low-match'">
 									{{app.match_percentage}}%
 								</mat-chip>
@@ -148,14 +143,7 @@
 							<div class="expanded-detail" [@detailExpand]="isExpanded(app.application_id || app.user_id) ? 'expanded' : 'collapsed'">
 								<div class="detail-content">
 									<div class="detail-header">
-										<h3>{{TEXT.detail.detailsPrefix}} {{app.full_name}}
-											@if (app.resume_tailored) {
-												<mat-chip class="tailored-badge">
-													<mat-icon>auto_fix_high</mat-icon>
-													{{TEXT.detail.tailoredResume}}
-												</mat-chip>
-											}
-										</h3>
+										<h3>{{TEXT.detail.detailsPrefix}} {{app.full_name}}</h3>
 									</div>
 
 									<!-- Skills -->

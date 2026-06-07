@@ -87,6 +87,19 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 			this.buildForm();
 		}
 		
+		// Rebuild form when initialValues change (for dynamic-array population)
+		if (changes['initialValues'] && this.form) {
+			const newValues = changes['initialValues'].currentValue;
+			if (newValues && Object.keys(newValues).length > 0) {
+				this.initialValues = { ...newValues };
+				this.buildForm();
+				if (this.readonly) {
+					this.form.disable();
+				}
+				this.cdr.detectChanges();
+			}
+		}
+		
 		// Handle readonly state changes
 		if (changes['readonly'] && this.form) {
 			if (this.readonly) {
@@ -328,14 +341,13 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 			return;
 		}
 		
-		// Store values and rebuild form to ensure correct structure
-		this.initialValues = { ...values };
-		
 		if (this.form) {
-			this.buildForm();
+			// Merge new values into existing initialValues (don't replace)
+			this.initialValues = { ...this.initialValues, ...values };
+			// Patch only the provided fields without rebuilding the form
+			this.form.patchValue(values, { emitEvent: false });
+			this.cdr.detectChanges();
 		}
-		
-		this.cdr.detectChanges();
 	}
 	
 	getArrayItems(fieldName: string): string[] {
