@@ -7,7 +7,7 @@ export const environment = {
 	apiUrl: 'http://localhost:8000',
 
 	// Google OAuth
-	googleClientId: '<your-local-google-client-id>',
+	googleClientId: '1090356197579-abdlof3j1luttp85oikdpet3e9k4p4gk.apps.googleusercontent.com',
 
 	// Gemini AI (Voice AI feature)
 	geminiApiKey: '<your-local-gemini-api-key>',

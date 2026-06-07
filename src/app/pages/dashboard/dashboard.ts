@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, DestroyRef, inject, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, signal, DestroyRef, inject, input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -11,11 +11,13 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatDividerModule } from '@angular/material/divider';
 
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
+import { CvBootstrapComponent } from '../../shared/components/cv-bootstrap/cv-bootstrap.component';
 import { DashboardData, DashboardStats, ActivityItem } from '../../types/dashboard.types';
 import { ACTIVITY_TYPE_COLOR_MAP, ACTIVITY_STATUS_ICON_MAP } from './dashboard.constants';
 import { DASHBOARD_TEXT } from '../../data/dashboard-data';
 
 import { DashboardService } from '../../services/dashboard.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
 	selector: 'app-dashboard-page',
@@ -29,7 +31,8 @@ import { DashboardService } from '../../services/dashboard.service';
 		MatButtonModule,
 		MatBadgeModule,
 		MatDividerModule,
-		LoadingComponent
+		LoadingComponent,
+		CvBootstrapComponent
 	],
 	templateUrl: './dashboard.html',
 	styleUrls: ['./dashboard.css'],
@@ -38,10 +41,12 @@ import { DashboardService } from '../../services/dashboard.service';
 export class DashboardPage implements OnInit {
 	dashboardData = signal<DashboardData | null>(null);
 	isLoading = signal(true);
+	showBootstrap = signal(false);
 	private destroyRef = inject(DestroyRef);
 	private router = inject(Router);
+	private authService = inject(AuthService);
 
-	@Output() navigateToPage = new EventEmitter<{ page: string }>();
+	navigateToPage = input<(event: { page: string }) => void>();
 
 	readonly TEXT = DASHBOARD_TEXT;
 
@@ -54,44 +59,54 @@ export class DashboardPage implements OnInit {
 		'profile-completion': 'profile'
 	};
 
-	constructor(private dashboardService: DashboardService) {
-		console.log('🏗️ DashboardPage: Constructor called');
-	}
+	constructor(private dashboardService: DashboardService) {}
 
 	ngOnInit(): void {
-		console.log('📊 DashboardPage: ngOnInit START');
-		console.log('📊 DashboardPage: About to call loadDashboardData()');
 		this.loadDashboardData();
-		console.log('📊 DashboardPage: ngOnInit END');
+		this.checkIfNewUser();
+	}
+
+	private checkIfNewUser(): void {
+		const user = this.authService.getCurrentUserValue();
+		if (user) {
+			const hasNoSkills = !user.skills || user.skills.length === 0;
+			const hasNoSummary = !(user as any).professional_summary && !(user as any).professional_info?.professional_summary;
+			if (hasNoSkills && hasNoSummary) {
+				this.showBootstrap.set(true);
+			}
+		}
+	}
+
+	onBootstrapData(cv: any): void {
+		// Navigate to profile to fill data
+		this.showBootstrap.set(false);
+		this.navigateToPage()?.({ page: 'profile' });
+		this.router.navigate(['/dashboard', 'profile']);
+	}
+
+	onBootstrapDismissed(): void {
+		this.showBootstrap.set(false);
 	}
 
 	private loadDashboardData(): void {
-		console.log('📊 DashboardPage: loadDashboardData START');
 		this.isLoading.set(true);
-		console.log('📊 DashboardPage: isLoading set to true');
-		
-		console.log('📊 DashboardPage: Calling dashboardService.getDashboardData()');
 		this.dashboardService.getDashboardData()
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 			next: (data) => {
-				console.log('✅ DashboardPage: Received data:', data);
 				this.dashboardData.set(data);
 				this.isLoading.set(false);
-				console.log('✅ DashboardPage: Data set, isLoading = false');
 			},
-			error: (err) => {
-				console.error('❌ DashboardPage: Error loading dashboard:', err);
+			error: () => {
 				this.isLoading.set(false);
 			}
 		});
-		console.log('📊 DashboardPage: loadDashboardData END (subscription created)');
 	}
 
 	onStatClick(statId: string): void {
 		const page = this.statRouteMap[statId];
 		if (page) {
-			this.navigateToPage.emit({ page });
+			this.navigateToPage()?.({ page });
 			this.router.navigate(['/dashboard', page]);
 		}
 	}

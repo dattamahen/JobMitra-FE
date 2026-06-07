@@ -1,5 +1,11 @@
 <div class="page-container">
 	<div class="dashboard-content">
+		@if (showBootstrap()) {
+			<app-cv-bootstrap
+				(profileStarted)="onBootstrapData($event)"
+				(dismissed)="onBootstrapDismissed()" />
+		}
+
 		@if (isLoading()) {
 			<app-loading 
 				[title]="TEXT.loading.title"
