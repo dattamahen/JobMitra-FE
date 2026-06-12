@@ -1,4 +1,4 @@
-import { Component, OnInit, PLATFORM_ID, inject, signal } from '@angular/core';
+import { Component, OnInit, PLATFORM_ID, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,7 +16,8 @@ import { GoogleAuthService } from '../services/google-auth.service';
 	selector: 'app-login-page',
 	imports: [MatIconModule, DynamicFormComponent],
 	templateUrl: './login-page.html',
-	styleUrl: './login-page.css'
+	styleUrl: './login-page.css',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginPage implements OnInit {
 	readonly TEXT = LOGIN_PAGE_TEXT;

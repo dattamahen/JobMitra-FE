@@ -49,7 +49,6 @@ export interface JobOption {
 
 @Component({
 	selector: 'app-applications-received',
-	standalone: true,
 	imports: [
 		MatCardModule,
 		MatTableModule,

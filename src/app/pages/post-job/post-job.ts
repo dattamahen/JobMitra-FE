@@ -137,8 +137,6 @@ export class PostJobPage {
 	}
 
 	private updateFormData(formData: any): void {
-		console.log('Updating form with data:', formData);
-		
 		// Convert dot notation to nested objects
 		const nestedData: any = {};
 		Object.keys(formData).forEach(key => {
@@ -158,9 +156,7 @@ export class PostJobPage {
 			}
 		});
 		
-		console.log('Nested data:', nestedData);
 		this.jobForm.patchValue(nestedData, { emitEvent: false });
-		console.log('Form value after update:', this.jobForm.value);
 	}
 
 
@@ -374,24 +370,12 @@ export class PostJobPage {
 
 	// Form submission
 	async onSubmit(): Promise<void> {
-		console.log('=== Form Submission Debug ===');
-		console.log('Form Valid:', this.jobForm.valid);
-		console.log('Form Value:', this.jobForm.value);
-		
 		const formErrors = this.getFormValidationErrors();
-		console.log('Form Errors:', formErrors);
 		
-		// Show specific missing fields
 		if (Object.keys(formErrors).length > 0) {
-			console.error('❌ Invalid fields:');
-			Object.keys(formErrors).forEach(field => {
-				console.error(`  - ${field}:`, formErrors[field]);
-			});
 		}
 		
-		// Custom validation for arrays
 		const validationErrors = this.validateArrayFields();
-		console.log('Array Validation Errors:', validationErrors);
 		
 		if (this.jobForm.invalid || validationErrors.length > 0) {
 			this.markFormGroupTouched(this.jobForm);
@@ -407,7 +391,6 @@ export class PostJobPage {
 				? `Missing required fields: ${allErrors.join(', ')}`
 				: 'Please fill in all required fields';
 			
-			console.error('Validation failed:', errorMessage);
 			this.snackBar.open(errorMessage, this.TEXT.snackbar.close, {
 				duration: 10000,
 				panelClass: ['error-snackbar']
@@ -432,9 +415,7 @@ export class PostJobPage {
 				delete jobData.application_instructions;
 			}
 			
-			console.log('Submitting job data:', jobData);
 			const result = await this.hrService.createJob(jobData);
-			console.log('Job created successfully:', result);
 			
 			this.snackBar.open(this.TEXT.snackbar.jobPosted, this.TEXT.snackbar.close, {
 				duration: 3000,
@@ -445,7 +426,6 @@ export class PostJobPage {
 			
 		} catch (error: any) {
 			this.isSubmitting = false;
-			console.error('Error posting job:', error);
 			
 			// Handle validation errors from backend
 			if (error.error?.errors && Array.isArray(error.error.errors)) {

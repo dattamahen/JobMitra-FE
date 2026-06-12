@@ -21,7 +21,6 @@ import { AuthService } from '../../services/auth.service';
 
 @Component({
 	selector: 'app-dashboard-page',
-	standalone: true,
 	imports: [
 		CommonModule,
 		MatCardModule, 
