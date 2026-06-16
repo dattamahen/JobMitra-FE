@@ -1,4 +1,4 @@
-import { ResumeData, skillName, formatDuration, formatYear } from './resume-data.model';
+import { ResumeData, skillName, formatDuration, formatYear, formatDescription } from './resume-data.model';
 
 export function creativeTemplate(d: ResumeData): string {
 	const name = d.personalInfo?.full_name || 'Your Name';
@@ -39,7 +39,7 @@ export function creativeTemplate(d: ResumeData): string {
 <meta charset="UTF-8">
 <style>
 	* { margin: 0; padding: 0; box-sizing: border-box; }
-	body { font-family: 'Segoe UI', Arial, sans-serif; color: #333; font-size: 12px; line-height: 1.5; background: #fff; }
+	body { font-family: 'Segoe UI', Arial, sans-serif; color: #444; font-size: 12px; line-height: 1.5; background: #fff; }
 	table { width: 100%; border-collapse: collapse; table-layout: fixed; }
 	td { vertical-align: top; overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; }
 
@@ -61,17 +61,17 @@ export function creativeTemplate(d: ResumeData): string {
 		font-size: 15px; font-weight: 700; color: #222; margin-bottom: 4px;
 	}
 	.sb-icon { font-size: 16px; }
-	.sb-line { width: 60%; height: 2px; background: #333; margin-bottom: 14px; }
+	.sb-line { width: 60%; height: 2px; background: #222; margin-bottom: 14px; }
 	.sb-list { list-style: disc; padding-left: 20px; margin: 0; }
-	.sb-list li { font-size: 11.5px; margin-bottom: 4px; color: #333; }
+	.sb-list li { font-size: 11.5px; margin-bottom: 4px; color: #444; }
 	.detail-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 11.5px; }
-	.detail-label { color: #555; }
+	.detail-label { color: #666; }
 	.detail-value { font-weight: 600; color: #222; text-align: right; max-width: 55%; }
 
 	/* Main */
 	.main { width: 67%; padding: 28px 28px 28px 24px; }
-	.main-name { font-size: 30px; font-weight: 700; color: #111; line-height: 1.15; }
-	.main-title { font-size: 13px; color: #555; margin: 4px 0 16px; }
+	.main-name { font-size: 30px; font-weight: 700; color: #222; line-height: 1.15; }
+	.main-title { font-size: 13px; color: #666; margin: 4px 0 16px; }
 
 	/* Contact bar */
 	.contact-bar {
@@ -81,29 +81,31 @@ export function creativeTemplate(d: ResumeData): string {
 	}
 	.contact-cell { flex: 1; text-align: center; font-size: 11px; color: #444; }
 	.contact-cell:not(:last-child) { border-right: 1px solid #ccc; }
-	.contact-cell-icon { font-size: 16px; display: block; margin-bottom: 3px; color: #333; }
+	.contact-cell-icon { font-size: 16px; display: block; margin-bottom: 3px; color: #222; }
 
 	/* Section heading */
 	.sec-heading {
 		display: flex; align-items: center; gap: 8px;
 		font-size: 16px; font-weight: 700; color: #222; margin: 22px 0 4px;
 	}
-	.sec-icon { font-size: 18px; color: #444; }
-	.sec-line { height: 2px; background: #333; margin-bottom: 14px; }
+	.sec-icon { font-size: 18px; color: #222; }
+	.sec-line { height: 2px; background: #222; margin-bottom: 14px; }
 
 	.summary-text { font-size: 11.5px; line-height: 1.65; color: #444; text-align: justify; }
 
 	/* Badge */
 	.badge {
 		display: inline-block; background: #eee; padding: 3px 10px; border-radius: 2px;
-		font-size: 11px; font-weight: 500; color: #333; margin-bottom: 6px;
+		font-size: 11px; font-weight: 500; color: #444; margin-bottom: 6px;
 	}
 
 	/* Experience item */
 	.exp-item { margin-bottom: 18px; }
 	.exp-role { font-size: 12px; font-weight: 500; color: #222; }
-	.exp-company { font-size: 12px; font-weight: 700; color: #111; margin-bottom: 4px; }
-	.exp-desc { font-size: 11px; line-height: 1.6; color: #555; text-align: justify; }
+	.exp-company { font-size: 12px; font-weight: 700; color: #222; margin-bottom: 4px; }
+	.exp-desc { font-size: 11px; line-height: 1.6; color: #444; text-align: justify; }
+	.exp-desc ul { margin: 4px 0 0; padding-left: 18px; list-style: disc; }
+	.exp-desc li { font-size: 11px; line-height: 1.6; color: #444; margin-bottom: 2px; }
 
 	/* Education item */
 	.edu-item { margin-bottom: 14px; }
@@ -112,8 +114,8 @@ export function creativeTemplate(d: ResumeData): string {
 	/* Projects */
 	.proj-item { margin-bottom: 12px; }
 	.proj-name { font-size: 12px; font-weight: 600; color: #222; }
-	.proj-desc { font-size: 11px; color: #555; margin-top: 2px; }
-	.proj-tech { font-size: 10px; color: #888; margin-top: 3px; }
+	.proj-desc { font-size: 11px; color: #444; margin-top: 2px; }
+	.proj-tech { font-size: 10px; color: #666; margin-top: 3px; }
 </style>
 </head>
 <body>
@@ -195,7 +197,7 @@ export function creativeTemplate(d: ResumeData): string {
 				<div class="badge">${formatDuration(e)}</div>
 				<div class="exp-role">${e.position}</div>
 				<div class="exp-company">${e.company}</div>
-				${e.description ? `<div class="exp-desc">${e.description}</div>` : ''}
+				${e.description ? `<div class="exp-desc">${formatDescription(e.description)}</div>` : ''}
 			</div>`).join('')}
 			` : ''}
 
@@ -217,8 +219,8 @@ export function creativeTemplate(d: ResumeData): string {
 			<div class="sec-line"></div>
 			${d.certifications.map(c => `
 			<div style="margin-bottom:8px">
-				<div style="font-weight:600;font-size:12px">${c.name}</div>
-				${c.issuer ? `<div style="font-size:11px;color:#555">${c.issuer}</div>` : ''}
+				<div style="font-weight:600;font-size:12px;color:#222">${c.name}</div>
+				${c.issuer ? `<div style="font-size:11px;color:#666">${c.issuer}</div>` : ''}
 			</div>`).join('')}
 			` : ''}
 		</td>

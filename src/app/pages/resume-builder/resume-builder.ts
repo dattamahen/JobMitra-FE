@@ -989,7 +989,7 @@ export class ResumeBuilderPage implements OnInit {
 	technicalSkillCount = signal(1);
 
 	// Template management
-	selectedTemplate = signal('modern');
+	selectedTemplate = signal('standard');
 	isFullscreen = signal(false);
 	
 	// Layout management
@@ -1211,13 +1211,12 @@ export class ResumeBuilderPage implements OnInit {
 		tempElement.style.position = 'absolute';
 		tempElement.style.left = '-9999px';
 		tempElement.style.width = '210mm';
-		tempElement.style.padding = '0';
 		tempElement.style.fontFamily = 'Arial, sans-serif';
 		tempElement.style.fontSize = '12px';
 		tempElement.style.lineHeight = '1.4';
 		tempElement.style.color = '#000';
 		tempElement.style.backgroundColor = '#fff';
-		tempElement.style.overflow = 'wrap';
+		tempElement.style.overflow = 'hidden';
 
 		tempElement.innerHTML = this.generateResumeHTML(resume);
 		document.body.appendChild(tempElement);
@@ -1267,8 +1266,8 @@ export class ResumeBuilderPage implements OnInit {
 
 	private generateResumeHTML(resume: Resume): string {
 		const data = {
-			personalInfo: this.personalInfoValues,
-			summary: this.summaryValues?.summary || '',
+			personalInfo: this.personalInfoForm.value,
+			summary: this.summaryForm.value?.summary || '',
 			experience: this.convertExperienceValues(),
 			education: this.convertEducationValues(),
 			skills: this.convertSkillsValues(),
@@ -1276,7 +1275,8 @@ export class ResumeBuilderPage implements OnInit {
 			certifications: this.convertCertificationsValues()
 		};
 
-		return this.resumeTemplateService.getTemplateHTML(this.selectedTemplate(), data);
+		const templateId = this.selectedTemplate();
+		return this.resumeTemplateService.getTemplateHTML(templateId, data);
 	}
 
 

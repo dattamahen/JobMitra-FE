@@ -3,42 +3,40 @@ import { isPlatformBrowser } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 
-import { DynamicFormComponent } from '../shared/components/dynamic-form/dynamic-form.component';
-import { FormConfig } from '../shared/interfaces/form.interfaces';
-import { LOGIN_FORM_CONFIG, SIGNUP_FORM_CONFIG, FORGOT_PASSWORD_FORM_CONFIG, RESET_PASSWORD_FORM_CONFIG } from '../shared/components/dynamic-form/form-configs';
-import { LOGIN_FEATURES, ENTERPRISE_STATS, CERTIFICATIONS, LOGIN_PAGE_TEXT } from '../data/login-page-data';
-import { LOGIN_PAGE_CONSTANTS } from './login-page.constants';
+import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
+import { FormConfig } from '../../shared/interfaces/form.interfaces';
+import { LOGIN_FORM_CONFIG, SIGNUP_FORM_CONFIG, FORGOT_PASSWORD_FORM_CONFIG, RESET_PASSWORD_FORM_CONFIG } from '../../shared/components/dynamic-form/form-configs';
+import { LOGIN_PAGE_TEXT } from '../../data/login-page-data';
+import { LOGIN_PAGE_CONSTANTS } from '../../login-page/login-page.constants';
 
-import { AuthService, LoginRequest, LoginResponse, RegisterRequest } from '../services/auth.service';
-import { GoogleAuthService } from '../services/google-auth.service';
+import { AuthService, LoginResponse, RegisterRequest } from '../../services/auth.service';
+import { GoogleAuthService } from '../../services/google-auth.service';
 
 @Component({
-	selector: 'app-login-page',
+	selector: 'app-landing',
 	imports: [MatIconModule, DynamicFormComponent],
-	templateUrl: './login-page.html',
-	styleUrl: './login-page.css',
+	templateUrl: './landing.html',
+	styleUrl: './landing.css',
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LoginPage implements OnInit {
+export class LandingPage implements OnInit {
 	readonly TEXT = LOGIN_PAGE_TEXT;
+	readonly CONSTANTS = LOGIN_PAGE_CONSTANTS;
+	readonly showAuthPanel = signal(false);
 	readonly isSignupMode = signal(false);
 	readonly isForgotPasswordMode = signal(false);
 	readonly isResetPasswordMode = signal(false);
 	errorMessage = '';
 	successMessage = '';
 	resetToken = '';
-	readonly CONSTANTS = LOGIN_PAGE_CONSTANTS;
-	readonly features = LOGIN_FEATURES;
-	readonly stats = ENTERPRISE_STATS;
-	readonly certifications = CERTIFICATIONS;
-	
+
 	loginFormConfig: FormConfig = { ...LOGIN_FORM_CONFIG, loading: false };
 	signupFormConfig: FormConfig = { ...SIGNUP_FORM_CONFIG, loading: false };
 	forgotPasswordFormConfig: FormConfig = { ...FORGOT_PASSWORD_FORM_CONFIG, loading: false };
 	resetPasswordFormConfig: FormConfig = { ...RESET_PASSWORD_FORM_CONFIG, loading: false };
 
 	private platformId = inject(PLATFORM_ID);
-	
+
 	constructor(
 		private router: Router,
 		private route: ActivatedRoute,
@@ -49,7 +47,7 @@ export class LoginPage implements OnInit {
 	ngOnInit(): void {
 		const isAuth = this.authService.isAuthenticated();
 		const userType = this.authService.getUserType();
-		
+
 		if (isAuth && userType) {
 			this.redirectBasedOnUserType(userType);
 		}
@@ -58,25 +56,42 @@ export class LoginPage implements OnInit {
 			if (params['token']) {
 				this.resetToken = params['token'];
 				this.isResetPasswordMode.set(true);
+				this.showAuthPanel.set(true);
 			}
 		});
-		
+	}
+
+	openAuthPanel(): void {
+		this.showAuthPanel.set(true);
 		this.initializeGoogleSignIn();
 	}
-	
+
+	openSignupPanel(): void {
+		this.isSignupMode.set(true);
+		this.isForgotPasswordMode.set(false);
+		this.isResetPasswordMode.set(false);
+		this.showAuthPanel.set(true);
+	}
+
+	closeAuthPanel(): void {
+		this.showAuthPanel.set(false);
+		this.errorMessage = '';
+		this.successMessage = '';
+	}
+
 	private async initializeGoogleSignIn(): Promise<void> {
 		if (!isPlatformBrowser(this.platformId)) return;
-		
+
 		try {
 			await this.googleAuthService.initializeGoogleSignIn();
-			
+
 			if (!this.isSignupMode() && !this.isForgotPasswordMode() && !this.isResetPasswordMode()) {
 				setTimeout(() => {
 					const container = document.getElementById('google-signin-button');
 					if (container) {
 						this.googleAuthService.renderSignInButton('google-signin-button');
 					}
-				}, 100);
+				}, 200);
 			}
 		} catch (error) {
 			console.error('Failed to initialize Google Sign-In:', error);
@@ -109,14 +124,14 @@ export class LoginPage implements OnInit {
 		this.isResetPasswordMode.set(false);
 		this.errorMessage = '';
 		this.successMessage = '';
-		
+
 		if (!this.isSignupMode() && isPlatformBrowser(this.platformId)) {
 			setTimeout(() => {
 				const container = document.getElementById('google-signin-button');
 				if (container) {
 					this.googleAuthService.renderSignInButton('google-signin-button');
 				}
-			}, 100);
+			}, 200);
 		}
 	}
 
@@ -134,7 +149,6 @@ export class LoginPage implements OnInit {
 		this.isSignupMode.set(false);
 		this.errorMessage = '';
 		this.successMessage = '';
-		this.router.navigate(['/login']);
 	}
 
 	onForgotPassword(formData: any): void {

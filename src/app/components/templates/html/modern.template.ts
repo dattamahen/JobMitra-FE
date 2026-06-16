@@ -1,4 +1,4 @@
-import { ResumeData, skillName, formatDuration, formatYear } from './resume-data.model';
+import { ResumeData, skillName, formatDuration, formatYear, formatDescription } from './resume-data.model';
 
 export function modernTemplate(d: ResumeData): string {
 	return `<!DOCTYPE html>
@@ -15,6 +15,8 @@ export function modernTemplate(d: ResumeData): string {
 	.main h1 { margin: 0; font-size: 28px; color: #2c3e50; }
 	.main h2 { margin-top: 20px; color: #2c3e50; }
 	.main p { font-size: 13px; line-height: 1.5; }
+	.main ul { margin: 4px 0 0; padding-left: 18px; list-style: disc; }
+	.main li { font-size: 13px; line-height: 1.5; color: #333; margin-bottom: 2px; }
 	.summary { font-size: 14px; color: #7f8c8d; }
 </style>
 </head>
@@ -52,7 +54,7 @@ export function modernTemplate(d: ResumeData): string {
 			<p>
 				<b>${e.company}</b> — ${e.position}<br>
 				<i>${formatDuration(e)}</i><br>
-				${e.description || ''}
+				${e.description ? formatDescription(e.description) : ''}
 			</p>`).join('')}` : ''}
 
 			${d.education.length ? `

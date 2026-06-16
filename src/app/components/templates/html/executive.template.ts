@@ -1,4 +1,4 @@
-import { ResumeData, skillName, formatDuration, formatYear } from './resume-data.model';
+import { ResumeData, skillName, formatDuration, formatYear, formatDescription } from './resume-data.model';
 
 export function executiveTemplate(d: ResumeData): string {
 	const name = d.personalInfo?.full_name || 'Your Name';
@@ -87,6 +87,8 @@ export function executiveTemplate(d: ResumeData): string {
 	.work-company { font-size: 12px; color: #333; }
 	.work-date { font-size: 11px; color: #666; margin-bottom: 6px; }
 	.work-desc { font-size: 11px; line-height: 1.6; color: #555; text-align: justify; margin-top: 6px; }
+	.work-desc ul { margin: 4px 0 0; padding-left: 18px; list-style: disc; }
+	.work-desc li { font-size: 11px; line-height: 1.6; color: #555; margin-bottom: 2px; }
 
 	/* Education */
 	.edu-item { margin-bottom: 12px; }
@@ -185,7 +187,7 @@ export function executiveTemplate(d: ResumeData): string {
 				<div class="work-role">${e.position}</div>
 				<div class="work-company">${e.company}</div>
 				<div class="work-date">${formatDuration(e)}</div>
-				${e.description ? `<div class="work-desc">${e.description}</div>` : ''}
+				${e.description ? `<div class="work-desc">${formatDescription(e.description)}</div>` : ''}
 			</div>`).join('')}
 			` : ''}
 

@@ -4,7 +4,8 @@ import {
 	modernTemplate,
 	classicTemplate,
 	creativeTemplate,
-	executiveTemplate
+	executiveTemplate,
+	standardTemplate
 } from '../components/templates/html';
 
 export type { ResumeData };
@@ -17,6 +18,7 @@ export class ResumeTemplateService {
 			case 'classic': return classicTemplate(data);
 			case 'creative': return creativeTemplate(data);
 			case 'executive': return executiveTemplate(data);
+			case 'standard': return standardTemplate(data);
 			case 'modern':
 			default: return modernTemplate(data);
 		}

@@ -1,0 +1,493 @@
+<!-- NAV -->
+<nav>
+  <div class="nav-left">
+    <div class="logo-mark">JM</div>
+    <span class="logo-name">Job<span>Mouka</span></span>
+  </div>
+  <div class="nav-links">
+    <a>Products</a>
+    <a>Job Portal</a>
+    <a>Resume Builder</a>
+    <a>Pricing</a>
+    <a>About</a>
+  </div>
+  <div class="nav-right">
+    <a class="nav-login" (click)="openAuthPanel()">Log in</a>
+    <button class="nav-cta" (click)="openSignupPanel()">Get started free</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero-wrapper">
+  <div class="hero-grid">
+    <div class="hero-text">
+      <div class="hero-badge"><i class="ti ti-bolt"></i> Now in public beta — free for 30 days</div>
+      <h1>The smarter way to <span class="brand-text">hire & get hired</span></h1>
+      <p>JobMouka brings a powerful job portal and an AI resume builder together — helping candidates land jobs faster and companies find the right talent.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" (click)="openSignupPanel()"><i class="ti ti-rocket"></i> Start for free</button>
+        <button class="btn-secondary"><i class="ti ti-player-play"></i> Watch demo</button>
+      </div>
+      <div class="hero-social-proof">
+        <div class="avatar-stack">
+          <div class="avatar" style="background:#6366f1">AK</div>
+          <div class="avatar" style="background:#4831af">MR</div>
+          <div class="avatar" style="background:#0891b2">SP</div>
+          <div class="avatar" style="background:#059669">YT</div>
+        </div>
+        <span class="social-proof-text"><strong>2,400+ professionals</strong> already using JobMouka</span>
+      </div>
+    </div>
+
+    <!-- Dashboard Preview -->
+    <div class="hero-preview">
+      <div class="dashboard-card">
+        <div class="dc-header">
+          <span class="dc-title">Recommended Jobs</span>
+          <span class="dc-badge">12 new today</span>
+        </div>
+        <div class="job-list">
+          <div class="job-item featured">
+            <div class="job-logo" style="background:var(--brand-light);color:var(--brand)">G</div>
+            <div class="job-info">
+              <div class="job-title">Senior Frontend Engineer</div>
+              <div class="job-meta"><span><i class="ti ti-building"></i> Google</span><span><i class="ti ti-map-pin"></i> Bangalore</span></div>
+            </div>
+            <div class="job-right">
+              <span class="job-salary">₹32L/yr</span>
+              <button class="apply-btn">Apply</button>
+            </div>
+          </div>
+          <div class="job-item">
+            <div class="job-logo" style="background:#fef3c7;color:#92400e">A</div>
+            <div class="job-info">
+              <div class="job-title">Product Designer</div>
+              <div class="job-meta"><span><i class="ti ti-building"></i> Amazon</span><span><i class="ti ti-map-pin"></i> Remote</span></div>
+            </div>
+            <div class="job-right">
+              <span class="job-salary">₹28L/yr</span>
+              <button class="apply-btn">Apply</button>
+            </div>
+          </div>
+          <div class="job-item">
+            <div class="job-logo" style="background:#f0fdf4;color:#15803d">M</div>
+            <div class="job-info">
+              <div class="job-title">Backend Engineer</div>
+              <div class="job-meta"><span><i class="ti ti-building"></i> Microsoft</span><span><i class="ti ti-map-pin"></i> Hyderabad</span></div>
+            </div>
+            <div class="job-right">
+              <span class="job-salary">₹24L/yr</span>
+              <button class="apply-btn">Apply</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="floating-card fc-top">
+        <div class="fc-label">Profile strength</div>
+        <div class="fc-value">94%</div>
+        <div class="fc-sub"><i class="ti ti-trending-up"></i> +12% this week</div>
+      </div>
+      <div class="floating-card fc-bottom">
+        <div class="fc-label">Applications sent</div>
+        <div class="fc-value">24</div>
+        <div class="fc-sub"><i class="ti ti-check"></i> 6 interviews scheduled</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TRUST LOGOS -->
+<div class="logos-section">
+  <div class="logos-inner">
+    <p class="logos-label">Trusted by teams at</p>
+    <div class="logos-row">
+      <div class="logo-pill"><i class="ti ti-building-skyscraper"></i>Infosys</div>
+      <div class="logo-pill"><i class="ti ti-building-community"></i>TCS</div>
+      <div class="logo-pill"><i class="ti ti-brand-google"></i>Google</div>
+      <div class="logo-pill"><i class="ti ti-building"></i>Wipro</div>
+      <div class="logo-pill"><i class="ti ti-brand-apple"></i>Apple</div>
+      <div class="logo-pill"><i class="ti ti-building-bank"></i>Razorpay</div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<div class="section">
+  <div class="section-label">Our products</div>
+  <h2 class="section-title">Two tools. One platform.</h2>
+  <p class="section-sub">Everything you need — whether you're a job seeker or a hiring team.</p>
+  <div class="products-grid">
+    <div class="product-card purple">
+      <span class="product-tag">Most popular</span>
+      <div class="product-icon solid"><i class="ti ti-briefcase"></i></div>
+      <h3>Job Portal</h3>
+      <p class="product-desc">A smart, AI-powered job board connecting top candidates with the best companies. Apply in one click, track applications, and get matched intelligently.</p>
+      <div class="feature-item"><i class="ti ti-check"></i> AI-powered job recommendations</div>
+      <div class="feature-item"><i class="ti ti-check"></i> One-click apply with saved profile</div>
+      <div class="feature-item"><i class="ti ti-check"></i> Real-time application tracker</div>
+      <div class="feature-item"><i class="ti ti-check"></i> Company reviews & salary insights</div>
+      <div class="feature-item"><i class="ti ti-check"></i> Recruiter direct messaging</div>
+      <a class="product-link">Explore Job Portal <i class="ti ti-arrow-right"></i></a>
+    </div>
+    <div class="product-card white">
+      <span class="product-tag new">New</span>
+      <div class="product-icon light"><i class="ti ti-file-text"></i></div>
+      <h3>Resume Builder</h3>
+      <p class="product-desc">Build an ATS-optimized, professional resume in minutes. Let AI suggest the right keywords and structure for your target role — zero design skills needed.</p>
+      <div class="feature-item"><i class="ti ti-check"></i> 30+ ATS-friendly templates</div>
+      <div class="feature-item"><i class="ti ti-check"></i> AI keyword & content suggestions</div>
+      <div class="feature-item"><i class="ti ti-check"></i> Export to PDF, DOCX, or link</div>
+      <div class="feature-item"><i class="ti ti-check"></i> Resume score & improvement tips</div>
+      <div class="feature-item"><i class="ti ti-check"></i> Cover letter generator included</div>
+      <a class="product-link">Explore Resume Builder <i class="ti ti-arrow-right"></i></a>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-section">
+  <div class="stats-header">
+    <p class="stats-label">By the numbers</p>
+    <h2>Results that speak for themselves</h2>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="stat-number">50<span>K+</span></div>
+      <div class="stat-label">Active job listings</div>
+      <div class="stat-sub">Updated daily</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">2.<span>4M</span></div>
+      <div class="stat-label">Resumes created</div>
+      <div class="stat-sub">In 2024 alone</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">87<span>%</span></div>
+      <div class="stat-label">Interview success rate</div>
+      <div class="stat-sub">vs 34% industry avg</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">14<span>d</span></div>
+      <div class="stat-label">Avg time to placement</div>
+      <div class="stat-sub">vs 60d industry avg</div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="section">
+  <div class="section-label">How it works</div>
+  <h2 class="section-title">From zero to placed — in 5 steps</h2>
+  <p class="section-sub">A clear path from sign-up to your dream job offer.</p>
+
+  <div class="steps-row">
+    <div class="step-col">
+      <div class="step-bubble active">
+        <i class="ti ti-user-plus"></i>
+        <span class="step-num-badge">1</span>
+      </div>
+      <h4>Create account</h4>
+      <p>Sign up in 60 seconds. Build your profile and tell us what you're looking for.</p>
+    </div>
+    <div class="step-col">
+      <div class="step-bubble">
+        <i class="ti ti-file-check"></i>
+        <span class="step-num-badge">2</span>
+      </div>
+      <h4>Generate ATS-friendly CV</h4>
+      <p>One click. AI builds your optimized, recruiter-ready resume instantly.</p>
+    </div>
+    <div class="step-col">
+      <div class="step-bubble">
+        <i class="ti ti-microphone"></i>
+        <span class="step-num-badge">3</span>
+      </div>
+      <h4>Practice mock interviews</h4>
+      <p>Role-specific AI mock interviews with instant feedback and scoring.</p>
+    </div>
+    <div class="step-col">
+      <div class="step-bubble">
+        <i class="ti ti-mood-happy"></i>
+        <span class="step-num-badge">4</span>
+      </div>
+      <h4>Get confidence</h4>
+      <p>Know your strengths. Walk into every interview feeling fully prepared.</p>
+    </div>
+    <div class="step-col">
+      <div class="step-bubble">
+        <i class="ti ti-trophy"></i>
+        <span class="step-num-badge">5</span>
+      </div>
+      <h4>Get placed</h4>
+      <p>Land your dream role. Celebrate — then come back and refer a friend.</p>
+    </div>
+  </div>
+
+  <div class="steps-detail">
+    <div class="step-detail-card active">
+      <div class="sd-label">Step 1</div>
+      <div class="sd-text">60 sec signup</div>
+    </div>
+    <div class="step-detail-card">
+      <div class="sd-label">Step 2</div>
+      <div class="sd-text">AI generates CV</div>
+    </div>
+    <div class="step-detail-card">
+      <div class="sd-label">Step 3</div>
+      <div class="sd-text">AI mock interview</div>
+    </div>
+    <div class="step-detail-card">
+      <div class="sd-label">Step 4</div>
+      <div class="sd-text">Build confidence</div>
+    </div>
+    <div class="step-detail-card">
+      <div class="sd-label">Step 5</div>
+      <div class="sd-text">Get the offer</div>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<div class="testimonials">
+  <div class="test-inner">
+    <div class="section-label">Testimonials</div>
+    <h2 class="section-title">Loved by thousands of professionals</h2>
+    <div class="test-grid">
+      <div class="test-card">
+        <div class="stars">
+          <i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i>
+        </div>
+        <p class="test-text">"The AI resume builder got me 3x more callbacks. The mock interview feature made me walk in confident — I got the offer on my first try."</p>
+        <div class="test-author">
+          <div class="test-avatar" style="background:#6366f1">AK</div>
+          <div>
+            <div class="test-name">Arjun Kapoor</div>
+            <div class="test-role">SDE-2 at Flipkart</div>
+          </div>
+        </div>
+      </div>
+      <div class="test-card">
+        <div class="stars">
+          <i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i>
+        </div>
+        <p class="test-text">"One-click CV generation saved me hours. It was ATS-optimized and I started getting shortlisted within days of applying."</p>
+        <div class="test-author">
+          <div class="test-avatar" style="background:#059669">SP</div>
+          <div>
+            <div class="test-name">Sneha Patel</div>
+            <div class="test-role">Product Manager at Razorpay</div>
+          </div>
+        </div>
+      </div>
+      <div class="test-card">
+        <div class="stars">
+          <i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i>
+        </div>
+        <p class="test-text">"The mock interview tool is a game changer. I practiced 5 sessions and felt totally prepared. Got placed at my dream company in 2 weeks."</p>
+        <div class="test-author">
+          <div class="test-avatar" style="background:var(--brand)">RT</div>
+          <div>
+            <div class="test-name">Rahul Tiwari</div>
+            <div class="test-role">Engineering Head at Swiggy</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<div class="section">
+  <div class="section-label">Pricing</div>
+  <h2 class="section-title">Simple, honest pricing</h2>
+  <p class="section-sub">Start free. Upgrade when you're ready. No hidden fees, ever.</p>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-tier">Free</div>
+      <div class="price-amount"><sup>₹</sup>0</div>
+      <div class="price-period">Forever free, no credit card needed</div>
+      <div class="pf-item"><i class="ti ti-check"></i> 10 job applications/month</div>
+      <div class="pf-item"><i class="ti ti-check"></i> 1 ATS resume template</div>
+      <div class="pf-item"><i class="ti ti-check"></i> Basic mock interview (3/month)</div>
+      <div class="pf-item muted"><i class="ti ti-x"></i> AI recommendations</div>
+      <div class="pf-item muted"><i class="ti ti-x"></i> Unlimited mock interviews</div>
+      <div class="pf-item muted"><i class="ti ti-x"></i> Recruiter messaging</div>
+      <button class="btn-price outline" (click)="openSignupPanel()">Get started free</button>
+    </div>
+    <div class="price-card popular">
+      <div class="popular-badge">Most popular</div>
+      <div class="price-tier">Pro</div>
+      <div class="price-amount"><sup>₹</sup>499</div>
+      <div class="price-period">per month, billed monthly</div>
+      <div class="pf-item"><i class="ti ti-check"></i> Unlimited applications</div>
+      <div class="pf-item"><i class="ti ti-check"></i> 30+ ATS resume templates</div>
+      <div class="pf-item"><i class="ti ti-check"></i> Unlimited mock interviews</div>
+      <div class="pf-item"><i class="ti ti-check"></i> AI keyword suggestions</div>
+      <div class="pf-item"><i class="ti ti-check"></i> Resume score & tips</div>
+      <div class="pf-item muted"><i class="ti ti-x"></i> Direct recruiter messaging</div>
+      <button class="btn-price primary" (click)="openSignupPanel()">Start 30-day free trial</button>
+    </div>
+    <div class="price-card">
+      <div class="price-tier">Business</div>
+      <div class="price-amount"><sup>₹</sup>999</div>
+      <div class="price-period">per month, billed monthly</div>
+      <div class="pf-item"><i class="ti ti-check"></i> Everything in Pro</div>
+      <div class="pf-item"><i class="ti ti-check"></i> Direct recruiter messaging</div>
+      <div class="pf-item"><i class="ti ti-check"></i> Cover letter generator</div>
+      <div class="pf-item"><i class="ti ti-check"></i> Interview prep kit</div>
+      <div class="pf-item"><i class="ti ti-check"></i> Salary negotiation guide</div>
+      <div class="pf-item"><i class="ti ti-check"></i> Dedicated career advisor</div>
+      <button class="btn-price outline" (click)="openSignupPanel()">Get Business</button>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>Your next opportunity is one click away</h2>
+  <p>Join 2,400+ professionals already using JobMouka to build careers they love.</p>
+  <div class="cta-actions">
+    <button class="btn-white" (click)="openSignupPanel()">Get started — it's free</button>
+    <button class="btn-ghost">Talk to sales</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="nav-left">
+        <div class="logo-mark">JM</div>
+        <span class="logo-name">Job<span>Mouka</span></span>
+      </div>
+      <p class="footer-desc">Smart tools for job seekers and hiring teams. Your next career move starts here.</p>
+      <div class="social-links">
+        <button class="social-btn"><i class="ti ti-brand-twitter"></i></button>
+        <button class="social-btn"><i class="ti ti-brand-linkedin"></i></button>
+        <button class="social-btn"><i class="ti ti-brand-instagram"></i></button>
+        <button class="social-btn"><i class="ti ti-brand-github"></i></button>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Products</h5>
+      <a>Job Portal</a>
+      <a>Resume Builder</a>
+      <a>Mock Interviews</a>
+      <a>AI Matching</a>
+      <a>Salary Insights</a>
+    </div>
+    <div class="footer-col">
+      <h5>Company</h5>
+      <a>About us</a>
+      <a>Blog</a>
+      <a>Careers</a>
+      <a>Press</a>
+      <a>Contact</a>
+    </div>
+    <div class="footer-col">
+      <h5>Support</h5>
+      <a>Help center</a>
+      <a>Privacy policy</a>
+      <a>Terms of service</a>
+      <a>Cookie policy</a>
+      <a>Security</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 JobMouka Technologies Pvt. Ltd. All rights reserved.</span>
+    <div class="footer-links">
+      <a>Privacy</a>
+      <a>Terms</a>
+      <a>Cookies</a>
+    </div>
+  </div>
+</footer>
+
+<!-- AUTH SLIDE-IN PANEL -->
+<div class="auth-overlay" [class.open]="showAuthPanel()" (click)="closeAuthPanel()"></div>
+<div class="auth-panel" [class.open]="showAuthPanel()">
+  <button class="auth-panel-close" (click)="closeAuthPanel()"><i class="ti ti-x"></i></button>
+
+  <div class="auth-panel-content">
+    <div class="auth-header">
+      <h1 class="auth-title">{{TEXT.welcome}}</h1>
+      <p class="auth-subtitle">
+        {{ isSignupMode() ? TEXT.subtitles.signup :
+           isForgotPasswordMode() ? TEXT.subtitles.forgotPassword :
+           isResetPasswordMode() ? TEXT.subtitles.resetPassword :
+           TEXT.subtitles.login }}
+      </p>
+    </div>
+
+    @if (errorMessage) {
+      <div class="error-message">
+        <mat-icon>error</mat-icon>
+        {{ errorMessage }}
+      </div>
+    }
+
+    @if (successMessage) {
+      <div class="success-message">
+        <mat-icon>check_circle</mat-icon>
+        {{ successMessage }}
+      </div>
+    }
+
+    @if (!isSignupMode() && !isForgotPasswordMode() && !isResetPasswordMode()) {
+      <div id="google-signin-button" class="google-signin-container"></div>
+      <div class="divider"><span>or</span></div>
+    }
+
+    @if (!isSignupMode() && !isForgotPasswordMode() && !isResetPasswordMode()) {
+      <div class="auth-form">
+        <app-dynamic-form
+          [config]="loginFormConfig"
+          (formSubmit)="onLogin($event)">
+        </app-dynamic-form>
+      </div>
+    }
+
+    @if (isSignupMode()) {
+      <div class="auth-form">
+        <app-dynamic-form
+          [config]="signupFormConfig"
+          (formSubmit)="onSignup($event)">
+        </app-dynamic-form>
+      </div>
+    }
+
+    @if (isForgotPasswordMode()) {
+      <div class="auth-form">
+        <app-dynamic-form
+          [config]="forgotPasswordFormConfig"
+          (formSubmit)="onForgotPassword($event)">
+        </app-dynamic-form>
+      </div>
+    }
+
+    @if (isResetPasswordMode()) {
+      <div class="auth-form">
+        <app-dynamic-form
+          [config]="resetPasswordFormConfig"
+          (formSubmit)="onResetPassword($event)">
+        </app-dynamic-form>
+      </div>
+    }
+
+    <div class="auth-toggle">
+      @if (!isSignupMode() && !isForgotPasswordMode() && !isResetPasswordMode()) {
+        <p>Don't have an account? <a (click)="toggleSignupMode()" class="toggle-link">Create account</a></p>
+        <p><a (click)="toggleForgotPasswordMode()" class="toggle-link">Forgot Password?</a></p>
+      }
+      @if (isSignupMode()) {
+        <p>Already have an account? <a (click)="toggleSignupMode()" class="toggle-link">Sign in</a></p>
+      }
+      @if (isForgotPasswordMode()) {
+        <p><a (click)="toggleForgotPasswordMode()" class="toggle-link">Back to Sign in</a></p>
+      }
+      @if (isResetPasswordMode()) {
+        <p><a (click)="toggleResetPasswordMode()" class="toggle-link">Back to Sign in</a></p>
+      }
+    </div>
+  </div>
+</div>

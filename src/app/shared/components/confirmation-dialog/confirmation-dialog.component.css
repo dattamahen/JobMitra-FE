@@ -1,0 +1,98 @@
+.confirmation-dialog {
+	min-width: 360px;
+	padding: 1.5rem;
+	text-align: center;
+}
+
+.dialog-icon-wrapper {
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	background: rgba(72, 49, 175, 0.1);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto 1rem;
+}
+
+.dialog-icon-wrapper mat-icon {
+	font-size: 28px;
+	width: 28px;
+	height: 28px;
+	color: #4831af;
+}
+
+.dialog-title {
+	margin: 0 0 0.5rem;
+	font-size: 1.125rem;
+	font-weight: 600;
+	color: #1a1a2e;
+}
+
+.dialog-content {
+	padding: 0.5rem 0 1.5rem;
+}
+
+.message {
+	margin: 0;
+	color: #64748b;
+	font-size: 0.875rem;
+	line-height: 1.5;
+}
+
+.warning {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.5rem;
+	background: #fef5e7;
+	border: 1px solid #f6ad55;
+	border-radius: 8px;
+	padding: 0.75rem;
+	margin-top: 1rem;
+	text-align: left;
+}
+
+.warning mat-icon {
+	color: #d69e2e;
+	font-size: 1.125rem;
+	margin-top: 0.125rem;
+}
+
+.warning p {
+	margin: 0;
+	color: #744210;
+	font-size: 0.8rem;
+	line-height: 1.4;
+}
+
+.dialog-actions {
+	justify-content: center;
+	gap: 0.75rem;
+	padding: 0;
+}
+
+.btn-cancel {
+	border-color: #e2e8f0 !important;
+	color: #64748b !important;
+	border-radius: 8px !important;
+	padding: 0 1.5rem !important;
+	font-weight: 500 !important;
+}
+
+.btn-cancel:hover {
+	background: #f8fafc !important;
+}
+
+.btn-confirm {
+	background: #fff !important;
+	color: #4831af !important;
+	border: 2px solid #4831af !important;
+	border-radius: 8px !important;
+	padding: 0 1.5rem !important;
+	font-weight: 600 !important;
+}
+
+.btn-confirm:hover {
+	background: #4831af !important;
+	color: #fff !important;
+}

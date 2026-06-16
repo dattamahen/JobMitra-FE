@@ -1,4 +1,4 @@
-import { ResumeData, skillName, formatDuration, formatYear } from './resume-data.model';
+import { ResumeData, skillName, formatDuration, formatYear, formatDescription } from './resume-data.model';
 
 export function classicTemplate(d: ResumeData): string {
 	const name = d.personalInfo?.full_name || 'Your Name';
@@ -95,6 +95,8 @@ export function classicTemplate(d: ResumeData): string {
 	.timeline-role { font-size: 12px; font-weight: 600; color: #222; }
 	.timeline-company { font-size: 12px; font-weight: 700; color: #333; margin-bottom: 4px; }
 	.timeline-desc { font-size: 11px; line-height: 1.55; color: #555; text-align: justify; }
+	.timeline-desc ul { margin: 4px 0 0; padding-left: 18px; list-style: disc; }
+	.timeline-desc li { font-size: 11px; line-height: 1.55; color: #555; margin-bottom: 2px; }
 </style>
 </head>
 <body>
@@ -188,7 +190,7 @@ export function classicTemplate(d: ResumeData): string {
 				<div class="timeline-content">
 					<div class="timeline-role">${e.position}</div>
 					<div class="timeline-company">${e.company}</div>
-					${e.description ? `<div class="timeline-desc">${e.description}</div>` : ''}
+					${e.description ? `<div class="timeline-desc">${formatDescription(e.description)}</div>` : ''}
 				</div>
 			</div>`).join('')}
 			` : ''}
