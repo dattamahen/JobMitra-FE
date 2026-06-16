@@ -59,6 +59,7 @@ export class JobSearchPage {
 	expandedJobs: { [key: string]: boolean } = {};
 	unmaskedHRDetails: { [key: string]: boolean } = {};
 	jobListings = signal<JobListing[]>([]);
+	private jobMap = new Map<string, JobListing>();
 	filterOptions: any = {};
 	isLoading = true;
 	totalJobs = 0;
@@ -111,7 +112,7 @@ export class JobSearchPage {
 			const scoreA = (a as any).match_score || 0;
 			const scoreB = (b as any).match_score || 0;
 			if (scoreB !== scoreA) return scoreB - scoreA;
-			return new Date(b.posted_date).getTime() - new Date(a.posted_date).getTime();
+			return Date.parse(b.posted_date) - Date.parse(a.posted_date);
 		});
 	});
 
@@ -146,7 +147,10 @@ export class JobSearchPage {
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
 				next: (response) => {
-					this.jobListings.set(response.jobs || []);
+					const jobs = response.jobs || [];
+					this.jobListings.set(jobs);
+					this.jobMap.clear();
+					jobs.forEach(job => this.jobMap.set(job.job_id, job));
 					this.totalJobs = this.filteredJobListings().length;
 					this.currentPage.set(1);
 					
@@ -232,7 +236,7 @@ export class JobSearchPage {
 	}
 
 	getJobById(jobId: string): JobListing | undefined {
-		return this.jobListings().find(job => job.job_id === jobId);
+		return this.jobMap.get(jobId);
 	}
 
 	formatSalary(job: JobListing): string {

@@ -12,7 +12,6 @@ import { FeatureUsageService } from '../services/feature-usage.service';
 
 @Component({
 	selector: 'app-dashboard',
-	standalone: true,
 	imports: [NgComponentOutlet, SideNav, LoadingComponent],
 	templateUrl: './dashboard.html',
 	styleUrl: './dashboard.css'

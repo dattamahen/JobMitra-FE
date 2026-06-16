@@ -54,36 +54,21 @@ export class ApplicationsPage {
 					return;
 				}
 
-				const token = localStorage.getItem('jobmitra_token');
-				if (!token) {
-					this.error.set(this.TEXT.snackbar.loginRequired);
-					this.isLoading.set(false);
-					return;
-				}
+				this.isLoading.set(true);
+				this.error.set('');
 
-				try {
-					const payload = JSON.parse(atob(token.split('.')[1]));
-					const actualUserId = payload.user_id;
-
-					this.isLoading.set(true);
-					this.error.set('');
-
-					this.jobService.getUserAppliedJobs(actualUserId)
-						.pipe(takeUntilDestroyed(this.destroyRef))
-						.subscribe({
-							next: (response) => {
-								this.applications.set(response.applications as unknown as ApplicationData[] || []);
-								this.isLoading.set(false);
-							},
-							error: (error) => {
-								this.error.set(error.error?.detail || this.TEXT.snackbar.loadFailed);
-								this.isLoading.set(false);
-							}
-						});
-				} catch (e) {
-					this.error.set(this.TEXT.snackbar.invalidAuth);
-					this.isLoading.set(false);
-				}
+				this.jobService.getUserAppliedJobs(currentUser.user_id)
+					.pipe(takeUntilDestroyed(this.destroyRef))
+					.subscribe({
+						next: (response) => {
+							this.applications.set(response.applications as unknown as ApplicationData[] || []);
+							this.isLoading.set(false);
+						},
+						error: (error) => {
+							this.error.set(error.error?.detail || this.TEXT.snackbar.loadFailed);
+							this.isLoading.set(false);
+						}
+					});
 			});
 	}
 

@@ -9,6 +9,7 @@ export const RESUME_SECTIONS = [
 ] as const;
 
 export const CV_TEMPLATES = [
+	{ id: 'standard', name: 'Standard', icon: 'text_snippet' },
 	{ id: 'modern', name: 'Modern', icon: 'article' },
 	{ id: 'classic', name: 'Classic', icon: 'description' },
 	{ id: 'creative', name: 'Creative', icon: 'palette' },

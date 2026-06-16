@@ -3,7 +3,7 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci
 
 COPY . .
 RUN npm run build
@@ -15,8 +15,9 @@ WORKDIR /app
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/package*.json ./
 
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
-EXPOSE 4000
+EXPOSE 8080
+ENV PORT=8080
 
-CMD ["npm", "run", "serve:ssr:tech-profile"]
+CMD ["node", "dist/tech-profile/server/server.mjs"]

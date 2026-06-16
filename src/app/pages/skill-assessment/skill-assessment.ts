@@ -1,4 +1,4 @@
-import { Component, OnInit, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef, signal } from '@angular/core';
+import { Component, OnInit, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef, signal, computed } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -23,8 +23,13 @@ import { SKILL_ASSESSMENT_TEXT } from '../../data/skill-assessment-data';
 })
 export class SkillAssessmentPage implements OnInit {
 	readonly TEXT = SKILL_ASSESSMENT_TEXT;
-	skillAssessments: SkillAssessment[] = [];
+	skillAssessments = signal<SkillAssessment[]>([]);
 	interviewHistory = signal<InterviewHistorySession[]>([]);
+
+	technicalSkills = computed(() => this.skillAssessments().filter(s => s.category === 'technical' && !s.isRecommended));
+	softSkills = computed(() => this.skillAssessments().filter(s => s.category === 'soft-skills'));
+	recommendedSkills = computed(() => this.skillAssessments().filter(s => s.isRecommended));
+	hasSkills = computed(() => this.technicalSkills().length > 0 || this.softSkills().length > 0);
 	selectedSkillResources: readonly LearningResource[] = [];
 	showLearningModal = false;
 	selectedSkill = '';
@@ -75,7 +80,10 @@ export class SkillAssessmentPage implements OnInit {
 						currentLevel: skill.current_level,
 						levelText: skill.level_text as SkillAssessment['levelText']
 					}));
-					this.skillAssessments = [...technicalSkills, ...this.skillAssessments.filter(s => s.category !== 'technical' && !s.isRecommended)];
+					this.skillAssessments.update(current => [
+						...technicalSkills,
+						...current.filter(s => s.category !== 'technical' && !s.isRecommended)
+					]);
 					this.cdr.markForCheck();
 				},
 				error: (error) => console.error('Error loading technical skills:', error)
@@ -92,7 +100,10 @@ export class SkillAssessmentPage implements OnInit {
 						currentLevel: skill.current_level,
 						levelText: skill.level_text as SkillAssessment['levelText']
 					}));
-					this.skillAssessments = [...this.skillAssessments.filter(s => s.category !== 'soft-skills'), ...softSkills];
+					this.skillAssessments.update(current => [
+						...current.filter(s => s.category !== 'soft-skills'),
+						...softSkills
+					]);
 					this.cdr.markForCheck();
 				},
 				error: (error) => console.error('Error loading soft skills:', error)
@@ -111,7 +122,10 @@ export class SkillAssessmentPage implements OnInit {
 						isRecommended: true,
 						relevanceReason: skill.relevance_reason
 					}));
-					this.skillAssessments = [...this.skillAssessments.filter(s => !s.isRecommended), ...recommendedSkills];
+					this.skillAssessments.update(current => [
+						...current.filter(s => !s.isRecommended),
+						...recommendedSkills
+					]);
 					this.cdr.markForCheck();
 				},
 				error: (error) => console.error('Error loading recommended skills:', error)
@@ -119,19 +133,19 @@ export class SkillAssessmentPage implements OnInit {
 	}
 
 	getTechnicalSkills(): SkillAssessment[] {
-		return this.skillAssessments.filter(skill => skill.category === 'technical' && !skill.isRecommended);
+		return this.technicalSkills();
 	}
 
 	getSoftSkills(): SkillAssessment[] {
-		return this.skillAssessments.filter(skill => skill.category === 'soft-skills');
+		return this.softSkills();
 	}
 
-	hasSkills(): boolean {
-		return this.getTechnicalSkills().length > 0 || this.getSoftSkills().length > 0;
+	hasSkillsValue(): boolean {
+		return this.hasSkills();
 	}
 
 	getRecommendedSkills(): SkillAssessment[] {
-		return this.skillAssessments.filter(skill => skill.isRecommended);
+		return this.recommendedSkills();
 	}
 
 	navigateToProfile(): void {

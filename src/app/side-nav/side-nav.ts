@@ -12,7 +12,6 @@ import { SIDE_NAV_TEXT } from '../data/nav-data';
 
 @Component({
 	selector: 'app-side-nav',
-	standalone: true,
 	imports: [
 		MatListModule,
 		MatIconModule

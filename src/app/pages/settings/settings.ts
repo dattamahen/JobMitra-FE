@@ -3,7 +3,6 @@ import { SETTINGS_TEXT } from '../../data/settings-data';
 
 @Component({
 	selector: 'app-settings',
-	standalone: true,
 	imports: [],
 	templateUrl: './settings.html',
 	styleUrls: ['./settings.css'],
