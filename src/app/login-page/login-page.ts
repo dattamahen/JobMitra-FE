@@ -7,7 +7,7 @@ import { DynamicFormComponent } from '../shared/components/dynamic-form/dynamic-
 import { FormConfig } from '../shared/interfaces/form.interfaces';
 import { LOGIN_FORM_CONFIG, SIGNUP_FORM_CONFIG, FORGOT_PASSWORD_FORM_CONFIG, RESET_PASSWORD_FORM_CONFIG } from '../shared/components/dynamic-form/form-configs';
 import {
-	LOGIN_JOB_ITEMS, LOGIN_PAGE_TEXT, NAV_LINKS, TRUST_LOGOS,
+	LOGIN_PAGE_TEXT, TRUST_LOGOS,
 	PRODUCT_CARDS, STATS, STEPS, TESTIMONIALS, PRICING, FOOTER_LINKS
 } from '../data/login-page-data';
 import { LOGIN_PAGE_CONSTANTS } from './login-page.constants';
@@ -25,8 +25,6 @@ import { GoogleAuthService } from '../services/google-auth.service';
 export class LoginPage implements OnInit {
 	readonly TEXT = LOGIN_PAGE_TEXT;
 	readonly CONSTANTS = LOGIN_PAGE_CONSTANTS;
-	readonly jobItems = LOGIN_JOB_ITEMS;
-	readonly navLinks = NAV_LINKS;
 	readonly trustLogos = TRUST_LOGOS;
 	readonly products = PRODUCT_CARDS;
 	readonly stats = STATS;
@@ -91,6 +89,13 @@ export class LoginPage implements OnInit {
 
 	closePanel(): void {
 		this.isPanelOpen.set(false);
+	}
+
+	scrollTo(sectionId: string): void {
+		const el = document.getElementById(sectionId);
+		if (el) {
+			el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		}
 	}
 
 	private async initializeGoogleSignIn(): Promise<void> {

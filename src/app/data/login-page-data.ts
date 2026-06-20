@@ -1,14 +1,3 @@
-export interface JobItem {
-	title: string;
-	company: string;
-	location: string;
-	salary: string;
-	initial: string;
-	iconBg: string;
-	iconColor: string;
-	featured: boolean;
-}
-
 export interface ProductCard {
 	title: string;
 	description: string;
@@ -54,40 +43,7 @@ export interface PricingCard {
 	btnClass: string;
 }
 
-export const LOGIN_JOB_ITEMS: JobItem[] = [
-	{
-		title: 'Senior Frontend Engineer',
-		company: 'Google',
-		location: 'Bangalore',
-		salary: '₹32L/yr',
-		initial: 'G',
-		iconBg: '#eeebf9',
-		iconColor: '#4831af',
-		featured: true
-	},
-	{
-		title: 'Product Designer',
-		company: 'Amazon',
-		location: 'Remote',
-		salary: '₹28L/yr',
-		initial: 'A',
-		iconBg: '#fef3c7',
-		iconColor: '#92400e',
-		featured: false
-	},
-	{
-		title: 'Backend Engineer',
-		company: 'Microsoft',
-		location: 'Hyderabad',
-		salary: '₹24L/yr',
-		initial: 'M',
-		iconBg: '#f0fdf4',
-		iconColor: '#15803d',
-		featured: false
-	}
-];
-
-export const NAV_LINKS = ['Products', 'Job Portal', 'Resume Builder', 'Pricing', 'About'];
+export const NAV_LINKS = ['Features', 'Job Portal', 'Resume Builder', 'Pricing'];
 
 export const TRUST_LOGOS = [
 	{ icon: 'ti ti-building-skyscraper', name: 'Infosys' },
@@ -101,33 +57,33 @@ export const TRUST_LOGOS = [
 export const PRODUCT_CARDS: ProductCard[] = [
 	{
 		title: 'Job Portal',
-		description: 'A smart, AI-powered job board connecting top candidates with the best companies. Apply in one click, track applications, and get matched intelligently.',
+		description: 'AI-powered job matching that connects you with the right opportunities. Apply in one click, track applications in real-time, and get HR contact details directly.',
 		features: [
-			'AI-powered job recommendations',
-			'One-click apply with saved profile',
-			'Real-time application tracker',
-			'Company reviews & salary insights',
-			'Recruiter direct messaging'
+			'AI match analysis for every job listing',
+			'One-click apply with tailored resume',
+			'Real-time application status tracking',
+			'Direct HR contact details',
+			'Smart filters: location, salary, skills'
 		],
 		icon: 'ti ti-briefcase',
-		tag: 'Most popular',
+		tag: 'Core feature',
 		tagClass: 'tag-popular',
 		cardClass: 'purple',
 		iconClass: 'solid',
 		linkText: 'Explore Job Portal'
 	},
 	{
-		title: 'Resume Builder',
-		description: 'Build an ATS-optimized, professional resume in minutes. Let AI suggest the right keywords and structure for your target role — zero design skills needed.',
+		title: 'AI Resume Builder',
+		description: 'Build an ATS-optimized resume in minutes. AI enhances your content, suggests improvements, and lets you download professional PDFs tailored to each job.',
 		features: [
-			'30+ ATS-friendly templates',
-			'AI keyword & content suggestions',
-			'Export to PDF, DOCX, or link',
-			'Resume score & improvement tips',
-			'Cover letter generator included'
+			'AI-powered content enhancement',
+			'ATS-friendly professional templates',
+			'Auto-tailor resume per job description',
+			'Download as PDF with one click',
+			'Resume score & improvement tips'
 		],
 		icon: 'ti ti-file-text',
-		tag: 'New',
+		tag: 'AI powered',
 		tagClass: 'tag-new',
 		cardClass: 'white',
 		iconClass: 'light',
@@ -136,39 +92,39 @@ export const PRODUCT_CARDS: ProductCard[] = [
 ];
 
 export const STATS: StatItem[] = [
-	{ number: '50', suffix: 'K+', label: 'Active job listings', sub: 'Updated daily' },
-	{ number: '2.', suffix: '4M', label: 'Resumes created', sub: 'In 2024 alone' },
-	{ number: '87', suffix: '%', label: 'Interview success rate', sub: 'vs 34% industry avg' },
+	{ number: '10', suffix: 'K+', label: 'Active job listings', sub: 'Updated daily' },
+	{ number: '5', suffix: 'K+', label: 'Resumes built', sub: 'ATS-optimized' },
+	{ number: '87', suffix: '%', label: 'Interview success rate', sub: 'After mock prep' },
 	{ number: '14', suffix: 'd', label: 'Avg time to placement', sub: 'vs 60d industry avg' }
 ];
 
 export const STEPS: StepItem[] = [
-	{ icon: 'ti ti-user-plus', title: 'Create account', description: 'Sign up in 60 seconds. Build your profile and tell us what you\'re looking for.', active: true, badge: '60 sec signup' },
-	{ icon: 'ti ti-file-check', title: 'Generate ATS-friendly CV', description: 'One click. AI builds your optimized, recruiter-ready resume instantly.', active: false, badge: 'AI generates CV' },
-	{ icon: 'ti ti-microphone', title: 'Practice mock interviews', description: 'Role-specific AI mock interviews with instant feedback and scoring.', active: false, badge: 'AI mock interview' },
-	{ icon: 'ti ti-mood-happy', title: 'Get confidence', description: 'Know your strengths. Walk into every interview feeling fully prepared.', active: false, badge: 'Build confidence' },
-	{ icon: 'ti ti-trophy', title: 'Get placed', description: 'Land your dream role. Celebrate — then come back and refer a friend.', active: false, badge: 'Get the offer' }
+	{ icon: 'ti ti-user-plus', title: 'Create your profile', description: 'Sign up in 60 seconds. Add your skills, experience, and career preferences.', active: true, badge: '60 sec signup' },
+	{ icon: 'ti ti-file-check', title: 'Build your resume', description: 'AI generates an ATS-optimized CV from your profile. Download or tailor per job.', active: false, badge: 'AI builds CV' },
+	{ icon: 'ti ti-microphone', title: 'Practice interviews', description: 'AI mock interviews with real-time voice feedback and scoring per skill.', active: false, badge: 'Voice AI prep' },
+	{ icon: 'ti ti-target', title: 'Apply with confidence', description: 'Match analysis shows fit %. One-click apply with tailored resume attached.', active: false, badge: 'Smart apply' },
+	{ icon: 'ti ti-trophy', title: 'Get placed', description: 'Track applications, connect with HR directly, and land your dream role.', active: false, badge: 'Get the offer' }
 ];
 
 export const TESTIMONIALS: TestimonialItem[] = [
 	{
-		text: 'The AI resume builder got me 3x more callbacks. The mock interview feature made me walk in confident — I got the offer on my first try.',
-		name: 'Arjun Kapoor',
-		role: 'SDE-2 at Flipkart',
+		text: 'The AI resume builder and match analysis got me 3x more callbacks. I could see exactly how well I fit each role before applying.',
+		name: 'Arjun K.',
+		role: 'SDE-2, placed via JobMouka',
 		initials: 'AK',
 		color: '#6366f1'
 	},
 	{
-		text: 'One-click CV generation saved me hours. It was ATS-optimized and I started getting shortlisted within days of applying.',
-		name: 'Sneha Patel',
-		role: 'Product Manager at Razorpay',
+		text: 'Mock interviews with voice AI made all the difference. I practiced 5 sessions and felt fully prepared. Got placed in 2 weeks.',
+		name: 'Sneha P.',
+		role: 'Product Manager, Bangalore',
 		initials: 'SP',
 		color: '#059669'
 	},
 	{
-		text: 'The mock interview tool is a game changer. I practiced 5 sessions and felt totally prepared. Got placed at my dream company in 2 weeks.',
-		name: 'Rahul Tiwari',
-		role: 'Engineering Head at Swiggy',
+		text: 'The resume tailoring feature is a game changer — one click and my CV is optimized for each job description. Saved me hours.',
+		name: 'Rahul T.',
+		role: 'Full Stack Developer',
 		initials: 'RT',
 		color: '#4831af'
 	}
@@ -178,62 +134,62 @@ export const PRICING: PricingCard[] = [
 	{
 		tier: 'Free',
 		price: '0',
-		period: 'Forever free, no credit card needed',
+		period: 'Forever free, no card needed',
 		features: [
-			{ text: '10 job applications/month', included: true },
-			{ text: '1 ATS resume template', included: true },
-			{ text: 'Basic mock interview (3/month)', included: true },
-			{ text: 'AI recommendations', included: false },
-			{ text: 'Unlimited mock interviews', included: false },
-			{ text: 'Recruiter messaging', included: false }
+			{ text: 'Browse & search all jobs', included: true },
+			{ text: 'Build resume with AI', included: true },
+			{ text: 'Profile & skill assessment', included: true },
+			{ text: 'CV download (PDF)', included: false },
+			{ text: 'AI mock interviews', included: false },
+			{ text: 'HR contact details', included: false }
 		],
 		popular: false,
 		btnText: 'Get started free',
 		btnClass: 'outline'
 	},
 	{
-		tier: 'Pro',
-		price: '499',
-		period: 'per month, billed monthly',
+		tier: 'Credits Pack',
+		price: '149',
+		period: 'one-time, use at your pace',
 		features: [
-			{ text: 'Unlimited applications', included: true },
-			{ text: '30+ ATS resume templates', included: true },
-			{ text: 'Unlimited mock interviews', included: true },
-			{ text: 'AI keyword suggestions', included: true },
-			{ text: 'Resume score & tips', included: true },
-			{ text: 'Direct recruiter messaging', included: false }
+			{ text: 'Everything in Free', included: true },
+			{ text: '5 CV downloads (PDF)', included: true },
+			{ text: '5 AI mock interview sessions', included: true },
+			{ text: 'Resume tailor per job', included: true },
+			{ text: 'HR contact details access', included: true },
+			{ text: 'Priority match analysis', included: true }
 		],
 		popular: true,
-		btnText: 'Start 30-day free trial',
+		btnText: 'Buy credits — ₹149',
 		btnClass: 'primary'
 	},
 	{
-		tier: 'Business',
-		price: '999',
-		period: 'per month, billed monthly',
+		tier: 'Unlimited',
+		price: '499',
+		period: 'per month, cancel anytime',
 		features: [
-			{ text: 'Everything in Pro', included: true },
-			{ text: 'Direct recruiter messaging', included: true },
-			{ text: 'Cover letter generator', included: true },
-			{ text: 'Interview prep kit', included: true },
-			{ text: 'Salary negotiation guide', included: true },
+			{ text: 'Everything in Credits', included: true },
+			{ text: 'Unlimited CV downloads', included: true },
+			{ text: 'Unlimited mock interviews', included: true },
+			{ text: 'Unlimited resume tailoring', included: true },
+			{ text: 'All HR contacts unlocked', included: true },
 			{ text: 'Dedicated career advisor', included: true }
 		],
 		popular: false,
-		btnText: 'Get Business',
+		btnText: 'Coming soon',
 		btnClass: 'outline'
 	}
 ];
 
 export const FOOTER_LINKS = {
-	products: ['Job Portal', 'Resume Builder', 'Mock Interviews', 'AI Matching', 'Salary Insights'],
-	company: ['About us', 'Blog', 'Careers', 'Press', 'Contact'],
-	support: ['Help center', 'Privacy policy', 'Terms of service', 'Cookie policy', 'Security']
+	products: ['Job Portal', 'Resume Builder', 'Mock Interviews', 'Skill Assessment', 'Match Analysis'],
+	company: ['About us', 'Blog', 'Careers', 'Contact'],
+	support: ['Help center', 'Privacy policy', 'Terms of service', 'Refund policy']
 };
 
 export const LOGIN_PAGE_TEXT = {
 	subtitle: 'Intelligent Recruitment Platform',
-	description: 'Revolutionize your hiring process with AI-driven recruitment solutions that connect talent with opportunity seamlessly.',
+	description: 'AI-powered job search, resume building, and interview preparation — all in one platform.',
 	welcome: 'Welcome',
 	subtitles: {
 		signup: 'Create your account to get started',
