@@ -1,59 +1,301 @@
-<div class="login-container">
-	<div class="app-info-section">
-		<div class="background-pattern"></div>
-				
-		<div class="app-info-content">
-			<div class="logo-section">
-				<h1 class="app-title">{{CONSTANTS.APP_NAME}}</h1>
-				<p class="app-subtitle">{{TEXT.subtitle}}</p>
-				<p class="app-description">{{TEXT.description}}</p>
-			</div>
-			
-			<div class="features-section">
-				<div class="feature-grid">
-					@for (feature of features; track feature.title) {
-						<div class="feature-card">
-							<div class="feature-icon-wrapper">
-								<div class="feature-icon">{{ feature.icon }}</div>
-							</div>
-							<h2>{{ feature.title }}</h2>
-							<p>{{ feature.description }}</p>
-						</div>
-					}
+<div class="login-page">
+	<div class="background-pattern"></div>
+
+	<!-- Nav -->
+	<nav class="login-nav">
+		<div class="logo-group">
+			<div class="logo-mark">JM</div>
+			<span class="logo-name">Job<span class="brand-text">Mouka</span></span>
+		</div>
+		<div class="nav-links">
+			@for (link of navLinks; track link) {
+				<a>{{link}}</a>
+			}
+		</div>
+		<div class="nav-actions">
+			<a class="nav-login" (click)="openPanel()" (keydown.enter)="openPanel()" tabindex="0">Log in</a>
+			<button class="nav-cta" (click)="openPanel('signup')">Get started free</button>
+		</div>
+	</nav>
+
+	<!-- Hero -->
+	<div class="hero-wrapper">
+		<div class="hero-grid">
+			<div class="hero-text">
+				<div class="hero-badge">
+					<i class="ti ti-bolt" aria-hidden="true"></i> Now in public beta — free for 30 days
+				</div>
+				<h1 class="hero-title">The smarter way to <span class="brand-highlight">hire & get hired</span></h1>
+				<p class="hero-description">JobMouka brings a powerful job portal and an AI resume builder together — helping candidates land jobs faster and companies find the right talent.</p>
+				<div class="hero-actions">
+					<button class="btn-primary" (click)="openPanel('signup')"><i class="ti ti-rocket" aria-hidden="true"></i> Start for free</button>
+					<button class="btn-secondary" (click)="openPanel()"><i class="ti ti-player-play" aria-hidden="true"></i> Watch demo</button>
+				</div>
+				<div class="hero-social-proof">
+					<div class="avatar-stack">
+						<div class="avatar" style="background:#6366f1">AK</div>
+						<div class="avatar" style="background:#4831af">MR</div>
+						<div class="avatar" style="background:#0891b2">SP</div>
+						<div class="avatar" style="background:#059669">YT</div>
+					</div>
+					<span class="social-proof-text"><strong>2,400+ professionals</strong> already using JobMouka</span>
 				</div>
 			</div>
-			
-			<div class="enterprise-stats">
-				<div class="stats-grid">
-					@for (stat of stats; track stat.label) {
-						<div class="stat-item">
-							<div class="stat-number">{{ stat.number }}</div>
-							<div class="stat-label">{{ stat.label }}</div>
+
+			<!-- Hero Visual -->
+			<div class="hero-visual">
+				<div class="visual-card visual-card-main">
+					<div class="visual-icon-row">
+						<div class="visual-icon vi-purple"><i class="ti ti-briefcase" aria-hidden="true"></i></div>
+						<div class="visual-icon vi-green"><i class="ti ti-file-check" aria-hidden="true"></i></div>
+						<div class="visual-icon vi-blue"><i class="ti ti-microphone" aria-hidden="true"></i></div>
+					</div>
+					<div class="visual-bar-group">
+						<div class="visual-bar" style="width:90%"></div>
+						<div class="visual-bar" style="width:72%"></div>
+						<div class="visual-bar" style="width:85%"></div>
+					</div>
+					<div class="visual-stats-row">
+						<div class="visual-stat">
+							<span class="vs-number">50K+</span>
+							<span class="vs-label">Jobs</span>
 						</div>
-					}
+						<div class="visual-stat">
+							<span class="vs-number">2.4M</span>
+							<span class="vs-label">Resumes</span>
+						</div>
+						<div class="visual-stat">
+							<span class="vs-number">87%</span>
+							<span class="vs-label">Success</span>
+						</div>
+					</div>
 				</div>
-				
-				<div class="certifications">
-					@for (cert of certifications; track cert.badge) {
-						<div class="cert-badge">{{ cert.badge }}</div>
-					}
+				<div class="floating-card fc-top-right">
+					<div class="fc-icon"><i class="ti ti-trending-up" aria-hidden="true"></i></div>
+					<div class="fc-label">Profile strength</div>
+					<div class="fc-value">94%</div>
+				</div>
+				<div class="floating-card fc-bottom-left">
+					<div class="fc-icon"><i class="ti ti-checks" aria-hidden="true"></i></div>
+					<div class="fc-label">Interviews scheduled</div>
+					<div class="fc-value">6</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
-	<div class="login-form-section">
+	<!-- Trust Logos -->
+	<div class="logos-section">
+		<div class="logos-inner">
+			<p class="logos-label">Trusted by teams at</p>
+			<div class="logos-row">
+				@for (logo of trustLogos; track logo.name) {
+					<div class="logo-pill"><i [class]="logo.icon" aria-hidden="true"></i>{{logo.name}}</div>
+				}
+			</div>
+		</div>
+	</div>
+
+	<!-- Products -->
+	<div class="section">
+		<div class="section-label">Our products</div>
+		<h2 class="section-title">Two tools. One platform.</h2>
+		<p class="section-sub">Everything you need — whether you're a job seeker or a hiring team.</p>
+		<div class="products-grid">
+			@for (product of products; track product.title) {
+				<div class="product-card" [class]="'product-card ' + product.cardClass">
+					<span class="product-tag" [class]="'product-tag ' + product.tagClass">{{product.tag}}</span>
+					<div class="product-icon" [class]="'product-icon ' + product.iconClass"><i [class]="product.icon" aria-hidden="true"></i></div>
+					<h3 class="product-title">{{product.title}}</h3>
+					<p class="product-desc">{{product.description}}</p>
+					@for (feature of product.features; track feature) {
+						<div class="feature-item"><i class="ti ti-check" aria-hidden="true"></i> {{feature}}</div>
+					}
+					<a class="product-link">{{product.linkText}} <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+				</div>
+			}
+		</div>
+	</div>
+
+	<!-- Stats -->
+	<div class="stats-section">
+		<div class="stats-header">
+			<p class="stats-label">By the numbers</p>
+			<h2 class="stats-title">Results that speak for themselves</h2>
+		</div>
+		<div class="stats-grid">
+			@for (stat of stats; track stat.label) {
+				<div class="stat-item">
+					<div class="stat-number">{{stat.number}}<span>{{stat.suffix}}</span></div>
+					<div class="stat-label">{{stat.label}}</div>
+					<div class="stat-sub">{{stat.sub}}</div>
+				</div>
+			}
+		</div>
+	</div>
+
+	<!-- How it works — 5 Steps -->
+	<div class="section">
+		<div class="section-label">How it works</div>
+		<h2 class="section-title">From zero to placed — in 5 steps</h2>
+		<p class="section-sub">A clear path from sign-up to your dream job offer.</p>
+		<div class="steps-row">
+			@for (step of steps; track step.title; let i = $index) {
+				<div class="step-col">
+					<div class="step-bubble" [class.active]="step.active">
+						<i [class]="step.icon" aria-hidden="true"></i>
+						<span class="step-num-badge">{{i + 1}}</span>
+					</div>
+					<h4>{{step.title}}</h4>
+					<p>{{step.description}}</p>
+				</div>
+			}
+		</div>
+		<div class="steps-badges">
+			@for (step of steps; track step.title; let i = $index) {
+				<div class="step-badge-card" [class.active]="step.active">
+					<div class="step-badge-label">Step {{i + 1}}</div>
+					<div class="step-badge-text">{{step.badge}}</div>
+				</div>
+			}
+		</div>
+	</div>
+
+	<!-- Testimonials -->
+	<div class="testimonials-section">
+		<div class="testimonials-inner">
+			<div class="section-label">Testimonials</div>
+			<h2 class="section-title">Loved by thousands of professionals</h2>
+			<div class="test-grid">
+				@for (t of testimonials; track t.name) {
+					<div class="test-card">
+						<div class="stars">
+							<i class="ti ti-star-filled" aria-hidden="true"></i>
+							<i class="ti ti-star-filled" aria-hidden="true"></i>
+							<i class="ti ti-star-filled" aria-hidden="true"></i>
+							<i class="ti ti-star-filled" aria-hidden="true"></i>
+							<i class="ti ti-star-filled" aria-hidden="true"></i>
+						</div>
+						<p class="test-text">"{{t.text}}"</p>
+						<div class="test-author">
+							<div class="test-avatar" [style.background]="t.color">{{t.initials}}</div>
+							<div>
+								<div class="test-name">{{t.name}}</div>
+								<div class="test-role">{{t.role}}</div>
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+	</div>
+
+	<!-- Pricing -->
+	<div class="section">
+		<div class="section-label">Pricing</div>
+		<h2 class="section-title">Simple, honest pricing</h2>
+		<p class="section-sub">Start free. Upgrade when you're ready. No hidden fees, ever.</p>
+		<div class="pricing-grid">
+			@for (plan of pricing; track plan.tier) {
+				<div class="price-card" [class.popular]="plan.popular">
+					@if (plan.popular) {
+						<div class="popular-badge">Most popular</div>
+					}
+					<div class="price-tier">{{plan.tier}}</div>
+					<div class="price-amount"><sup>₹</sup>{{plan.price}}</div>
+					<div class="price-period">{{plan.period}}</div>
+					@for (f of plan.features; track f.text) {
+						<div class="pf-item" [class.muted]="!f.included">
+							<i [class]="f.included ? 'ti ti-check' : 'ti ti-x'" aria-hidden="true"></i> {{f.text}}
+						</div>
+					}
+					<button class="btn-price" [class]="'btn-price ' + plan.btnClass" (click)="openPanel('signup')">{{plan.btnText}}</button>
+				</div>
+			}
+		</div>
+	</div>
+
+	<!-- CTA -->
+	<div class="cta-section">
+		<h2>Your next opportunity is one click away</h2>
+		<p>Join 2,400+ professionals already using JobMouka to build careers they love.</p>
+		<div class="cta-actions">
+			<button class="btn-white" (click)="openPanel('signup')">Get started — it's free</button>
+			<button class="btn-ghost" (click)="openPanel()">Talk to sales</button>
+		</div>
+	</div>
+
+	<!-- Footer -->
+	<footer class="site-footer">
+		<div class="footer-top">
+			<div class="footer-brand">
+				<div class="logo-group">
+					<div class="logo-mark logo-mark-footer">JM</div>
+					<span class="logo-name logo-name-footer">Job<span class="brand-text-footer">Mouka</span></span>
+				</div>
+				<p class="footer-desc">Smart tools for job seekers and hiring teams. Your next career move starts here.</p>
+				<div class="social-row">
+					<button class="social-btn" aria-label="Twitter"><i class="ti ti-brand-twitter" aria-hidden="true"></i></button>
+					<button class="social-btn" aria-label="LinkedIn"><i class="ti ti-brand-linkedin" aria-hidden="true"></i></button>
+					<button class="social-btn" aria-label="Instagram"><i class="ti ti-brand-instagram" aria-hidden="true"></i></button>
+					<button class="social-btn" aria-label="GitHub"><i class="ti ti-brand-github" aria-hidden="true"></i></button>
+				</div>
+			</div>
+			<div class="footer-col">
+				<h5>Products</h5>
+				@for (link of footerLinks.products; track link) {
+					<a>{{link}}</a>
+				}
+			</div>
+			<div class="footer-col">
+				<h5>Company</h5>
+				@for (link of footerLinks.company; track link) {
+					<a>{{link}}</a>
+				}
+			</div>
+			<div class="footer-col">
+				<h5>Support</h5>
+				@for (link of footerLinks.support; track link) {
+					<a>{{link}}</a>
+				}
+			</div>
+		</div>
+		<div class="footer-bottom">
+			<span>© 2025 JobMouka Technologies Pvt. Ltd. All rights reserved.</span>
+			<div class="footer-legal">
+				<a>Privacy</a>
+				<a>Terms</a>
+				<a>Cookies</a>
+			</div>
+		</div>
+	</footer>
+
+	<!-- Overlay -->
+	@if (isPanelOpen()) {
+		<div class="panel-overlay" (click)="closePanel()" aria-hidden="true"></div>
+	}
+
+	<!-- Slide Panel -->
+	<aside class="auth-panel" [class.open]="isPanelOpen()" role="dialog" aria-label="Authentication">
+		<button class="panel-close" (click)="closePanel()" aria-label="Close panel">
+			<i class="ti ti-x"></i>
+		</button>
+
 		<div class="auth-container">
 			<div class="auth-header">
+				<div class="auth-logo">
+					<div class="logo-mark logo-mark-solid">JM</div>
+					<span class="logo-name logo-name-dark">Job<span class="brand-text-dark">Mouka</span></span>
+				</div>
 				<h1 class="auth-title">{{TEXT.welcome}}</h1>
 				<p class="auth-subtitle">
-					{{ isSignupMode() ? TEXT.subtitles.signup : 
+					{{ isSignupMode() ? TEXT.subtitles.signup :
 					   isForgotPasswordMode() ? TEXT.subtitles.forgotPassword :
 					   isResetPasswordMode() ? TEXT.subtitles.resetPassword :
 					   TEXT.subtitles.login }}
 				</p>
 			</div>
-			
+
 			@if (errorMessage) {
 				<div class="error-message">
 					<mat-icon>error</mat-icon>
@@ -77,8 +319,8 @@
 
 			@if (!isSignupMode() && !isForgotPasswordMode() && !isResetPasswordMode()) {
 				<div class="auth-form">
-					<app-dynamic-form 
-						[config]="loginFormConfig" 
+					<app-dynamic-form
+						[config]="loginFormConfig"
 						(formSubmit)="onLogin($event)">
 					</app-dynamic-form>
 				</div>
@@ -86,8 +328,8 @@
 
 			@if (isSignupMode()) {
 				<div class="auth-form">
-					<app-dynamic-form 
-						[config]="signupFormConfig" 
+					<app-dynamic-form
+						[config]="signupFormConfig"
 						(formSubmit)="onSignup($event)">
 					</app-dynamic-form>
 				</div>
@@ -95,8 +337,8 @@
 
 			@if (isForgotPasswordMode()) {
 				<div class="auth-form">
-					<app-dynamic-form 
-						[config]="forgotPasswordFormConfig" 
+					<app-dynamic-form
+						[config]="forgotPasswordFormConfig"
 						(formSubmit)="onForgotPassword($event)">
 					</app-dynamic-form>
 				</div>
@@ -104,28 +346,28 @@
 
 			@if (isResetPasswordMode()) {
 				<div class="auth-form">
-					<app-dynamic-form 
-						[config]="resetPasswordFormConfig" 
+					<app-dynamic-form
+						[config]="resetPasswordFormConfig"
 						(formSubmit)="onResetPassword($event)">
 					</app-dynamic-form>
 				</div>
 			}
-			
+
 			<div class="auth-toggle">
 				@if (!isSignupMode() && !isForgotPasswordMode() && !isResetPasswordMode()) {
-					<p>{{TEXT.toggle.noAccount}} <a (click)="toggleSignupMode()" class="toggle-link">{{TEXT.toggle.createAccount}}</a></p>
-					<p><a (click)="toggleForgotPasswordMode()" class="toggle-link">{{TEXT.toggle.forgotPassword}}</a></p>
+					<p>{{TEXT.toggle.noAccount}} <a (click)="toggleSignupMode()" (keydown.enter)="toggleSignupMode()" tabindex="0" class="toggle-link">{{TEXT.toggle.createAccount}}</a></p>
+					<p><a (click)="toggleForgotPasswordMode()" (keydown.enter)="toggleForgotPasswordMode()" tabindex="0" class="toggle-link">{{TEXT.toggle.forgotPassword}}</a></p>
 				}
 				@if (isSignupMode()) {
-					<p>{{TEXT.toggle.alreadyHaveAccount}} <a (click)="toggleSignupMode()" class="toggle-link">{{TEXT.toggle.signIn}}</a></p>
+					<p>{{TEXT.toggle.alreadyHaveAccount}} <a (click)="toggleSignupMode()" (keydown.enter)="toggleSignupMode()" tabindex="0" class="toggle-link">{{TEXT.toggle.signIn}}</a></p>
 				}
 				@if (isForgotPasswordMode()) {
-					<p><a (click)="toggleForgotPasswordMode()" class="toggle-link">{{TEXT.toggle.backToSignIn}}</a></p>
+					<p><a (click)="toggleForgotPasswordMode()" (keydown.enter)="toggleForgotPasswordMode()" tabindex="0" class="toggle-link">{{TEXT.toggle.backToSignIn}}</a></p>
 				}
 				@if (isResetPasswordMode()) {
-					<p><a (click)="toggleResetPasswordMode()" class="toggle-link">{{TEXT.toggle.backToSignIn}}</a></p>
+					<p><a (click)="toggleResetPasswordMode()" (keydown.enter)="toggleResetPasswordMode()" tabindex="0" class="toggle-link">{{TEXT.toggle.backToSignIn}}</a></p>
 				}
 			</div>
 		</div>
-	</div>
+	</aside>
 </div>
