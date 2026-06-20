@@ -8,9 +8,10 @@
 			<span class="logo-name">Job<span class="brand-text">Mouka</span></span>
 		</div>
 		<div class="nav-links">
-			@for (link of navLinks; track link) {
-				<a>{{link}}</a>
-			}
+			<a (click)="scrollTo('features')" tabindex="0">Features</a>
+			<a (click)="scrollTo('products')" tabindex="0">Job Portal</a>
+			<a (click)="scrollTo('resume-builder')" tabindex="0">Resume Builder</a>
+			<a (click)="scrollTo('pricing')" tabindex="0">Pricing</a>
 		</div>
 		<div class="nav-actions">
 			<a class="nav-login" (click)="openPanel()" (keydown.enter)="openPanel()" tabindex="0">Log in</a>
@@ -25,8 +26,8 @@
 				<div class="hero-badge">
 					<i class="ti ti-bolt" aria-hidden="true"></i> Now in public beta — free for 30 days
 				</div>
-				<h1 class="hero-title">The smarter way to <span class="brand-highlight">hire & get hired</span></h1>
-				<p class="hero-description">JobMouka brings a powerful job portal and an AI resume builder together — helping candidates land jobs faster and companies find the right talent.</p>
+				<h1 class="hero-title">Land your dream job <span class="brand-highlight">in 14 days, not 60</span></h1>
+				<p class="hero-description">AI builds your resume, matches you to the right roles, and preps you for interviews — so you show up confident and get hired faster.</p>
 				<div class="hero-actions">
 					<button class="btn-primary" (click)="openPanel('signup')"><i class="ti ti-rocket" aria-hidden="true"></i> Start for free</button>
 					<button class="btn-secondary" (click)="openPanel()"><i class="ti ti-player-play" aria-hidden="true"></i> Watch demo</button>
@@ -97,7 +98,7 @@
 	</div>
 
 	<!-- Products -->
-	<div class="section">
+	<div class="section" id="products">
 		<div class="section-label">Our products</div>
 		<h2 class="section-title">Two tools. One platform.</h2>
 		<p class="section-sub">Everything you need — whether you're a job seeker or a hiring team.</p>
@@ -118,7 +119,7 @@
 	</div>
 
 	<!-- Stats -->
-	<div class="stats-section">
+	<div class="stats-section" id="features">
 		<div class="stats-header">
 			<p class="stats-label">By the numbers</p>
 			<h2 class="stats-title">Results that speak for themselves</h2>
@@ -135,7 +136,7 @@
 	</div>
 
 	<!-- How it works — 5 Steps -->
-	<div class="section">
+	<div class="section" id="resume-builder">
 		<div class="section-label">How it works</div>
 		<h2 class="section-title">From zero to placed — in 5 steps</h2>
 		<p class="section-sub">A clear path from sign-up to your dream job offer.</p>
@@ -191,7 +192,7 @@
 	</div>
 
 	<!-- Pricing -->
-	<div class="section">
+	<div class="section" id="pricing">
 		<div class="section-label">Pricing</div>
 		<h2 class="section-title">Simple, honest pricing</h2>
 		<p class="section-sub">Start free. Upgrade when you're ready. No hidden fees, ever.</p>
@@ -261,7 +262,7 @@
 			</div>
 		</div>
 		<div class="footer-bottom">
-			<span>© 2025 JobMouka Technologies Pvt. Ltd. All rights reserved.</span>
+			<span>© 2026 SanChaM Technology Solutions Pvt. Ltd. All rights reserved.</span>
 			<div class="footer-legal">
 				<a>Privacy</a>
 				<a>Terms</a>
