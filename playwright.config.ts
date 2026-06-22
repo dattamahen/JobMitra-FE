@@ -23,10 +23,22 @@ export default defineConfig({
 		navigationTimeout: 30000,
 	},
 
+	webServer: {
+		command: 'ng serve',
+		url: 'http://localhost:4200',
+		reuseExistingServer: true,
+		timeout: 120000,
+	},
+
 	projects: [
 		{
 			name: 'chromium',
-			use: { ...devices['Desktop Chrome'] },
+			use: {
+				...devices['Desktop Chrome'],
+				launchOptions: {
+					slowMo: 500,
+				},
+			},
 		},
 	],
 

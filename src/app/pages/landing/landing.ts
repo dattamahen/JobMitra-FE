@@ -16,7 +16,6 @@ import { GoogleAuthService } from '../../services/google-auth.service';
 	selector: 'app-landing',
 	imports: [MatIconModule, DynamicFormComponent],
 	templateUrl: './landing.html',
-	styleUrl: './landing.css',
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LandingPage implements OnInit {
