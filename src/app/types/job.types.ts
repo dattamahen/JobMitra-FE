@@ -50,6 +50,10 @@ export type JobListing = {
 	already_applied?: boolean;
 	match_analysis_done?: boolean;
 	tailor_resume_done?: boolean;
+	// New skill-based matching fields from backend
+	match_score?: number;
+	matched_skills_count?: number;
+	matched_skills?: string[];
 	hr_contact?: {
 		name: string;
 		email: string;
@@ -118,6 +122,15 @@ export type JobSearchResponse = {
 	total_pages?: number;
 	has_next?: boolean;
 	has_prev?: boolean;
+	// New backend response fields
+	message?: string;
+	filters_applied?: {
+		min_skills_required?: number;
+		user_skills_count?: number;
+		skill_matching_enabled?: boolean;
+		jobs_before_filtering?: number;
+		jobs_after_skill_filtering?: number;
+	};
 };
 
 export type SavedJob = {
