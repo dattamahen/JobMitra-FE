@@ -37,7 +37,9 @@
 				<div class="buy-section">
 					<div class="buy-info">
 						<h3>{{TEXT.labels.needMoreCredits}}</h3>
-						<p>Get <strong>10 CV Downloads</strong> + <strong>10 Mock Interviews</strong> for just <strong>₹149</strong> (incl. GST)</p>
+						@if (plan()) {
+							<p>Get <strong>{{plan()!.cv_downloads}} CV Downloads</strong> + <strong>{{plan()!.mock_interviews}} Mock Interviews</strong> for just <strong>₹{{plan()!.amount}}</strong> (incl. GST)</p>
+						}
 					</div>
 					<button mat-raised-button color="primary" (click)="openBuyDialog()">
 						<mat-icon>shopping_cart</mat-icon>

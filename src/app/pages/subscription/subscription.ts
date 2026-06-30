@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { CreditsService, UserCredits } from '../../services/credits.service';
+import { CreditsService, UserCredits, SubscriptionPlan } from '../../services/credits.service';
 import { SubscriptionDialogComponent } from '../../shared/components/subscription-dialog/subscription-dialog.component';
 import { SUBSCRIPTION_TEXT } from '../../data/subscription-data';
 
@@ -24,10 +24,11 @@ export class SubscriptionPage implements OnInit {
 	private dialog = inject(MatDialog);
 
 	credits = signal<UserCredits | null>(null);
+	plan = signal<SubscriptionPlan | null>(null);
 	loading = signal(true);
 
 	async ngOnInit() {
-		await this.loadCredits();
+		await Promise.all([this.loadCredits(), this.loadPlan()]);
 	}
 
 	async loadCredits() {
@@ -40,6 +41,12 @@ export class SubscriptionPage implements OnInit {
 		} finally {
 			this.loading.set(false);
 		}
+	}
+
+	private async loadPlan() {
+		try {
+			this.plan.set(await this.creditsService.loadPlan());
+		} catch { /* fallback handled */ }
 	}
 
 	openBuyDialog() {

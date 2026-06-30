@@ -94,6 +94,22 @@
 .payment-instruction {
 	font-size: 12px;
 	line-height: 1.5;
+	margin-top: 12px;
+}
+
+.razorpay-btn {
+	width: 100%;
+	font-weight: 600;
+	font-size: var(--font-size-body, 0.875rem);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	margin-top: 8px;
+}
+
+.upi-info a {
+	text-decoration: none;
 }
 
 .full-width {

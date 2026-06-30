@@ -32,11 +32,13 @@
 				<div class="payment-section">
 					<div class="upi-info">
 						<p class="pay-to">{{TEXT.payment.payTo}} <strong>₹{{AMOUNT}}</strong> {{TEXT.payment.toSuffix}}</p>
-						<div class="upi-id-box">
-							<mat-icon>account_balance</mat-icon>
-							<span class="upi-id">{{UPI_ID}}</span>
-						</div>
-						<p class="payment-instruction">{{TEXT.payment.instruction}}</p>
+						<a [href]="PAYMENT_LINK" target="_blank" rel="noopener noreferrer">
+							<button mat-raised-button color="accent" class="razorpay-btn">
+								<mat-icon>open_in_new</mat-icon>
+								Pay ₹{{AMOUNT}} via Razorpay
+							</button>
+						</a>
+						<p class="payment-instruction">Complete payment on Razorpay, then enter the transaction/payment ID below.</p>
 					</div>
 					<mat-form-field appearance="fill" class="full-width">
 						<mat-label>{{TEXT.payment.transactionIdLabel}}</mat-label>

@@ -1,4 +1,11 @@
 <div class="page-container">
+	<!-- Job Filter -->
+	<app-job-filter
+		[filterConfig]="filterConfig()"
+		[filterOptions]="filterOptions"
+		[resultsCount]="filteredJobListings().length"
+		(filterChange)="onFilterChange($event)">
+	</app-job-filter>
 
 	<div class="job-listings">
 		@if (isLoading) {
@@ -16,170 +23,19 @@
 				</app-empty-state>
 			</mat-card>
 		} @else {
-		@for (job of paginatedJobs(); track job.job_id) {
-		<mat-card class="job-card">
-			<mat-card-content>
-				<div class="job-card-layout">
-					<div class="job-card-main">
-						<!-- Row 1: Title + Employment type -->
-						<div class="job-title-row">
-							<h3 class="job-title">{{job.title}}</h3>
-							<mat-chip class="type-chip">{{job.employment_type | titlecase}}</mat-chip>
-							@if (job.match_percentage) {
-								<mat-chip class="match-chip">{{job.match_percentage}}{{TEXT.chips.matchSuffix}}</mat-chip>
-							}
-						</div>
-
-						<!-- Row 2: Company -->
-						<span class="job-company">{{job.company}}</span>
-
-						<!-- Row 3: Meta -->
-						<div class="job-meta-row">
-							<span class="meta-item"><mat-icon>location_on</mat-icon>{{formatLocation(job)}}</span>
-							<span class="meta-item"><mat-icon>attach_money</mat-icon>{{formatSalary(job)}}</span>
-							@if (job.experience_level) {
-								<span class="meta-item"><mat-icon>work_history</mat-icon>{{job.experience_level | titlecase}} {{TEXT.chips.levelSuffix}}</span>
-							}
-							<span class="meta-item"><mat-icon>schedule</mat-icon>{{getFormattedPostedDate(job)}}</span>
-							@if (isDeadlineApproaching(job) && getDaysRemaining(job) !== null) {
-								<span class="meta-item deadline"><mat-icon>warning</mat-icon>{{getDaysRemaining(job)}} {{TEXT.chips.daysLeftSuffix}}</span>
-							}
-						</div>
-
-						<!-- Row 4: Skills (max 5) -->
-						@if (job.skills_required && job.skills_required.length > 0) {
-							<div class="job-skills-row">
-								@for (skill of job.skills_required.slice(0, 5); track skill) {
-									<mat-chip class="skill-chip-sm">{{skill}}</mat-chip>
-								}
-								@if (job.skills_required.length > 5) {
-									<mat-chip class="skill-chip-sm more">+{{job.skills_required.length - 5}}</mat-chip>
-								}
-							</div>
-						}
-					</div>
-
-					<!-- Right side: Actions -->
-					<div class="job-card-actions">
-						<div class="action-chips">
-							<mat-chip class="action-chip"
-								[class.disabled]="isMatchAnalysisDisabled(job.job_id)"
-								(click)="takeMatchAnalysis(job.job_id)"
-								[matTooltip]="TEXT.tooltips.matchAnalysis">
-								{{getMatchAnalysisText(job.job_id)}}
-							</mat-chip>
-							<mat-chip class="action-chip"
-								[class.disabled]="isTailorResumeDisabled(job.job_id)"
-								(click)="modifyCV(job.job_id)"
-								[matTooltip]="TEXT.tooltips.tailorResume">
-								{{getTailorResumeText(job.job_id)}}
-							</mat-chip>
-							<mat-chip class="action-chip" (click)="takeMockInterview(job.job_id)"
-								[matTooltip]="TEXT.tooltips.mockInterview">
-								{{TEXT.chips.mockInterview}}
-							</mat-chip>
-						</div>
-						<div class="apply-row">
-							<button mat-raised-button
-								[color]="job.already_applied ? 'accent' : 'primary'"
-								[disabled]="job.already_applied"
-								(click)="applyForJob(job.job_id)">
-								{{job.already_applied ? TEXT.buttons.applied : TEXT.buttons.applyNow}}
-							</button>
-							<button mat-icon-button (click)="toggleJobExpansion(job.job_id)" matTooltip="Show details">
-								<mat-icon>{{isJobExpanded(job.job_id) ? 'expand_less' : 'expand_more'}}</mat-icon>
-							</button>
-						</div>
-					</div>
-				</div>
-
-				<!-- Expanded Content -->
-				@if (isJobExpanded(job.job_id)) {
-				<div class="job-expanded">
-					@if (job.description) {
-						<div class="expanded-section">
-							<h4>Description</h4>
-							<p>{{job.description}}</p>
-						</div>
-					}
-					@if (job.requirements && job.requirements.length > 0) {
-						<div class="expanded-section">
-							<h4>{{TEXT.labels.requirements}}</h4>
-							<ul>
-								@for (req of job.requirements; track req) {
-									<li>{{req}}</li>
-								}
-							</ul>
-						</div>
-					}
-					@if (job.responsibilities && job.responsibilities.length > 0) {
-						<div class="expanded-section">
-							<h4>{{TEXT.labels.responsibilities}}</h4>
-							<ul>
-								@for (resp of job.responsibilities; track $index) {
-									<li>{{resp}}</li>
-								}
-							</ul>
-						</div>
-					}
-					@if (job.skills_preferred && job.skills_preferred.length > 0) {
-						<div class="expanded-section">
-							<h4>{{TEXT.labels.preferredSkills}}</h4>
-							<div class="job-skills-row">
-								@for (skill of job.skills_preferred; track skill) {
-									<mat-chip class="skill-chip-sm preferred">{{skill}}</mat-chip>
-								}
-							</div>
-						</div>
-					}
-					@if (job.benefits && job.benefits.length > 0) {
-						<div class="expanded-section">
-							<h4>{{TEXT.labels.benefitsAndPerks}}</h4>
-							<div class="job-skills-row">
-								@for (benefit of job.benefits; track $index) {
-									<mat-chip class="skill-chip-sm">{{benefit}}</mat-chip>
-								}
-							</div>
-						</div>
-					}
-					@if (job.company_info) {
-						<div class="expanded-section">
-							<h4>{{TEXT.labels.aboutCompany}} {{job.company}}</h4>
-							@if (job.company_info.description) { <p>{{job.company_info.description}}</p> }
-							<div class="job-meta-row" style="margin-top: 6px;">
-								<span class="meta-item"><mat-icon>business</mat-icon>{{job.company_info.industry}}</span>
-								<span class="meta-item"><mat-icon>people</mat-icon>{{job.company_info.company_size}} employees</span>
-								@if (job.company_info.website) {
-									<span class="meta-item"><mat-icon>link</mat-icon><a [href]="job.company_info.website" target="_blank">Website</a></span>
-								}
-							</div>
-						</div>
-					}
-					@if (job.hr_contact) {
-						<div class="expanded-section">
-							<h4>{{TEXT.labels.hrContact}}</h4>
-							<div class="job-meta-row">
-								<span class="meta-item"><mat-icon>person</mat-icon>{{job.hr_contact.name}}</span>
-								<span class="meta-item"><mat-icon>email</mat-icon>{{getMaskedEmail(job.hr_contact.email, job.job_id)}}</span>
-								<span class="meta-item"><mat-icon>phone</mat-icon>{{getMaskedPhone(job.hr_contact.phone, job.job_id)}}</span>
-								@if (!isHRDetailsUnmasked(job.job_id)) {
-									<button mat-stroked-button color="primary" (click)="getHRDetails(job.job_id)">
-										<mat-icon>visibility</mat-icon> {{TEXT.labels.getHRDetails}}
-									</button>
-								}
-							</div>
-						</div>
-					}
-					@if (job.application_deadline) {
-						<div class="expanded-section">
-							<span class="meta-item deadline"><mat-icon>event</mat-icon>{{TEXT.labels.applyBy}} {{job.application_deadline | date:'MMM d, y'}}</span>
-						</div>
-					}
-				</div>
-				}
-			</mat-card-content>
-		</mat-card>
-		}
+			@for (job of paginatedJobs(); track job.job_id) {
+				<app-job-card
+					[job]="job"
+					[isMatchAnalysisDisabled]="isMatchAnalysisDisabled(job.job_id)"
+					[isTailorResumeDisabled]="isTailorResumeDisabled(job.job_id)"
+					[matchAnalysisText]="getMatchAnalysisText(job.job_id)"
+					[tailorResumeText]="getTailorResumeText(job.job_id)"
+					(matchAnalysisClick)="takeMatchAnalysis($event)"
+					(tailorResumeClick)="modifyCV($event)"
+					(mockInterviewClick)="takeMockInterview($event)"
+					(applyClick)="applyForJob($event)">
+				</app-job-card>
+			}
 
 		<!-- Pagination -->
 		@if (totalPages() > 1) {

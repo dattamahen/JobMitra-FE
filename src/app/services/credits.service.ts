@@ -11,6 +11,19 @@ export interface UserCredits {
 	is_paid_user: boolean;
 }
 
+export interface SubscriptionPlan {
+	plan_id: string;
+	name: string;
+	description: string;
+	amount: number;
+	currency: string;
+	cv_downloads: number;
+	mock_interviews: number;
+	upi_id: string;
+	payment_link: string;
+	benefits: { icon: string; text: string; detail: string }[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class CreditsService {
 	private api = inject(ApiService);
@@ -24,7 +37,10 @@ export class CreditsService {
 		is_paid_user: false
 	});
 
+	private plan = signal<SubscriptionPlan | null>(null);
+
 	readonly currentCredits = this.credits.asReadonly();
+	readonly currentPlan = this.plan.asReadonly();
 	readonly canDownloadCV = computed(() => this.credits().cv_downloads_remaining > 0);
 	readonly canMockInterview = computed(() => this.credits().mock_interviews_remaining > 0);
 
@@ -39,6 +55,16 @@ export class CreditsService {
 			this.api.get<UserCredits>(`/users/${this.getUserId()}/credits`)
 		);
 		this.credits.set(result);
+		return result;
+	}
+
+	async loadPlan(): Promise<SubscriptionPlan> {
+		const cached = this.plan();
+		if (cached) return cached;
+		const result = await firstValueFrom(
+			this.api.get<SubscriptionPlan>('/subscription-plan')
+		);
+		this.plan.set(result);
 		return result;
 	}
 
@@ -81,11 +107,12 @@ export class CreditsService {
 	}
 
 	async confirmPayment(upiTransactionId: string): Promise<any> {
+		const plan = await this.loadPlan();
 		const result = await firstValueFrom(
 			this.api.post('/payments/confirm', {
 				user_id: this.getUserId(),
 				upi_transaction_id: upiTransactionId,
-				amount: 149
+				amount: plan.amount
 			})
 		);
 		await this.loadCredits();
