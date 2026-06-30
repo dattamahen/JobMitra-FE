@@ -12,6 +12,7 @@ import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angu
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { JobFilterComponent, JobFilterConfig } from '../../shared/components/job-filter/job-filter.component';
+import { JobCardComponent } from '../../shared/components/job-card/job-card.component';
 import { ResumeTailorModalComponent } from '../../components/mock-interview-modal/resume-tailor-modal.component';
 import type { JobListing, JobSearchFilters } from '../../types/job.types';
 import { maskEmail, maskPhone } from '../../utils/mask.util';
@@ -37,7 +38,8 @@ import { ResumeTailorService } from '../../services/resume-tailor.service';
 		MatDialogModule,
 		LoadingComponent,
 		EmptyStateComponent,
-		JobFilterComponent
+		JobFilterComponent,
+		JobCardComponent
 	],
 	templateUrl: './job-search.html',
 	styleUrl: './job-search.css',

@@ -1,0 +1,144 @@
+<mat-card class="job-card">
+  <div class="job-card-content">
+    <!-- Left side: Company avatar and job details -->
+    <div class="job-main-content">
+      <!-- Company Avatar -->
+      <div class="company-avatar">
+        @if (job().company_info?.logo_url) {
+          <img [src]="job().company_info.logo_url" [alt]="job().company + ' logo'" />
+        } @else {
+          <div class="avatar-initials">{{ getCompanyInitials(job().company) }}</div>
+        }
+      </div>
+
+      <!-- Job Details -->
+      <div class="job-details">
+        <!-- Title and Employment Type -->
+        <div class="job-header">
+          <h3 class="job-title">{{ job().title }}</h3>
+          <mat-chip class="employment-type-chip">{{ job().employment_type | titlecase }}</mat-chip>
+        </div>
+
+        <!-- Company Name -->
+        <p class="company-name">{{ job().company }}</p>
+
+        <!-- Meta Information -->
+        <div class="job-meta">
+          <span class="meta-item">
+            <mat-icon>location_on</mat-icon>
+            {{ formatLocation(job()) }}
+          </span>
+          <span class="meta-item">
+            <mat-icon>payments</mat-icon>
+            {{ formatSalary(job()) }}
+          </span>
+          @if (job().experience_level) {
+            <span class="meta-item">
+              <mat-icon>work_history</mat-icon>
+              {{ job().experience_level | titlecase }} level
+            </span>
+          }
+          <span class="meta-item">
+            <mat-icon>schedule</mat-icon>
+            {{ getFormattedPostedDate(job()) }}
+          </span>
+        </div>
+
+        <!-- Skills -->
+        @if (job().skills_required && job().skills_required.length > 0) {
+          <div class="job-skills">
+            @for (skill of job().skills_required.slice(0, 6); track skill) {
+              <mat-chip class="skill-chip">{{ skill }}</mat-chip>
+            }
+            @if (job().skills_required.length > 6) {
+              <mat-chip class="skill-chip more-skills">+{{ job().skills_required.length - 6 }}</mat-chip>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Right side: Match percentage and actions -->
+    <div class="job-actions">
+      <!-- Match Percentage Circle -->
+      @if (job().match_percentage) {
+        <div class="match-percentage">
+          <svg class="progress-ring" width="60" height="60">
+            <circle
+              class="progress-ring-background"
+              cx="30"
+              cy="30"
+              r="25"
+              fill="transparent"
+              stroke="#e0e0e0"
+              stroke-width="4"
+            />
+            <circle
+              class="progress-ring-progress"
+              cx="30"
+              cy="30"
+              r="25"
+              fill="transparent"
+              stroke="#ff9800"
+              stroke-width="4"
+              [style.stroke-dasharray]="157.08"
+              [style.stroke-dashoffset]="157.08 - (157.08 * getMatchPercentage()) / 100"
+            />
+          </svg>
+          <span class="percentage-text">{{ getMatchPercentage() }}%</span>
+        </div>
+      }
+
+      <!-- Applied Status -->
+      @if (job().already_applied) {
+        <div class="applied-status">
+          <mat-icon class="applied-icon">check_circle</mat-icon>
+          <span>Applied</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <button 
+      mat-stroked-button 
+      class="action-btn"
+      [class.disabled]="isMatchAnalysisDisabled()"
+      [disabled]="isMatchAnalysisDisabled()"
+      (click)="onMatchAnalysis()">
+      <mat-icon>analytics</mat-icon>
+      {{ matchAnalysisText() }}
+    </button>
+
+    <button 
+      mat-stroked-button 
+      class="action-btn tailor-resume"
+      [class.disabled]="isTailorResumeDisabled()"
+      [disabled]="isTailorResumeDisabled()"
+      (click)="onTailorResume()">
+      <mat-icon>description</mat-icon>
+      <span class="btn-text">{{ tailorResumeText() }}</span>
+      <span class="btn-benefit">↗ +15%</span>
+    </button>
+
+    <button 
+      mat-stroked-button 
+      class="action-btn mock-interview"
+      (click)="onMockInterview()">
+      <mat-icon>mic</mat-icon>
+      <span class="btn-text">Mock interview</span>
+      <span class="btn-benefit">↗ +25%</span>
+    </button>
+
+    @if (!job().already_applied) {
+      <button 
+        mat-raised-button 
+        color="primary" 
+        class="apply-btn"
+        (click)="onApply()">
+        Apply Now
+      </button>
+    }
+  </div>
+</mat-card>

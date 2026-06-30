@@ -8,12 +8,14 @@ import { FormConfig } from '../shared/interfaces/form.interfaces';
 import { LOGIN_FORM_CONFIG, SIGNUP_FORM_CONFIG, FORGOT_PASSWORD_FORM_CONFIG, RESET_PASSWORD_FORM_CONFIG } from '../shared/components/dynamic-form/form-configs';
 import {
 	LOGIN_PAGE_TEXT, TRUST_LOGOS,
-	PRODUCT_CARDS, STATS, STEPS, TESTIMONIALS, PRICING, FOOTER_LINKS
+	PRODUCT_CARDS, STATS, STEPS, TESTIMONIALS, PRICING, FOOTER_LINKS, PricingCard
 } from '../data/login-page-data';
 import { LOGIN_PAGE_CONSTANTS } from './login-page.constants';
 
 import { AuthService, LoginResponse, RegisterRequest } from '../services/auth.service';
 import { GoogleAuthService } from '../services/google-auth.service';
+import { ApiService } from '../services/api.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
 	selector: 'app-login-page',
@@ -30,7 +32,7 @@ export class LoginPage implements OnInit {
 	readonly stats = STATS;
 	readonly steps = STEPS;
 	readonly testimonials = TESTIMONIALS;
-	readonly pricing = PRICING;
+	pricing = signal<PricingCard[]>(PRICING);
 	readonly footerLinks = FOOTER_LINKS;
 
 	readonly isPanelOpen = signal(false);
@@ -47,6 +49,7 @@ export class LoginPage implements OnInit {
 	resetPasswordFormConfig: FormConfig = { ...RESET_PASSWORD_FORM_CONFIG, loading: false };
 
 	private platformId = inject(PLATFORM_ID);
+	private api = inject(ApiService);
 
 	constructor(
 		private router: Router,
@@ -72,6 +75,26 @@ export class LoginPage implements OnInit {
 		});
 
 		this.initializeGoogleSignIn();
+		this.loadDynamicPricing();
+	}
+
+	private async loadDynamicPricing(): Promise<void> {
+		try {
+			const plan = await firstValueFrom(
+				this.api.get<any>('/subscription-plan')
+			);
+			const updated = PRICING.map(card => {
+				if (card.tier === 'Credits Pack') {
+					return {
+						...card,
+						price: String(plan.amount),
+						btnText: `Buy credits \u2014 \u20b9${plan.amount}`,
+					};
+				}
+				return card;
+			});
+			this.pricing.set(updated);
+		} catch { /* keep static fallback */ }
 	}
 
 	openPanel(mode: 'login' | 'signup' = 'login'): void {

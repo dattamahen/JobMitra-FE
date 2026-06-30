@@ -197,7 +197,7 @@
 		<h2 class="section-title">Simple, honest pricing</h2>
 		<p class="section-sub">Start free. Upgrade when you're ready. No hidden fees, ever.</p>
 		<div class="pricing-grid">
-			@for (plan of pricing; track plan.tier) {
+			@for (plan of pricing(); track plan.tier) {
 				<div class="price-card" [class.popular]="plan.popular">
 					@if (plan.popular) {
 						<div class="popular-badge">Most popular</div>

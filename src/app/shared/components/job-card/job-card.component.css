@@ -1,0 +1,455 @@
+.job-card {
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.job-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.job-card-content {
+  display: flex;
+  padding: 20px;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+/* Main Content Area */
+.job-main-content {
+  display: flex;
+  flex: 1;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+/* Company Avatar */
+.company-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.company-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-initials {
+  font-weight: 600;
+  font-size: 16px;
+  color: #666;
+}
+
+/* Job Details */
+.job-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.job-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.job-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.employment-type-chip {
+  background: #e3f2fd !important;
+  color: #1976d2 !important;
+  font-size: 0.625rem !important;
+  font-weight: 500 !important;
+  height: 20px !important;
+  border-radius: 10px !important;
+  padding: 0 6px !important;
+}
+
+.company-name {
+  font-size: 0.875rem;
+  color: #666;
+  margin: 0 0 8px 0;
+  font-weight: 500;
+}
+
+/* Meta Information */
+.job-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.meta-item mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #999;
+}
+
+/* Skills */
+.job-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.skill-chip {
+  background: #f0f7ff !important;
+  color: #1976d2 !important;
+  font-size: 0.625rem !important;
+  font-weight: 500 !important;
+  height: 20px !important;
+  border-radius: 10px !important;
+  padding: 0 6px !important;
+  border: 1px solid #e3f2fd !important;
+}
+
+.skill-chip.more-skills {
+  background: #f5f5f5 !important;
+  color: #666 !important;
+  border: 1px solid #e0e0e0 !important;
+}
+
+/* Right Side Actions */
+.job-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* Match Percentage Circle */
+.match-percentage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-progress {
+  transition: stroke-dashoffset 0.5s ease-in-out;
+}
+
+.percentage-text {
+  position: absolute;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #ff9800;
+}
+
+/* Applied Status */
+.applied-status {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #4caf50;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.applied-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+/* Bookmark Button - REMOVED */
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  padding: 16px 20px 20px 20px;
+  border-top: 1px solid #f0f0f0;
+  background: #fafafa;
+}
+
+.action-btn {
+  flex: 0 1 auto;
+  max-width: 50%;
+  font-size: 0.75rem !important;
+  height: 32px !important;
+  border-radius: 16px !important;
+  border: 1px solid #e0e0e0 !important;
+  background: #ffffff !important;
+  color: #666 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 3px !important;
+  min-width: 100px !important;
+  padding: 0 6px !important;
+  position: relative;
+  overflow: visible;
+  transition: all 0.3s ease;
+}
+
+.action-btn .btn-text {
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.action-btn .btn-benefit {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: #4caf50;
+  background: rgba(76, 175, 80, 0.1);
+  padding: 1px 3px;
+  border-radius: 4px;
+  margin-left: 2px;
+  flex-shrink: 0;
+}
+
+.action-btn mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.action-btn:not(.disabled):hover {
+  background: #f5f5f5 !important;
+  border-color: #ccc !important;
+}
+
+.action-btn.disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Special Action Button Animations */
+.action-btn.tailor-resume {
+  background: linear-gradient(135deg, #f8faff, #f0f7ff) !important;
+  border: 1px solid #1976d2 !important;
+  color: #1565c0 !important;
+  animation: tailorPulse 4s ease-in-out infinite;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(25, 118, 210, 0.1);
+}
+
+.action-btn.tailor-resume .btn-benefit {
+  color: #1976d2 !important;
+  background: rgba(25, 118, 210, 0.1) !important;
+}
+
+.action-btn.tailor-resume:not(.disabled):hover {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.25);
+  border-color: #1565c0 !important;
+}
+
+.action-btn.tailor-resume::after {
+  content: 'Better ATS Match Rate';
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1565c0;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.625rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+}
+
+.action-btn.tailor-resume:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-2px);
+}
+
+@keyframes tailorPulse {
+  0%, 100% { 
+    box-shadow: 0 1px 3px rgba(25, 118, 210, 0.1), 0 0 0 0 rgba(25, 118, 210, 0.2);
+  }
+  50% { 
+    box-shadow: 0 1px 3px rgba(25, 118, 210, 0.1), 0 0 0 3px rgba(25, 118, 210, 0.1);
+  }
+}
+
+.action-btn.mock-interview {
+  background: linear-gradient(135deg, #fff8f0, #fef7ed) !important;
+  border: 1px solid #f57c00 !important;
+  color: #ef6c00 !important;
+  animation: confidencePulse 4.5s ease-in-out infinite;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(245, 124, 0, 0.1);
+}
+
+.action-btn.mock-interview .btn-benefit {
+  color: #f57c00 !important;
+  background: rgba(245, 124, 0, 0.1) !important;
+}
+
+.action-btn.mock-interview:not(.disabled):hover {
+  background: linear-gradient(135deg, #fff3e0, #ffe0b2) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(245, 124, 0, 0.25);
+  border-color: #ef6c00 !important;
+}
+
+.action-btn.mock-interview::after {
+  content: 'Higher Interview Success';
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ef6c00;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.625rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(245, 124, 0, 0.3);
+}
+
+.action-btn.mock-interview:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-2px);
+}
+
+@keyframes confidencePulse {
+  0%, 100% { 
+    box-shadow: 0 1px 3px rgba(245, 124, 0, 0.1), 0 0 0 0 rgba(245, 124, 0, 0.2);
+  }
+  50% { 
+    box-shadow: 0 1px 3px rgba(245, 124, 0, 0.1), 0 0 0 3px rgba(245, 124, 0, 0.1);
+  }
+}
+
+.apply-btn {
+  flex: 0 1 auto;
+  max-width: 50%;
+  font-size: 0.75rem !important;
+  height: 32px !important;
+  border-radius: 16px !important;
+  font-weight: 500 !important;
+  min-width: 100px !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .job-card-content {
+    padding: 16px;
+    flex-direction: column;
+  }
+
+  .job-main-content {
+    width: 100%;
+  }
+
+  .job-actions {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .action-buttons {
+    flex-wrap: wrap;
+    padding: 16px;
+    gap: 6px;
+  }
+
+  .action-btn {
+    flex: 0 1 calc(50% - 3px);
+    min-width: 80px;
+    font-size: 0.625rem !important;
+    gap: 2px !important;
+  }
+
+  .action-btn .btn-text {
+    font-size: 0.625rem;
+  }
+
+  .action-btn .btn-benefit {
+    font-size: 0.5rem;
+    padding: 1px 2px;
+  }
+
+  .action-btn.tailor-resume::after,
+  .action-btn.mock-interview::after {
+    display: none; /* Hide hover tooltips on mobile for better UX */
+  }
+
+  .apply-btn {
+    flex: 1 1 100%;
+    margin-top: 6px;
+    font-size: 0.75rem !important;
+  }
+
+  .job-meta {
+    gap: 12px;
+  }
+
+  .meta-item {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .job-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .job-title {
+    font-size: 0.875rem;
+  }
+
+  .job-meta {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .action-btn {
+    flex: 1 1 100%;
+    margin-bottom: 4px;
+    min-width: unset;
+  }
+}

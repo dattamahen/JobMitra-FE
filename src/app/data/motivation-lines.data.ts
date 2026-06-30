@@ -22,7 +22,7 @@ export const MOTIVATION_GROUPS: MotivationGroup[] = [
 		lines: [
 			'Top candidates don\'t prepare once — they practice multiple times.',
 			'While others are guessing answers, you can practice with AI.',
-			'₹149 today can help you earn ₹5–10L more in your next offer.',
+			'A small investment today can help you earn ₹5–10L more in your next offer.',
 		],
 		cta: 'Start Practicing Like Top Candidates',
 	},
