@@ -52,20 +52,47 @@ export class JobService {
 
 
 
-				return this.apiService.post<JobSearchResponse>('/jobs', requestBody)
+				return this.apiService.post<any>('/jobs', requestBody)
 					.pipe(
 						map(response => {
-
-							return response;
+							// Handle both old and new response formats
+							if (response.jobs) {
+								// New format from backend
+								return {
+									jobs: response.jobs,
+									total_count: response.total || response.jobs.length,
+									page,
+									per_page: perPage,
+									total_pages: Math.ceil((response.total || response.jobs.length) / perPage),
+									has_next: false,
+									has_prev: false,
+									filters: response.filters_applied || {},
+									message: response.message
+								};
+							} else {
+								// Fallback to old format
+								return response;
+							}
 						}),
 						catchError(error => {
-
+							// If backend returns skill-related error, surface it
+							if (error.error?.detail?.includes('skills') || error.error?.message?.includes('skills')) {
+								return of({
+									jobs: [],
+									total_count: 0,
+									page,
+									per_page: perPage,
+									total_pages: 0,
+									has_next: false,
+									has_prev: false,
+									message: error.error?.detail || error.error?.message || 'Please add at least 2 skills to your profile to see job recommendations.'
+								});
+							}
 							return of(this.getMockJobSearchResponse(filters, page, perPage));
 						})
 					);
 			}),
 			catchError(error => {
-
 				// Fallback to mock data if user service fails
 				return of(this.getMockJobSearchResponse(filters, page, perPage));
 			})

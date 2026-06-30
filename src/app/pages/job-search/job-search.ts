@@ -1,5 +1,6 @@
 import { Component, ChangeDetectorRef, DestroyRef, inject, ChangeDetectionStrategy, computed, signal, Inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -61,6 +62,7 @@ export class JobSearchPage {
 	expandedJobs: { [key: string]: boolean } = {};
 	unmaskedHRDetails: { [key: string]: boolean } = {};
 	jobListings = signal<JobListing[]>([]);
+	userSkills = signal<string[]>([]);
 	private jobMap = new Map<string, JobListing>();
 	filterOptions: any = {};
 	isLoading = true;
@@ -81,8 +83,13 @@ export class JobSearchPage {
 		if (!jobs || jobs.length === 0) return [];
 		
 		const filtered = jobs.filter(job => {
+			// 1. Status Filter: Remove expired/closed/filled jobs (backend handles this)
 			if (job.status && ['expired', 'closed', 'filled'].includes(job.status)) return false;
 
+			// 2. SKILL-BASED FILTERING: Now handled in backend (jobs already filtered by >=2 skill matches)
+			// No need for frontend skill filtering since backend enforces the rule
+
+			// 3. Search Query Filter
 			if (config.searchQuery) {
 				const query = config.searchQuery.toLowerCase();
 				const matchesSearch = 
@@ -93,15 +100,18 @@ export class JobSearchPage {
 				if (!matchesSearch) return false;
 			}
 			
+			// 4. Location Filter
 			if (config.selectedLocation !== 'all') {
 				const jobLocation = this.formatLocation(job).toLowerCase().replace(' ', '-');
 				if (!jobLocation.includes(config.selectedLocation)) return false;
 			}
 			
+			// 5. Experience Level Filter
 			if (config.selectedExperience !== 'all') {
 				if (job.experience_level?.toLowerCase().replace(' ', '-') !== config.selectedExperience) return false;
 			}
 			
+			// 6. Employment Type Filter
 			if (config.selectedEmploymentType !== 'all') {
 				if (job.employment_type?.toLowerCase().replace(' ', '-') !== config.selectedEmploymentType) return false;
 			}
@@ -109,7 +119,7 @@ export class JobSearchPage {
 			return true;
 		});
 
-		// Sort: match score desc, then posted date desc
+		// Sort: match score desc, then posted date desc (backend already sorts by match_score)
 		return filtered.sort((a, b) => {
 			const scoreA = (a as any).match_score || 0;
 			const scoreB = (b as any).match_score || 0;
@@ -138,6 +148,7 @@ export class JobSearchPage {
 			companies: [],
 			salary_ranges: []
 		};
+		this.loadUserSkills();
 		this.loadJobs();
 	}
 
@@ -156,6 +167,11 @@ export class JobSearchPage {
 					this.totalJobs = this.filteredJobListings().length;
 					this.currentPage.set(1);
 					
+					// Handle backend filtering messages
+					if ((response as any).message) {
+						this.snackBar.open((response as any).message, this.TEXT.snackbar.close, { duration: 5000 });
+					}
+					
 					if (response.filters) {
 						this.filterOptions = response.filters;
 					}
@@ -163,10 +179,31 @@ export class JobSearchPage {
 					this.isLoading = false;
 					this.cdr.markForCheck();
 				},
-				error: () => {
+				error: (error) => {
+					// Handle specific skill-related errors
+					if (error.error?.detail?.includes('skills')) {
+						this.snackBar.open(
+							'Please add at least 2 skills to your profile to see job recommendations.',
+							this.TEXT.snackbar.close,
+							{ duration: 7000 }
+						);
+					}
 					this.isLoading = false;
 					this.cdr.markForCheck();
 				}
+			});
+	}
+
+	private loadUserSkills(): void {
+		this.userService.getCurrentUser()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe(user => {
+				if (user?.skills) {
+					this.userSkills.set(user.skills);
+				} else {
+					this.userSkills.set([]);
+				}
+				this.cdr.markForCheck();
 			});
 	}
 
@@ -446,7 +483,13 @@ export class JobSearchPage {
 	getMatchAnalysisText(jobId: string): string {
 		const job = this.getJobById(jobId);
 		if (job?.match_analysis_done && job.match_percentage) {
-			return `${this.TEXT.matchAnalysis.analysisPrefix} ${job.match_percentage}${this.TEXT.matchAnalysis.matchSuffix}`;
+			// Show detailed analysis result
+			const level = (job as any).match_level;
+			const levelText = level ? ` (${level})` : '';
+			return `${this.TEXT.matchAnalysis.analysisPrefix} ${job.match_percentage}${this.TEXT.matchAnalysis.matchSuffix}${levelText}`;
+		} else if (job?.match_score) {
+			// Show basic skill-based score from backend
+			return `Quick Match: ${job.match_score}% - Click for detailed analysis`;
 		}
 		return this.TEXT.matchAnalysis.default;
 	}
@@ -459,8 +502,33 @@ export class JobSearchPage {
 		return this.TEXT.tailorResume.default;
 	}
 
-	getMaskedEmail(email: string, jobId: string): string {
-		return maskEmail(email, !this.unmaskedHRDetails[jobId]);
+	getMatchedSkillsInfo(jobId: string): { count: number; skills: string[] } {
+		const job = this.getJobById(jobId);
+		return {
+			count: (job as any)?.matched_skills_count || 0,
+			skills: (job as any)?.matched_skills || []
+		};
+	}
+
+	getMatchScoreColor(jobId: string): string {
+		const job = this.getJobById(jobId);
+		const score = job?.match_percentage || job?.match_score || 0;
+		
+		if (score >= 80) return 'success';
+		if (score >= 60) return 'primary'; 
+		if (score >= 40) return 'accent';
+		return 'warn';
+	}
+
+	getMatchScoreText(jobId: string): string {
+		const job = this.getJobById(jobId);
+		const score = job?.match_percentage || job?.match_score || 0;
+		const matchInfo = this.getMatchedSkillsInfo(jobId);
+		
+		if (matchInfo.count > 0) {
+			return `${score}% match (${matchInfo.count} skills)`;
+		}
+		return `${score}% match`;
 	}
 
 	getMaskedPhone(phone: string, jobId: string): string {
