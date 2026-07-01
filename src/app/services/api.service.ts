@@ -108,20 +108,6 @@ export class ApiService {
 	}
 
 	/**
-	* AI Query endpoint (core endpoint)
-	*/
-	askAI(query: string): Observable<{ response: string; timestamp: string }> {
-		return this.http.post<{ response: string; timestamp: string }>(
-			`${this.baseUrl}/ask`, 
-			{ query },
-			{ headers: this.createHeaders() }
-		).pipe(
-			retry(1),
-			catchError(this.handleError)
-		);
-	}
-
-	/**
 	* Health check endpoints
 	*/
 	healthCheck(): Observable<any> {
@@ -132,17 +118,6 @@ export class ApiService {
 
 	extendedHealthCheck(): Observable<any> {
 		return this.get('/health');
-	}
-
-	/**
-	* Get logs
-	*/
-	getLogs(limit: number = 10): Observable<any> {
-		return this.http.get(`${this.baseUrl}/logs`, {
-			params: { limit: limit.toString() }
-		}).pipe(
-			catchError(this.handleError)
-		);
 	}
 
 	/**
