@@ -51,7 +51,7 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 	@Output() toggleEdit = new EventEmitter<void>();
 
 	form!: FormGroup;
-	showPassword = signal(false);
+	showPasswordMap = signal<Record<string, boolean>>({});
 
 	constructor(private fb: FormBuilder, private cdr: ChangeDetectorRef) {}
 
@@ -230,12 +230,20 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
 	getInputType(field: FormFieldConfig): string {
 		if (field.type === 'password') {
-			return this.showPassword() ? 'text' : 'password';
+			return this.showPasswordMap()[field.name] ? 'text' : 'password';
 		}
 		if (field.type === 'number') {
 			return 'number';
 		}
 		return field.type;
+	}
+
+	toggleFieldVisibility(fieldName: string): void {
+		this.showPasswordMap.update(map => ({ ...map, [fieldName]: !map[fieldName] }));
+	}
+
+	isPasswordVisible(fieldName: string): boolean {
+		return !!this.showPasswordMap()[fieldName];
 	}
 
 	onBack(): void {
@@ -267,7 +275,7 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 	}
 
 	togglePasswordVisibility() {
-		this.showPassword.update(show => !show);
+		// kept for backward compat if called elsewhere
 	}
 
 	getFieldError(fieldName: string): string {

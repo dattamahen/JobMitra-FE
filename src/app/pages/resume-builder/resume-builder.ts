@@ -14,6 +14,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ResumeService } from '../../services/resume.service';
 import { ResumeTemplateService } from '../../services/resume-template.service';
+import { UserService } from '../../services/user.service';
 import type { Resume, ResumeTemplate, Experience, Education, Project, Certification } from '../../types/resume.types';
 import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
@@ -212,14 +213,12 @@ export class ResumeBuilderPage implements OnInit {
 
 	private populateSkillsValues(user: any): any {
 		const values: any = {};
-		if (user?.technical_skills && Array.isArray(user.technical_skills)) {
-			user.technical_skills.forEach((skill: any, index: number) => {
-				const itemId = `item_${index}`;
-				values[`technical_skills_${itemId}_name`] = skill.name || '';
-				values[`technical_skills_${itemId}_version`] = skill.version || '';
-				values[`technical_skills_${itemId}_experience`] = skill.experience || '';
-			});
-		}
+		UserService.resolveSkills(user).forEach((skill, index) => {
+			const itemId = `item_${index}`;
+			values[`technical_skills_${itemId}_name`] = skill.name;
+			values[`technical_skills_${itemId}_version`] = skill.version;
+			values[`technical_skills_${itemId}_experience`] = skill.experience;
+		});
 		return values;
 	}
 

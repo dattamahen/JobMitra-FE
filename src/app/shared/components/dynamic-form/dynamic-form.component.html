@@ -20,7 +20,7 @@
 								<div class="array-item-header">
 									<span class="item-title">{{ field.label }} {{ $index + 1 }}</span>
 									<button mat-icon-button type="button" (click)="removeArrayItem(field.name, itemId)" 
-													class="delete-btn" [disabled]="readonly">
+											class="delete-btn" [disabled]="readonly">
 										<mat-icon>close</mat-icon>
 									</button>
 								</div>
@@ -84,7 +84,7 @@
 							</div>
 						}
 						<button mat-raised-button type="button" (click)="addArrayItem(field.name)" 
-										[disabled]="readonly || !canAddArrayItem(field.name)">
+								[disabled]="readonly || !canAddArrayItem(field.name)">
 							<mat-icon>add</mat-icon>
 							Add {{ field.label === 'Skills' ? 'Skill' : field.label }}
 						</button>
@@ -97,6 +97,7 @@
 						[required]="!!field.required"
 						[readonly]="!!(readonly || field.readonly)"
 						[disabled]="!!(readonly || field.readonly)"
+						[maxDate]="field.maxDate || null"
 						[hint]="field.hint || ''">
 					</app-date-field>
 				}
@@ -143,12 +144,15 @@
 									[disabled]="readonly || !!field.readonly">
 							}
 						}
-						
-						@if (field.icon) {
-							<mat-icon matSuffix [class.password-toggle]="field.type === 'password'" 
-											(click)="field.type === 'password' ? togglePasswordVisibility() : null">
-								{{ field.type === 'password' ? (showPassword() ? 'visibility_off' : 'visibility') : field.icon }}
-							</mat-icon>
+
+						@if (field.icon && field.type === 'password') {
+							<button mat-icon-button matSuffix type="button"
+								(click)="toggleFieldVisibility(field.name)"
+								[attr.aria-label]="isPasswordVisible(field.name) ? 'Hide password' : 'Show password'">
+								<mat-icon>{{ isPasswordVisible(field.name) ? 'visibility_off' : 'visibility' }}</mat-icon>
+							</button>
+						} @else if (field.icon) {
+							<mat-icon matSuffix>{{ field.icon }}</mat-icon>
 						}
 						
 						@if (field.hint) {
@@ -159,6 +163,14 @@
 							<mat-error>{{ getFieldError(field.name) }}</mat-error>
 						}
 					</mat-form-field>
+
+					@if (field.name === 'confirmPassword' && form.get('confirmPassword')?.dirty && form.get('confirmPassword')?.value) {
+						<p class="password-match-hint"
+							[class.match]="form.get('password')?.value === form.get('confirmPassword')?.value"
+							[class.mismatch]="form.get('password')?.value !== form.get('confirmPassword')?.value">
+							{{ form.get('password')?.value === form.get('confirmPassword')?.value ? '✓ Password and Confirm Password matches' : '✗ Password and Confirm Password has to be matched' }}
+						</p>
+					}
 				}
 			}
 			</div>

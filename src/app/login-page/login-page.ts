@@ -250,7 +250,7 @@ export class LoginPage implements OnInit {
 		).catch(
 			(error) => {
 				this.signupFormConfig.loading = false;
-				this.errorMessage = error.error?.detail || 'Signup failed. Please try again.';
+				this.errorMessage = error.message || 'Signup failed. Please try again.';
 			}
 		);
 	}

@@ -1,4 +1,4 @@
-import { Component, viewChild, AfterViewInit, OnInit, ElementRef, DestroyRef, inject, signal, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, viewChild, AfterViewInit, OnInit, ElementRef, DestroyRef, inject, signal, computed, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -84,7 +84,25 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	isGeneratingJobDesc = signal<string | null>(null);
 	
 	profileForm!: FormGroup;
-	currentUser: UserProfile | null = null;
+	currentUser = signal<UserProfile | null>(null);
+	readonly skills = computed(() => this.resolveSkills(this.currentUser() as any)
+		.map(s => s.version ? `${s.name} (${s.version})` : s.name));
+	readonly completionPercentage = computed(() => {
+		const user = this.currentUser() as any;
+		if (!user) return 0;
+		const fields = [
+			`${user.first_name || ''} ${user.last_name || ''}`.trim(),
+			user.email,
+			user.phone,
+			user.current_role || user.professional_info?.current_role,
+			UserService.resolveSkills(user).length > 0,
+			user.city || user.personal_info?.location?.city,
+			user.professional_summary || user.professional_info?.professional_summary,
+			(user.overall_experience_years || 0) !== 0
+		];
+		const completed = fields.filter(f => f !== undefined && f !== null && f !== '' && f !== false).length;
+		return Math.round((completed / fields.length) * 100);
+	});
 	isLoading = signal(false);
 	isSaving = signal(false);
 	private formsInitialized = false;
@@ -188,7 +206,7 @@ export class ProfilePage implements OnInit, AfterViewInit {
 
 	generateProfessionalSummary(): void {
 		this.isGeneratingSummary.set(true);
-		const user = this.currentUser as any;
+		const user = this.currentUser() as any;
 
 		const payload = {
 			current_role: user?.current_role || '',
@@ -235,7 +253,7 @@ export class ProfilePage implements OnInit, AfterViewInit {
 
 	generateJobDescription(itemId: string): void {
 		this.isGeneratingJobDesc.set(itemId);
-		const user = this.currentUser as any;
+		const user = this.currentUser() as any;
 		const experienceFormRef = this.experienceForm();
 		if (!experienceFormRef) return;
 
@@ -461,31 +479,18 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	}
 
 	// Methods to populate dynamic array values
+	private resolveSkills(user: any): { name: string; version: string; experience: string }[] {
+		return UserService.resolveSkills(user);
+	}
+
 	private populateSkillsValues(user: Record<string, any>): Record<string, any> {
 		const values: any = {};
-		
-		if (user?.['technical_skills'] && Array.isArray(user['technical_skills'])) {
-			const validSkills = user['technical_skills'].filter((skill: any) => skill && skill.name);
-			if (validSkills.length > 0) {
-				validSkills.forEach((skill: any, index: number) => {
-					const itemId = `item_${index}`;
-					values[`technical_skills_${itemId}_name`] = skill.name || '';
-					values[`technical_skills_${itemId}_version`] = skill.version || '';
-					values[`technical_skills_${itemId}_experience`] = skill.experience || '';
-				});
-			}
-		} else if (user?.['skills'] && Array.isArray(user['skills'])) {
-			const validSkills = user['skills'].filter((skill: string) => skill && skill.trim());
-			if (validSkills.length > 0) {
-				validSkills.forEach((skillName: string, index: number) => {
-					const itemId = `item_${index}`;
-					values[`technical_skills_${itemId}_name`] = skillName;
-					values[`technical_skills_${itemId}_version`] = '';
-					values[`technical_skills_${itemId}_experience`] = 'Beginner (0-6 months)';
-				});
-			}
-		}
-		
+		this.resolveSkills(user).forEach((skill, index) => {
+			const id = `item_${index}`;
+			values[`technical_skills_${id}_name`] = skill.name;
+			values[`technical_skills_${id}_version`] = skill.version;
+			values[`technical_skills_${id}_experience`] = skill.experience;
+		});
 		return values;
 	}
 
@@ -661,7 +666,7 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	jobPreferencesValues: any = {};
 
 	private updateFormValues(): void {
-		const user = this.currentUser as any;
+		const user = this.currentUser() as any;
 
 		
 		// Update all form values
@@ -780,14 +785,14 @@ export class ProfilePage implements OnInit, AfterViewInit {
 			.subscribe({
 				next: (user: any) => {
 					this.isLoading.set(false);
-					this.currentUser = user as any;
+					this.currentUser.set(user as any);
 					this.updateFormValues();
 					this.updateDynamicForms();
 					this.cdr.markForCheck();
 				},
 				error: (error: any) => {
 					this.isLoading.set(false);
-					if (error.status === 401) {
+					if ((error as any).status === 401) {
 						this.authService.clearAllAuthData();
 					}
 					this.snackBar.open('Error loading profile data', 'Close', { duration: 3000 });
@@ -935,8 +940,8 @@ export class ProfilePage implements OnInit, AfterViewInit {
 
 	public resetForm(): void {
 		if (confirm('Are you sure you want to reset all changes?')) {
-			if (this.currentUser) {
-				this.populateForm(this.currentUser);
+		if (this.currentUser()) {
+				this.populateForm(this.currentUser()!);
 			} else {
 				this.profileForm.reset();
 			}
@@ -944,10 +949,8 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	}
 
 	getProfileCompletion(): number {
-		if (this.currentUser) {
-			return this.userService.calculateProfileCompletion(this.currentUser);
-		}
-		return 0;
+		const user = this.currentUser();
+		return user ? this.userService.calculateProfileCompletion(user) : 0;
 	}
 
 	private markFormGroupTouched(): void {
@@ -1008,113 +1011,83 @@ export class ProfilePage implements OnInit, AfterViewInit {
 
 	// Getter methods for profile summary section
 	getFullName(): string {
-		const user = this.currentUser as any;
+		const user = this.currentUser() as any;
 		return user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() : '';
 	}
 
 	getCurrentRole(): string {
-		const user = this.currentUser as any;
+		const user = this.currentUser() as any;
 		return user?.current_role || user?.professional_info?.current_role || '';
 	}
 
 	getLocation(): string {
-		const user = this.currentUser as any;
+		const user = this.currentUser() as any;
 		const city = user?.city || user?.personal_info?.location?.city || '';
 		const state = user?.state || user?.personal_info?.location?.state || '';
 		return [city, state].filter(Boolean).join(', ');
 	}
 
 	getExperience(): string {
-		const user = this.currentUser as any;
+		const user = this.currentUser() as any;
 		return user?.overall_experience_years?.toString() || '0';
 	}
 
 	getProfessionalSummary(): string {
-		const user = this.currentUser as any;
+		const user = this.currentUser() as any;
 		return user?.professional_summary || user?.professional_info?.professional_summary || '';
 	}
 
-	getSkills(): string[] {
-		const user = this.currentUser as any;
-		// Get skills from technical skills with version info
-		if (user?.technical_skills && Array.isArray(user.technical_skills) && user.technical_skills.length > 0) {
-			return user.technical_skills.map((skill: any) => {
-				const name = skill.name || '';
-				const version = skill.version || '';
-				return version ? `${name} (${version})` : name;
-			}).filter(Boolean);
-		}
-		
-		// Fallback to simple skills array
-		return user?.skills || [];
-	}
+	getSkills(): string[] { return this.skills(); }
 
 	getEmail(): string {
-		const user = this.currentUser as any;
+		const user = this.currentUser() as any;
 		return user?.email || '';
 	}
 
 	getPhone(): string {
-		const user = this.currentUser as any;
+		const user = this.currentUser() as any;
 		return user?.phone || '';
 	}
 
 	getGithubLink(): string {
-		const user = this.currentUser as any;
+		const user = this.currentUser() as any;
 		return user?.github_link || user?.social_links?.github || '';
 	}
 
 	getLinkedinLink(): string {
-		const user = this.currentUser as any;
+		const user = this.currentUser() as any;
 		return user?.linkedin_link || user?.social_links?.linkedin || '';
 	}
 
 	getPortfolioLink(): string {
-		const user = this.currentUser as any;
+		const user = this.currentUser() as any;
 		return user?.portfolio_link || user?.social_links?.portfolio || '';
 	}
 
 	getHighestQualification(): string {
-		const user = this.currentUser as any;
+		const user = this.currentUser() as any;
 		const qualification = user?.highest_qualification || '';
 		return QUALIFICATION_DISPLAY_MAP[qualification] || qualification;
 	}
 
 	getJobPreferences(): string {
-		const user = this.currentUser as any;
+		const user = this.currentUser() as any;
 		return user?.job_preferences?.[0] || '';
 	}
 
 	getEmploymentType(): string {
-		const user = this.currentUser as any;
+		const user = this.currentUser() as any;
 		return user?.employment_type?.[0] || '';
 	}
 
 	getExpectedSalary(): string {
-		const user = this.currentUser as any;
+		const user = this.currentUser() as any;
 		const salary = user?.expected_salary || user?.professional_info?.expected_salary;
 		return salary ? `₹${salary.toLocaleString()}` : '';
 	}
 
 	getCompletionPercentage(): number {
-		if (!this.currentUser) return 0;
-		
-		const fields = [
-			this.getFullName(),
-			this.getEmail(),
-			this.getPhone(),
-			this.getCurrentRole(),
-			this.getSkills().length > 0,
-			this.getLocation(),
-			this.getProfessionalSummary(),
-			this.getExperience() !== '0'
-		];
-
-		const completedFields = fields.filter(field => 
-			field !== undefined && field !== null && field !== '' && field !== false
-		).length;
-
-		return Math.round((completedFields / fields.length) * 100);
+		return this.completionPercentage();
 	}
 
 	getProfileSnapshot(): ProfileSnapshot {
@@ -1123,7 +1096,7 @@ export class ProfilePage implements OnInit, AfterViewInit {
 			role: this.getCurrentRole() || 'Add your professional headline',
 			location: this.getLocation() || 'Add your location',
 			experience: this.getExperience() || '0',
-			skills: this.getSkills(),
+			skills: this.skills(),
 			email: this.getEmail(),
 			phone: this.getPhone(),
 			linkedin: this.getLinkedinLink(),
@@ -1142,7 +1115,7 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	}
 
 	getProfileAvatarImage(): string | null {
-		const url = this.currentUser?.avatar_url;
+		const url = this.currentUser()?.avatar_url;
 		return this.imageUploadService.getFullAvatarUrl(url as string | null | undefined);
 	}
 
@@ -1415,7 +1388,7 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	pullUserDetailsForResume(): void {
 
 		
-		if (!this.currentUser) {
+		if (!this.currentUser()) {
 			this.snackBar.open('No user data available', 'Close', { duration: 3000 });
 			return;
 		}

@@ -366,6 +366,22 @@ export class UserService {
 	}
 
 	/**
+	* Single source of truth for resolving skills from any user object.
+	* Prefers technical_skills (filtered by .name), falls back to flat skills[].
+	*/
+	static resolveSkills(user: any): { name: string; version: string; experience: string }[] {
+		const technical = Array.isArray(user?.technical_skills)
+			? user.technical_skills.filter((s: any) => s?.name)
+			: [];
+		if (technical.length > 0) {
+			return technical.map((s: any) => ({ name: s.name, version: s.version || '', experience: s.experience || '' }));
+		}
+		return (user?.skills as string[] || [])
+			.filter((s: string) => s?.trim())
+			.map((name: string) => ({ name, version: '', experience: 'Beginner (0-6 months)' }));
+	}
+
+	/**
 	* Update profile completion percentage
 	*/
 	calculateProfileCompletion(user: UserProfile): number {

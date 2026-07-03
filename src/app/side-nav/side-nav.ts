@@ -1,5 +1,7 @@
 import { Component, Output, EventEmitter, OnInit, DestroyRef, inject, ViewEncapsulation } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
@@ -33,18 +35,32 @@ export class SideNav implements OnInit {
 	constructor(
 		private authService: AuthService,
 		private navigationService: NavigationService,
-		private dialog: MatDialog
+		private dialog: MatDialog,
+		private router: Router
 	) {}
+
+	private syncActiveFromUrl(url: string): void {
+		const parts = url.split('/').map(p => p.split('?')[0]);
+		const page = parts[2] || parts[1] || 'dashboard';
+		const match = this.navItems.find(item => item.id === page);
+		this.activeItem = match ? match.id : 'dashboard';
+	}
 
 	ngOnInit() {
 		this.navItems = this.navigationService.getNavigationItems();
-		this.activeItem = 'dashboard';
-		
+
 		const user = this.authService.getCurrentUserValue();
 		if (user) {
 			this.userName = `${user.first_name} ${user.last_name}`;
 			this.userEmail = user.email;
 		}
+
+		this.syncActiveFromUrl(this.router.url);
+
+		this.router.events.pipe(
+			filter(e => e instanceof NavigationEnd),
+			takeUntilDestroyed(this.destroyRef)
+		).subscribe(e => this.syncActiveFromUrl((e as NavigationEnd).urlAfterRedirects));
 	}
 
 	selectItem(itemId: string) {

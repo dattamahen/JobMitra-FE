@@ -24,6 +24,7 @@ export const SIGNUP_TEXT = {
 		confirmPassword: 'Confirm Password',
 		confirmPasswordRequired: 'Confirm password is required',
 		passwordMismatch: 'Passwords do not match',
+		passwordsMatch: 'Passwords match',
 		userType: 'I am a',
 		jobSeeker: 'Job Seeker',
 		hrRecruiter: 'HR/Recruiter',

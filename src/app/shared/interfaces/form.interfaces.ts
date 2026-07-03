@@ -21,6 +21,7 @@ export interface FormFieldConfig {
 	cssClass?: string;
 	width?: 'full' | 'half' | 'quarter' | 'three-quarter';
 	readonly?: boolean;
+	maxDate?: Date;
 	fields?: FormFieldConfig[]; // For dynamic-array and nested field types
 }
 
