@@ -245,15 +245,7 @@ export const JOB_SEARCH_TEXT = {
 		icon: 'work',
 	},
 	emptyState: {
-		icon: 'work_off',
-		title: 'No Jobs Found',
-		message: 'Try adjusting your search filters to find more opportunities.',
-	},
-	tooltips: {
-		matchAnalysis: 'Analyze profile match',
-		tailorResume: 'Tailor resume for this role',
-		mockInterview: 'Practice interview for this role',
-	},
+
 	chips: {
 		mockInterview: 'Mock Interview',
 		matchSuffix: '% Match',

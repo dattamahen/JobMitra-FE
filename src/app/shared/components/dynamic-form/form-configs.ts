@@ -806,7 +806,8 @@ export const PROFILE_BASIC_INFO_CONFIG: FormConfig = {
 			name: 'date_of_birth',
 			type: 'date',
 			label: 'Date of Birth',
-			width: 'half'
+			width: 'half',
+			maxDate: new Date()
 		},
 		{
 			name: 'location',

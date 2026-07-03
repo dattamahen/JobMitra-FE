@@ -14,14 +14,16 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
 
 	return next(req).pipe(
 		catchError((error: HttpErrorResponse) => {
-			// Skip notification for auth endpoints — they handle their own errors
 			const isAuthRequest = req.url.includes('/auth/');
+
+			// Always show network-down error regardless of endpoint
+			if (error.status === 0) {
+				notificationService.show('Unable to connect to server. Check your network.', 'warning');
+				return throwError(() => error);
+			}
 
 			if (!isAuthRequest) {
 				switch (error.status) {
-					case 0:
-						notificationService.show('Unable to connect to server. Check your network.', 'warning');
-						break;
 					case 401:
 						if (!is401Handled) {
 							is401Handled = true;

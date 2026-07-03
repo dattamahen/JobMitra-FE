@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, throwError, of } from 'rxjs';
+import { BehaviorSubject, Observable, throwError, of, firstValueFrom } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
@@ -300,8 +300,7 @@ export class AuthService {
 	*/
 	async register(userData: RegisterRequest): Promise<User> {
 		try {
-			const response = await this.http.post<User>(`${this.API_URL}/register`, userData).toPromise();
-			return response!;
+			return await firstValueFrom(this.http.post<User>(`${this.API_URL}/register`, userData));
 		} catch (error: any) {
 			throw new Error(error.error?.detail || 'Registration failed');
 		}

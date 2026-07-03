@@ -193,7 +193,7 @@
 						</div>
 						<div class="stat-divider"></div>
 						<div class="stat-item">
-							<span class="stat-number">{{getCompletionPercentage()}}</span>
+							<span class="stat-number">{{completionPercentage()}}</span>
 							<span class="stat-label">{{TEXT.labels.percentComplete}}</span>
 						</div>
 					</div>
@@ -222,21 +222,21 @@
 			<mat-card class="section-card">
 				<div class="section-header">
 					<h2>{{TEXT.sections.skills}}</h2>
-					@if (getSkills().length > 0) {
-						<span class="skills-count">{{getSkills().length}} {{TEXT.sections.skillsSuffix}}</span>
+					@if (skills().length > 0) {
+						<span class="skills-count">{{skills().length}} {{TEXT.sections.skillsSuffix}}</span>
 					}
 				</div>
 				<mat-card-content>
-					@if (getSkills().length > 0) {
+					@if (skills().length > 0) {
 						<div class="skills-list">
-							@for (skill of getSkills().slice(0, 6); track skill) {
+							@for (skill of skills().slice(0, 6); track skill) {
 								<div class="skill-item">
 									<span class="skill-name">{{skill}}</span>
 								</div>
 							}
-							@if (getSkills().length > 6) {
+							@if (skills().length > 6) {
 								<button mat-button class="show-more-btn">
-									{{TEXT.emptyStates.showAllPrefix}} {{getSkills().length}} {{TEXT.emptyStates.showAllSuffix}}
+									{{TEXT.emptyStates.showAllPrefix}} {{skills().length}} {{TEXT.emptyStates.showAllSuffix}}
 									<mat-icon>arrow_forward</mat-icon>
 								</button>
 							}

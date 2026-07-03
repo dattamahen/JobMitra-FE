@@ -239,3 +239,21 @@ mat-spinner {
 	color: #3730a3;
 	text-decoration: underline;
 }
+
+.password-match-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  margin: 4px 0 12px;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &.match { color: #16a34a; }
+  &.mismatch { color: #dc2626; }
+}

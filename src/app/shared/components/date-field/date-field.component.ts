@@ -26,6 +26,7 @@ import { CommonModule } from '@angular/common';
 				[matDatepicker]="picker"
 				[value]="value"
 				(dateInput)="onDateChange($event)"
+				[max]="maxDate"
 				[readonly]="readonly"
 				[disabled]="disabled || readonly">
 			<mat-datepicker-toggle matSuffix [for]="picker" [disabled]="disabled || readonly"></mat-datepicker-toggle>
@@ -56,6 +57,7 @@ export class DateFieldComponent implements ControlValueAccessor {
 	@Input() readonly = false;
 	@Input() disabled = false;
 	@Input() hint = '';
+	@Input() maxDate: Date | null = null;
 
 	value: Date | null = null;
 	onChange = (value: Date | null) => {};
