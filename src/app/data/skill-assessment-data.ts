@@ -1,6 +1,6 @@
 export const SKILL_ASSESSMENT_TEXT = {
 	categories: {
-		technicalSkills: 'Technical Skills',
+		technicalSkills: 'Skills',
 		softSkills: 'Soft Skills',
 	},
 	buttons: {

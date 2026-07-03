@@ -27,20 +27,6 @@ export const routes: Routes = [
 		loadComponent: () => import('./pages/job-applications/job-applications.component').then(m => m.JobApplicationsComponent),
 		canActivate: [AuthGuard]
 	},
-	// Legacy route support for backwards compatibility
-	{
-		path: 'hr-dashboard',
-		redirectTo: '/dashboard'
-	},
-	{
-		path: 'admin-dashboard', 
-		redirectTo: '/dashboard'
-	},
-	{
-		path: 'hr',
-		redirectTo: '/dashboard'
-	},
-	// Redirect all job seeker pages to dashboard (they'll be handled internally)
 	{
 		path: 'profile',
 		redirectTo: '/dashboard'
