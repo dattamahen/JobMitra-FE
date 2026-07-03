@@ -1,0 +1,69 @@
+[debug] [2026-07-03T13:55:04.568Z] ----------------------------------------------------------------------
+[debug] [2026-07-03T13:55:04.573Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Datta Mahendrakar\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js projects:addfirebase jobmouka
+[debug] [2026-07-03T13:55:04.573Z] CLI Version:   15.22.4
+[debug] [2026-07-03T13:55:04.573Z] Platform:      win32
+[debug] [2026-07-03T13:55:04.574Z] Node Version:  v24.15.0
+[debug] [2026-07-03T13:55:04.574Z] Detected Agent: unknown
+[debug] [2026-07-03T13:55:04.574Z] Time:          Fri Jul 03 2026 19:25:04 GMT+0530 (India Standard Time)
+[debug] [2026-07-03T13:55:04.574Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-07-03T13:55:04.777Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-07-03T13:55:04.777Z] > authorizing via signed-in user (renukadevi@jobmouka.com)
+[debug] [2026-07-03T13:55:04.781Z] Checked if tokens are valid: true, expires at: 1783090476911
+[debug] [2026-07-03T13:55:04.782Z] Checked if tokens are valid: true, expires at: 1783090476911
+[debug] [2026-07-03T13:55:04.783Z] >>> [apiv2][query] POST https://firebase.googleapis.com/v1beta1/projects/jobmouka:addFirebase [none]
+[debug] [2026-07-03T13:55:05.388Z] <<< [apiv2][status] POST https://firebase.googleapis.com/v1beta1/projects/jobmouka:addFirebase 403
+[debug] [2026-07-03T13:55:05.388Z] <<< [apiv2][body] POST https://firebase.googleapis.com/v1beta1/projects/jobmouka:addFirebase {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2026-07-03T13:55:05.389Z] Request to https://firebase.googleapis.com/v1beta1/projects/jobmouka:addFirebase had HTTP Error: 403, The caller does not have permission
+[debug] [2026-07-03T13:55:05.547Z] FirebaseError: Request to https://firebase.googleapis.com/v1beta1/projects/jobmouka:addFirebase had HTTP Error: 403, The caller does not have permission
+    at responseToError (C:\Users\Datta Mahendrakar\AppData\Roaming\npm\node_modules\firebase-tools\lib\responseToError.js:53:12)
+    at RetryOperation._fn (C:\Users\Datta Mahendrakar\AppData\Roaming\npm\node_modules\firebase-tools\lib\apiv2.js:381:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[error] 
+[error] Error: Failed to add Firebase to Google Cloud Platform project. See firebase-debug.log for more info.
+[debug] [2026-07-03T13:57:19.609Z] ----------------------------------------------------------------------
+[debug] [2026-07-03T13:57:19.612Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Datta Mahendrakar\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js projects:addfirebase jobmouka
+[debug] [2026-07-03T13:57:19.612Z] CLI Version:   15.22.4
+[debug] [2026-07-03T13:57:19.612Z] Platform:      win32
+[debug] [2026-07-03T13:57:19.612Z] Node Version:  v24.15.0
+[debug] [2026-07-03T13:57:19.613Z] Detected Agent: unknown
+[debug] [2026-07-03T13:57:19.613Z] Time:          Fri Jul 03 2026 19:27:19 GMT+0530 (India Standard Time)
+[debug] [2026-07-03T13:57:19.613Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-07-03T13:57:19.806Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-07-03T13:57:19.806Z] > authorizing via signed-in user (renukadevi@jobmouka.com)
+[debug] [2026-07-03T13:57:19.809Z] Checked if tokens are valid: true, expires at: 1783090476911
+[debug] [2026-07-03T13:57:19.844Z] Checked if tokens are valid: true, expires at: 1783090476911
+[debug] [2026-07-03T13:57:19.846Z] >>> [apiv2][query] POST https://firebase.googleapis.com/v1beta1/projects/jobmouka:addFirebase [none]
+[debug] [2026-07-03T13:57:20.403Z] <<< [apiv2][status] POST https://firebase.googleapis.com/v1beta1/projects/jobmouka:addFirebase 403
+[debug] [2026-07-03T13:57:20.403Z] <<< [apiv2][body] POST https://firebase.googleapis.com/v1beta1/projects/jobmouka:addFirebase {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2026-07-03T13:57:20.404Z] Request to https://firebase.googleapis.com/v1beta1/projects/jobmouka:addFirebase had HTTP Error: 403, The caller does not have permission
+[debug] [2026-07-03T13:57:20.564Z] FirebaseError: Request to https://firebase.googleapis.com/v1beta1/projects/jobmouka:addFirebase had HTTP Error: 403, The caller does not have permission
+    at responseToError (C:\Users\Datta Mahendrakar\AppData\Roaming\npm\node_modules\firebase-tools\lib\responseToError.js:53:12)
+    at RetryOperation._fn (C:\Users\Datta Mahendrakar\AppData\Roaming\npm\node_modules\firebase-tools\lib\apiv2.js:381:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[error] 
+[error] Error: Failed to add Firebase to Google Cloud Platform project. See firebase-debug.log for more info.
+[debug] [2026-07-03T14:00:29.810Z] ----------------------------------------------------------------------
+[debug] [2026-07-03T14:00:29.814Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Datta Mahendrakar\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js projects:addfirebase jobmouka
+[debug] [2026-07-03T14:00:29.815Z] CLI Version:   15.22.4
+[debug] [2026-07-03T14:00:29.815Z] Platform:      win32
+[debug] [2026-07-03T14:00:29.815Z] Node Version:  v24.15.0
+[debug] [2026-07-03T14:00:29.815Z] Detected Agent: unknown
+[debug] [2026-07-03T14:00:29.815Z] Time:          Fri Jul 03 2026 19:30:29 GMT+0530 (India Standard Time)
+[debug] [2026-07-03T14:00:29.816Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-07-03T14:00:30.015Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-07-03T14:00:30.015Z] > authorizing via signed-in user (renukadevi@jobmouka.com)
+[debug] [2026-07-03T14:00:30.019Z] Checked if tokens are valid: true, expires at: 1783090476911
+[debug] [2026-07-03T14:00:30.019Z] Checked if tokens are valid: true, expires at: 1783090476911
+[debug] [2026-07-03T14:00:30.021Z] >>> [apiv2][query] POST https://firebase.googleapis.com/v1beta1/projects/jobmouka:addFirebase [none]
+[debug] [2026-07-03T14:00:30.579Z] <<< [apiv2][status] POST https://firebase.googleapis.com/v1beta1/projects/jobmouka:addFirebase 403
+[debug] [2026-07-03T14:00:30.579Z] <<< [apiv2][body] POST https://firebase.googleapis.com/v1beta1/projects/jobmouka:addFirebase {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2026-07-03T14:00:30.580Z] Request to https://firebase.googleapis.com/v1beta1/projects/jobmouka:addFirebase had HTTP Error: 403, The caller does not have permission
+[debug] [2026-07-03T14:00:30.745Z] FirebaseError: Request to https://firebase.googleapis.com/v1beta1/projects/jobmouka:addFirebase had HTTP Error: 403, The caller does not have permission
+    at responseToError (C:\Users\Datta Mahendrakar\AppData\Roaming\npm\node_modules\firebase-tools\lib\responseToError.js:53:12)
+    at RetryOperation._fn (C:\Users\Datta Mahendrakar\AppData\Roaming\npm\node_modules\firebase-tools\lib\apiv2.js:381:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[error] 
+[error] Error: Failed to add Firebase to Google Cloud Platform project. See firebase-debug.log for more info.

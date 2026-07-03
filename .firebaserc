@@ -1,0 +1,12 @@
+{
+  "projects": {
+    "default": "jobmouka"
+  },
+  "targets": {
+    "jobmouka": {
+      "hosting": {
+        "dev": ["jobmouka-dev"]
+      }
+    }
+  }
+}

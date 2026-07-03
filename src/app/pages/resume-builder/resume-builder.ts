@@ -10,6 +10,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ResumeService } from '../../services/resume.service';
@@ -50,6 +52,7 @@ import { RESUME_SECTIONS, CV_TEMPLATES } from './resume-builder.constants';
 		MatChipsModule,
 		MatSnackBarModule,
 		MatTooltipModule,
+		MatDialogModule,
 		DynamicFormComponent,
 		LoadingComponent,
 		FeatureGuardDirective
@@ -75,6 +78,7 @@ export class ResumeBuilderPage implements OnInit {
 	private resumeTemplateService = inject(ResumeTemplateService);
 	private fb = inject(FormBuilder);
 	private snackBar = inject(MatSnackBar);
+	private dialog = inject(MatDialog);
 	private featureUsageService = inject(FeatureUsageService);
 	private creditsService = inject(CreditsService);
 	
@@ -1187,7 +1191,15 @@ export class ResumeBuilderPage implements OnInit {
 	}
 
 	async downloadPDF(): Promise<void> {
-		// Check credits via backend
+		const confirmed = await this.dialog.open(ConfirmationDialogComponent, {
+			data: {
+				title: 'Confirm Download',
+				message: 'Please confirm that all details entered are correct and relevant before downloading.',
+				confirmText: 'OK',
+				cancelText: 'No'
+			}
+		}).afterClosed().toPromise();
+		if (!confirmed) return;
 		const allowed = await this.creditsService.gate('cv_download');
 		if (!allowed) {
 			this.snackBar.open('No CV download credits remaining. Please purchase more.', 'Close', { duration: 5000 });

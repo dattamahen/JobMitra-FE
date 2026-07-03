@@ -245,6 +245,12 @@ export const JOB_SEARCH_TEXT = {
 		icon: 'work',
 	},
 	emptyState: {
+		icon: 'work_off',
+		title: 'No Jobs Found',
+		message: 'No matching jobs found. Try updating your profile skills or adjusting your filters.',
+		actionLabel: 'Update Profile',
+		actionRoute: '/profile',
+	},
 
 	chips: {
 		mockInterview: 'Mock Interview',
