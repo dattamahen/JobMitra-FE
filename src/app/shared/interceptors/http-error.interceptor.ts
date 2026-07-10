@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 let is401Handled = false;
+let networkErrorShown = false;
 
 export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
 	const notificationService = inject(ErrorNotificationService);
@@ -16,9 +17,13 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
 		catchError((error: HttpErrorResponse) => {
 			const isAuthRequest = req.url.includes('/auth/');
 
-			// Always show network-down error regardless of endpoint
+			// Show network error only once until it recovers
 			if (error.status === 0) {
-				notificationService.show('Unable to connect to server. Check your network.', 'warning');
+				if (!networkErrorShown) {
+					networkErrorShown = true;
+					notificationService.show('Unable to connect to server. Check your network.', 'warning');
+					setTimeout(() => { networkErrorShown = false; }, 30000);
+				}
 				return throwError(() => error);
 			}
 

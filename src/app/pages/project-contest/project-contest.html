@@ -1,0 +1,266 @@
+<div class="page-container">
+	<!-- Prize Banner -->
+	<div class="prize-banner">
+		<div class="prize-banner-content">
+			<mat-icon class="trophy-icon">emoji_events</mat-icon>
+			<div class="prize-text">
+				<span class="prize-label">Win Prizes Up To</span>
+				<span class="prize-amount">₹25,000</span>
+			</div>
+			<mat-icon class="trophy-icon">emoji_events</mat-icon>
+		</div>
+	</div>
+
+	<!-- Top Cards Row -->
+	<div class="top-cards">
+		<!-- Leaderboard Card -->
+		<mat-card class="info-card leaderboard-card">
+			<mat-card-content>
+				<div class="info-card-header">
+					<mat-icon>leaderboard</mat-icon>
+					<span>Your Standing</span>
+				</div>
+				@if (myEntries().length > 0) {
+					<div class="info-card-value">{{ myEntries().length }}</div>
+					<div class="info-card-label">Project{{ myEntries().length > 1 ? 's' : '' }} / {{ totalProjects() }} Total</div>
+				} @else {
+					<div class="info-card-value">N/A</div>
+					<div class="info-card-label">Not enrolled yet</div>
+				}
+			</mat-card-content>
+		</mat-card>
+
+		<!-- Info / Notification Card -->
+		<mat-card class="info-card notification-card">
+			<mat-card-content>
+				<div class="info-card-header">
+					<mat-icon>info</mat-icon>
+					<span>Next Steps</span>
+				</div>
+				@if (myEntries().length === 0) {
+					<div class="info-card-message">Register your project below to participate in the contest.</div>
+				} @else if (hasPendingPayment()) {
+					<div class="info-card-message warning">Complete payment for your pending submission to confirm entry.</div>
+				} @else {
+					<div class="info-card-message success">Your project is under review. Results will be announced soon!</div>
+				}
+			</mat-card-content>
+		</mat-card>
+	</div>
+
+	<!-- My Projects (shown when user has entries) -->
+	@if (myEntries().length > 0) {
+		<mat-card class="form-card">
+			<mat-card-content>
+				<h2 class="section-title">{{ TEXT.myEntriesTitle }}</h2>
+				@for (entry of myEntries(); track entry.entry_id) {
+					<div class="entry-item">
+						<div class="entry-header">
+							<h3>{{ entry.project_title }}</h3>
+							<span class="status" [class]="entry.payment_status">{{ entry.payment_status }}</span>
+						</div>
+						<p class="entry-meta">
+							{{ entry.project_type === 'technical' ? 'Technical' : 'Non-Technical' }} •
+							{{ entry.category }} •
+							{{ entry.team_size }} member{{ entry.team_size > 1 ? 's' : '' }}
+						</p>
+					</div>
+				}
+			</mat-card-content>
+		</mat-card>
+	}
+
+	<!-- Step: Done (after successful submission) -->
+	@if (currentStep() === 'done') {
+		<mat-card class="form-card success-card">
+			<mat-card-content>
+				<mat-icon class="success-icon">celebration</mat-icon>
+				<h2>Project Submitted Successfully!</h2>
+
+				<div class="success-info">
+					<div class="success-item">
+						<mat-icon>visibility</mat-icon>
+						<p>Your project is now <strong>showcased to recruiters</strong>. Recruiters can reach you for great job opportunities!</p>
+					</div>
+					<div class="success-item">
+						<mat-icon>card_giftcard</mat-icon>
+						<p>You also get <strong>+5 CV Downloads</strong> and <strong>+3 Mock Interviews</strong> added to your account.</p>
+					</div>
+				</div>
+
+				<button mat-raised-button color="primary" (click)="backToForm()">Submit Another Project</button>
+			</mat-card-content>
+		</mat-card>
+	}
+
+	<!-- Registration Form (Collapsible) -->
+	@if (currentStep() === 'form') {
+		<mat-card class="form-card">
+			<mat-card-content>
+				<div class="section-header-toggle" (click)="toggleFormCollapse()">
+					<h2 class="section-title">{{ myEntries().length > 0 ? 'Register Another Project' : 'Register Your Project' }}</h2>
+					<mat-icon>{{ formCollapsed() ? 'expand_more' : 'expand_less' }}</mat-icon>
+				</div>
+
+				@if (!formCollapsed()) {
+					<form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
+						<!-- Team Members Card -->
+						<div class="form-section">
+							<h3 class="subsection-title">Team Members</h3>
+							<p class="section-hint">You are the team lead (Member 1). Add up to 3 additional members below.</p>
+
+							<!-- Logged-in user as Member 1 (read-only) -->
+							<div class="member-card member-lead">
+								<div class="member-header">
+									<span>Member 1 (You - Team Lead)</span>
+								</div>
+								<div class="form-row form-row-3">
+									<mat-form-field appearance="fill">
+										<mat-label>First Name</mat-label>
+										<input matInput [value]="currentUserFirstName" readonly>
+									</mat-form-field>
+									<mat-form-field appearance="fill">
+										<mat-label>Last Name</mat-label>
+										<input matInput [value]="currentUserLastName" readonly>
+									</mat-form-field>
+									<mat-form-field appearance="fill">
+										<mat-label>Email</mat-label>
+										<input matInput [value]="currentUserEmail" readonly>
+									</mat-form-field>
+								</div>
+							</div>
+
+							@for (member of teamMembers.controls; track $index; let i = $index) {
+								<div class="member-card" [formGroup]="$any(member)">
+									<div class="member-header">
+										<span>Member {{ i + 2 }}</span>
+										<button mat-icon-button color="warn" type="button" (click)="removeMember(i)">
+											<mat-icon>close</mat-icon>
+										</button>
+									</div>
+									<div class="form-row form-row-4">
+										<mat-form-field appearance="fill">
+											<mat-label>{{ TEXT.memberNameLabel }}</mat-label>
+											<input matInput formControlName="full_name">
+										</mat-form-field>
+										<mat-form-field appearance="fill">
+											<mat-label>{{ TEXT.memberEmailLabel }}</mat-label>
+											<input matInput formControlName="email" placeholder="name@gmail.com">
+										</mat-form-field>
+										<mat-form-field appearance="fill">
+											<mat-label>{{ TEXT.memberRoleLabel }}</mat-label>
+											<input matInput formControlName="role_in_project">
+										</mat-form-field>
+										<mat-form-field appearance="fill">
+											<mat-label>{{ TEXT.memberCollegeLabel }}</mat-label>
+											<input matInput formControlName="college">
+										</mat-form-field>
+									</div>
+								</div>
+							}
+
+							@if (teamMembers.length < 3) {
+								<button mat-stroked-button type="button" (click)="addMember()" class="add-member-btn">
+									<mat-icon>person_add</mat-icon> {{ TEXT.addMemberBtn }}
+								</button>
+							}
+						</div>
+
+						<mat-divider></mat-divider>
+
+						<!-- Project Details -->
+						<div class="form-section">
+							<h3 class="subsection-title">Project Details</h3>
+
+							<mat-form-field appearance="fill" class="full-width">
+								<mat-label>{{ TEXT.projectTitleLabel }}</mat-label>
+								<input matInput formControlName="project_title">
+							</mat-form-field>
+
+							<div class="ai-generate-row">
+								@if (generatingDesc()) {
+									<button mat-stroked-button color="primary" type="button" disabled>
+										<mat-icon class="spin">sync</mat-icon>
+										Generating...
+									</button>
+								} @else {
+									<button mat-stroked-button color="primary" type="button" (click)="generateDescription()">
+										<mat-icon>auto_awesome</mat-icon>
+										Generate Description with AI
+									</button>
+								}
+							</div>
+
+							<mat-form-field appearance="fill" class="full-width">
+								<mat-label>{{ TEXT.projectDescLabel }}</mat-label>
+								<textarea matInput formControlName="project_description" rows="5"></textarea>
+							</mat-form-field>
+
+							<div class="form-row">
+								<mat-form-field appearance="fill">
+									<mat-label>{{ TEXT.projectTypeLabel }}</mat-label>
+									<mat-select formControlName="project_type">
+										<mat-option value="technical">Technical</mat-option>
+										<mat-option value="non_technical">Non-Technical</mat-option>
+									</mat-select>
+								</mat-form-field>
+
+								<mat-form-field appearance="fill">
+									<mat-label>{{ TEXT.categoryLabel }}</mat-label>
+									<mat-select formControlName="category">
+										@for (cat of categories(); track cat.value) {
+											<mat-option [value]="cat.value">{{ cat.label }}</mat-option>
+										}
+									</mat-select>
+								</mat-form-field>
+							</div>
+
+							<mat-form-field appearance="fill" class="full-width">
+								<mat-label>{{ TEXT.techStackLabel }}</mat-label>
+								<input matInput formControlName="tech_stack" placeholder="Angular, Python, MongoDB...">
+							</mat-form-field>
+
+							<div class="form-row">
+								<mat-form-field appearance="fill">
+									<mat-label>{{ TEXT.projectUrlLabel }}</mat-label>
+									<input matInput formControlName="project_url">
+								</mat-form-field>
+								<mat-form-field appearance="fill">
+									<mat-label>{{ TEXT.demoUrlLabel }}</mat-label>
+									<input matInput formControlName="demo_url">
+								</mat-form-field>
+							</div>
+
+							<mat-form-field appearance="fill" class="full-width">
+								<mat-label>{{ TEXT.githubUrlLabel }}</mat-label>
+								<input matInput formControlName="github_url">
+							</mat-form-field>
+
+							<div class="form-row">
+								<mat-form-field appearance="fill">
+									<mat-label>{{ TEXT.collegeLabel }}</mat-label>
+									<input matInput formControlName="college_name">
+								</mat-form-field>
+								<mat-form-field appearance="fill">
+									<mat-label>{{ TEXT.gradYearLabel }}</mat-label>
+									<input matInput type="number" formControlName="graduation_year" placeholder="2025">
+								</mat-form-field>
+							</div>
+						</div>
+
+						<!-- Submit -->
+						<div class="actions">
+							<button mat-raised-button color="primary" type="submit" [disabled]="submitting()">
+								@if (submitting()) {
+									<mat-spinner diameter="20"></mat-spinner>
+								} @else {
+									{{ TEXT.submitBtn }}
+								}
+							</button>
+						</div>
+					</form>
+				}
+			</mat-card-content>
+		</mat-card>
+	}
+</div>

@@ -1,7 +1,15 @@
 .dynamic-form {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	gap: 0;
+
+	::ng-deep .mat-mdc-form-field-subscript-wrapper {
+		display: none;
+	}
+
+	::ng-deep .mat-mdc-form-field-bottom-align::before {
+		display: none;
+	}
 	
 	// Form labels
 	.mat-mdc-form-field-label,
@@ -48,7 +56,7 @@
 .form-row {
 	display: flex;
 	flex-wrap: wrap;
-	row-gap: 8px;
+	row-gap: 0;
 	column-gap: 16px;
 	align-items: flex-start;
 }
@@ -66,7 +74,7 @@
 	display: flex;
 	gap: 16px;
 	justify-content: flex-end;
-	margin-top: 16px;
+	margin-top: 8px;
 }
 
 .submit-btn {
@@ -141,6 +149,7 @@ mat-spinner {
 
 .dynamic-array-field {
 	width: 100%;
+	margin-bottom: 0;
 }
 
 .array-header {
@@ -156,11 +165,11 @@ mat-spinner {
 }
 
 .array-item {
-	padding: 16px;
-	margin-bottom: 12px;
-	border: 1px solid #e0e0e0;
-	border-radius: 8px;
-	background: #fafafa;
+	padding: 4px 0;
+	margin-bottom: 4px;
+	border: none;
+	border-radius: 0;
+	background: transparent;
 }
 
 .dynamic-array-item {
@@ -189,13 +198,14 @@ mat-spinner {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 8px;
+	margin-bottom: 4px;
 	font-weight: 500;
 }
 
 .item-title {
-	font-size: 14px;
+	font-size: 0.8rem;
 	font-weight: 500;
+	color: #6b7280;
 }
 
 .delete-btn {
