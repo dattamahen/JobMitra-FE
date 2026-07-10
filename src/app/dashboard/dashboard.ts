@@ -36,6 +36,7 @@ export class Dashboard implements OnInit {
 		'my-jobs':               () => import('../pages/my-jobs/my-jobs').then(m => m.MyJobsPage),
 		'applications-received': () => import('../pages/applications-received/applications-received').then(m => m.ApplicationsReceivedPage),
 		'subscription':          () => import('../pages/subscription/subscription').then(m => m.SubscriptionPage),
+		'project-contest':       () => import('../pages/project-contest/project-contest').then(m => m.ProjectContestPage),
 	};
 
 	readonly pageInputs = {

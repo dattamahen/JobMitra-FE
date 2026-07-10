@@ -35,6 +35,11 @@ h1, h2 {
 	gap: 8px;
 }
 
+.skills-list {
+	max-height: 400px;
+	overflow-y: auto;
+}
+
 .skill-item {
 	display: flex;
 	align-items: center;

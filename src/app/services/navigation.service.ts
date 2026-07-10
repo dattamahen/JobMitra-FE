@@ -64,6 +64,12 @@ export class NavigationService {
 			matIcon: 'card_membership',
 			userTypes: ['job_seeker', 'candidate']
 		},
+		{ 
+			id: 'project-contest', 
+			label: 'Project Contest', 
+			matIcon: 'emoji_events',
+			userTypes: ['job_seeker', 'candidate']
+		},
 
 		// HR Navigation
 		{ 

@@ -1,5 +1,6 @@
 import { Component, OnInit, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef, signal, computed } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 
 import { InterviewHistoryComponent } from '../../shared/components/interview-history/interview-history.component';
@@ -42,6 +43,7 @@ export class SkillAssessmentPage implements OnInit {
 	private interviewService = inject(InterviewService);
 	private creditsService = inject(CreditsService);
 	private authService = inject(AuthService);
+	private router = inject(Router);
 
 	ngOnInit(): void {
 		this.loadSkillAssessments();
@@ -149,7 +151,7 @@ export class SkillAssessmentPage implements OnInit {
 	}
 
 	navigateToProfile(): void {
-		alert('Please update your profile to add skills. Navigate to Profile section.');
+		this.router.navigate(['/dashboard', 'profile']);
 	}
 
 	getProgressColor(level: number): string {

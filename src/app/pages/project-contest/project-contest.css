@@ -1,0 +1,480 @@
+.page-container {
+	padding: 0;
+}
+
+/* Prize Banner */
+.prize-banner {
+	background: linear-gradient(135deg, #4831af 0%, #7c3aed 50%, #a855f7 100%);
+	border-radius: 12px;
+	padding: 20px;
+	margin-bottom: 24px;
+	text-align: center;
+}
+
+.prize-banner-content {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 16px;
+}
+
+.trophy-icon {
+	font-size: 36px;
+	width: 36px;
+	height: 36px;
+	color: #fbbf24;
+}
+
+.prize-text {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.prize-label {
+	font-size: 0.8rem;
+	color: rgba(255, 255, 255, 0.85);
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-weight: 500;
+}
+
+.prize-amount {
+	font-size: 1.75rem;
+	font-weight: 800;
+	color: #fff;
+	line-height: 1.2;
+}
+
+/* Form Cards - matching profile page */
+.form-card {
+	margin-bottom: 24px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	transition: box-shadow 0.3s ease;
+}
+
+.form-card:hover {
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Top Cards Row */
+.top-cards {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+	margin-bottom: 24px;
+}
+
+.info-card {
+	border-radius: 12px;
+}
+
+.info-card-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 0.8rem;
+	font-weight: 600;
+	color: #6b7280;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	margin-bottom: 12px;
+}
+
+.info-card-header mat-icon {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+}
+
+.leaderboard-card .info-card-header mat-icon {
+	color: #4831af;
+}
+
+.notification-card .info-card-header mat-icon {
+	color: #0ea5e9;
+}
+
+.info-card-value {
+	font-size: 1.75rem;
+	font-weight: 800;
+	color: #1a1a2e;
+	line-height: 1.2;
+}
+
+.info-card-label {
+	font-size: 0.8rem;
+	color: #6b7280;
+	margin-top: 4px;
+}
+
+.info-card-message {
+	font-size: 0.875rem;
+	color: #374151;
+	line-height: 1.5;
+}
+
+.info-card-message.warning {
+	color: #d97706;
+}
+
+.info-card-message.success {
+	color: #16a34a;
+}
+
+/* Section Header Toggle */
+.section-header-toggle {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	cursor: pointer;
+	user-select: none;
+}
+
+.section-header-toggle h2 {
+	margin: 0;
+}
+
+.section-header-toggle mat-icon {
+	color: #6b7280;
+}
+
+.form-section {
+	padding: 16px 0;
+}
+
+.subsection-title {
+	font-size: 0.9rem;
+	font-weight: 600;
+	margin: 0 0 12px;
+	color: #374151;
+}
+
+.section-title {
+	font-size: 1rem;
+	font-weight: 600;
+	margin: 0 0 16px;
+}
+
+.section-hint {
+	font-size: 0.875rem;
+	color: #666;
+	margin: -8px 0 16px;
+}
+
+.full-width {
+	width: 100%;
+}
+
+.form-row {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+}
+
+/* Override mat-form-field font sizes to match profile */
+:host ::ng-deep .mat-mdc-form-field {
+	font-size: 0.875rem;
+}
+
+:host ::ng-deep .mat-mdc-floating-label {
+	font-size: 0.875rem !important;
+}
+
+:host ::ng-deep .mat-mdc-form-field-infix {
+	font-size: 0.875rem;
+}
+
+:host ::ng-deep .mdc-floating-label {
+	font-size: 0.875rem !important;
+}
+
+:host ::ng-deep .mdc-floating-label--float-above {
+	font-size: 0.875rem !important;
+}
+
+:host ::ng-deep .mat-mdc-input-element {
+	font-size: 0.875rem;
+}
+
+:host ::ng-deep .mat-mdc-select-value-text {
+	font-size: 0.875rem;
+}
+
+:host ::ng-deep .mat-mdc-form-field-hint {
+	font-size: 0.75rem;
+}
+
+/* AI Generate Button - matching profile page */
+.ai-generate-row {
+	display: flex;
+	justify-content: flex-end;
+	margin-bottom: 8px;
+}
+
+.ai-generate-row button {
+	font-size: 0.8rem;
+	border-color: #4831af;
+	color: #4831af;
+}
+
+.ai-generate-row button:hover:not(:disabled) {
+	background-color: rgba(72, 49, 175, 0.05);
+}
+
+.ai-generate-row button:disabled {
+	opacity: 0.6;
+}
+
+.ai-generate-row mat-icon {
+	font-size: 1rem;
+	width: 1rem;
+	height: 1rem;
+	margin-right: 4px;
+}
+
+@keyframes spin {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}
+
+.spin {
+	animation: spin 1s linear infinite;
+}
+
+/* Team Members */
+.member-card {
+	background: #fafafa;
+	border: 1px solid #e8e8e8;
+	border-radius: 8px;
+	padding: 10px 16px;
+	margin-bottom: 10px;
+}
+
+.member-lead {
+	background: #f3f0ff;
+	border-color: #d4c8f5;
+}
+
+.member-lead input[readonly] {
+	color: #555;
+}
+
+.form-row-3 {
+	grid-template-columns: 1fr 1fr 1fr;
+}
+
+.form-row-4 {
+	grid-template-columns: 1fr 1fr 1fr 1fr;
+	gap: 12px;
+}
+
+.member-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 4px;
+	font-weight: 600;
+	font-size: 0.875rem;
+}
+
+.add-member-btn {
+	margin-top: 8px;
+	font-size: 0.875rem;
+}
+
+/* Actions */
+.actions {
+	display: flex;
+	gap: 12px;
+	justify-content: flex-end;
+	margin-top: 8px;
+	margin-bottom: 24px;
+}
+
+.actions button {
+	font-size: 0.875rem;
+}
+
+/* Payment Card */
+.payment-card {
+	max-width: 560px;
+}
+
+.pricing-summary {
+	background: #f8f9fa;
+	border-radius: 8px;
+	padding: 16px;
+	margin-bottom: 20px;
+}
+
+.pricing-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 8px 0;
+	font-size: 0.875rem;
+}
+
+.pricing-row.total {
+	padding-top: 12px;
+}
+
+.pricing-row .amount {
+	font-size: 1rem;
+	color: #4831af;
+}
+
+.benefits-box {
+	background: #f0fdf4;
+	border-radius: 8px;
+	padding: 16px;
+	margin-bottom: 20px;
+	border: 1px solid #bbf7d0;
+}
+
+.benefits-box h3 {
+	margin: 0 0 8px;
+	font-size: 0.875rem;
+	font-weight: 600;
+}
+
+.benefits-box ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.benefits-box li {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.875rem;
+	margin-bottom: 4px;
+}
+
+.benefits-box li mat-icon {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	color: #16a34a;
+}
+
+.payment-instruction {
+	font-size: 0.875rem;
+	color: #666;
+	margin-bottom: 16px;
+}
+
+/* Success */
+.success-card {
+	text-align: center;
+	padding: 40px 20px;
+}
+
+.success-card h2 {
+	font-size: 1rem;
+	margin: 12px 0 8px;
+}
+
+.success-card p {
+	font-size: 0.875rem;
+	color: #666;
+	margin-bottom: 20px;
+}
+
+.success-info {
+	text-align: left;
+	margin: 20px 0;
+}
+
+.success-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 12px 16px;
+	background: #f8f9fa;
+	border-radius: 8px;
+	margin-bottom: 10px;
+}
+
+.success-item mat-icon {
+	color: #4831af;
+	font-size: 22px;
+	width: 22px;
+	height: 22px;
+	margin-top: 2px;
+}
+
+.success-item p {
+	margin: 0;
+	font-size: 0.875rem;
+	color: #333;
+	line-height: 1.5;
+}
+
+.success-icon {
+	font-size: 48px;
+	width: 48px;
+	height: 48px;
+	color: #16a34a;
+}
+
+/* Entries */
+.entry-item {
+	padding: 12px 0;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.entry-item:last-child {
+	border-bottom: none;
+}
+
+.entry-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.entry-header h3 {
+	margin: 0;
+	font-size: 0.875rem;
+	font-weight: 600;
+}
+
+.entry-meta {
+	font-size: 0.75rem;
+	color: #666;
+	margin: 4px 0 0;
+}
+
+.status {
+	padding: 4px 10px;
+	border-radius: 12px;
+	font-size: 0.7rem;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+
+.status.confirmed {
+	background: #d4edda;
+	color: #155724;
+}
+
+.status.pending {
+	background: #fff3cd;
+	color: #856404;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+	.form-row,
+	.form-row-3,
+	.form-row-4 {
+		grid-template-columns: 1fr;
+	}
+
+	.top-cards {
+		grid-template-columns: 1fr;
+	}
+}

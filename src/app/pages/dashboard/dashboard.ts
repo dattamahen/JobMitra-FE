@@ -67,6 +67,8 @@ export class DashboardPage implements OnInit {
 
 	private checkIfNewUser(): void {
 		const user = this.authService.getCurrentUserValue();
+		const userType = this.authService.getUserType();
+		if (userType === 'hr') return;
 		if (user) {
 			const hasNoSkills = !user.skills || user.skills.length === 0;
 			const hasNoSummary = !(user as any).professional_summary && !(user as any).professional_info?.professional_summary;

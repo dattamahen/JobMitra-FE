@@ -39,6 +39,7 @@ export class CvBootstrapComponent {
 	readonly profileStarted = output<BootstrapCV>();
 
 	step = signal<'input' | 'loading' | 'preview'>('input');
+	collapsed = signal(true);
 	desiredRole = '';
 	skillsInput = '';
 	experienceYears = 2;
@@ -52,6 +53,10 @@ export class CvBootstrapComponent {
 
 	getUserEmail(): string {
 		return this.authService.getCurrentUserValue()?.email || '';
+	}
+
+	toggleCollapse(): void {
+		this.collapsed.update(v => !v);
 	}
 
 	generatePreview() {
