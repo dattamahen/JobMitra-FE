@@ -17,7 +17,6 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
 		catchError((error: HttpErrorResponse) => {
 			const isAuthRequest = req.url.includes('/auth/');
 
-			// Show network error only once until it recovers
 			if (error.status === 0) {
 				if (!networkErrorShown) {
 					networkErrorShown = true;

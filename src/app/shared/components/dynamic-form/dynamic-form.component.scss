@@ -1,7 +1,7 @@
 .dynamic-form {
 	display: flex;
 	flex-direction: column;
-	gap: 0;
+	gap: 8px;
 
 	::ng-deep .mat-mdc-form-field-subscript-wrapper {
 		display: none;
@@ -56,7 +56,7 @@
 .form-row {
 	display: flex;
 	flex-wrap: wrap;
-	row-gap: 0;
+	row-gap: 8px;
 	column-gap: 16px;
 	align-items: flex-start;
 }
@@ -166,7 +166,7 @@ mat-spinner {
 
 .array-item {
 	padding: 4px 0;
-	margin-bottom: 4px;
+	margin-bottom: 12px;
 	border: none;
 	border-radius: 0;
 	background: transparent;

@@ -4,9 +4,9 @@
 		<h1 class="app-name">{{TEXT.appName}}</h1>
 	</div>
 	<mat-nav-list class="nav-menu-scrollable">
-		@for (item of navItems; track item.id) {
+		@for (item of navItems(); track item.id) {
 			<mat-list-item 
-				[class.active]="activeItem === item.id"
+				[class.active]="activeItem() === item.id"
 				(click)="selectItem(item.id)"
 				class="nav-item"
 				style="height:2.5rem !important">
@@ -20,8 +20,8 @@
 		<div class="user-info">
 			<mat-icon class="user-avatar">account_circle</mat-icon>
 			<div class="user-details">
-				<span class="user-name">{{ userName }}</span>
-				<span class="user-email">{{ userEmail }}</span>
+				<span class="user-name">{{ userName() }}</span>
+				<span class="user-email">{{ userEmail() }}</span>
 			</div>
 		</div>
 		<mat-list-item 
