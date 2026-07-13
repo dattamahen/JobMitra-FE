@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, DestroyRef, inject, signal, input, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -32,6 +32,7 @@ export class ApplicationsPage {
 	applications = signal<ApplicationData[]>([]);
 	isLoading = signal(true);
 	error = signal('');
+	navigateToPage = input<(event: { page: string }) => void>();
 
 	private destroyRef = inject(DestroyRef);
 	private jobService = inject(JobService);
