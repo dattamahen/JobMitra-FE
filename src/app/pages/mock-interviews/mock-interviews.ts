@@ -64,8 +64,9 @@ export class MockInterviewsPage {
 	}
 
 	async onStartInterview(type: string = 'technical'): Promise<void> {
-		const allowed = await this.creditsService.gate('mock_interview');
-		if (!allowed) {
+		const credits = await this.creditsService.loadCredits();
+		if (credits.mock_interviews_remaining <= 0) {
+			await this.creditsService.gate('mock_interview'); // opens subscription dialog
 			return;
 		}
 		this.startInterviewWithPrompt(type);
@@ -93,7 +94,10 @@ export class MockInterviewsPage {
 				this.interviewService.startInterview(userProfile, true, 'openai', type)
 					.pipe(takeUntilDestroyed(this.destroyRef))
 					.subscribe({
-						next: (response) => dialogRef.componentInstance.loadQuestions(response),
+						next: async (response) => {
+							await this.creditsService.gate('mock_interview');
+							dialogRef.componentInstance.loadQuestions(response);
+						},
 						error: () => {
 							dialogRef.close();
 							alert('Error generating questions. Please try again.');
