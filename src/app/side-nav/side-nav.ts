@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, OnInit, DestroyRef, inject, ViewEncapsulation } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit, DestroyRef, inject, ViewEncapsulation, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs';
@@ -14,22 +14,20 @@ import { SIDE_NAV_TEXT } from '../data/nav-data';
 
 @Component({
 	selector: 'app-side-nav',
-	imports: [
-		MatListModule,
-		MatIconModule
-	],
+	imports: [MatListModule, MatIconModule],
 	templateUrl: './side-nav.html',
 	styleUrl: './side-nav.css',
-	encapsulation: ViewEncapsulation.None
+	encapsulation: ViewEncapsulation.None,
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SideNav implements OnInit {
 	readonly TEXT = SIDE_NAV_TEXT;
 	@Output() pageSelected = new EventEmitter<string>();
 
-	activeItem: string = '';
-	navItems: NavItem[] = [];
-	userName: string = '';
-	userEmail: string = '';
+	activeItem = signal('');
+	navItems = signal<NavItem[]>([]);
+	userName = signal('');
+	userEmail = signal('');
 	private destroyRef = inject(DestroyRef);
 
 	constructor(
@@ -42,20 +40,21 @@ export class SideNav implements OnInit {
 	private syncActiveFromUrl(url: string): void {
 		const parts = url.split('/').map(p => p.split('?')[0]);
 		const page = parts[2] || parts[1] || 'dashboard';
-		const match = this.navItems.find(item => item.id === page);
-		this.activeItem = match ? match.id : 'dashboard';
+		const match = this.navItems().find(item => item.id === page);
+		this.activeItem.set(match ? match.id : 'dashboard');
 	}
 
 	ngOnInit() {
-		this.navItems = this.navigationService.getNavigationItems();
-
-		const user = this.authService.getCurrentUserValue();
-		if (user) {
-			this.userName = `${user.first_name} ${user.last_name}`;
-			this.userEmail = user.email;
-		}
-
-		this.syncActiveFromUrl(this.router.url);
+		this.authService.authState$.pipe(
+			takeUntilDestroyed(this.destroyRef)
+		).subscribe(state => {
+			if (state.user) {
+				this.userName.set(`${state.user.first_name} ${state.user.last_name}`);
+				this.userEmail.set(state.user.email);
+				this.navItems.set(this.navigationService.getNavigationItems());
+				this.syncActiveFromUrl(this.router.url);
+			}
+		});
 
 		this.router.events.pipe(
 			filter(e => e instanceof NavigationEnd),
@@ -64,9 +63,8 @@ export class SideNav implements OnInit {
 	}
 
 	selectItem(itemId: string) {
-		this.activeItem = itemId;
+		this.activeItem.set(itemId);
 		this.pageSelected.emit(itemId);
-		return;
 	}
 
 	logout() {
@@ -83,14 +81,7 @@ export class SideNav implements OnInit {
 			if (result) {
 				this.authService.logout()
 					.pipe(takeUntilDestroyed(this.destroyRef))
-					.subscribe({
-					next: (response) => {
-						console.log('Logout successful:', response);
-					},
-					error: (error) => {
-						console.error('Logout error:', error);
-					}
-				});
+					.subscribe();
 			}
 		});
 	}

@@ -70,9 +70,9 @@ export class DashboardPage implements OnInit {
 		const userType = this.authService.getUserType();
 		if (userType === 'hr') return;
 		if (user) {
-			const hasNoSkills = !user.skills || user.skills.length === 0;
+			const hasNoSkills = (!user.skills || user.skills.length === 0) && (!user.professional_info?.skills || user.professional_info.skills.length === 0);
 			const hasNoSummary = !(user as any).professional_summary && !(user as any).professional_info?.professional_summary;
-			if (hasNoSkills && hasNoSummary) {
+			if (hasNoSkills) {
 				this.showBootstrap.set(true);
 			}
 		}

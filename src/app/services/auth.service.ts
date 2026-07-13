@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, throwError, of, firstValueFrom } from 'rxjs';
-import { map, catchError, tap } from 'rxjs/operators';
+import { map, catchError, tap, switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 // Interfaces for authentication
@@ -273,26 +273,30 @@ export class AuthService {
 	* Load authentication state from localStorage
 	*/
 	private loadAuthState(): void {
-		if (!this.isBrowser()) {
-			return;
-		}
-		
+		if (!this.isBrowser()) return;
 		const token = localStorage.getItem(this.TOKEN_KEY);
-		const userStr = localStorage.getItem(this.USER_KEY);
-		
-		if (token && userStr) {
-			try {
-				const user: User = JSON.parse(userStr);
+		if (token) {
+			this.authStateSubject.next({ isAuthenticated: true, user: null, token });
+		}
+	}
+
+	refreshCurrentUser(): Observable<User> {
+		return this.getCurrentUser().pipe(
+			tap(user => {
 				this.authStateSubject.next({
 					isAuthenticated: true,
-					user: user,
-					token: token
+					user,
+					token: this.authStateSubject.value.token
 				});
-			} catch (error) {
-
-				this.clearAuthData();
-			}
-		}
+			}),
+			catchError(err => {
+				if (err.status === 401) {
+					this.clearAuthData();
+					this.authStateSubject.next({ isAuthenticated: false, user: null, token: null });
+				}
+				return throwError(() => err);
+			})
+		);
 	}
 
 	/**
@@ -318,22 +322,15 @@ export class AuthService {
 					// Store token and user data only in browser
 					if (this.isBrowser()) {
 						localStorage.setItem(this.TOKEN_KEY, response.access_token);
-						localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
 					}
-					
-					// Update auth state
 					this.authStateSubject.next({
 						isAuthenticated: true,
 						user: response.user,
 						token: response.access_token
 					});
-					
 					return response;
 				}),
-				catchError(error => {
-
-					return this.handleError(error);
-				})
+				catchError(error => this.handleError(error))
 			);
 	}
 
@@ -391,18 +388,7 @@ export class AuthService {
 			headers: this.getAuthHeaders()
 		}).pipe(
 			map(user => {
-				// Update stored user data only in browser
-				if (this.isBrowser()) {
-					localStorage.setItem(this.USER_KEY, JSON.stringify(user));
-				}
-				
-				// Update auth state
-				const currentState = this.authStateSubject.value;
-				this.authStateSubject.next({
-					...currentState,
-					user: user
-				});
-				
+				this.authStateSubject.next({ ...this.authStateSubject.value, user });
 				return user;
 			}),
 			catchError(this.handleError)
@@ -435,15 +421,12 @@ export class AuthService {
 			map(response => {
 				if (this.isBrowser()) {
 					localStorage.setItem(this.TOKEN_KEY, response.access_token);
-					localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
 				}
-				
 				this.authStateSubject.next({
 					isAuthenticated: true,
 					user: response.user,
 					token: response.access_token
 				});
-				
 				return response;
 			}),
 			catchError(this.handleError)
@@ -499,7 +482,6 @@ export class AuthService {
 	private clearAuthData(): void {
 		if (this.isBrowser()) {
 			localStorage.removeItem(this.TOKEN_KEY);
-			localStorage.removeItem(this.USER_KEY);
 		}
 	}
 
@@ -537,7 +519,7 @@ export class AuthService {
 	* Check if user is authenticated
 	*/
 	isAuthenticated(): boolean {
-		return this.authStateSubject.value.isAuthenticated;
+		return !!this.authStateSubject.value.token;
 	}
 
 	/**

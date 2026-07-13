@@ -1,4 +1,6 @@
 import { Component, ChangeDetectionStrategy, signal, inject, output } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -35,6 +37,8 @@ export class CvBootstrapComponent {
 	private apiService = inject(ApiService);
 	private authService = inject(AuthService);
 
+	private readonly currentUser = toSignal(this.authService.authState$.pipe(map(s => s.user)));
+
 	readonly dismissed = output<void>();
 	readonly profileStarted = output<BootstrapCV>();
 
@@ -47,12 +51,12 @@ export class CvBootstrapComponent {
 	generatedCV = signal<BootstrapCV | null>(null);
 
 	getUserName(): string {
-		const user = this.authService.getCurrentUserValue();
+		const user = this.currentUser();
 		return user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() : '';
 	}
 
 	getUserEmail(): string {
-		return this.authService.getCurrentUserValue()?.email || '';
+		return this.currentUser()?.email || '';
 	}
 
 	toggleCollapse(): void {
