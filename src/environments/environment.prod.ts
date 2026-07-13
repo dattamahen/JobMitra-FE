@@ -7,7 +7,7 @@ export const environment = {
 	apiUrl: 'https://api.jobmouka.com',
 
 	// Google OAuth
-	googleClientId: '<your-prod-google-client-id>',
+	googleClientId: '137210229872-kpariik623855abdb9msavc5k24epl5o.apps.googleusercontent.com',
 
 	// Gemini AI (Voice AI feature)
 	geminiApiKey: '<your-prod-gemini-api-key>',
