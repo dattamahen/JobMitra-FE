@@ -127,6 +127,8 @@ export class CreditsService {
 			)
 		);
 	}
+
+	private async openSubscriptionDialog(): Promise<void> {
 		const { SubscriptionDialogComponent } = await import(
 			'../shared/components/subscription-dialog/subscription-dialog.component'
 		);
