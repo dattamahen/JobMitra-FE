@@ -119,7 +119,14 @@ export class CreditsService {
 		return result;
 	}
 
-	private async openSubscriptionDialog(): Promise<void> {
+	async createPaymentLink(): Promise<{ payment_url: string; payment_link_id: string; amount: number }> {
+		return firstValueFrom(
+			this.api.post<{ payment_url: string; payment_link_id: string; amount: number }>(
+				'/api/v1/payments/create-link',
+				{ user_id: this.getUserId() }
+			)
+		);
+	}
 		const { SubscriptionDialogComponent } = await import(
 			'../shared/components/subscription-dialog/subscription-dialog.component'
 		);

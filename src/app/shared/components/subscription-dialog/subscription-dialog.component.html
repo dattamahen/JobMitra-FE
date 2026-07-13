@@ -1,84 +1,29 @@
 <div class="subscription-dialog">
-	@switch (step()) {
-		@case ('plans') {
-			<h2 mat-dialog-title>{{TEXT.plans.title}}</h2>
-			<mat-dialog-content>
-				<app-motivation-banner />
-
-				<div class="invest-card">
-					<div class="invest-benefits">
-						@for (benefit of TEXT.plans.benefits; track benefit.icon) {
-							<div class="benefit-row">
-								<mat-icon>{{benefit.icon}}</mat-icon>
-								<span><strong>{{benefit.text}}</strong> — {{benefit.detail}}</span>
-							</div>
-						}
+	<h2 mat-dialog-title>{{TEXT.plans.title}}</h2>
+	<mat-dialog-content>
+		<app-motivation-banner />
+		<div class="invest-card">
+			<div class="invest-benefits">
+				@for (benefit of TEXT.plans.benefits; track benefit.icon) {
+					<div class="benefit-row">
+						<mat-icon>{{benefit.icon}}</mat-icon>
+						<span><strong>{{benefit.text}}</strong> — {{benefit.detail}}</span>
 					</div>
-					<p class="invest-result">{{TEXT.plans.investResult}}</p>
-					<button mat-raised-button color="primary" class="invest-cta" (click)="selectPaid()">
-						<mat-icon>bolt</mat-icon>
-						{{TEXT.plans.ctaPrefix}} ₹{{AMOUNT}}
-					</button>
-				</div>
-			</mat-dialog-content>
-			<mat-dialog-actions align="end">
-				<button mat-button (click)="close()">{{TEXT.plans.maybeLater}}</button>
-			</mat-dialog-actions>
-		}
-
-		@case ('payment') {
-			<h2 mat-dialog-title>{{TEXT.payment.title}}</h2>
-			<mat-dialog-content>
-				<div class="payment-section">
-					<div class="upi-info">
-						<p class="pay-to">{{TEXT.payment.payTo}} <strong>₹{{AMOUNT}}</strong> {{TEXT.payment.toSuffix}}</p>
-						<a [href]="PAYMENT_LINK" target="_blank" rel="noopener noreferrer">
-							<button mat-raised-button color="accent" class="razorpay-btn">
-								<mat-icon>open_in_new</mat-icon>
-								Pay ₹{{AMOUNT}} via Razorpay
-							</button>
-						</a>
-						<p class="payment-instruction">Complete payment on Razorpay, then enter the transaction/payment ID below.</p>
-					</div>
-					<mat-form-field appearance="fill" class="full-width">
-						<mat-label>{{TEXT.payment.transactionIdLabel}}</mat-label>
-						<input matInput [(ngModel)]="upiTransactionId" [placeholder]="TEXT.payment.transactionIdPlaceholder">
-						<mat-hint>{{TEXT.payment.transactionIdHint}}</mat-hint>
-					</mat-form-field>
-				</div>
-			</mat-dialog-content>
-			<mat-dialog-actions align="end">
-				<button mat-button (click)="step.set('plans')">{{TEXT.payment.back}}</button>
-				<button mat-raised-button color="primary" (click)="confirmPayment()" [disabled]="loading()">
-					@if (loading()) {
-						<mat-spinner diameter="20"></mat-spinner>
-					}
-					{{TEXT.payment.confirmPayment}}
-				</button>
-			</mat-dialog-actions>
-		}
-
-		@case ('confirm') {
-			<h2 mat-dialog-title>{{TEXT.success.title}}</h2>
-			<mat-dialog-content>
-				<div class="success-section">
-					<mat-icon class="success-icon">check_circle</mat-icon>
-					<p>{{TEXT.success.message}}</p>
-					<div class="credits-added">
-						<div class="credit-item">
-							<mat-icon>description</mat-icon>
-							<span>{{TEXT.success.cvDownloads}}</span>
-						</div>
-						<div class="credit-item">
-							<mat-icon>record_voice_over</mat-icon>
-							<span>{{TEXT.success.mockInterviews}}</span>
-						</div>
-					</div>
-				</div>
-			</mat-dialog-content>
-			<mat-dialog-actions align="end">
-				<button mat-raised-button color="primary" (click)="close()">{{TEXT.success.done}}</button>
-			</mat-dialog-actions>
-		}
-	}
+				}
+			</div>
+			<p class="invest-result">{{TEXT.plans.investResult}}</p>
+			<button mat-raised-button color="primary" class="invest-cta"
+				(click)="pay()" [disabled]="loading()">
+				@if (loading()) {
+					<mat-spinner diameter="20"></mat-spinner>
+				} @else {
+					<mat-icon>bolt</mat-icon>
+					{{TEXT.plans.ctaPrefix}} ₹{{AMOUNT}}
+				}
+			</button>
+		</div>
+	</mat-dialog-content>
+	<mat-dialog-actions align="end">
+		<button mat-button (click)="close()">{{TEXT.plans.maybeLater}}</button>
+	</mat-dialog-actions>
 </div>
