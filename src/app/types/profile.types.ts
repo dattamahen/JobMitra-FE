@@ -48,7 +48,7 @@ export type UserProfile = {
 	avatar_url?: string;
 	current_job_title?: string;
 	desired_job_title?: string;
-	experience_years?: string;
+	experience_years?: number | string;
 	skills: string[];
 	technical_skills?: TechnicalSkill[];
 	work_experience?: WorkExperience[];
@@ -105,7 +105,7 @@ export type UpdateUserRequest = {
 	education?: Education[];
 	projects?: Project[];
 	professional_summary?: string;
-	experience_years?: string;
+	experience_years?: number | string;
 	certifications?: string[] | Certification[];
 	area_of_expertise?: string[];
 	key_contributions?: string;

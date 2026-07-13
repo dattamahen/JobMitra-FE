@@ -209,6 +209,7 @@ export class ProfilePage implements OnInit, AfterViewInit {
 		const user = this.currentUser() as any;
 
 		const payload = {
+			type: 'professional_summary' as const,
 			current_role: user?.current_role || '',
 			current_company: user?.current_company || '',
 			experience_years: user?.overall_experience_years || 0,
@@ -890,7 +891,7 @@ export class ProfilePage implements OnInit, AfterViewInit {
 				phone: formValue.phone,
 				current_job_title: formValue.currentJobTitle,
 				desired_job_title: formValue.desiredJobTitle,
-				experience_years: formValue.experience,
+				experience_years: formValue.experience ? Number(formValue.experience) : undefined,
 				skills: formValue.skills.split(',').map((s: string) => s.trim()).filter((s: string) => s),
 				professional_summary: formValue.summary,
 				certifications: this.certificationsArray.value,
