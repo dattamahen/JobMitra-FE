@@ -1,4 +1,4 @@
-import { Component, viewChild, AfterViewInit, OnInit, ElementRef, DestroyRef, inject, signal, computed, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, viewChild, AfterViewInit, OnInit, ElementRef, DestroyRef, inject, signal, computed, ChangeDetectionStrategy, ChangeDetectorRef, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -59,6 +59,7 @@ import { ApiService } from '../../services/api.service';
 })
 export class ProfilePage implements OnInit, AfterViewInit {
 	readonly TEXT = PROFILE_TEXT;
+	navigateToPage = input<(event: { page: string }) => void>();
 	basicForm = viewChild<DynamicFormComponent>('basicForm');
 	professionalForm = viewChild<DynamicFormComponent>('professionalForm');
 	skillsForm = viewChild<DynamicFormComponent>('skillsForm');

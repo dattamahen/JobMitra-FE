@@ -1,4 +1,4 @@
-import { Component, signal, computed, viewChild, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, signal, computed, viewChild, inject, ChangeDetectionStrategy, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -48,6 +48,7 @@ export class PostJobPage {
 	jobForm: FormGroup;
 	isSubmitting = false;
 	currentStep = signal(0);
+	navigateToPage = input<(event: { page: string }) => void>();
 	
 	stepper = viewChild.required<MatStepper>('stepper');
 	

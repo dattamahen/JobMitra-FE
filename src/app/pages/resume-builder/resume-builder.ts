@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed, effect, DestroyRef, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, effect, DestroyRef, inject, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -62,6 +62,7 @@ import { RESUME_SECTIONS, CV_TEMPLATES } from './resume-builder.constants';
 })
 export class ResumeBuilderPage implements OnInit {
 	readonly TEXT = RESUME_BUILDER_TEXT;
+	navigateToPage = input<(event: { page: string }) => void>();
 	// Reactive signals - initialized after constructor
 	readonly currentResume = computed(() => this.resumeService.currentResume());
 	readonly isLoading = computed(() => this.resumeService.isLoading());

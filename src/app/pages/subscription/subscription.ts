@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, signal, inject, ChangeDetectionStrategy, input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,6 +20,7 @@ import { SUBSCRIPTION_TEXT } from '../../data/subscription-data';
 })
 export class SubscriptionPage implements OnInit {
 	readonly TEXT = SUBSCRIPTION_TEXT;
+	navigateToPage = input<(event: { page: string }) => void>();
 	private creditsService = inject(CreditsService);
 	private dialog = inject(MatDialog);
 

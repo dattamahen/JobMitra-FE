@@ -1,4 +1,4 @@
-import { Component, OnInit, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef, signal, computed } from '@angular/core';
+import { Component, OnInit, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef, signal, computed, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -24,6 +24,7 @@ import { SKILL_ASSESSMENT_TEXT } from '../../data/skill-assessment-data';
 })
 export class SkillAssessmentPage implements OnInit {
 	readonly TEXT = SKILL_ASSESSMENT_TEXT;
+	navigateToPage = input<(event: { page: string }) => void>();
 	skillAssessments = signal<SkillAssessment[]>([]);
 	interviewHistory = signal<InterviewHistorySession[]>([]);
 

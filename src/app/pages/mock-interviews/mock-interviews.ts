@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, DestroyRef, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, DestroyRef, inject, signal, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -26,6 +26,7 @@ import { MOCK_INTERVIEWS_TEXT } from '../../data/mock-interviews-page-data';
 })
 export class MockInterviewsPage {
 	readonly TEXT = MOCK_INTERVIEWS_TEXT;
+	navigateToPage = input<(event: { page: string }) => void>();
 	interviewTypes = INTERVIEW_TYPES;
 	interviewHistory = signal<InterviewHistorySession[]>([]);
 	private readonly destroyRef = inject(DestroyRef);
