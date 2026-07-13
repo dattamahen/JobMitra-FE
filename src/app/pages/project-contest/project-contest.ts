@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, signal, inject, ChangeDetectionStrategy, input } from '@angular/core';
 import { FormBuilder, FormArray, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MatCardModule } from '@angular/material/card';
@@ -39,6 +39,7 @@ export class ProjectContestPage implements OnInit {
 	readonly TEXT = PROJECT_CONTEST_TEXT;
 	readonly technicalCategories = TECHNICAL_CATEGORIES;
 	readonly nonTechnicalCategories = NON_TECHNICAL_CATEGORIES;
+	navigateToPage = input<(event: { page: string }) => void>();
 
 	private fb = inject(FormBuilder);
 	private http = inject(HttpClient);

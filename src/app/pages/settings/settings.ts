@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { SETTINGS_TEXT } from '../../data/settings-data';
 
 @Component({
@@ -10,4 +10,5 @@ import { SETTINGS_TEXT } from '../../data/settings-data';
 })
 export class SettingsPage {
 	readonly TEXT = SETTINGS_TEXT;
+	navigateToPage = input<(event: { page: string }) => void>();
 }

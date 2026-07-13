@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, DestroyRef, inject, ChangeDetectionStrategy, computed, signal, Inject } from '@angular/core';
+import { Component, ChangeDetectorRef, DestroyRef, inject, ChangeDetectionStrategy, computed, signal, input, Inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -47,6 +47,7 @@ import { ResumeTailorService } from '../../services/resume-tailor.service';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class JobSearchPage {
+	navigateToPage = input<(event: { page: string }) => void>();
 	private readonly destroyRef = inject(DestroyRef);
 	private readonly jobService = inject(JobService);
 	private readonly userService = inject(UserService);

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, signal, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
+import { Component, OnInit, Input, signal, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject, input as inputSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { trigger, state, style, transition, animate } from '@angular/animations';
@@ -77,6 +77,7 @@ export interface JobOption {
 export class ApplicationsReceivedPage implements OnInit {
 	
 	@Input() specificJobId?: string;
+	navigateToPage = inputSignal<(event: { page: string }) => void>();
 	
 	applications = signal<ApplicationReceived[]>([]);
 	jobOptions = signal<JobOption[]>([]);
