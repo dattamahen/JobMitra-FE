@@ -12,6 +12,7 @@ export interface ProductCard {
 
 export interface StatItem {
 	number: string;
+	target: number;
 	suffix: string;
 	label: string;
 	sub: string;
@@ -92,10 +93,10 @@ export const PRODUCT_CARDS: ProductCard[] = [
 ];
 
 export const STATS: StatItem[] = [
-	{ number: '10', suffix: 'K+', label: 'Active job listings', sub: 'Updated daily' },
-	{ number: '5', suffix: 'K+', label: 'Resumes built', sub: 'ATS-optimized' },
-	{ number: '87', suffix: '%', label: 'Interview success rate', sub: 'After mock prep' },
-	{ number: '14', suffix: 'd', label: 'Avg time to placement', sub: 'vs 60d industry avg' }
+	{ number: '0', target: 10, suffix: 'K+', label: 'Active job listings', sub: 'Updated daily' },
+	{ number: '0', target: 5, suffix: 'K+', label: 'Resumes built', sub: 'ATS-optimized' },
+	{ number: '0', target: 87, suffix: '%', label: 'Interview success rate', sub: 'After mock prep' },
+	{ number: '0', target: 14, suffix: 'd', label: 'Avg time to placement', sub: 'vs 60d industry avg' }
 ];
 
 export const STEPS: StepItem[] = [

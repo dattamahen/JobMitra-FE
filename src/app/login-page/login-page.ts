@@ -1,4 +1,4 @@
-import { Component, OnInit, PLATFORM_ID, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, PLATFORM_ID, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,7 +8,7 @@ import { FormConfig } from '../shared/interfaces/form.interfaces';
 import { LOGIN_FORM_CONFIG, SIGNUP_FORM_CONFIG, FORGOT_PASSWORD_FORM_CONFIG, RESET_PASSWORD_FORM_CONFIG } from '../shared/components/dynamic-form/form-configs';
 import {
 	LOGIN_PAGE_TEXT, TRUST_LOGOS,
-	PRODUCT_CARDS, STATS, STEPS, TESTIMONIALS, PRICING, FOOTER_LINKS, PricingCard
+	PRODUCT_CARDS, STATS, STEPS, TESTIMONIALS, PRICING, FOOTER_LINKS, PricingCard, StatItem
 } from '../data/login-page-data';
 import { LOGIN_PAGE_CONSTANTS } from './login-page.constants';
 
@@ -24,12 +24,12 @@ import { firstValueFrom } from 'rxjs';
 	styleUrl: './login-page.css',
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LoginPage implements OnInit {
+export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 	readonly TEXT = LOGIN_PAGE_TEXT;
 	readonly CONSTANTS = LOGIN_PAGE_CONSTANTS;
 	readonly trustLogos = TRUST_LOGOS;
 	readonly products = PRODUCT_CARDS;
-	readonly stats = STATS;
+	readonly stats = signal<StatItem[]>(STATS.map(s => ({ ...s })));
 	readonly steps = STEPS;
 	readonly testimonials = TESTIMONIALS;
 	pricing = signal<PricingCard[]>(PRICING);
@@ -47,6 +47,11 @@ export class LoginPage implements OnInit {
 	signupFormConfig: FormConfig = { ...SIGNUP_FORM_CONFIG, loading: false };
 	forgotPasswordFormConfig: FormConfig = { ...FORGOT_PASSWORD_FORM_CONFIG, loading: false };
 	resetPasswordFormConfig: FormConfig = { ...RESET_PASSWORD_FORM_CONFIG, loading: false };
+
+	private statsObserver?: IntersectionObserver;
+	private stepsObserver?: IntersectionObserver;
+	private testimonialsObserver?: IntersectionObserver;
+	private pricingObserver?: IntersectionObserver;
 
 	private platformId = inject(PLATFORM_ID);
 	private api = inject(ApiService);
@@ -76,6 +81,98 @@ export class LoginPage implements OnInit {
 
 		this.initializeGoogleSignIn();
 		this.loadDynamicPricing();
+	}
+
+	ngAfterViewInit(): void {
+		this.initStatsAnimation();
+		this.initStepsAnimation();
+		this.initTestimonialsAnimation();
+		this.initPricingAnimation();
+	}
+
+	ngOnDestroy(): void {
+		this.statsObserver?.disconnect();
+		this.stepsObserver?.disconnect();
+		this.testimonialsObserver?.disconnect();
+		this.pricingObserver?.disconnect();
+	}
+
+	private initStatsAnimation(): void {
+		if (!isPlatformBrowser(this.platformId)) return;
+		const section = document.querySelector('.stats-section');
+		if (!section) return;
+		this.statsObserver = new IntersectionObserver(([entry]) => {
+			if (!entry.isIntersecting) return;
+			this.statsObserver!.disconnect();
+			STATS.forEach((stat, i) => this.animateStat(i, stat.target));
+		}, { threshold: 0.3 });
+		this.statsObserver.observe(section);
+	}
+
+	private initPricingAnimation(): void {
+		if (!isPlatformBrowser(this.platformId)) return;
+		const grid = document.querySelector('.pricing-grid');
+		if (!grid) return;
+		grid.querySelectorAll('.price-card').forEach((el, i) => {
+			(el as HTMLElement).style.transitionDelay = `${i * 0.15}s`;
+		});
+		this.pricingObserver = new IntersectionObserver(([entry]) => {
+			if (!entry.isIntersecting) return;
+			this.pricingObserver!.disconnect();
+			grid.querySelectorAll('.price-card').forEach(el => el.classList.add('card-visible'));
+		}, { threshold: 0.2 });
+		this.pricingObserver.observe(grid);
+	}
+
+	private initTestimonialsAnimation(): void {
+		if (!isPlatformBrowser(this.platformId)) return;
+		const grid = document.querySelector('.test-grid');
+		if (!grid) return;
+		grid.querySelectorAll('.test-card').forEach((el, i) => {
+			(el as HTMLElement).style.transitionDelay = `${i * 0.15}s`;
+		});
+		this.testimonialsObserver = new IntersectionObserver(([entry]) => {
+			if (!entry.isIntersecting) return;
+			this.testimonialsObserver!.disconnect();
+			grid.querySelectorAll('.test-card').forEach(el => el.classList.add('card-visible'));
+		}, { threshold: 0.2 });
+		this.testimonialsObserver.observe(grid);
+	}
+
+	private initStepsAnimation(): void {
+		if (!isPlatformBrowser(this.platformId)) return;
+		const section = document.querySelector('.steps-row');
+		if (!section) return;
+		// Set stagger delays upfront via inline style
+		section.querySelectorAll('.step-col').forEach((el, i) => {
+			(el as HTMLElement).style.transitionDelay = `${i * 0.12}s`;
+		});
+		document.querySelectorAll('.step-badge-card').forEach((el, i) => {
+			(el as HTMLElement).style.transitionDelay = `${0.4 + i * 0.1}s`;
+		});
+		this.stepsObserver = new IntersectionObserver(([entry]) => {
+			if (!entry.isIntersecting) return;
+			this.stepsObserver!.disconnect();
+			section.classList.add('steps-visible');
+			section.querySelectorAll('.step-col').forEach(el => el.classList.add('step-visible'));
+			document.querySelectorAll('.step-badge-card').forEach(el => el.classList.add('badge-visible'));
+		}, { threshold: 0.2 });
+		this.stepsObserver.observe(section);
+	}
+
+	private animateStat(index: number, target: number): void {
+		const duration = 1500;
+		const start = performance.now();
+		const step = (now: number) => {
+			const progress = Math.min((now - start) / duration, 1);
+			const eased = 1 - Math.pow(1 - progress, 3);
+			const current = Math.round(eased * target);
+			this.stats.update(list =>
+				list.map((s, i) => i === index ? { ...s, number: String(current) } : s)
+			);
+			if (progress < 1) requestAnimationFrame(step);
+		};
+		requestAnimationFrame(step);
 	}
 
 	private async loadDynamicPricing(): Promise<void> {
