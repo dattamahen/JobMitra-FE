@@ -772,6 +772,27 @@
 	flex-wrap: wrap;
 }
 
+.logos-marquee {
+	overflow: hidden;
+	position: relative;
+	width: 100%;
+	-webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+	mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+.logos-track {
+	display: flex;
+	align-items: center;
+	gap: 48px;
+	width: max-content;
+	animation: marquee 30s linear infinite;
+}
+
+@keyframes marquee {
+	0% { transform: translateX(0); }
+	100% { transform: translateX(-50%); }
+}
+
 .logo-pill {
 	display: flex;
 	align-items: center;
@@ -1656,7 +1677,7 @@
 }
 
 @media (max-width: 480px) {
-	.logos-row {
+	.logos-track {
 		gap: 24px;
 	}
 

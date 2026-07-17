@@ -52,7 +52,19 @@ export const TRUST_LOGOS = [
 	{ icon: 'ti ti-brand-google', name: 'Google' },
 	{ icon: 'ti ti-building', name: 'Wipro' },
 	{ icon: 'ti ti-brand-apple', name: 'Apple' },
-	{ icon: 'ti ti-building-bank', name: 'Razorpay' }
+	{ icon: 'ti ti-building-bank', name: 'Razorpay' },
+	{ icon: 'ti ti-brand-amazon', name: 'Amazon' },
+	{ icon: 'ti ti-brand-microsoft', name: 'Microsoft' },
+	{ icon: 'ti ti-brand-meta', name: 'Meta' },
+	{ icon: 'ti ti-brand-netflix', name: 'Netflix' },
+	{ icon: 'ti ti-brand-spotify', name: 'Spotify' },
+	{ icon: 'ti ti-brand-slack', name: 'Slack' },
+	{ icon: 'ti ti-brand-adobe', name: 'Adobe' },
+	{ icon: 'ti ti-brand-uber', name: 'Uber' },
+	{ icon: 'ti ti-building-factory', name: 'Accenture' },
+	{ icon: 'ti ti-building-estate', name: 'Deloitte' },
+	{ icon: 'ti ti-brand-github', name: 'GitHub' },
+	{ icon: 'ti ti-brand-stripe', name: 'Stripe' },
 ];
 
 export const PRODUCT_CARDS: ProductCard[] = [

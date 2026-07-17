@@ -89,10 +89,15 @@
 	<div class="logos-section">
 		<div class="logos-inner">
 			<p class="logos-label">Trusted by teams at</p>
-			<div class="logos-row">
-				@for (logo of trustLogos; track logo.name) {
-					<div class="logo-pill"><i [class]="logo.icon" aria-hidden="true"></i>{{logo.name}}</div>
-				}
+			<div class="logos-marquee">
+				<div class="logos-track">
+					@for (logo of trustLogos; track logo.name) {
+						<div class="logo-pill"><i [class]="logo.icon" aria-hidden="true"></i>{{logo.name}}</div>
+					}
+					@for (logo of trustLogos; track logo.name + '-dup') {
+						<div class="logo-pill"><i [class]="logo.icon" aria-hidden="true"></i>{{logo.name}}</div>
+					}
+				</div>
 			</div>
 		</div>
 	</div>
