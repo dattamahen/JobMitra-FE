@@ -166,8 +166,7 @@ p, span, div, label, input, textarea, select {
 
 /* Material List Item Height */
 .mat-mdc-list-item.mdc-list-item--with-leading-checkbox.mdc-list-item--with-one-line,
-.mat-mdc-list-item.mdc-list-item--with-leading-icon.mdc-list-item--with-one-line,
-mat-nav-list .mat-mdc-list-item {
+.mat-mdc-list-item.mdc-list-item--with-leading-icon.mdc-list-item--with-one-line {
 	height: 3.5rem !important;
 }
 
