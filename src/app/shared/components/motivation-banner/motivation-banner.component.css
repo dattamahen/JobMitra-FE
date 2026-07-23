@@ -24,9 +24,10 @@
 
 .banner-header {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	gap: 8px;
 	margin-bottom: 14px;
+	min-width: 0;
 }
 
 .banner-icon {
@@ -42,6 +43,8 @@
 	font-weight: 700;
 	line-height: 1.3;
 	color: #363694 !important;
+	word-break: break-word;
+	min-width: 0;
 }
 
 .motivation-lines {

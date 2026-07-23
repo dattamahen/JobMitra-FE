@@ -56,17 +56,26 @@ import type { InterviewHistorySession } from '../../../types/mock-interview.type
 			padding: 15px;
 			border-radius: 8px;
 			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+			gap: 12px;
+			min-width: 0;
+		}
+
+		.session-info {
+			min-width: 0;
+			flex: 1;
 		}
 
 		.session-info h4 {
 			margin: 0 0 8px 0;
-			font-size: 1.1em;
+			font-size: 1em;
+			word-break: break-word;
 		}
 
 		.session-info p {
 			margin: 4px 0;
 			color: #666;
-			font-size: 0.9em;
+			font-size: 0.85em;
+			word-break: break-word;
 		}
 
 		.questions-count {
@@ -81,9 +90,10 @@ import type { InterviewHistorySession } from '../../../types/mock-interview.type
 		}
 
 		.score {
-			font-size: 1.5em;
+			font-size: 1.25em;
 			font-weight: bold;
 			color: #4CAF50;
+			white-space: nowrap;
 		}
 
 		.no-history {

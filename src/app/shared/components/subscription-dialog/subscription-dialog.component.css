@@ -1,5 +1,7 @@
 .subscription-dialog {
 	max-width: 520px;
+	width: 100%;
+	box-sizing: border-box;
 }
 
 /* Invest card */
