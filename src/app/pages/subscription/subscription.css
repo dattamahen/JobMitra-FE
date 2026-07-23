@@ -111,4 +111,12 @@
 		gap: 12px;
 		text-align: center;
 	}
+
+	.buy-section button {
+		width: 100%;
+	}
+
+	.page-container {
+		padding: 12px;
+	}
 }
