@@ -8,8 +8,7 @@
 			<mat-list-item 
 				[class.active]="activeItem() === item.id"
 				(click)="selectItem(item.id)"
-				class="nav-item"
-				style="height:2.5rem !important">
+				class="nav-item">
 				<mat-icon matListItemIcon class="nav-icon">{{ item.matIcon }}</mat-icon>
 				<span matListItemTitle>{{ item.label }}</span>
 			</mat-list-item>
@@ -23,12 +22,9 @@
 				<span class="user-name">{{ userName() }}</span>
 				<span class="user-email">{{ userEmail() }}</span>
 			</div>
+			<button class="logout-btn" (click)="logout()" [attr.aria-label]="TEXT.logout" title="Logout">
+				<mat-icon>logout</mat-icon>
+			</button>
 		</div>
-		<mat-list-item 
-			(click)="logout()"
-			class="nav-item logout-item">
-			<mat-icon matListItemIcon class="nav-icon">logout</mat-icon>
-			<span matListItemTitle>{{TEXT.logout}}</span>
-		</mat-list-item>
 	</div>
 </nav>
