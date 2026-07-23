@@ -57,7 +57,7 @@ export class MockInterviewsPage {
 									this.interviewHistory.set(response.interviews);
 								}
 							},
-							error: (error) => console.error('Error loading interview history:', error)
+							error: (error) => console.warn('Error loading interview history')
 						});
 				}
 			});
@@ -73,7 +73,7 @@ export class MockInterviewsPage {
 	}
 
 	onUsePaidVersion(): void {
-		confirm('Upgrade to Premium to unlock unlimited mock interviews and advanced features. Upgrade now?');
+		this.creditsService.gate('mock_interview');
 	}
 
 	private startInterviewWithPrompt(type: string = 'technical'): void {
@@ -98,10 +98,7 @@ export class MockInterviewsPage {
 							await this.creditsService.gate('mock_interview');
 							dialogRef.componentInstance.loadQuestions(response);
 						},
-						error: () => {
-							dialogRef.close();
-							alert('Error generating questions. Please try again.');
-						}
+						error: () => dialogRef.close()
 					});
 
 				dialogRef.afterClosed()

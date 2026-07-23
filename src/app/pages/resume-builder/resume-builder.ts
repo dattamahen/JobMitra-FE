@@ -1279,12 +1279,12 @@ export class ResumeBuilderPage implements OnInit {
 	private generateResumeHTML(resume: Resume): string {
 		const data = {
 			personalInfo: this.personalInfoForm.value,
-			summary: this.summaryForm.value?.summary || '',
-			experience: this.convertExperienceValues(),
-			education: this.convertEducationValues(),
-			skills: this.convertSkillsValues(),
-			projects: this.convertProjectsValues(),
-			certifications: this.convertCertificationsValues()
+			summary: this.summaryForm.value?.summary || this.summaryValues?.summary || '',
+			experience: this.convertExperienceValues().length ? this.convertExperienceValues() : this.convertRawExperienceValues(),
+			education: this.convertEducationValues().length ? this.convertEducationValues() : this.convertRawEducationValues(),
+			skills: this.convertSkillsValues().technical.length ? this.convertSkillsValues() : this.convertRawSkillsValues(),
+			projects: this.convertProjectsValues().length ? this.convertProjectsValues() : this.convertRawProjectsValues(),
+			certifications: this.convertCertificationsValues().length ? this.convertCertificationsValues() : this.convertRawCertificationsValues()
 		};
 
 		const templateId = this.selectedTemplate();
@@ -1292,6 +1292,82 @@ export class ResumeBuilderPage implements OnInit {
 	}
 
 
+
+	private convertRawExperienceValues(): any[] {
+		const keys = Object.keys(this.experienceValues).filter(k => k.includes('_company'));
+		return keys.map(key => {
+			const m = key.match(/experiences_item_(\d+)_company/);
+			if (!m) return null;
+			const i = m[1];
+			return {
+				company: this.experienceValues[`experiences_item_${i}_company`] || '',
+				position: this.experienceValues[`experiences_item_${i}_position`] || '',
+				start_date: this.experienceValues[`experiences_item_${i}_start_date`] || '',
+				end_date: this.experienceValues[`experiences_item_${i}_end_date`] || '',
+				description: this.experienceValues[`experiences_item_${i}_description`] || ''
+			};
+		}).filter(Boolean);
+	}
+
+	private convertRawEducationValues(): any[] {
+		const keys = Object.keys(this.educationValues).filter(k => k.includes('_institution'));
+		return keys.map(key => {
+			const m = key.match(/education_item_(\d+)_institution/);
+			if (!m) return null;
+			const i = m[1];
+			return {
+				institution: this.educationValues[`education_item_${i}_institution`] || '',
+				education_type: this.educationValues[`education_item_${i}_education_type`] || '',
+				start_date: this.educationValues[`education_item_${i}_start_date`] || '',
+				end_date: this.educationValues[`education_item_${i}_end_date`] || ''
+			};
+		}).filter(Boolean);
+	}
+
+	private convertRawSkillsValues(): { technical: any[]; soft: string[] } {
+		const keys = Object.keys(this.skillsValues).filter(k => k.includes('_name'));
+		const technical = keys.map(key => {
+			const m = key.match(/technical_skills_item_(\d+)_name/);
+			if (!m) return null;
+			const i = m[1];
+			return {
+				name: this.skillsValues[`technical_skills_item_${i}_name`] || '',
+				version: this.skillsValues[`technical_skills_item_${i}_version`] || '',
+				experience: this.skillsValues[`technical_skills_item_${i}_experience`] || ''
+			};
+		}).filter(Boolean);
+		return { technical, soft: [] };
+	}
+
+	private convertRawProjectsValues(): any[] {
+		const keys = Object.keys(this.projectsValues).filter(k => k.includes('_name'));
+		return keys.map(key => {
+			const m = key.match(/projects_item_(\d+)_name/);
+			if (!m) return null;
+			const i = m[1];
+			return {
+				name: this.projectsValues[`projects_item_${i}_name`] || '',
+				url: this.projectsValues[`projects_item_${i}_url`] || '',
+				description: this.projectsValues[`projects_item_${i}_description`] || '',
+				technologies: this.projectsValues[`projects_item_${i}_technologies`] || ''
+			};
+		}).filter(Boolean);
+	}
+
+	private convertRawCertificationsValues(): any[] {
+		const keys = Object.keys(this.certificationsValues).filter(k => k.includes('_name'));
+		return keys.map(key => {
+			const m = key.match(/certifications_item_(\d+)_name/);
+			if (!m) return null;
+			const i = m[1];
+			return {
+				name: this.certificationsValues[`certifications_item_${i}_name`] || '',
+				issuer: this.certificationsValues[`certifications_item_${i}_issuer`] || '',
+				date: this.certificationsValues[`certifications_item_${i}_date`] || '',
+				credential_id: this.certificationsValues[`certifications_item_${i}_credential_id`] || ''
+			};
+		}).filter(Boolean);
+	}
 
 	private saveAllSections(): void {
 		// Collect all form data regardless of validation state

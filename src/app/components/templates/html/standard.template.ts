@@ -1,7 +1,10 @@
 import { ResumeData, skillName, formatDuration, formatYear, formatDescription } from './resume-data.model';
 
 export function standardTemplate(d: ResumeData): string {
-	const name = d.personalInfo?.full_name || 'Your Name';
+	const name = (d.personalInfo?.full_name || 'Your Name')
+		.split(' ')
+		.map((w: string) => w ? w[0].toUpperCase() + w.slice(1).toLowerCase() : '')
+		.join(' ');
 	const email = d.personalInfo?.email || '';
 	const phone = d.personalInfo?.phone || '';
 	const location = d.personalInfo?.location || '';

@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
-import { MatGridListModule } from '@angular/material/grid-list';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -24,7 +23,6 @@ import { AuthService } from '../../services/auth.service';
 	imports: [
 		CommonModule,
 		MatCardModule, 
-		MatGridListModule, 
 		MatListModule, 
 		MatIconModule,
 		MatButtonModule,
@@ -71,10 +69,7 @@ export class DashboardPage implements OnInit {
 		if (userType === 'hr') return;
 		if (user) {
 			const hasNoSkills = (!user.skills || user.skills.length === 0) && (!user.professional_info?.skills || user.professional_info.skills.length === 0);
-			const hasNoSummary = !(user as any).professional_summary && !(user as any).professional_info?.professional_summary;
-			if (hasNoSkills) {
-				this.showBootstrap.set(true);
-			}
+			if (hasNoSkills) this.showBootstrap.set(true);
 		}
 	}
 

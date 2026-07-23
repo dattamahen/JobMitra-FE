@@ -3,6 +3,24 @@
 	font-family: 'Inter', sans-serif;
 }
 
+@media (max-width: 768px) {
+	.page-container {
+		padding: 16px;
+	}
+
+	.setting-group {
+		padding: 16px;
+	}
+
+	.setting-item label {
+		flex-wrap: wrap;
+	}
+
+	select {
+		width: 100%;
+	}
+}
+
 .page-container h1 {
 	font-family: 'Poppins', sans-serif;
 	font-weight: 600;

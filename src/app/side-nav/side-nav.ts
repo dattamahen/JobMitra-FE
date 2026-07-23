@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, OnInit, DestroyRef, inject, ViewEncapsulation, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit, DestroyRef, inject, ViewEncapsulation, signal, ChangeDetectionStrategy, input, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs';
@@ -23,6 +23,7 @@ import { SIDE_NAV_TEXT } from '../data/nav-data';
 export class SideNav implements OnInit {
 	readonly TEXT = SIDE_NAV_TEXT;
 	@Output() pageSelected = new EventEmitter<string>();
+	isOpen = input(false);
 
 	activeItem = signal('');
 	navItems = signal<NavItem[]>([]);
@@ -77,12 +78,14 @@ export class SideNav implements OnInit {
 			}
 		});
 
-		dialogRef.afterClosed().subscribe(result => {
-			if (result) {
-				this.authService.logout()
-					.pipe(takeUntilDestroyed(this.destroyRef))
-					.subscribe();
-			}
-		});
+		dialogRef.afterClosed()
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe(result => {
+				if (result) {
+					this.authService.logout()
+						.pipe(takeUntilDestroyed(this.destroyRef))
+						.subscribe();
+				}
+			});
 	}
 }

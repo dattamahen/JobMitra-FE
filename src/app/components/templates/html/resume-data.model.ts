@@ -9,18 +9,35 @@ export interface ResumeData {
 }
 
 export function skillName(skill: any): string {
-	return typeof skill === 'string' ? skill : skill?.name || '';
+	if (typeof skill === 'string') return skill;
+	const name = skill?.name || '';
+	const version = skill?.version || '';
+	return version ? `${name} ${version}` : name;
+}
+
+function toDisplayDate(val: string): string {
+	if (!val) return '';
+	const lower = val.toLowerCase().trim();
+	if (lower === 'present' || lower === 'current') return 'Present';
+	// ISO date: YYYY-MM-DD or YYYY-MM
+	const isoMatch = val.match(/^(\d{4})-(\d{2})(?:-(\d{2}))?$/);
+	if (isoMatch) {
+		const [, y, m, d] = isoMatch;
+		return d ? `${d}-${m}-${y}` : `${m}-${y}`;
+	}
+	// Already DD-MM-YYYY or similar
+	return val;
 }
 
 export function formatDuration(item: any): string {
 	if (item.duration) return item.duration;
-	if (item.start_date && item.end_date) return `${item.start_date} - ${item.end_date}`;
+	if (item.start_date && item.end_date) return `${toDisplayDate(item.start_date)} - ${toDisplayDate(item.end_date)}`;
 	return '';
 }
 
 export function formatYear(item: any): string {
 	if (item.year) return item.year;
-	if (item.start_date && item.end_date) return `${item.start_date} – ${item.end_date}`;
+	if (item.start_date && item.end_date) return `${toDisplayDate(item.start_date)} – ${toDisplayDate(item.end_date)}`;
 	return '';
 }
 

@@ -2,7 +2,7 @@ import { Component, viewChild, AfterViewInit, OnInit, ElementRef, DestroyRef, in
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { finalize } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -10,9 +10,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatListModule } from '@angular/material/list';
-import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -26,8 +23,6 @@ import type { UserProfile, UpdateUserRequest } from '../../services';
 
 import { UserService } from '../../services';
 import { AuthService } from '../../services/auth.service';
-import { ResumeIntegrationService } from '../../services/resume-integration.service';
-import { TestProfileService } from '../../test-profile.service';
 import { ProfileShareService } from '../../services/profile-share.service';
 import { ImageUploadService } from '../../services/image-upload.service';
 import { ApiService } from '../../services/api.service';
@@ -44,9 +39,6 @@ import { ApiService } from '../../services/api.service';
 		MatButtonModule,
 		MatIconModule,
 		MatChipsModule,
-		MatProgressBarModule,
-		MatListModule,
-		MatExpansionModule,
 		MatSnackBarModule,
 		MatTooltipModule,
 		DynamicFormComponent,
@@ -75,8 +67,6 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	private userService = inject(UserService);
 	private authService = inject(AuthService);
 	private snackBar = inject(MatSnackBar);
-	private resumeIntegrationService = inject(ResumeIntegrationService);
-	private testProfileService = inject(TestProfileService);
 	private profileShareService = inject(ProfileShareService);
 	private imageUploadService = inject(ImageUploadService);
 	private cdr = inject(ChangeDetectorRef);
@@ -632,7 +622,6 @@ export class ProfilePage implements OnInit, AfterViewInit {
 					});
 					this.formsInitialized = false;
 					this.loadUserProfile();
-					this.syncWithResumeBuilder();
 				},
 				error: (error) => {
 					this.isSaving.set(false);
@@ -642,20 +631,6 @@ export class ProfilePage implements OnInit, AfterViewInit {
 					});
 				}
 			});
-	}
-
-	private syncWithResumeBuilder(): void {
-		// Sync updated profile data with resume builder
-		this.resumeIntegrationService.getResumeData()
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-			next: (resumeData) => {
-
-			},
-			error: (error) => {
-
-			}
-		});
 	}
 
 	basicInfoValues: any = {};
@@ -802,25 +777,6 @@ export class ProfilePage implements OnInit, AfterViewInit {
 			});
 	}
 
-	private convertToUserProfile(user: Record<string, any>): Record<string, any> {
-		return {
-			full_name: user['full_name'] || `${user['first_name']} ${user['last_name']}`,
-			email: user['email'],
-			phone: user['phone'] || user['personal_info']?.phone,
-			location: { city: user['personal_info']?.location?.city || user['city'] || '' },
-			professional_summary: user['professional_info']?.professional_summary,
-			current_job_title: user['professional_info']?.current_role,
-			experience_years: user['professional_info']?.total_experience,
-			social_links: user['social_links'] || {},
-			expected_salary: { min: user['professional_info']?.expected_salary || 0 },
-			desired_job_title: user['professional_info']?.desired_job_title,
-			preferred_work_types: user['job_preferences'] || [user['preferences']?.remote_preference || 'hybrid'],
-			preferred_employment_types: user['employment_type'] || ['full-time']
-		};
-	}
-
-
-
 	private createForm(): void {
 		this.profileForm = this.fb.group({
 			fullName: ['', [Validators.required, Validators.minLength(2)]],
@@ -936,17 +892,14 @@ export class ProfilePage implements OnInit, AfterViewInit {
 						});
 					}
 				});
-
 	}
 }
 
 	public resetForm(): void {
-		if (confirm('Are you sure you want to reset all changes?')) {
 		if (this.currentUser()) {
-				this.populateForm(this.currentUser()!);
-			} else {
-				this.profileForm.reset();
-			}
+			this.populateForm(this.currentUser()!);
+		} else {
+			this.profileForm.reset();
 		}
 	}
 
@@ -1286,151 +1239,4 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	private getFieldDisplayName(fieldName: string): string {
 		return PROFILE_FIELD_DISPLAY_NAMES[fieldName] || fieldName;
 	}
-
-	// Self-testing methods
-	runSelfTest(): void {
-
-		
-		this.testProfileService.testProfileFlow()
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-			next: (result: any) => {
-
-				
-				const passedTests = result.tests.filter((test: any) => test.status === 'PASS').length;
-				const totalTests = result.tests.length;
-				
-				this.snackBar.open(
-					`Self Test Complete: ${passedTests}/${totalTests} tests passed`,
-					'View Details',
-					{ duration: 5000, panelClass: ['success-snackbar'] }
-				);
-				
-				// Log detailed results
-
-			},
-			error: (error: any) => {
-
-				this.snackBar.open('Self test failed. Check console for details.', 'Close', {
-					duration: 3000,
-					panelClass: ['error-snackbar']
-				});
-			}
-		});
-	}
-
-	exportToResume(): void {
-
-		
-		this.resumeIntegrationService.getResumeData()
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-			next: (resumeData) => {
-
-				
-				this.snackBar.open(
-					'Profile data exported to resume builder successfully!',
-					'Close',
-					{ duration: 3000, panelClass: ['success-snackbar'] }
-				);
-				
-				// Here you would typically navigate to resume builder or open it in a new tab
-				// For now, just log the data
-
-			},
-			error: (error) => {
-
-				this.snackBar.open('Failed to export to resume builder.', 'Close', {
-					duration: 3000,
-					panelClass: ['error-snackbar']
-				});
-			}
-		});
-	}
-
-	// Test individual form sections
-	testFormSection(sectionName: string): void {
-
-		
-		// Get current form values for the section
-		let formValues: any = {};
-		
-		switch (sectionName) {
-			case 'skills':
-				formValues = this.skillsValues;
-				break;
-			case 'experience':
-				formValues = this.experienceValues;
-				break;
-			case 'education':
-				formValues = this.educationValues;
-				break;
-			case 'projects':
-				formValues = this.projectsValues;
-				break;
-			case 'certifications':
-				formValues = this.certificationsValues;
-				break;
-			default:
-
-				return;
-		}
-		
-		// Validate form data
-		const validation = this.testProfileService.validateFormData({ [sectionName]: formValues });
-		
-		if (validation.isValid) {
-
-		} else {
-
-		}
-	}
-
-	// Pull user details and map to resume sections
-	pullUserDetailsForResume(): void {
-
-		
-		if (!this.currentUser()) {
-			this.snackBar.open('No user data available', 'Close', { duration: 3000 });
-			return;
-		}
-		
-		const resumeData = {
-			personal_info: this.basicInfoValues,
-			professional_info: this.professionalValues,
-			skills: this.skillsValues,
-			experience: this.experienceValues,
-			education: this.educationValues,
-			projects: this.projectsValues,
-			certifications: this.certificationsValues,
-			job_preferences: this.jobPreferencesValues
-		};
-		
-
-		
-		this.snackBar.open(
-			'User details successfully mapped to resume format!',
-			'Close',
-			{ duration: 3000, panelClass: ['success-snackbar'] }
-		);
-	}
-
-	// Debug helper methods
-	debugLocationSave(testLocation: string = 'Test City, Test State') {
-
-		const formData = { location: testLocation };
-		this.onBasicInfoSubmit(formData);
-	}
-
-	debugCertificationSave() {
-
-		const formData = {
-			'certifications_item_0_name': 'Debug Certification',
-			'certifications_item_0_issuer': 'Debug Organization',
-			'certifications_item_0_issue_date': 'December 2023',
-			'certifications_item_0_credential_id': 'DEBUG123'
-		};
-		this.onCertificationsSubmit(formData);
-	}
 }
-

@@ -49,13 +49,6 @@
 			</mat-card-content>
 		</mat-card>
 
-		@if (credits()!.is_paid_user) {
-			<mat-card class="status-card">
-				<mat-card-content>
-					<mat-icon class="paid-icon">verified</mat-icon>
-					<span class="paid-text">{{TEXT.labels.proUser}} ₹{{ credits()!.total_paid }}</span>
-				</mat-card-content>
-			</mat-card>
-		}
+
 	}
 </div>

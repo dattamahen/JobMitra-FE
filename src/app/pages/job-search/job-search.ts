@@ -1,5 +1,5 @@
 import { Component, ChangeDetectorRef, DestroyRef, inject, ChangeDetectionStrategy, computed, signal, input, Inject } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
@@ -29,7 +29,6 @@ import { ResumeTailorService } from '../../services/resume-tailor.service';
 	selector: 'app-job-search-page',
 	imports: [
 		CommonModule,
-		DatePipe,
 		MatCardModule,
 		MatButtonModule,
 		MatIconModule,

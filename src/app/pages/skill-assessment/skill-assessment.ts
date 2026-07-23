@@ -65,7 +65,7 @@ export class SkillAssessmentPage implements OnInit {
 									this.cdr.markForCheck();
 								}
 							},
-							error: (error) => console.error('Error loading interview history:', error)
+							error: () => {}
 						});
 				}
 			});
@@ -89,7 +89,7 @@ export class SkillAssessmentPage implements OnInit {
 					]);
 					this.cdr.markForCheck();
 				},
-				error: (error) => console.error('Error loading technical skills:', error)
+				error: () => {}
 			});
 
 		this.skillAssessmentService.getSoftSkills()
@@ -109,7 +109,7 @@ export class SkillAssessmentPage implements OnInit {
 					]);
 					this.cdr.markForCheck();
 				},
-				error: (error) => console.error('Error loading soft skills:', error)
+				error: () => {}
 			});
 
 		this.skillAssessmentService.getRecommendedSkills()
@@ -131,25 +131,13 @@ export class SkillAssessmentPage implements OnInit {
 					]);
 					this.cdr.markForCheck();
 				},
-				error: (error) => console.error('Error loading recommended skills:', error)
+				error: () => {}
 			});
 	}
 
-	getTechnicalSkills(): SkillAssessment[] {
-		return this.technicalSkills();
-	}
-
-	getSoftSkills(): SkillAssessment[] {
-		return this.softSkills();
-	}
-
-	hasSkillsValue(): boolean {
-		return this.hasSkills();
-	}
-
-	getRecommendedSkills(): SkillAssessment[] {
-		return this.recommendedSkills();
-	}
+	getTechnicalSkills(): SkillAssessment[] { return this.technicalSkills(); }
+	getSoftSkills(): SkillAssessment[] { return this.softSkills(); }
+	getRecommendedSkills(): SkillAssessment[] { return this.recommendedSkills(); }
 
 	navigateToProfile(): void {
 		this.router.navigate(['/dashboard', 'profile']);
@@ -187,10 +175,7 @@ export class SkillAssessmentPage implements OnInit {
 					.pipe(takeUntilDestroyed(this.destroyRef))
 					.subscribe({
 						next: (response) => dialogRef.componentInstance.loadQuestions(response),
-						error: () => {
-							dialogRef.close();
-							alert('Error generating questions. Please try again.');
-						}
+						error: () => dialogRef.close()
 					});
 
 				dialogRef.afterClosed()
@@ -265,7 +250,7 @@ export class SkillAssessmentPage implements OnInit {
 					this.hideContributeForm();
 					form.reset();
 				},
-				error: () => alert('Failed to submit contribution. Please try again.')
+				error: () => {}
 			});
 	}
 
