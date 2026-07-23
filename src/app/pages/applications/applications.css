@@ -125,3 +125,18 @@
 	font-size: 0.75rem !important;
 	min-height: 22px !important;
 }
+
+@media (max-width: 768px) {
+	.page-container {
+		padding: 16px;
+	}
+
+	.header-actions {
+		position: static;
+		margin-top: 8px;
+	}
+
+	.application-card mat-card-header {
+		flex-wrap: wrap;
+	}
+}

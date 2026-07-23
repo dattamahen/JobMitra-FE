@@ -13,7 +13,7 @@ h1, h2 {
 
 .skill-categories {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr));
 	gap: 24px;
 	margin-bottom: 32px;
 }
@@ -740,23 +740,42 @@ mat-icon {
 }
 
 @media (max-width: 768px) {
+	.page-container {
+		padding: 16px;
+	}
+
+	.skill-categories {
+		grid-template-columns: 1fr;
+	}
+
 	.skill-item {
 		flex-wrap: wrap;
-		gap: 8px;
+		gap: 6px;
+		padding: 10px 0;
+	}
+
+	.skill-name {
+		flex: 1;
+		min-width: 0;
 	}
 
 	.skill-level {
-		order: 3;
-		width: 100%;
-		margin-right: 0;
-		margin-top: 10px;
+		display: none;
+	}
+
+	.level-text {
+		display: none;
 	}
 
 	.skill-actions {
-		order: 4;
-		width: 100%;
-		margin-top: 10px;
-		justify-content: flex-start;
+		order: 2;
+		margin-top: 0;
+	}
+
+	.interview-btn {
+		padding: 6px 8px;
+		font-size: 0.75rem;
+		height: 30px;
 	}
 
 	.modal-overlay {
@@ -769,20 +788,16 @@ mat-icon {
 	}
 
 	.modal-header {
-		padding: 20px;
-	}
-
-	.modal-header h2 {
-		font-size: 1rem;
+		padding: 16px;
 	}
 
 	.modal-body {
-		padding: 15px 20px;
+		padding: 12px 16px;
 	}
 
 	.resource-item {
 		flex-direction: column;
-		gap: 15px;
+		gap: 12px;
 	}
 
 	.resource-thumbnail {
@@ -802,6 +817,5 @@ mat-icon {
 	.cancel-btn,
 	.submit-btn {
 		width: 100%;
-		padding: 15px;
 	}
 }

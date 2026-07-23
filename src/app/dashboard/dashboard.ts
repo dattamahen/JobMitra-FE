@@ -2,6 +2,7 @@ import { Component, OnInit, signal, Type, DestroyRef, inject } from '@angular/co
 import { NgComponentOutlet } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatIconModule } from '@angular/material/icon';
 
 import { SideNav } from '../side-nav/side-nav';
 import { LoadingComponent } from '../shared/components/loading/loading.component';
@@ -12,7 +13,7 @@ import { FeatureUsageService } from '../services/feature-usage.service';
 
 @Component({
 	selector: 'app-dashboard',
-	imports: [NgComponentOutlet, SideNav, LoadingComponent],
+	imports: [NgComponentOutlet, SideNav, LoadingComponent, MatIconModule],
 	templateUrl: './dashboard.html',
 	styleUrl: './dashboard.css'
 })
@@ -20,6 +21,7 @@ export class Dashboard implements OnInit {
 	currentPage = signal('dashboard');
 	currentComponent = signal<Type<unknown> | null>(null);
 	isPageLoading = signal(false);
+	navOpen = signal(false);
 	userType: string | null = null;
 	loadingConfigs = PAGE_LOADING_CONFIGS;
 

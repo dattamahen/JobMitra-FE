@@ -24,7 +24,6 @@ import { AuthService } from '../../services/auth.service';
 	imports: [
 		CommonModule,
 		MatCardModule, 
-		MatGridListModule, 
 		MatListModule, 
 		MatIconModule,
 		MatButtonModule,

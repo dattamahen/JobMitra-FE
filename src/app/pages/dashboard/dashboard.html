@@ -14,33 +14,31 @@
 			</app-loading>
 		} @else {
 			@if (dashboardData(); as data) {
-				<mat-grid-list cols="4" rowHeight="140px" gutterSize="20px" class="stats-grid">
+				<div class="stats-grid">
 					@for (stat of data.stats; track stat.id) {
-						<mat-grid-tile>
-							<mat-card class="stat-card" [class]="'stat-card-' + stat.color" role="button" tabindex="0"
-								(click)="onStatClick(stat.id)" (keydown.enter)="onStatClick(stat.id)">
-								<mat-card-content>
-									<div class="stat-header">
-										<mat-icon class="stat-icon">{{ stat.icon }}</mat-icon>
-										@if (stat.trend) {
-											<div class="trend-indicator" [class]="'trend-' + stat.trend.direction">
-												<mat-icon class="trend-icon">{{ getTrendIcon(stat.trend.direction) }}</mat-icon>
-												<span class="trend-text">{{ stat.trend.percentage }}%</span>
-											</div>
-										}
-									</div>
-									<div class="stat-content">
-										<h2 class="stat-value">{{ stat.value }}</h2>
-										<p class="stat-label">{{ stat.label }}</p>
-										@if (stat.trend) {
-											<small class="trend-period">{{ stat.trend.period }}</small>
-										}
-									</div>
-								</mat-card-content>
-							</mat-card>
-						</mat-grid-tile>
+						<mat-card class="stat-card" [class]="'stat-card-' + stat.color" role="button" tabindex="0"
+							(click)="onStatClick(stat.id)" (keydown.enter)="onStatClick(stat.id)">
+							<mat-card-content>
+								<div class="stat-header">
+									<mat-icon class="stat-icon">{{ stat.icon }}</mat-icon>
+									@if (stat.trend) {
+										<div class="trend-indicator" [class]="'trend-' + stat.trend.direction">
+											<mat-icon class="trend-icon">{{ getTrendIcon(stat.trend.direction) }}</mat-icon>
+											<span class="trend-text">{{ stat.trend.percentage }}%</span>
+										</div>
+									}
+								</div>
+								<div class="stat-content">
+									<h2 class="stat-value">{{ stat.value }}</h2>
+									<p class="stat-label">{{ stat.label }}</p>
+									@if (stat.trend) {
+										<small class="trend-period">{{ stat.trend.period }}</small>
+									}
+								</div>
+							</mat-card-content>
+						</mat-card>
 					}
-				</mat-grid-list>
+				</div>
 				
 				<mat-card class="recent-activity">
 					<mat-card-header>

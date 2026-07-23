@@ -1,5 +1,21 @@
 <div class="dashboard-layout">
-	<app-side-nav (pageSelected)="onPageSelected($event)"></app-side-nav>
+	<!-- Mobile top bar -->
+	<div class="mobile-topbar">
+		<button class="hamburger" (click)="navOpen.set(!navOpen())" aria-label="Toggle navigation">
+			<mat-icon>{{ navOpen() ? 'close' : 'menu' }}</mat-icon>
+		</button>
+		<span class="mobile-app-name">JobMouka</span>
+	</div>
+
+	<!-- Overlay backdrop -->
+	@if (navOpen()) {
+		<div class="nav-backdrop" (click)="navOpen.set(false)"></div>
+	}
+
+	<app-side-nav
+		[isOpen]="navOpen()"
+		(pageSelected)="onPageSelected($event); navOpen.set(false)">
+	</app-side-nav>
 
 	<div class="main-content">
 		<div class="page-content">
