@@ -1,6 +1,7 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, PLATFORM_ID, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, PLATFORM_ID, inject, signal, ChangeDetectionStrategy, DestroyRef } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 
 import { DynamicFormComponent } from '../shared/components/dynamic-form/dynamic-form.component';
@@ -55,6 +56,7 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 
 	private platformId = inject(PLATFORM_ID);
 	private api = inject(ApiService);
+	private destroyRef = inject(DestroyRef);
 
 	constructor(
 		private router: Router,
@@ -71,13 +73,15 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 			this.redirectBasedOnUserType(userType);
 		}
 
-		this.route.queryParams.subscribe(params => {
-			if (params['token']) {
-				this.resetToken = params['token'];
-				this.isResetPasswordMode.set(true);
-				this.isPanelOpen.set(true);
-			}
-		});
+		this.route.queryParams
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe(params => {
+				if (params['token']) {
+					this.resetToken = params['token'];
+					this.isResetPasswordMode.set(true);
+					this.isPanelOpen.set(true);
+				}
+			});
 
 		this.initializeGoogleSignIn();
 		this.loadDynamicPricing();
@@ -220,12 +224,9 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 
 	private async initializeGoogleSignIn(): Promise<void> {
 		if (!isPlatformBrowser(this.platformId)) return;
-
 		try {
 			await this.googleAuthService.initializeGoogleSignIn();
-		} catch (error) {
-			console.error('Failed to initialize Google Sign-In:', error);
-		}
+		} catch { /* silent fail */ }
 	}
 
 	private renderGoogleButton(): void {
@@ -241,20 +242,21 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 	onLogin(formData: any): void {
 		this.loginFormConfig.loading = true;
 		this.errorMessage = '';
-
-		this.authService.login(formData).subscribe({
-			next: (response: LoginResponse) => {
-				this.loginFormConfig.loading = false;
-				this.redirectBasedOnUserType(response.user.user_type);
-			},
-			error: (error: any) => {
-				this.loginFormConfig.loading = false;
-				this.errorMessage = error.error?.detail || 'Login failed. Please try again.';
-			}
-		});
+		this.authService.login(formData)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (response: LoginResponse) => {
+					this.loginFormConfig.loading = false;
+					this.redirectBasedOnUserType(response.user.user_type);
+				},
+				error: (error: any) => {
+					this.loginFormConfig.loading = false;
+					this.errorMessage = error.error?.detail || 'Login failed. Please try again.';
+				}
+			});
 	}
 
-	private redirectBasedOnUserType(userType: string): void {
+	private redirectBasedOnUserType(_userType: string): void {
 		this.router.navigate(['/dashboard']);
 	}
 
@@ -291,17 +293,18 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 		this.forgotPasswordFormConfig.loading = true;
 		this.errorMessage = '';
 		this.successMessage = '';
-
-		this.authService.forgotPassword(formData.email).subscribe({
-			next: () => {
-				this.forgotPasswordFormConfig.loading = false;
-				this.successMessage = 'Password reset link sent! Check your email.';
-			},
-			error: (error) => {
-				this.forgotPasswordFormConfig.loading = false;
-				this.errorMessage = error.error?.detail || 'Failed to send reset link';
-			}
-		});
+		this.authService.forgotPassword(formData.email)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: () => {
+					this.forgotPasswordFormConfig.loading = false;
+					this.successMessage = 'Password reset link sent! Check your email.';
+				},
+				error: (error) => {
+					this.forgotPasswordFormConfig.loading = false;
+					this.errorMessage = error.error?.detail || 'Failed to send reset link';
+				}
+			});
 	}
 
 	onResetPassword(formData: any): void {
@@ -309,22 +312,22 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 			this.errorMessage = 'Passwords do not match';
 			return;
 		}
-
 		this.resetPasswordFormConfig.loading = true;
 		this.errorMessage = '';
 		this.successMessage = '';
-
-		this.authService.resetPassword(this.resetToken, formData.new_password).subscribe({
-			next: (response) => {
-				this.resetPasswordFormConfig.loading = false;
-				this.successMessage = response.message;
-				setTimeout(() => this.toggleResetPasswordMode(), 2000);
-			},
-			error: (error) => {
-				this.resetPasswordFormConfig.loading = false;
-				this.errorMessage = error.error?.detail || 'Failed to reset password';
-			}
-		});
+		this.authService.resetPassword(this.resetToken, formData.new_password)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (response) => {
+					this.resetPasswordFormConfig.loading = false;
+					this.successMessage = response.message;
+					setTimeout(() => this.toggleResetPasswordMode(), 2000);
+				},
+				error: (error) => {
+					this.resetPasswordFormConfig.loading = false;
+					this.errorMessage = error.error?.detail || 'Failed to reset password';
+				}
+			});
 	}
 
 	onSignup(formData: any): void {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, signal, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject, input as inputSignal } from '@angular/core';
+import { Component, OnInit, signal, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject, input as inputSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { trigger, state, style, transition, animate } from '@angular/animations';
@@ -76,7 +76,7 @@ export interface JobOption {
 })
 export class ApplicationsReceivedPage implements OnInit {
 	
-	@Input() specificJobId?: string;
+	specificJobId?: string;
 	navigateToPage = inputSignal<(event: { page: string }) => void>();
 	
 	applications = signal<ApplicationReceived[]>([]);
@@ -139,16 +139,13 @@ export class ApplicationsReceivedPage implements OnInit {
 				title: job.title
 			}));
 			this.jobOptions.set(jobOptions);
-			// If we have a specific job ID, find and set the title
 			if (this.specificJobId) {
 				const specificJob = jobOptions.find(job => job.job_id === this.specificJobId);
 				if (specificJob) {
 					this.pageTitle.set(`Applications for "${specificJob.title}"`);
 				}
 			}
-		} catch (error: any) {
-			console.error('Error loading job options:', error);
-		}
+		} catch { /* silent */ }
 	}
 
 	async loadApplications() {
@@ -168,8 +165,7 @@ export class ApplicationsReceivedPage implements OnInit {
 			
 			this.applications.set(applications);
 		} catch (error: any) {
-			console.error('Error loading applications:', error);
-				this.snackBar.open(error.message || this.TEXT.snackbar.loadFailed, this.TEXT.snackbar.close, { duration: 5000 });
+			this.snackBar.open(error.message || this.TEXT.snackbar.loadFailed, this.TEXT.snackbar.close, { duration: 5000 });
 			this.applications.set([]);
 		}
 		

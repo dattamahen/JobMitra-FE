@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, Type, DestroyRef, inject } from '@angular/core';
+import { Component, OnInit, signal, Type, DestroyRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { NgComponentOutlet } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -15,7 +15,8 @@ import { FeatureUsageService } from '../services/feature-usage.service';
 	selector: 'app-dashboard',
 	imports: [NgComponentOutlet, SideNav, LoadingComponent, MatIconModule],
 	templateUrl: './dashboard.html',
-	styleUrl: './dashboard.css'
+	styleUrl: './dashboard.css',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Dashboard implements OnInit {
 	currentPage = signal('dashboard');
