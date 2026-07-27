@@ -24,6 +24,7 @@ export function standardTemplate(d: ResumeData): string {
 <head>
 <meta charset="UTF-8">
 <style>
+	@page { size: A4; margin: 12.7mm 18mm 12.7mm 12.7mm; }
 	* { margin: 0; padding: 0; box-sizing: border-box; }
 	body { font-family: 'Segoe UI', Arial, sans-serif; color: #333; font-size: 12px; line-height: 1.6; background: #fff; }
 	.page-wrapper { padding: 0; }
@@ -34,7 +35,7 @@ export function standardTemplate(d: ResumeData): string {
 	.header .contact-line a { color: #4831af; text-decoration: none; }
 	.header .links-line { font-size: 11px; }
 
-	.section { margin-bottom: 20px; page-break-inside: avoid; }
+	.section { margin-bottom: 20px; }
 	.section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #4831af; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #e0e0e0; page-break-after: avoid; }
 
 	.summary { font-size: 11.5px; line-height: 1.7; color: #444; text-align: justify; }
