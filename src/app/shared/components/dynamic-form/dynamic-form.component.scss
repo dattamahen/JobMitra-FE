@@ -75,14 +75,17 @@
 	gap: 16px;
 	justify-content: flex-end;
 	margin-top: 8px;
+	flex-wrap: wrap;
 }
 
 .submit-btn {
 	min-width: 120px;
+	max-width: 100%;
 }
 
 .edit-btn {
 	min-width: 100px;
+	max-width: 100%;
 }
 
 .cancel-btn {
@@ -266,4 +269,50 @@ mat-spinner {
 
   &.match { color: #16a34a; }
   &.mismatch { color: #dc2626; }
+}
+
+@media (max-width: 768px) {
+	.dynamic-form {
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	.form-actions {
+		justify-content: flex-end;
+		position: relative;
+		z-index: 1;
+	}
+
+	.edit-btn,
+	.submit-btn,
+	.cancel-btn {
+		min-width: unset;
+		max-width: 100%;
+	}
+
+	.half-width {
+		width: 100%;
+		flex: 0 0 100%;
+	}
+
+	.quarter-width {
+		flex: 0 0 100%;
+		max-width: 100%;
+	}
+
+	.three-quarter-width {
+		width: 100%;
+	}
+
+	.dynamic-array-item {
+		.quarter-width {
+			flex: 0 0 100%;
+			max-width: 100%;
+		}
+
+		.half-width {
+			flex: 0 0 100%;
+			max-width: 100%;
+		}
+	}
 }

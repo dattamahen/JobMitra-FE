@@ -48,19 +48,19 @@ export function modernTemplate(d: ResumeData): string {
 			<h1>${d.personalInfo?.full_name || 'Your Name'}</h1>
 			${d.summary ? `<p class="summary">${d.summary}</p>` : ''}
 
+			${d.education.length ? `
+			<h2>Education</h2>
+			${d.education.map(e => `
+			<p><b>${e.institution}</b> — ${e.degree || e.education_type || ''} (${formatYear(e)})</p>`).join('')}` : ''}
+
 			${d.experience.length ? `
-			<h2>Experience</h2>
+			<h2>Work Experience</h2>
 			${d.experience.map(e => `
 			<p>
 				<b>${e.company}</b> — ${e.position}<br>
 				<i>${formatDuration(e)}</i><br>
 				${e.description ? formatDescription(e.description) : ''}
 			</p>`).join('')}` : ''}
-
-			${d.education.length ? `
-			<h2>Education</h2>
-			${d.education.map(e => `
-			<p><b>${e.institution}</b> — ${e.degree || e.education_type || ''} (${formatYear(e)})</p>`).join('')}` : ''}
 
 			${d.projects.length ? `
 			<h2>Projects</h2>

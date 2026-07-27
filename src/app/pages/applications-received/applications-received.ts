@@ -228,51 +228,29 @@ export class ApplicationsReceivedPage implements OnInit {
 	}
 
 	async downloadApplicantPDF(application: ApplicationReceived): Promise<void> {
-		const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
-			import('jspdf'),
-			import('html2canvas')
-		]);
+		const html2pdfModule = await import('html2pdf.js');
+		const html2pdf = (html2pdfModule.default ?? html2pdfModule) as any;
 
 		const tempElement = document.createElement('div');
-		tempElement.style.position = 'absolute';
-		tempElement.style.left = '-9999px';
-		tempElement.style.width = '210mm';
-		tempElement.style.padding = '20mm';
-		tempElement.style.fontFamily = 'Arial, sans-serif';
-		tempElement.style.backgroundColor = '#fff';
-
+		tempElement.style.cssText = 'position:absolute;left:-9999px;top:0;width:794px;background:#fff;overflow:visible';
 		tempElement.innerHTML = this.generateApplicantHTML(application);
 		document.body.appendChild(tempElement);
+		await new Promise(r => setTimeout(r, 200));
 
 		try {
-			const canvas = await html2canvas(tempElement, {
-				scale: 2,
-				useCORS: true,
-				backgroundColor: '#ffffff'
-			});
-
-			const imgData = canvas.toDataURL('image/png');
-			const pdf = new jsPDF('p', 'mm', 'a4');
-			
-			const imgWidth = 210;
-			const pageHeight = 297;
-			const imgHeight = (canvas.height * imgWidth) / canvas.width;
-			let heightLeft = imgHeight;
-			let position = 0;
-
-			pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-			heightLeft -= pageHeight;
-
-			while (heightLeft >= 0) {
-				position = heightLeft - imgHeight;
-				pdf.addPage();
-				pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-				heightLeft -= pageHeight;
-			}
-
-			pdf.save(`${application.full_name.replace(/\s+/g, '-')}-application.pdf`);
+			await html2pdf()
+				.set({
+					margin: [15, 15, 15, 15],
+					filename: `${application.full_name.replace(/\s+/g, '-')}-application.pdf`,
+					image: { type: 'jpeg', quality: 0.98 },
+					html2canvas: { scale: 2, useCORS: true, logging: false, allowTaint: true },
+					jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+					pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
+				})
+				.from(tempElement)
+				.save();
 			this.snackBar.open(this.TEXT.snackbar.pdfDownloaded, this.TEXT.snackbar.close, { duration: 3000 });
-		} catch (error) {
+		} catch {
 			this.snackBar.open(this.TEXT.snackbar.pdfError, this.TEXT.snackbar.close, { duration: 3000 });
 		} finally {
 			document.body.removeChild(tempElement);

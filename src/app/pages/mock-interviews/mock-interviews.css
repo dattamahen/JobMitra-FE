@@ -124,12 +124,27 @@
 @media (max-width: 768px) {
 	.page-container {
 		padding: 12px;
+		overflow-x: hidden;
 	}
 	.interview-options {
 		grid-template-columns: 1fr;
 		gap: 12px;
 	}
+	.interview-card {
+		width: 100%;
+		max-width: 100%;
+		box-sizing: border-box;
+	}
 	.interview-card mat-card-content {
 		padding: 16px !important;
+	}
+	.start-btn {
+		width: 100%;
+		max-width: 100%;
+		box-sizing: border-box;
+	}
+	.topics {
+		white-space: nowrap;
+		overflow-x: auto;
 	}
 }

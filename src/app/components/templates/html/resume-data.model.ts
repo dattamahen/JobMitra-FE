@@ -15,17 +15,24 @@ export function skillName(skill: any): string {
 	return version ? `${name} ${version}` : name;
 }
 
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
 function toDisplayDate(val: string): string {
 	if (!val) return '';
 	const lower = val.toLowerCase().trim();
 	if (lower === 'present' || lower === 'current') return 'Present';
+	// Full ISO datetime: 2024-06-30T18:30:00.000Z
+	const isoFull = val.match(/^(\d{4})-(\d{2})-(\d{2})T/);
+	if (isoFull) {
+		const d = new Date(val);
+		if (!isNaN(d.getTime())) return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+	}
 	// ISO date: YYYY-MM-DD or YYYY-MM
 	const isoMatch = val.match(/^(\d{4})-(\d{2})(?:-(\d{2}))?$/);
 	if (isoMatch) {
-		const [, y, m, d] = isoMatch;
-		return d ? `${d}-${m}-${y}` : `${m}-${y}`;
+		const [, y, m] = isoMatch;
+		return `${MONTHS[parseInt(m, 10) - 1]} ${y}`;
 	}
-	// Already DD-MM-YYYY or similar
 	return val;
 }
 

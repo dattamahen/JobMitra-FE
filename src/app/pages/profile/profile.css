@@ -359,6 +359,20 @@
 @media (max-width: 768px) {
 	.page-container {
 		padding: 16px;
+		overflow-x: hidden;
+	}
+
+	.form-card {
+		overflow: hidden;
+	}
+
+	.ai-generate-row button {
+		width: 100%;
+		box-sizing: border-box;
+		white-space: normal;
+		height: auto;
+		padding: 8px 12px;
+		line-height: 1.4;
 	}
 }
 

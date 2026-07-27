@@ -26,7 +26,7 @@ export function standardTemplate(d: ResumeData): string {
 <style>
 	* { margin: 0; padding: 0; box-sizing: border-box; }
 	body { font-family: 'Segoe UI', Arial, sans-serif; color: #333; font-size: 12px; line-height: 1.6; background: #fff; }
-	.page-wrapper { padding: 50px 60px; }
+	.page-wrapper { padding: 0; }
 
 	.header { text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #4831af; }
 	.header h1 { font-size: 26px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; letter-spacing: 0.5px; }
@@ -34,12 +34,12 @@ export function standardTemplate(d: ResumeData): string {
 	.header .contact-line a { color: #4831af; text-decoration: none; }
 	.header .links-line { font-size: 11px; }
 
-	.section { margin-bottom: 20px; }
-	.section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #4831af; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #e0e0e0; }
+	.section { margin-bottom: 20px; page-break-inside: avoid; }
+	.section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #4831af; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #e0e0e0; page-break-after: avoid; }
 
 	.summary { font-size: 11.5px; line-height: 1.7; color: #444; text-align: justify; }
 
-	.entry { margin-bottom: 14px; }
+	.entry { margin-bottom: 14px; page-break-inside: avoid; }
 	.entry-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px; }
 	.entry-title { font-size: 12px; font-weight: 600; color: #1a1a2e; }
 	.entry-date { font-size: 10.5px; color: #777; white-space: nowrap; }
@@ -53,7 +53,7 @@ export function standardTemplate(d: ResumeData): string {
 
 	.project-tech { font-size: 10px; color: #777; margin-top: 3px; font-style: italic; }
 
-	.cert-item { margin-bottom: 8px; }
+	.cert-item { margin-bottom: 8px; page-break-inside: avoid; }
 	.cert-name { font-size: 11.5px; font-weight: 600; color: #333; }
 	.cert-issuer { font-size: 10.5px; color: #666; }
 </style>
@@ -76,19 +76,13 @@ ${d.summary ? `
 </div>
 ` : ''}
 
-<!-- Experience -->
-${d.experience.length ? `
+<!-- Skills -->
+${d.skills.technical.length ? `
 <div class="section">
-	<div class="section-title">Work Experience</div>
-	${d.experience.map(e => `
-	<div class="entry">
-		<div class="entry-header">
-			<span class="entry-title">${e.position || ''}</span>
-			<span class="entry-date">${formatDuration(e)}</span>
-		</div>
-		<div class="entry-subtitle">${e.company || ''}</div>
-		${e.description ? `<div class="entry-desc">${formatDescription(e.description)}</div>` : ''}
-	</div>`).join('')}
+	<div class="section-title">Skills</div>
+	<div class="skills-grid">
+		${d.skills.technical.map(s => `<span class="skill-tag">${skillName(s)}</span>`).join('')}
+	</div>
 </div>
 ` : ''}
 
@@ -107,13 +101,19 @@ ${d.education.length ? `
 </div>
 ` : ''}
 
-<!-- Skills -->
-${d.skills.technical.length ? `
+<!-- Experience -->
+${d.experience.length ? `
 <div class="section">
-	<div class="section-title">Skills</div>
-	<div class="skills-grid">
-		${d.skills.technical.map(s => `<span class="skill-tag">${skillName(s)}</span>`).join('')}
-	</div>
+	<div class="section-title">Work Experience</div>
+	${d.experience.map(e => `
+	<div class="entry">
+		<div class="entry-header">
+			<span class="entry-title">${e.position || ''}</span>
+			<span class="entry-date">${formatDuration(e)}</span>
+		</div>
+		<div class="entry-subtitle">${e.company || ''}</div>
+		${e.description ? `<div class="entry-desc">${formatDescription(e.description)}</div>` : ''}
+	</div>`).join('')}
 </div>
 ` : ''}
 

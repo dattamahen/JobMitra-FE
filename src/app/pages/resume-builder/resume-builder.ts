@@ -17,6 +17,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ResumeService } from '../../services/resume.service';
 import { ResumeTemplateService } from '../../services/resume-template.service';
 import { UserService } from '../../services/user.service';
+import { ApiService } from '../../services/api.service';
 import type { Resume, ResumeTemplate, Experience, Education, Project, Certification } from '../../types/resume.types';
 import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
@@ -82,6 +83,7 @@ export class ResumeBuilderPage implements OnInit {
 	private dialog = inject(MatDialog);
 	private featureUsageService = inject(FeatureUsageService);
 	private creditsService = inject(CreditsService);
+	private apiService = inject(ApiService);
 	
 
 
@@ -1214,65 +1216,19 @@ export class ResumeBuilderPage implements OnInit {
 		const resume = this.currentResume();
 		if (!resume) return;
 
-		const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
-			import('jspdf'),
-			import('html2canvas')
-		]);
-
-		const tempElement = document.createElement('div');
-		tempElement.style.position = 'absolute';
-		tempElement.style.left = '-9999px';
-		tempElement.style.width = '210mm';
-		tempElement.style.fontFamily = 'Arial, sans-serif';
-		tempElement.style.fontSize = '12px';
-		tempElement.style.lineHeight = '1.4';
-		tempElement.style.color = '#000';
-		tempElement.style.backgroundColor = '#fff';
-		tempElement.style.overflow = 'hidden';
-
-		tempElement.innerHTML = this.generateResumeHTML(resume);
-		document.body.appendChild(tempElement);
+		const html = this.generateResumeHTML(resume);
+		const filename = resume.sections.personal_info?.full_name || 'Resume';
 
 		try {
-			const canvas = await html2canvas(tempElement, {
-				scale: 4,
-				useCORS: true,
-				backgroundColor: '#ffffff',
-				logging: false,
-				imageTimeout: 0,
-				allowTaint: true,
-			});
-
-			const imgData = canvas.toDataURL('image/png', 1.0);
-			const pdf = new jsPDF({
-				orientation: 'p',
-				unit: 'mm',
-				format: 'a4',
-				compress: true,
-			});
-			
-			const imgWidth = 210;
-			const pageHeight = 297;
-			const imgHeight = (canvas.height * imgWidth) / canvas.width;
-			let heightLeft = imgHeight;
-			let position = 0;
-
-			pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
-			heightLeft -= pageHeight;
-
-			while (heightLeft >= 0) {
-				position = heightLeft - imgHeight;
-				pdf.addPage();
-				pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
-				heightLeft -= pageHeight;
-			}
-
-			pdf.save(`${resume.sections.personal_info?.full_name || 'Resume'}.pdf`);
-		} catch (error) {
-
+			const blob = await this.apiService.postBlob('/resume/generate-pdf', { html, filename });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = `${filename}.pdf`;
+			a.click();
+			URL.revokeObjectURL(url);
+		} catch {
 			this.snackBar.open('Error generating PDF', 'Close', { duration: 3000 });
-		} finally {
-			document.body.removeChild(tempElement);
 		}
 	}
 

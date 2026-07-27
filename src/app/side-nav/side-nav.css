@@ -230,4 +230,9 @@
 	.side-nav-container.nav-open {
 		transform: translateX(0);
 	}
+
+	/* Hide the logo+name header inside side-nav on mobile — top bar already shows it */
+	.side-nav-container .app-header {
+		display: none;
+	}
 }
