@@ -82,6 +82,17 @@ export class ApiService {
 	}
 
 	/**
+	* POST request returning Blob (for file downloads)
+	*/
+	postBlob(endpoint: string, data: any): Promise<Blob> {
+		const url = endpoint.startsWith('/api/v1') ? `${this.baseUrl}${endpoint}` : `${this.apiBaseUrl}${endpoint}`;
+		return this.http.post(url, JSON.stringify(data), {
+			headers: this.createHeaders(),
+			responseType: 'blob'
+		}).toPromise() as Promise<Blob>;
+	}
+
+	/**
 	* PUT request
 	*/
 	put<T>(endpoint: string, data: any): Observable<T> {

@@ -224,6 +224,10 @@
   white-space: nowrap;
 }
 
+/* Desktop: show full label, hide short label */
+.btn-text-short { display: none; }
+.btn-text-full  { display: inline; }
+
 .action-btn .btn-benefit {
   font-size: 0.625rem;
   font-weight: 700;
@@ -362,6 +366,11 @@
   }
 }
 
+/* When already applied: Mock Interview spans full row */
+.action-btn.full-row {
+  grid-column: 1 / -1;
+}
+
 .apply-btn {
   flex: 0 1 auto;
   max-width: 50%;
@@ -381,53 +390,109 @@
 
   .job-main-content {
     width: 100%;
+    min-width: 0;
+  }
+
+  .job-details {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .company-name {
+    white-space: normal;
+    word-break: break-word;
   }
 
   .job-actions {
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
+    align-items: center;
   }
 
+  /* 2-column grid for action buttons on mobile */
   .action-buttons {
-    flex-wrap: wrap;
-    padding: 16px;
-    gap: 6px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 12px 16px 16px;
+    gap: 8px;
   }
 
   .action-btn {
-    flex: 0 1 calc(50% - 3px);
-    min-width: 80px;
-    font-size: 0.625rem !important;
-    gap: 2px !important;
+    flex: unset;
+    width: 100%;
+    max-width: 100%;
+    min-width: unset;
+    height: 40px !important;
+    font-size: 0.7rem !important;
+    gap: 4px !important;
+    padding: 0 8px !important;
+    border-radius: 8px !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+  }
+
+  /* Angular Material button inner span needs truncation too */
+  .action-btn .mdc-button__label,
+  .action-btn .mat-mdc-button-touch-target {
+    overflow: hidden;
+    max-width: 100%;
+  }
+
+  .action-btn mat-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
   }
 
   .action-btn .btn-text {
-    font-size: 0.625rem;
+    font-size: 0.7rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    flex: 1;
   }
 
+  /* Mobile: hide full label, show short label */
+  .btn-text-full  { display: none; }
+  .btn-text-short { display: inline; }
+
   .action-btn .btn-benefit {
-    font-size: 0.5rem;
-    padding: 1px 2px;
+    font-size: 0.6rem;
+    padding: 1px 3px;
+    flex-shrink: 0;
+    white-space: nowrap;
   }
 
   .action-btn.tailor-resume::after,
   .action-btn.mock-interview::after {
-    display: none; /* Hide hover tooltips on mobile for better UX */
+    display: none;
   }
 
+  /* Apply Now spans full width — last item in grid */
   .apply-btn {
-    flex: 1 1 100%;
-    margin-top: 6px;
-    font-size: 0.75rem !important;
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: 100%;
+    min-width: unset;
+    height: 40px !important;
+    font-size: 0.8rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
   }
 
   .job-meta {
-    gap: 12px;
+    gap: 10px;
   }
 
   .meta-item {
     font-size: 0.75rem;
+  }
+
+  .job-skills {
+    overflow: hidden;
   }
 }
 
@@ -435,7 +500,7 @@
   .job-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 6px;
+    gap: 4px;
   }
 
   .job-title {
@@ -443,13 +508,6 @@
   }
 
   .job-meta {
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .action-btn {
-    flex: 1 1 100%;
-    margin-bottom: 4px;
-    min-width: unset;
+    gap: 8px;
   }
 }

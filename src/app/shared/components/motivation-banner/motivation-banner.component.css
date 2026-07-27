@@ -5,6 +5,8 @@
 	padding: 24px 20px;
 	overflow: hidden;
 	border: 1px solid #ddd8ff;
+	box-sizing: border-box;
+	width: 100%;
 }
 
 .banner-glow {
@@ -62,10 +64,16 @@
 	gap: 6px;
 	font-size: var(--font-size-body, 0.875rem);
 	line-height: 1.5;
+	word-break: break-word;
+	overflow-wrap: anywhere;
+	min-width: 0;
 }
 
 .motivation-lines li span {
 	color: #4a4a6a !important;
+	min-width: 0;
+	word-break: break-word;
+	overflow-wrap: anywhere;
 }
 
 .line-icon {

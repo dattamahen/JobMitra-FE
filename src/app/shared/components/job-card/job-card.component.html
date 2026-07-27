@@ -106,9 +106,11 @@
       class="action-btn"
       [class.disabled]="isMatchAnalysisDisabled()"
       [disabled]="isMatchAnalysisDisabled()"
+      [matTooltip]="matchAnalysisText()"
       (click)="onMatchAnalysis()">
       <mat-icon>analytics</mat-icon>
-      {{ matchAnalysisText() }}
+      <span class="btn-text btn-text-full">{{ matchAnalysisText() }}</span>
+      <span class="btn-text btn-text-short">Match</span>
     </button>
 
     <button 
@@ -116,18 +118,23 @@
       class="action-btn tailor-resume"
       [class.disabled]="isTailorResumeDisabled()"
       [disabled]="isTailorResumeDisabled()"
+      [matTooltip]="tailorResumeText()"
       (click)="onTailorResume()">
       <mat-icon>description</mat-icon>
-      <span class="btn-text">{{ tailorResumeText() }}</span>
+      <span class="btn-text btn-text-full">{{ tailorResumeText() }}</span>
+      <span class="btn-text btn-text-short">Tailor</span>
       <span class="btn-benefit">↗ +15%</span>
     </button>
 
     <button 
       mat-stroked-button 
       class="action-btn mock-interview"
+      [class.full-row]="job().already_applied"
+      matTooltip="Mock Interview"
       (click)="onMockInterview()">
       <mat-icon>mic</mat-icon>
-      <span class="btn-text">Mock interview</span>
+      <span class="btn-text btn-text-full">Mock Interview</span>
+      <span class="btn-text btn-text-short">Mock</span>
       <span class="btn-benefit">↗ +25%</span>
     </button>
 
