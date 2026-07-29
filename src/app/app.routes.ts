@@ -56,6 +56,10 @@ export const routes: Routes = [
 		redirectTo: '/dashboard'
 	},
 	{
+		path: 'privacy',
+		loadComponent: () => import('./pages/privacy/privacy').then(m => m.PrivacyPage)
+	},
+	{
 		path: 'error',
 		loadComponent: () => import('./pages/error/error-page.component').then(m => m.ErrorPageComponent)
 	},

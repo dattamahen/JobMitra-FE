@@ -1,7 +1,10 @@
 import { ResumeData, skillName, formatDuration, formatYear, formatDescription } from './resume-data.model';
 
 export function creativeTemplate(d: ResumeData): string {
-	const name = d.personalInfo?.full_name || 'Your Name';
+	const name = (d.personalInfo?.full_name || 'Your Name')
+		.split(' ')
+		.map((w: string) => w ? w[0].toUpperCase() + w.slice(1).toLowerCase() : '')
+		.join(' ');
 	const email = d.personalInfo?.email || '';
 	const phone = d.personalInfo?.phone || '';
 	const location = d.personalInfo?.location || '';
@@ -14,7 +17,7 @@ export function creativeTemplate(d: ResumeData): string {
 		let months = 0;
 		d.experience.forEach(e => {
 			const dur = formatDuration(e);
-			const parts = dur.split('-').map(s => s.trim());
+			const parts = dur.split('-').map((s: string) => s.trim());
 			if (parts.length === 2) {
 				const parseDate = (s: string) => {
 					const [m, y] = s.split(' ');
@@ -38,194 +41,158 @@ export function creativeTemplate(d: ResumeData): string {
 <head>
 <meta charset="UTF-8">
 <style>
+	@page { size: A4; margin: 0; }
 	* { margin: 0; padding: 0; box-sizing: border-box; }
-	body { font-family: 'Segoe UI', Arial, sans-serif; color: #444; font-size: 12px; line-height: 1.5; background: #fff; }
-	table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-	td { vertical-align: top; overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; }
+	body { font-family: 'Segoe UI', Arial, sans-serif; color: #444; font-size: 12px; line-height: 1.6; background: #fff; }
+
+	.layout { display: table; width: 100%; min-height: 297mm; table-layout: fixed; }
+	.sidebar { display: table-cell; width: 33%; vertical-align: top; background: #e8ecf1; word-wrap: break-word; overflow-wrap: break-word; }
+	.main { display: table-cell; width: 67%; vertical-align: top; padding: 28px 28px 28px 24px; }
 
 	/* Sidebar */
-	.sidebar { width: 33%; background: #e8ecf1; padding: 0; }
-	.photo-area {
-		width: 100%; height: 200px; background: #d5dce6; position: relative;
-		border-bottom-right-radius: 50% 40px;
-	}
-	.photo-placeholder {
-		width: 130px; height: 130px; border-radius: 50%; background: #bcc5d0;
-		border: 4px solid #fff; display: block; margin: 30px auto 0;
-		text-align: center; line-height: 130px; font-size: 48px; color: #8899aa;
-	}
-	.sidebar-content { padding: 24px 20px; }
-	.sb-section { margin-bottom: 24px; }
-	.sb-heading {
-		display: flex; align-items: center; gap: 8px;
-		font-size: 15px; font-weight: 700; color: #222; margin-bottom: 4px;
-	}
-	.sb-icon { font-size: 16px; }
-	.sb-line { width: 60%; height: 2px; background: #222; margin-bottom: 14px; }
-	.sb-list { list-style: disc; padding-left: 20px; margin: 0; }
-	.sb-list li { font-size: 11.5px; margin-bottom: 4px; color: #444; }
-	.detail-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 11.5px; }
-	.detail-label { color: #666; }
-	.detail-value { font-weight: 600; color: #222; text-align: right; max-width: 55%; }
+	.photo-area { width: 100%; height: 170px; background: #d5dce6; display: flex; align-items: center; justify-content: center; }
+	.photo-placeholder { width: 110px; height: 110px; border-radius: 50%; background: #bcc5d0; border: 4px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 38px; color: #8899aa; }
+	.sidebar-content { padding: 22px 18px; }
+	.sb-heading { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #222; margin-bottom: 4px; margin-top: 20px; }
+	.sb-heading:first-child { margin-top: 0; }
+	.sb-line { width: 40px; height: 3px; background: #4a6fa5; margin-bottom: 12px; }
+	.sb-list { list-style: none; padding: 0; margin: 0; }
+	.sb-list li { font-size: 11px; color: #444; padding: 3px 0; border-bottom: 1px solid rgba(0,0,0,0.08); word-wrap: break-word; }
+	.sb-list li:last-child { border-bottom: none; }
+	.contact-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+	.contact-icon { font-size: 12px; min-width: 16px; padding-top: 1px; flex-shrink: 0; }
+	.contact-label { font-size: 10px; font-weight: 600; color: #555; }
+	.contact-value { font-size: 11px; color: #333; word-wrap: break-word; overflow-wrap: break-word; }
+	.detail-row { display: flex; gap: 6px; margin-bottom: 6px; }
+	.detail-label { font-size: 10px; font-weight: 600; color: #555; min-width: 52px; flex-shrink: 0; }
+	.detail-value { font-size: 11px; color: #333; word-wrap: break-word; overflow-wrap: break-word; flex: 1; }
 
 	/* Main */
-	.main { width: 67%; padding: 28px 28px 28px 24px; }
-	.main-name { font-size: 30px; font-weight: 700; color: #222; line-height: 1.15; }
-	.main-title { font-size: 13px; color: #666; margin: 4px 0 16px; }
-
-	/* Contact bar */
-	.contact-bar {
-		display: flex; justify-content: space-between; align-items: flex-start;
-		border-top: 1px solid #ddd; border-bottom: 1px solid #ddd;
-		padding: 10px 0; margin-bottom: 22px;
-	}
-	.contact-cell { flex: 1; text-align: center; font-size: 11px; color: #444; }
+	.main-name { font-size: 26px; font-weight: 700; color: #1a1a2e; letter-spacing: 0.5px; margin-bottom: 2px; }
+	.main-title { font-size: 12px; color: #555; margin-bottom: 14px; }
+	.contact-bar { display: flex; gap: 0; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 8px 0; margin-bottom: 20px; }
+	.contact-cell { flex: 1; text-align: center; font-size: 10.5px; color: #444; padding: 0 6px; }
 	.contact-cell:not(:last-child) { border-right: 1px solid #ccc; }
-	.contact-cell-icon { font-size: 16px; display: block; margin-bottom: 3px; color: #222; }
+	.contact-cell-icon { font-size: 14px; display: block; margin-bottom: 2px; color: #4a6fa5; }
 
-	/* Section heading */
-	.sec-heading {
-		display: flex; align-items: center; gap: 8px;
-		font-size: 16px; font-weight: 700; color: #222; margin: 22px 0 4px;
-	}
-	.sec-icon { font-size: 18px; color: #222; }
-	.sec-line { height: 2px; background: #222; margin-bottom: 14px; }
+	.sec-heading { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #1a1a2e; margin-bottom: 4px; margin-top: 20px; page-break-after: avoid; }
+	.sec-heading:first-of-type { margin-top: 0; }
+	.sec-line { width: 40px; height: 3px; background: #4a6fa5; margin-bottom: 12px; }
 
-	.summary-text { font-size: 11.5px; line-height: 1.65; color: #444; text-align: justify; }
+	.summary-text { font-size: 11px; line-height: 1.7; color: #444; text-align: justify; }
 
-	/* Badge */
-	.badge {
-		display: inline-block; background: #eee; padding: 3px 10px; border-radius: 2px;
-		font-size: 11px; font-weight: 500; color: #444; margin-bottom: 6px;
-	}
+	.badge { display: inline-block; background: #e2e8f0; padding: 2px 10px; border-radius: 2px; font-size: 10.5px; font-weight: 500; color: #555; margin-bottom: 5px; }
 
-	/* Experience item */
-	.exp-item { margin-bottom: 18px; }
-	.exp-role { font-size: 12px; font-weight: 500; color: #222; }
-	.exp-company { font-size: 12px; font-weight: 700; color: #222; margin-bottom: 4px; }
-	.exp-desc { font-size: 11px; line-height: 1.6; color: #444; text-align: justify; }
+	.exp-item { margin-bottom: 16px; page-break-inside: avoid; }
+	.exp-role { font-size: 12px; font-weight: 600; color: #1a1a2e; }
+	.exp-company { font-size: 11.5px; font-weight: 500; color: #555; margin-bottom: 4px; }
+	.exp-desc { font-size: 11px; line-height: 1.6; color: #555; text-align: justify; }
 	.exp-desc ul { margin: 4px 0 0; padding-left: 18px; list-style: disc; }
-	.exp-desc li { font-size: 11px; line-height: 1.6; color: #444; margin-bottom: 2px; }
+	.exp-desc li { font-size: 11px; line-height: 1.6; color: #555; margin-bottom: 2px; }
 
-	/* Education item */
-	.edu-item { margin-bottom: 14px; }
-	.edu-institution { font-size: 11.5px; color: #444; }
+	.edu-item { margin-bottom: 12px; page-break-inside: avoid; }
+	.edu-degree { font-size: 12px; font-weight: 600; color: #1a1a2e; }
+	.edu-institution { font-size: 11px; color: #555; }
 
-	/* Projects */
-	.proj-item { margin-bottom: 12px; }
-	.proj-name { font-size: 12px; font-weight: 600; color: #222; }
-	.proj-desc { font-size: 11px; color: #444; margin-top: 2px; }
-	.proj-tech { font-size: 10px; color: #666; margin-top: 3px; }
+	.proj-item { margin-bottom: 12px; page-break-inside: avoid; }
+	.proj-name { font-size: 12px; font-weight: 600; color: #1a1a2e; }
+	.proj-desc { font-size: 11px; color: #555; margin-top: 2px; text-align: justify; }
+	.proj-tech { font-size: 10px; color: #777; margin-top: 3px; font-style: italic; }
+
+	.cert-item { margin-bottom: 8px; page-break-inside: avoid; }
+	.cert-name { font-size: 11.5px; font-weight: 600; color: #1a1a2e; }
+	.cert-issuer { font-size: 10.5px; color: #666; }
 </style>
 </head>
 <body>
-<table>
-	<tr>
-		<!-- LEFT SIDEBAR -->
-		<td class="sidebar">
-			<div class="photo-area">
-				<div class="photo-placeholder">&#128100;</div>
-			</div>
-			<div class="sidebar-content">
+<div class="layout">
 
-				<!-- Key Skills -->
-				${d.skills.technical.length ? `
-				<div class="sb-section">
-					<div class="sb-heading"><span class="sb-icon">&#9998;</span> Key skills</div>
-					<div class="sb-line"></div>
-					<ul class="sb-list">
-						${d.skills.technical.map(s => `<li>${skillName(s)}</li>`).join('')}
-					</ul>
-				</div>` : ''}
+	<div class="sidebar">
+		<div class="photo-area">
+			<div class="photo-placeholder">&#128100;</div>
+		</div>
+		<div class="sidebar-content">
 
-				<!-- Personal Information -->
-				<div class="sb-section">
-					<div class="sb-heading"><span class="sb-icon">&#128196;</span> Personal Information</div>
-					<div class="sb-line"></div>
-					${location ? `<div class="detail-row"><span class="detail-label">City</span><span class="detail-value">${location}</span></div>` : ''}
-					${linkedin ? `<div class="detail-row"><span class="detail-label">LinkedIn</span><span class="detail-value">${linkedin}</span></div>` : ''}
-					${github ? `<div class="detail-row"><span class="detail-label">GitHub</span><span class="detail-value">${github}</span></div>` : ''}
-					${portfolio ? `<div class="detail-row"><span class="detail-label">Portfolio</span><span class="detail-value">${portfolio}</span></div>` : ''}
-				</div>
+			${d.skills.technical.length ? `
+			<div class="sb-heading">Key Skills</div>
+			<div class="sb-line"></div>
+			<ul class="sb-list">
+				${d.skills.technical.map(s => `<li>${skillName(s)}</li>`).join('')}
+			</ul>` : ''}
 
-				<!-- Languages -->
-				<div class="sb-section">
-					<div class="sb-heading"><span class="sb-icon">&#128172;</span> Languages</div>
-					<div class="sb-line"></div>
-					<ul class="sb-list"><li>English</li></ul>
-				</div>
+			<div class="sb-heading" style="margin-top:20px">Contact</div>
+			<div class="sb-line"></div>
+			${email ? `<div class="contact-item"><span class="contact-icon">&#9993;</span><div><div class="contact-label">Email</div><div class="contact-value">${email}</div></div></div>` : ''}
+			${phone ? `<div class="contact-item"><span class="contact-icon">&#9742;</span><div><div class="contact-label">Mobile</div><div class="contact-value">${phone}</div></div></div>` : ''}
+			${totalExp ? `<div class="contact-item"><span class="contact-icon">&#128188;</span><div><div class="contact-label">Experience</div><div class="contact-value">${totalExp}</div></div></div>` : ''}
 
-			</div>
-		</td>
+			<div class="sb-heading" style="margin-top:20px">Other Details</div>
+			<div class="sb-line"></div>
+			${location ? `<div class="detail-row"><span class="detail-label">City</span><span class="detail-value">${location}</span></div>` : ''}
+			${linkedin ? `<div class="detail-row"><span class="detail-label">LinkedIn</span><span class="detail-value">${linkedin}</span></div>` : ''}
+			${github ? `<div class="detail-row"><span class="detail-label">GitHub</span><span class="detail-value">${github}</span></div>` : ''}
+			${portfolio ? `<div class="detail-row"><span class="detail-label">Portfolio</span><span class="detail-value">${portfolio}</span></div>` : ''}
 
-		<!-- RIGHT MAIN -->
-		<td class="main">
-			<div class="main-name">${name}</div>
-			${title ? `<div class="main-title">${title}</div>` : '<div style="margin-bottom:12px"></div>'}
+		</div>
+	</div>
 
-			<!-- Contact bar -->
-			<div class="contact-bar">
-				${totalExp ? `<div class="contact-cell"><span class="contact-cell-icon">&#128188;</span>${totalExp}</div>` : ''}
-				${phone ? `<div class="contact-cell"><span class="contact-cell-icon">&#128241;</span>${phone}</div>` : ''}
-				${email ? `<div class="contact-cell"><span class="contact-cell-icon">&#9993;</span>${email}</div>` : ''}
-			</div>
+	<div class="main">
+		<div class="main-name">${name}</div>
+		${title ? `<div class="main-title">${title}</div>` : '<div style="margin-bottom:12px"></div>'}
 
-			<!-- Profile Summary -->
-			${d.summary ? `
-			<div class="sec-heading"><span class="sec-icon">&#128196;</span> Profile Summary</div>
-			<div class="sec-line"></div>
-			<div class="summary-text">${d.summary}</div>
-			` : ''}
+		<div class="contact-bar">
+			${totalExp ? `<div class="contact-cell"><span class="contact-cell-icon">&#128188;</span>${totalExp}</div>` : ''}
+			${phone ? `<div class="contact-cell"><span class="contact-cell-icon">&#128241;</span>${phone}</div>` : ''}
+			${email ? `<div class="contact-cell"><span class="contact-cell-icon">&#9993;</span>${email}</div>` : ''}
+		</div>
 
-			<!-- Education -->
-			${d.education.length ? `
-			<div class="sec-heading"><span class="sec-icon">&#127891;</span> Education</div>
-			<div class="sec-line"></div>
-			${d.education.map(e => `
-			<div class="edu-item">
-				<div class="badge">${e.degree || e.education_type || ''}${formatYear(e) ? ', ' + formatYear(e) : ''}</div>
-				<div class="edu-institution">${e.institution}</div>
-			</div>`).join('')}
-			` : ''}
+		${d.summary ? `
+		<div class="sec-heading">Profile Summary</div>
+		<div class="sec-line"></div>
+		<div class="summary-text">${d.summary}</div>` : ''}
 
-			<!-- Work Experience -->
-			${d.experience.length ? `
-			<div class="sec-heading"><span class="sec-icon">&#127970;</span> Work Experience</div>
-			<div class="sec-line"></div>
-			${d.experience.map(e => `
-			<div class="exp-item">
-				<div class="badge">${formatDuration(e)}</div>
-				<div class="exp-role">${e.position}</div>
-				<div class="exp-company">${e.company}</div>
-				${e.description ? `<div class="exp-desc">${formatDescription(e.description)}</div>` : ''}
-			</div>`).join('')}
-			` : ''}
+		${d.education.length ? `
+		<div class="sec-heading">Education</div>
+		<div class="sec-line"></div>
+		${d.education.map(e => `
+		<div class="edu-item">
+			<div class="badge">${formatYear(e)}</div>
+			<div class="edu-degree">${e.degree || e.education_type || ''}</div>
+			<div class="edu-institution">${e.institution}</div>
+		</div>`).join('')}` : ''}
 
-			<!-- Projects -->
-			${d.projects.length ? `
-			<div class="sec-heading"><span class="sec-icon">&#128187;</span> Projects</div>
-			<div class="sec-line"></div>
-			${d.projects.map(p => `
-			<div class="proj-item">
-				<div class="proj-name">${p.name}</div>
-				${p.description ? `<div class="proj-desc">${p.description}</div>` : ''}
-				${p.technologies ? `<div class="proj-tech">${Array.isArray(p.technologies) ? p.technologies.join(', ') : p.technologies}</div>` : ''}
-			</div>`).join('')}
-			` : ''}
+		${d.experience.length ? `
+		<div class="sec-heading">Work Experience</div>
+		<div class="sec-line"></div>
+		${d.experience.map(e => `
+		<div class="exp-item">
+			<div class="badge">${formatDuration(e)}</div>
+			<div class="exp-role">${e.position}</div>
+			<div class="exp-company">${e.company}</div>
+			${e.description ? `<div class="exp-desc">${formatDescription(e.description)}</div>` : ''}
+		</div>`).join('')}` : ''}
 
-			<!-- Certifications -->
-			${d.certifications.length ? `
-			<div class="sec-heading"><span class="sec-icon">&#9989;</span> Certifications</div>
-			<div class="sec-line"></div>
-			${d.certifications.map(c => `
-			<div style="margin-bottom:8px">
-				<div style="font-weight:600;font-size:12px;color:#222">${c.name}</div>
-				${c.issuer ? `<div style="font-size:11px;color:#666">${c.issuer}</div>` : ''}
-			</div>`).join('')}
-			` : ''}
-		</td>
-	</tr>
-</table>
+		${d.projects.length ? `
+		<div class="sec-heading">Projects</div>
+		<div class="sec-line"></div>
+		${d.projects.map(p => `
+		<div class="proj-item">
+			<div class="proj-name">${p.name}</div>
+			${p.description ? `<div class="proj-desc">${p.description}</div>` : ''}
+			${p.technologies ? `<div class="proj-tech">Tech: ${Array.isArray(p.technologies) ? p.technologies.join(', ') : p.technologies}</div>` : ''}
+		</div>`).join('')}` : ''}
+
+		${d.certifications.length ? `
+		<div class="sec-heading">Certifications</div>
+		<div class="sec-line"></div>
+		${d.certifications.map(c => `
+		<div class="cert-item">
+			<div class="cert-name">${c.name}</div>
+			${c.issuer ? `<div class="cert-issuer">${c.issuer}${c.date ? ' • ' + c.date : ''}</div>` : ''}
+		</div>`).join('')}` : ''}
+	</div>
+
+</div>
 </body>
 </html>`;
 }

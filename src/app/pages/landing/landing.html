@@ -25,8 +25,8 @@
       <h1>The smarter way to <span class="brand-text">hire & get hired</span></h1>
       <p>JobMouka brings a powerful job portal and an AI resume builder together — helping candidates land jobs faster and companies find the right talent.</p>
       <div class="hero-actions">
-        <button class="btn-primary" (click)="openSignupPanel()"><i class="ti ti-rocket"></i> Start for free</button>
-        <button class="btn-secondary"><i class="ti ti-player-play"></i> Watch demo</button>
+        <button class="btn-primary" (click)="openAuthPanel()"><i class="ti ti-rocket"></i> Start for free</button>
+        <button class="btn-secondary" (click)="openYoutubeDemo()"><i class="ti ti-player-play"></i> Watch demo</button>
       </div>
       <div class="hero-social-proof">
         <div class="avatar-stack">
@@ -101,12 +101,16 @@
   <div class="logos-inner">
     <p class="logos-label">Trusted by teams at</p>
     <div class="logos-row">
-      <div class="logo-pill"><i class="ti ti-building-skyscraper"></i>Infosys</div>
-      <div class="logo-pill"><i class="ti ti-building-community"></i>TCS</div>
-      <div class="logo-pill"><i class="ti ti-brand-google"></i>Google</div>
+      <div class="logo-pill"><i class="ti ti-building-skyscraper"></i>TCS</div>
+      <div class="logo-pill"><i class="ti ti-building-community"></i>Infosys</div>
       <div class="logo-pill"><i class="ti ti-building"></i>Wipro</div>
-      <div class="logo-pill"><i class="ti ti-brand-apple"></i>Apple</div>
-      <div class="logo-pill"><i class="ti ti-building-bank"></i>Razorpay</div>
+      <div class="logo-pill"><i class="ti ti-building-skyscraper"></i>HCLTech</div>
+      <div class="logo-pill"><i class="ti ti-building-community"></i>Tech Mahindra</div>
+      <div class="logo-pill"><i class="ti ti-building"></i>Accenture</div>
+      <div class="logo-pill"><i class="ti ti-building-skyscraper"></i>Cognizant</div>
+      <div class="logo-pill"><i class="ti ti-building-community"></i>Capgemini</div>
+      <div class="logo-pill"><i class="ti ti-building"></i>IBM India</div>
+      <div class="logo-pill"><i class="ti ti-building-bank"></i>Flipkart</div>
     </div>
   </div>
 </div>
@@ -396,7 +400,7 @@
   <div class="footer-bottom">
     <span>© 2025 JobMouka Technologies Pvt. Ltd. All rights reserved.</span>
     <div class="footer-links">
-      <a>Privacy</a>
+      <a (click)="openPrivacy()" style="cursor:pointer">Privacy</a>
       <a>Terms</a>
       <a>Cookies</a>
     </div>

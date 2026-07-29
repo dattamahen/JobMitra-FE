@@ -60,6 +60,14 @@ export class LandingPage implements OnInit {
 		});
 	}
 
+	openYoutubeDemo(): void {
+		window.open('https://www.youtube.com', '_blank', 'noopener,noreferrer');
+	}
+
+	openPrivacy(): void {
+		this.router.navigate(['/privacy']);
+	}
+
 	openAuthPanel(): void {
 		this.showAuthPanel.set(true);
 		this.initializeGoogleSignIn();

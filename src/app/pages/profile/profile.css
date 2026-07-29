@@ -50,12 +50,6 @@
 	background-repeat: no-repeat;
 }
 
-.cover-gradient {
-	position: absolute;
-	inset: 0;
-	background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
-}
-
 .cover-actions {
 	position: absolute;
 	top: 12px;
@@ -89,24 +83,6 @@
 	width: 60px;
 	height: 60px;
 	color: #bdbdbd;
-}
-
-.avatar-overlay {
-	position: absolute;
-	inset: 0;
-	background: rgba(0,0,0,0.45);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	opacity: 1;
-	cursor: pointer;
-}
-
-.avatar-overlay mat-icon {
-	color: #fff !important;
-	font-size: 28px;
-	width: 28px;
-	height: 28px;
 }
 
 
@@ -225,6 +201,7 @@
 	font-size: 0.875rem;
 	line-height: 1.6;
 	margin: 0;
+	text-align: justify;
 }
 
 .empty-section {
