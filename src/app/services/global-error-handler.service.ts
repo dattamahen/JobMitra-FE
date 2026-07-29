@@ -20,8 +20,12 @@ export class GlobalErrorHandler implements ErrorHandler {
 		console.error('[GlobalErrorHandler]', unwrapped);
 
 		if (this.isChunkLoadError(unwrapped)) {
-			this.notificationService.show('A new version is available. Reloading...', 'info');
-			setTimeout(() => window.location.reload(), 1500);
+			const reloaded = sessionStorage.getItem('chunk_reload');
+			if (!reloaded) {
+				sessionStorage.setItem('chunk_reload', '1');
+				this.notificationService.show('A new version is available. Reloading...', 'info');
+				setTimeout(() => window.location.reload(), 1500);
+			}
 			return;
 		}
 
