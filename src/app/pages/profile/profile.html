@@ -148,31 +148,20 @@
 		<div class="profile-summary-section" #profileSummarySection>
 			<mat-card class="linkedin-profile-card">
 				<div class="profile-cover">
-					<div class="cover-gradient"></div>
 					<div class="cover-actions">
-						<app-profile-share 
+						<app-profile-share
 							[profileData]="getProfileSnapshot()">
 						</app-profile-share>
 					</div>
 					<div class="profile-avatar-section">
-						<div class="avatar-wrapper" 
+						<div class="avatar-wrapper"
 							[style.background-image]="getProfileAvatarImage() ? 'url(' + getProfileAvatarImage() + ')' : null"
 							[style.background-size]="getProfileAvatarImage() ? 'cover' : null"
 							[style.background-position]="getProfileAvatarImage() ? 'center' : null">
 							@if (!getProfileAvatarImage()) {
 								<mat-icon class="profile-avatar">account_circle</mat-icon>
 							}
-							<div class="avatar-overlay" (click)="avatarFileInput.click()">
-								<mat-icon>camera_alt</mat-icon>
-							</div>
-							<input type="file" #avatarFileInput (change)="onAvatarFileSelected($event)" 
-								   accept="image/*" style="display: none;">
 						</div>
-						@if (getProfileAvatarImage()) {
-							<button mat-icon-button class="avatar-remove" (click)="removeAvatarImage()" matTooltip="Remove photo">
-								<mat-icon>close</mat-icon>
-							</button>
-						}
 					</div>
 				</div>
 				

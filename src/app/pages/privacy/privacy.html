@@ -1,0 +1,193 @@
+<!-- NAV -->
+<nav class="privacy-nav">
+  <div class="nav-left" (click)="goBack()" style="cursor:pointer">
+    <div class="logo-mark">JM</div>
+    <span class="logo-name">Job<span>Mouka</span></span>
+  </div>
+  <button class="back-btn" (click)="goBack()">← Back to Home</button>
+</nav>
+
+<div class="privacy-container">
+  <div class="privacy-header">
+    <h1>Privacy Policy</h1>
+    <p class="effective-date">Effective Date: {{ effectiveDate }}</p>
+    <p class="intro">
+      This Privacy Policy describes how JobMouka Technologies Pvt. Ltd. ("JobMouka", "we", "us", or "our")
+      collects, uses, stores, and discloses your personal information when you use our platform at
+      <strong>jobmouka.com</strong> ("Platform"). This policy is compliant with the
+      <strong>Information Technology Act, 2000</strong>, the
+      <strong>Information Technology (Reasonable Security Practices and Procedures and Sensitive Personal Data or Information) Rules, 2011</strong>
+      ("SPDI Rules"), and the <strong>Digital Personal Data Protection Act, 2023</strong> ("DPDPA").
+    </p>
+  </div>
+
+  <div class="privacy-body">
+
+    <section>
+      <h2>1. Data Controller</h2>
+      <p>
+        JobMouka Technologies Pvt. Ltd. is the Data Fiduciary under the DPDPA, 2023. For any privacy-related
+        queries, contact our Grievance Officer at <strong>privacy&#64;jobmouka.com</strong>.
+      </p>
+    </section>
+
+    <section>
+      <h2>2. Information We Collect</h2>
+      <p>We collect the following categories of personal data:</p>
+      <ul>
+        <li><strong>Identity & Contact:</strong> Full name, email address, mobile number, date of birth.</li>
+        <li><strong>Professional Data:</strong> Resume, work experience, education, skills, certifications, LinkedIn/GitHub URLs.</li>
+        <li><strong>Account Credentials:</strong> Hashed passwords, OAuth tokens (Google Sign-In).</li>
+        <li><strong>Usage Data:</strong> Pages visited, features used, job searches, application history, session duration.</li>
+        <li><strong>Device & Technical Data:</strong> IP address, browser type, operating system, device identifiers.</li>
+        <li><strong>Payment Data:</strong> Subscription billing details processed via PCI-DSS compliant third-party gateways. We do not store card numbers.</li>
+        <li><strong>Sensitive Personal Data (SPDI):</strong> Financial information related to subscriptions, as defined under the SPDI Rules, 2011.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>3. Purpose of Processing</h2>
+      <p>Your data is processed for the following purposes:</p>
+      <ul>
+        <li>Creating and managing your account on the Platform.</li>
+        <li>Providing AI-powered resume building, job matching, and mock interview services.</li>
+        <li>Sending job alerts, application status updates, and platform notifications.</li>
+        <li>Processing subscription payments and managing billing.</li>
+        <li>Improving platform features through analytics and usage patterns.</li>
+        <li>Complying with applicable Indian laws and regulatory requirements.</li>
+        <li>Preventing fraud, abuse, and unauthorized access.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>4. Legal Basis for Processing</h2>
+      <p>Under the DPDPA, 2023, we process your personal data based on:</p>
+      <ul>
+        <li><strong>Consent:</strong> Obtained at the time of registration and for marketing communications.</li>
+        <li><strong>Contractual Necessity:</strong> To provide the services you have subscribed to.</li>
+        <li><strong>Legal Obligation:</strong> To comply with applicable Indian laws.</li>
+        <li><strong>Legitimate Interests:</strong> For fraud prevention, platform security, and service improvement.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>5. Data Sharing & Disclosure</h2>
+      <p>We do not sell your personal data. We may share your data with:</p>
+      <ul>
+        <li><strong>Employers / Recruiters:</strong> Only profile information you explicitly choose to share when applying for jobs.</li>
+        <li><strong>Service Providers:</strong> Cloud hosting (AWS), payment processors, email delivery services — bound by data processing agreements.</li>
+        <li><strong>AI/ML Providers:</strong> Anonymized or pseudonymized data for AI model inference (e.g., resume analysis).</li>
+        <li><strong>Legal Authorities:</strong> When required by law, court order, or government directive under Indian law.</li>
+        <li><strong>Business Transfers:</strong> In the event of a merger or acquisition, subject to equivalent privacy protections.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>6. Data Retention</h2>
+      <p>
+        We retain your personal data for as long as your account is active or as required to provide services.
+        Upon account deletion, personal data is purged within <strong>30 days</strong>, except where retention
+        is required by law (e.g., financial records retained for 7 years under the Companies Act, 2013).
+        Anonymized analytics data may be retained indefinitely.
+      </p>
+    </section>
+
+    <section>
+      <h2>7. Data Localisation</h2>
+      <p>
+        All personal data of Indian users is stored on servers located within the territory of India, in
+        compliance with applicable data localisation requirements. Any cross-border transfer of data is
+        conducted only to countries notified by the Central Government under the DPDPA, 2023, with
+        appropriate contractual safeguards in place.
+      </p>
+    </section>
+
+    <section>
+      <h2>8. Your Rights as a Data Principal</h2>
+      <p>Under the DPDPA, 2023, you have the following rights:</p>
+      <ul>
+        <li><strong>Right to Access:</strong> Obtain a summary of personal data we hold about you.</li>
+        <li><strong>Right to Correction:</strong> Request correction of inaccurate or incomplete data.</li>
+        <li><strong>Right to Erasure:</strong> Request deletion of your personal data (subject to legal retention obligations).</li>
+        <li><strong>Right to Grievance Redressal:</strong> Lodge a complaint with our Grievance Officer.</li>
+        <li><strong>Right to Nominate:</strong> Nominate another individual to exercise rights on your behalf in case of death or incapacity.</li>
+        <li><strong>Right to Withdraw Consent:</strong> Withdraw consent at any time; this will not affect prior lawful processing.</li>
+      </ul>
+      <p>To exercise any right, email us at <strong>privacy&#64;jobmouka.com</strong>. We will respond within <strong>30 days</strong>.</p>
+    </section>
+
+    <section>
+      <h2>9. Cookies & Tracking Technologies</h2>
+      <p>
+        We use cookies and similar technologies for session management, analytics, and personalisation.
+        You may control cookie preferences through your browser settings. Disabling essential cookies
+        may affect Platform functionality. We do not use cookies for cross-site behavioural advertising
+        without your explicit consent.
+      </p>
+    </section>
+
+    <section>
+      <h2>10. Security Practices</h2>
+      <p>
+        We implement reasonable security practices as mandated by the SPDI Rules, 2011, including:
+      </p>
+      <ul>
+        <li>AES-256 encryption for data at rest; TLS 1.2+ for data in transit.</li>
+        <li>Role-based access controls and multi-factor authentication for internal systems.</li>
+        <li>Regular security audits and vulnerability assessments.</li>
+        <li>Incident response procedures with breach notification within 72 hours to affected users and relevant authorities.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>11. Children's Privacy</h2>
+      <p>
+        Our Platform is not directed at individuals under the age of <strong>18 years</strong>. We do not
+        knowingly collect personal data from minors. If we become aware that a minor has provided personal
+        data, we will delete it promptly. Parents or guardians may contact us at <strong>privacy&#64;jobmouka.com</strong>.
+      </p>
+    </section>
+
+    <section>
+      <h2>12. Third-Party Links</h2>
+      <p>
+        Our Platform may contain links to third-party websites (e.g., employer career pages, LinkedIn).
+        We are not responsible for the privacy practices of such third parties. We encourage you to review
+        their privacy policies before providing any personal data.
+      </p>
+    </section>
+
+    <section>
+      <h2>13. Changes to This Policy</h2>
+      <p>
+        We may update this Privacy Policy from time to time. Material changes will be notified via email
+        or a prominent notice on the Platform at least <strong>15 days</strong> before taking effect.
+        Continued use of the Platform after the effective date constitutes acceptance of the revised policy.
+      </p>
+    </section>
+
+    <section>
+      <h2>14. Grievance Officer</h2>
+      <p>
+        In accordance with the Information Technology Act, 2000 and the DPDPA, 2023, the details of the
+        Grievance Officer are:
+      </p>
+      <div class="contact-box">
+        <p><strong>Name:</strong> Grievance Officer, JobMouka Technologies Pvt. Ltd.</p>
+        <p><strong>Email:</strong> privacy&#64;jobmouka.com</p>
+        <p><strong>Address:</strong> JobMouka Technologies Pvt. Ltd., India</p>
+        <p><strong>Response Time:</strong> Within 30 days of receipt of complaint</p>
+      </div>
+      <p>
+        If you are not satisfied with our response, you may approach the
+        <strong>Data Protection Board of India</strong> once constituted under the DPDPA, 2023.
+      </p>
+    </section>
+
+  </div>
+
+  <div class="privacy-footer">
+    <p>© 2025 JobMouka Technologies Pvt. Ltd. All rights reserved.</p>
+    <button class="back-btn-bottom" (click)="goBack()">← Back to Home</button>
+  </div>
+</div>

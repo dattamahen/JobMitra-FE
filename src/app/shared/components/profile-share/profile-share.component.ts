@@ -21,10 +21,6 @@ import { ProfileShareService, ProfileSnapshot } from '../../../services/profile-
 		</button>
 
 		<mat-menu #shareMenu="matMenu" xPosition="before">
-			<button mat-menu-item (click)="copyLink()">
-				<mat-icon>link</mat-icon>
-				<span>Copy link</span>
-			</button>
 			<button mat-menu-item (click)="shareViaEmail()">
 				<mat-icon>email</mat-icon>
 				<span>Email</span>
@@ -32,10 +28,6 @@ import { ProfileShareService, ProfileSnapshot } from '../../../services/profile-
 			<button mat-menu-item (click)="shareViaWhatsApp()">
 				<mat-icon>chat</mat-icon>
 				<span>WhatsApp</span>
-			</button>
-			<button mat-menu-item (click)="shareViaLinkedIn()">
-				<mat-icon>business</mat-icon>
-				<span>LinkedIn</span>
 			</button>
 			<mat-divider></mat-divider>
 			<button mat-menu-item (click)="downloadProfileCard()">
