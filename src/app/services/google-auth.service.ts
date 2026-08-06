@@ -1,5 +1,7 @@
 import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
 import { environment } from '../../environments/environment';
 
@@ -11,9 +13,10 @@ declare const google: any;
 export class GoogleAuthService {
 	private clientId = environment.googleClientId;
 	private platformId = inject(PLATFORM_ID);
+	private router = inject(Router);
+	private http = inject(HttpClient);
 
-	constructor(private authService: AuthService) {
-	}
+	constructor(private authService: AuthService) {}
 
 	async initializeGoogleSignIn(): Promise<void> {
 		if (!isPlatformBrowser(this.platformId)) return Promise.resolve();
@@ -26,7 +29,6 @@ export class GoogleAuthService {
 				});
 				resolve();
 			} else {
-				// Load Google Sign-In script
 				const script = document.createElement('script');
 				script.src = 'https://accounts.google.com/gsi/client';
 				script.onload = () => {
@@ -62,11 +64,13 @@ export class GoogleAuthService {
 		if (!isPlatformBrowser(this.platformId)) return;
 		
 		try {
-			const result = await this.authService.googleSignIn(response.credential).toPromise();
-			// Redirect to dashboard or handle success
-			window.location.href = '/dashboard';
-		} catch (error) {
-			alert('Google Sign-In failed. Please try again.');
+			await this.authService.googleSignIn(response.credential).toPromise();
+			this.router.navigate(['/dashboard']);
+		} catch (error: any) {
+			// Backend already sends failure emails; just report the error visually
+			const detail: string = error?.error?.detail ?? 'Google Sign-In failed. Please try again.';
+			// Dispatch a custom event so the login page can display the error without alert()
+			window.dispatchEvent(new CustomEvent('google-signin-error', { detail }));
 		}
 	}
 

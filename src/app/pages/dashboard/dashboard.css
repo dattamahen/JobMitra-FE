@@ -221,6 +221,8 @@
 		font-size: 0.75rem;
 	}
 
+	.activity-status { display: none; }
+
 	.activity-meta {
 		min-width: unset;
 		max-width: 90px;

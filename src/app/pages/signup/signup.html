@@ -84,6 +84,18 @@
 						@if (signupForm.get('password')?.hasError('minlength')) {
 							<mat-error>{{TEXT.form.passwordMinLength}}</mat-error>
 						}
+						@if (signupForm.get('password')?.hasError('missingUppercase')) {
+							<mat-error>{{TEXT.form.passwordMissingUppercase}}</mat-error>
+						}
+						@if (signupForm.get('password')?.hasError('missingLowercase')) {
+							<mat-error>{{TEXT.form.passwordMissingLowercase}}</mat-error>
+						}
+						@if (signupForm.get('password')?.hasError('missingNumber')) {
+							<mat-error>{{TEXT.form.passwordMissingNumber}}</mat-error>
+						}
+						@if (signupForm.get('password')?.hasError('missingSpecial')) {
+							<mat-error>{{TEXT.form.passwordMissingSpecial}}</mat-error>
+						}
 					</mat-form-field>
 
 					<mat-form-field appearance="outline">

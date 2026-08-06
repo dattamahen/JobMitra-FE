@@ -13,6 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { emailValidator } from '../../validators/email.validator';
 
 import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
 import { POST_JOB_STEP1_CONFIG, POST_JOB_STEP2_CONFIG, POST_JOB_STEP3_CONFIG, POST_JOB_STEP5_CONFIG, POST_JOB_STEP6_CONFIG, POST_JOB_STEP7_CONFIG } from '../../shared/components/dynamic-form/form-configs';
@@ -230,7 +231,7 @@ export class PostJobPage {
 			// HR Contact
 			hr_contact: this.formBuilder.group({
 				name: ['', [Validators.required]],
-				email: ['', [Validators.required, Validators.email]],
+				email: ['', [Validators.required, emailValidator()]],
 				phone: ['', [Validators.required]],
 				title: ['', [Validators.required]],
 				department: ['Human Resources', [Validators.required]]
@@ -548,7 +549,7 @@ export class PostJobPage {
 		if (control?.hasError('required')) {
 			return this.TEXT.errorMessages.fieldRequired;
 		}
-		if (control?.hasError('email')) {
+		if (control?.hasError('invalidEmail') || control?.hasError('email')) {
 			return this.TEXT.errorMessages.invalidEmail;
 		}
 		if (control?.hasError('minlength')) {

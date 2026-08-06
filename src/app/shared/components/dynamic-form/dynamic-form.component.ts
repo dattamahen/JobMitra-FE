@@ -285,28 +285,17 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 		const fieldConfig = this.config.fields.find(f => f.name === fieldName);
 		const fieldLabel = fieldConfig?.label || fieldName;
 		
-		if (field.errors['required']) {
-			return `${fieldLabel} is required`;
-		}
-		if (field.errors['email']) {
-			return 'Please enter a valid email address';
-		}
-		if (field.errors['minlength']) {
-			return `${fieldLabel} must be at least ${field.errors['minlength'].requiredLength} characters`;
-		}
-		if (field.errors['maxlength']) {
-			return `${fieldLabel} must be no more than ${field.errors['maxlength'].requiredLength} characters`;
-		}
-		if (field.errors['min']) {
-			return `${fieldLabel} must be at least ${field.errors['min'].min}`;
-		}
-		if (field.errors['max']) {
-			return `${fieldLabel} must be no more than ${field.errors['max'].max}`;
-		}
-		if (field.errors['passwordMismatch']) {
-			return 'Passwords do not match';
-		}
-		
+		if (field.errors['required']) return `${fieldLabel} is required`;
+		if (field.errors['invalidEmail'] || field.errors['email']) return 'Please enter a valid email address';
+		if (field.errors['invalidMobile']) return 'Please enter a valid mobile number';
+		if (field.errors['invalidLinkedin']) return 'Please enter a valid LinkedIn URL';
+		if (field.errors['invalidGithub']) return 'Please enter a valid GitHub URL';
+		if (field.errors['invalidWebsite']) return 'Please enter a valid website URL';
+		if (field.errors['minlength']) return `${fieldLabel} must be at least ${field.errors['minlength'].requiredLength} characters`;
+		if (field.errors['maxlength']) return `${fieldLabel} must be no more than ${field.errors['maxlength'].requiredLength} characters`;
+		if (field.errors['min']) return `${fieldLabel} must be at least ${field.errors['min'].min}`;
+		if (field.errors['max']) return `${fieldLabel} must be no more than ${field.errors['max'].max}`;
+		if (field.errors['passwordMismatch']) return 'Passwords do not match';
 		return 'Invalid input';
 	}
 

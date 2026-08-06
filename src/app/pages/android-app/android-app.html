@@ -1,0 +1,176 @@
+<!-- HEADER -->
+<div class="ps-header">
+  <div class="ps-header-inner">
+    <div class="ps-logo-wrap">
+      <div class="ps-logo-mark">JM</div>
+      <div class="ps-logo-info">
+        <span class="ps-app-name">JobMouka</span>
+        <span class="ps-developer">JobMouka Technologies Pvt. Ltd.</span>
+        <div class="ps-badges">
+          <span class="ps-badge verified"><i class="ti ti-rosette-discount-check"></i> Verified</span>
+          <span class="ps-badge free">Free</span>
+        </div>
+      </div>
+    </div>
+    <button class="ps-install-btn" (click)="downloadApk()">
+      <i class="ti ti-download"></i> Download APK
+    </button>
+  </div>
+
+  <!-- Stats row -->
+  <div class="ps-stats-row">
+    <div class="ps-stat">
+      <span class="ps-stat-value">4.8 <i class="ti ti-star-filled"></i></span>
+      <span class="ps-stat-label">2.9K reviews</span>
+    </div>
+    <div class="ps-stat-divider"></div>
+    <div class="ps-stat">
+      <span class="ps-stat-value">10K+</span>
+      <span class="ps-stat-label">Downloads</span>
+    </div>
+    <div class="ps-stat-divider"></div>
+    <div class="ps-stat">
+      <span class="ps-stat-value"><i class="ti ti-users"></i></span>
+      <span class="ps-stat-label">Everyone</span>
+    </div>
+    <div class="ps-stat-divider"></div>
+    <div class="ps-stat">
+      <span class="ps-stat-value">~18 MB</span>
+      <span class="ps-stat-label">Size</span>
+    </div>
+  </div>
+</div>
+
+<!-- SCREENSHOTS -->
+<div class="ps-section">
+  <h2 class="ps-section-title">Screenshots</h2>
+  <div class="ps-screenshots">
+    @for (s of screenshots; track s.label) {
+      <div class="ps-screenshot-card">
+        <div class="ps-screenshot-placeholder">
+          <i class="ti ti-device-mobile"></i>
+          <span>{{ s.label }}</span>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="ps-section ps-about">
+  <h2 class="ps-section-title">About this app</h2>
+  <p class="ps-about-text">
+    JobMouka is your all-in-one career platform — find jobs, build ATS-optimized resumes, and ace interviews with AI-powered mock sessions. Trusted by <strong>2,950+ professionals</strong> across India.
+  </p>
+  <p class="ps-about-text">
+    Whether you're a fresher or a seasoned professional, JobMouka helps you land your dream job faster with smart recommendations, one-click apply, and real-time application tracking.
+  </p>
+  <div class="ps-tags">
+    <span class="ps-tag">Jobs</span>
+    <span class="ps-tag">Resume Builder</span>
+    <span class="ps-tag">AI Interview</span>
+    <span class="ps-tag">Career</span>
+    <span class="ps-tag">Hiring</span>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div class="ps-section">
+  <h2 class="ps-section-title">Key features</h2>
+  <div class="ps-features-grid">
+    @for (f of features; track f.title) {
+      <div class="ps-feature-card">
+        <div class="ps-feature-icon"><i class="ti {{ f.icon }}"></i></div>
+        <div class="ps-feature-text">
+          <div class="ps-feature-title">{{ f.title }}</div>
+          <div class="ps-feature-desc">{{ f.desc }}</div>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- RATINGS -->
+<div class="ps-section">
+  <h2 class="ps-section-title">Ratings & reviews</h2>
+  <div class="ps-ratings-wrap">
+    <div class="ps-rating-big">
+      <div class="ps-rating-number">4.8</div>
+      <div class="ps-stars">
+        <i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i>
+        <i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i>
+        <i class="ti ti-star-half-filled"></i>
+      </div>
+      <div class="ps-rating-count">2,950 reviews</div>
+    </div>
+    <div class="ps-rating-bars">
+      <div class="ps-bar-row"><span>5</span><div class="ps-bar"><div class="ps-bar-fill" style="width:78%"></div></div></div>
+      <div class="ps-bar-row"><span>4</span><div class="ps-bar"><div class="ps-bar-fill" style="width:14%"></div></div></div>
+      <div class="ps-bar-row"><span>3</span><div class="ps-bar"><div class="ps-bar-fill" style="width:5%"></div></div></div>
+      <div class="ps-bar-row"><span>2</span><div class="ps-bar"><div class="ps-bar-fill" style="width:2%"></div></div></div>
+      <div class="ps-bar-row"><span>1</span><div class="ps-bar"><div class="ps-bar-fill" style="width:1%"></div></div></div>
+    </div>
+  </div>
+
+  <div class="ps-reviews">
+    <div class="ps-review-card">
+      <div class="ps-review-header">
+        <div class="ps-reviewer-avatar" style="background:#6366f1">AK</div>
+        <div>
+          <div class="ps-reviewer-name">Arjun Kapoor</div>
+          <div class="ps-review-stars"><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i></div>
+        </div>
+        <span class="ps-review-date">July 2025</span>
+      </div>
+      <p class="ps-review-text">"Got 3x more callbacks after using the AI resume builder. The mock interview feature is a game changer!"</p>
+    </div>
+    <div class="ps-review-card">
+      <div class="ps-review-header">
+        <div class="ps-reviewer-avatar" style="background:#059669">SP</div>
+        <div>
+          <div class="ps-reviewer-name">Sneha Patel</div>
+          <div class="ps-review-stars"><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i></div>
+        </div>
+        <span class="ps-review-date">June 2025</span>
+      </div>
+      <p class="ps-review-text">"One-click CV generation saved me hours. Started getting shortlisted within days of applying."</p>
+    </div>
+    <div class="ps-review-card">
+      <div class="ps-review-header">
+        <div class="ps-reviewer-avatar" style="background:#4831af">RT</div>
+        <div>
+          <div class="ps-reviewer-name">Rahul Tiwari</div>
+          <div class="ps-review-stars"><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i></div>
+        </div>
+        <span class="ps-review-date">June 2025</span>
+      </div>
+      <p class="ps-review-text">"Practiced 5 mock interview sessions and walked in fully confident. Got placed at my dream company in 2 weeks."</p>
+    </div>
+  </div>
+</div>
+
+<!-- APP INFO -->
+<div class="ps-section ps-app-info">
+  <h2 class="ps-section-title">App info</h2>
+  <div class="ps-info-grid">
+    <div class="ps-info-row"><span class="ps-info-label">Version</span><span class="ps-info-value">1.0.0</span></div>
+    <div class="ps-info-row"><span class="ps-info-label">Updated</span><span class="ps-info-value">July 2025</span></div>
+    <div class="ps-info-row"><span class="ps-info-label">Requires Android</span><span class="ps-info-value">8.0 and up</span></div>
+    <div class="ps-info-row"><span class="ps-info-label">Downloads</span><span class="ps-info-value">10,000+</span></div>
+    <div class="ps-info-row"><span class="ps-info-label">Developer</span><span class="ps-info-value">JobMouka Technologies Pvt. Ltd.</span></div>
+    <div class="ps-info-row"><span class="ps-info-label">Website</span><span class="ps-info-value"><a href="https://dev.jobmouka.com" target="_blank">dev.jobmouka.com</a></span></div>
+  </div>
+</div>
+
+<!-- STICKY BOTTOM CTA -->
+<div class="ps-sticky-cta">
+  <div class="ps-sticky-inner">
+    <div class="ps-sticky-logo">
+      <div class="ps-logo-mark sm">JM</div>
+      <span>JobMouka</span>
+    </div>
+    <button class="ps-install-btn" (click)="downloadApk()">
+      <i class="ti ti-download"></i> Download APK
+    </button>
+  </div>
+</div>

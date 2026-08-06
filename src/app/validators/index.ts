@@ -3,3 +3,4 @@ export { mobileNumberValidator } from './mobile-number.validator';
 export { linkedinUrlValidator } from './linkedin-url.validator';
 export { githubUrlValidator } from './github-url.validator';
 export { websiteUrlValidator } from './website-url.validator';
+export { passwordStrengthValidator } from './password.validator';

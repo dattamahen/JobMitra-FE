@@ -185,8 +185,8 @@ export class ProjectContestPage implements OnInit {
 	private async openPaymentDialog(entryId: string, amount: number) {
 		let paymentLink = '';
 		try {
-			const plan = await this.creditsService.loadPlan();
-			paymentLink = plan.payment_link || '';
+			const link = await this.creditsService.createPaymentLink();
+			paymentLink = link.payment_url || '';
 		} catch { /* use empty */ }
 
 		const ref = this.dialog.open(ContestPaymentDialogComponent, {

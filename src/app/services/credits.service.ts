@@ -122,7 +122,7 @@ export class CreditsService {
 	async createPaymentLink(): Promise<{ payment_url: string; payment_link_id: string; amount: number }> {
 		return firstValueFrom(
 			this.api.post<{ payment_url: string; payment_link_id: string; amount: number }>(
-				'/api/v1/payments/create-link',
+				'/payments/create-link',
 				{ user_id: this.getUserId() }
 			)
 		);

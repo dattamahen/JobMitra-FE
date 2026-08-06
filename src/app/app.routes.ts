@@ -60,6 +60,10 @@ export const routes: Routes = [
 		loadComponent: () => import('./pages/privacy/privacy').then(m => m.PrivacyPage)
 	},
 	{
+		path: 'android-app',
+		loadComponent: () => import('./pages/android-app/android-app').then(m => m.AndroidAppPage)
+	},
+	{
 		path: 'error',
 		loadComponent: () => import('./pages/error/error-page.component').then(m => m.ErrorPageComponent)
 	},

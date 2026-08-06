@@ -83,6 +83,14 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 				}
 			});
 
+		if (isPlatformBrowser(this.platformId)) {
+			const handler = (e: Event) => {
+				this.errorMessage = (e as CustomEvent<string>).detail;
+			};
+			window.addEventListener('google-signin-error', handler);
+			this.destroyRef.onDestroy(() => window.removeEventListener('google-signin-error', handler));
+		}
+
 		this.initializeGoogleSignIn();
 		this.loadDynamicPricing();
 	}

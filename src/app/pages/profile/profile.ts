@@ -61,7 +61,11 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	certificationsForm = viewChild<DynamicFormComponent>('certificationsForm');
 	jobPreferencesForm = viewChild<DynamicFormComponent>('jobPreferencesForm');
 	profileSummarySection = viewChild<ElementRef<HTMLElement>>('profileSummarySection');
-	
+
+	get profileSummaryEl(): HTMLElement | undefined {
+		return this.profileSummarySection()?.nativeElement;
+	}
+
 	private destroyRef = inject(DestroyRef);
 	private fb = inject(FormBuilder);
 	private userService = inject(UserService);

@@ -15,6 +15,7 @@ import { AuthService } from '../../services/auth.service';
 import { SIGNUP_PAGE_CONSTANTS } from './signup.constants';
 import { SIGNUP_TEXT } from '../../data/signup-data';
 import { emailValidator } from '../../validators/email.validator';
+import { passwordStrengthValidator } from '../../validators/password.validator';
 
 @Component({
 	selector: 'app-signup',
@@ -60,7 +61,7 @@ export class SignupPage {
 	constructor() {
 		this.signupForm = this.fb.group({
 			email: ['', [Validators.required, emailValidator()]],
-			password: ['', [Validators.required, Validators.minLength(8)]],
+			password: ['', [Validators.required, Validators.minLength(8), passwordStrengthValidator()]],
 			confirmPassword: ['', [Validators.required]],
 			first_name: ['', Validators.required],
 			last_name: ['', Validators.required],
@@ -98,17 +99,19 @@ export class SignupPage {
 	private passwordMatchValidator(form: any) {
 		const password = form.get('password');
 		const confirmPassword = form.get('confirmPassword');
+		if (!password || !confirmPassword) return null;
 
-		if (password && confirmPassword && password.value !== confirmPassword.value) {
-			confirmPassword.setErrors({ passwordMismatch: true });
+		const hasMismatch = password.value !== confirmPassword.value;
+		const currentErrors = confirmPassword.errors ? { ...confirmPassword.errors } : {};
+
+		if (hasMismatch) {
+			confirmPassword.setErrors({ ...currentErrors, passwordMismatch: true });
 			return { passwordMismatch: true };
 		}
 
-		if (confirmPassword?.errors?.['passwordMismatch']) {
-			delete confirmPassword.errors['passwordMismatch'];
-			if (Object.keys(confirmPassword.errors).length === 0) {
-				confirmPassword.setErrors(null);
-			}
+		if (currentErrors['passwordMismatch']) {
+			delete currentErrors['passwordMismatch'];
+			confirmPassword.setErrors(Object.keys(currentErrors).length ? currentErrors : null);
 		}
 
 		return null;
