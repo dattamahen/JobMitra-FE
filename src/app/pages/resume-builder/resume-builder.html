@@ -7,44 +7,48 @@
 		</app-loading>
 	} @else {
 		<div class="resume-builder-content full-width">
-			<div class="builder-sidebar">
-				<div class="section-list">
-					<h4>
-						<mat-icon>list</mat-icon>
-						{{TEXT.sidebar.resumeSections}}
-					</h4>
-					@for (section of sections; track section.id) {
-						<div class="section-item" 
-								[class.active]="activeSection() === section.id"
-								[class.completed]="isSectionComplete(section.id)"
-								(click)="selectSection(section.id)"
-								role="button"
-								tabindex="0">
-							<div class="section-info">
-								<mat-icon class="section-icon">{{ section.icon }}</mat-icon>
-								<span class="section-label">{{ section.label }}</span>
-							</div>
-						</div>
-					}
-				</div>
-				
-				@if (currentResume(); as resume) {
-					<div class="template-section">
+			<div class="builder-left">
+				<div class="builder-sidebar">
+					<div class="section-list">
 						<h4>
-							<mat-icon>palette</mat-icon>
-							{{TEXT.sidebar.cvTemplates}}
+							<mat-icon>list</mat-icon>
+							{{TEXT.sidebar.resumeSections}}
 						</h4>
-						<div class="template-grid">
-							@for (template of cvTemplates; track template.id) {
-								<div class="template-card" 
-										[class.active]="selectedTemplate() === template.id"
-										(click)="selectTemplate(template.id)">
-									<div class="template-preview">
-										<mat-icon>{{ template.icon }}</mat-icon>
-									</div>
-									<span class="template-name">{{ template.name }}</span>
+						@for (section of sections; track section.id) {
+							<div class="section-item" 
+									[class.active]="activeSection() === section.id"
+									[class.completed]="isSectionComplete(section.id)"
+									(click)="selectSection(section.id)"
+									role="button"
+									tabindex="0">
+								<div class="section-info">
+									<mat-icon class="section-icon">{{ section.icon }}</mat-icon>
+									<span class="section-label">{{ section.label }}</span>
 								</div>
-							}
+							</div>
+						}
+					</div>
+				</div>
+
+				@if (currentResume(); as resume) {
+					<div class="builder-templates">
+						<div class="template-section">
+							<h4>
+								<mat-icon>palette</mat-icon>
+								{{TEXT.sidebar.cvTemplates}}
+							</h4>
+							<div class="template-grid">
+								@for (template of cvTemplates; track template.id) {
+									<div class="template-card" 
+											[class.active]="selectedTemplate() === template.id"
+											(click)="selectTemplate(template.id)">
+										<div class="template-preview">
+											<mat-icon>{{ template.icon }}</mat-icon>
+										</div>
+										<span class="template-name">{{ template.name }}</span>
+									</div>
+								}
+							</div>
 						</div>
 					</div>
 				}

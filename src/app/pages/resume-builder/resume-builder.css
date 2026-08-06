@@ -5,9 +5,22 @@
 	height: 100vh;
 }
 
-.builder-sidebar {
+.builder-left {
 	width: 280px;
 	flex-shrink: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.builder-sidebar {
+	background: white;
+	border-radius: 12px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	overflow-y: auto;
+}
+
+.builder-templates {
 	background: white;
 	border-radius: 12px;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -85,7 +98,6 @@
 /* Template Section */
 .template-section {
 	padding: 12px;
-	border-top: 1px solid #e0e0e0;
 }
 
 .template-section h4 {
@@ -202,8 +214,15 @@
 		height: auto;
 	}
 
-	.builder-sidebar {
+	.builder-left {
 		width: 100%;
+		flex-direction: row;
+		align-items: flex-start;
+	}
+
+	.builder-sidebar,
+	.builder-templates {
+		flex: 1;
 		max-height: 220px;
 		overflow-y: auto;
 	}
