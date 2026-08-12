@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, PLATFORM_ID, inject, signal, ChangeDetectionStrategy, DestroyRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, PLATFORM_ID, inject, signal, ChangeDetectionStrategy, DestroyRef, ViewChildren, QueryList } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -16,6 +16,7 @@ import { LOGIN_PAGE_CONSTANTS } from './login-page.constants';
 import { AuthService, LoginResponse, RegisterRequest } from '../services/auth.service';
 import { GoogleAuthService } from '../services/google-auth.service';
 import { ApiService } from '../services/api.service';
+import { SeoService } from '../services/seo.service';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -49,6 +50,8 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 	forgotPasswordFormConfig: FormConfig = { ...FORGOT_PASSWORD_FORM_CONFIG, loading: false };
 	resetPasswordFormConfig: FormConfig = { ...RESET_PASSWORD_FORM_CONFIG, loading: false };
 
+	@ViewChildren(DynamicFormComponent) private formComponents!: QueryList<DynamicFormComponent>;
+
 	private statsObserver?: IntersectionObserver;
 	private stepsObserver?: IntersectionObserver;
 	private testimonialsObserver?: IntersectionObserver;
@@ -57,6 +60,7 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 	private platformId = inject(PLATFORM_ID);
 	private api = inject(ApiService);
 	private destroyRef = inject(DestroyRef);
+	private seoService = inject(SeoService);
 
 	constructor(
 		private router: Router,
@@ -66,6 +70,23 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 	) {}
 
 	ngOnInit(): void {
+		this.seoService.updateMeta({
+			title: 'AI-Powered Job Search & Career Platform',
+			description: 'Find jobs, build ATS-optimized resumes, practice mock interviews, and get AI-powered job matching. Join 2,400+ professionals on JobMouka — India\'s smartest job portal.',
+			url: 'https://www.jobmouka.com',
+			keywords: 'job search, naukri alternative, job portal India, AI resume builder, mock interview, job vacancies, fresher jobs, IT jobs, remote jobs, career platform, job matching, ATS resume, jobs near me',
+			structuredData: {
+				'@context': 'https://schema.org',
+				'@type': 'WebSite',
+				name: 'JobMouka',
+				url: 'https://www.jobmouka.com',
+				potentialAction: {
+					'@type': 'SearchAction',
+					target: 'https://www.jobmouka.com/dashboard?page=job-search&q={search_term_string}',
+					'query-input': 'required name=search_term_string'
+				}
+			}
+		});
 		const isAuth = this.authService.isAuthenticated();
 		const userType = this.authService.getUserType();
 
@@ -221,6 +242,13 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 
 	closePanel(): void {
 		this.isPanelOpen.set(false);
+		this.resetAllForms();
+	}
+
+	private resetAllForms(): void {
+		this.errorMessage = '';
+		this.successMessage = '';
+		this.formComponents?.forEach(f => f.resetForm());
 	}
 
 	scrollTo(sectionId: string): void {
@@ -272,8 +300,7 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 		this.isSignupMode.set(!this.isSignupMode());
 		this.isForgotPasswordMode.set(false);
 		this.isResetPasswordMode.set(false);
-		this.errorMessage = '';
-		this.successMessage = '';
+		this.resetAllForms();
 
 		if (!this.isSignupMode()) {
 			this.renderGoogleButton();
@@ -284,16 +311,14 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 		this.isForgotPasswordMode.set(!this.isForgotPasswordMode());
 		this.isSignupMode.set(false);
 		this.isResetPasswordMode.set(false);
-		this.errorMessage = '';
-		this.successMessage = '';
+		this.resetAllForms();
 	}
 
 	toggleResetPasswordMode(): void {
 		this.isResetPasswordMode.set(false);
 		this.isForgotPasswordMode.set(false);
 		this.isSignupMode.set(false);
-		this.errorMessage = '';
-		this.successMessage = '';
+		this.resetAllForms();
 		this.router.navigate(['/login']);
 	}
 

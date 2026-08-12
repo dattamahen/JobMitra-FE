@@ -11,6 +11,7 @@ import { LOGIN_PAGE_CONSTANTS } from '../../login-page/login-page.constants';
 
 import { AuthService, LoginResponse, RegisterRequest } from '../../services/auth.service';
 import { GoogleAuthService } from '../../services/google-auth.service';
+import { SeoService } from '../../services/seo.service';
 
 @Component({
 	selector: 'app-landing',
@@ -35,6 +36,7 @@ export class LandingPage implements OnInit {
 	resetPasswordFormConfig: FormConfig = { ...RESET_PASSWORD_FORM_CONFIG, loading: false };
 
 	private platformId = inject(PLATFORM_ID);
+	private seoService = inject(SeoService);
 
 	constructor(
 		private router: Router,
@@ -44,6 +46,24 @@ export class LandingPage implements OnInit {
 	) {}
 
 	ngOnInit(): void {
+		this.seoService.updateMeta({
+			title: 'AI-Powered Job Search & Career Platform',
+			description: 'Find jobs, build ATS-optimized resumes, practice mock interviews, and get AI-powered job matching. Join 2,950+ professionals on JobMouka — India\'s smartest job portal.',
+			url: 'https://www.jobmouka.com',
+			keywords: 'job search, naukri alternative, job portal India, AI resume builder, mock interview, job vacancies, fresher jobs, IT jobs, remote jobs, career platform, job matching, ATS resume',
+			structuredData: {
+				'@context': 'https://schema.org',
+				'@type': 'WebSite',
+				name: 'JobMouka',
+				url: 'https://www.jobmouka.com',
+				description: 'AI-powered job search platform with resume builder, mock interviews, and skill assessments',
+				potentialAction: {
+					'@type': 'SearchAction',
+					target: 'https://www.jobmouka.com/dashboard?page=job-search&q={search_term_string}',
+					'query-input': 'required name=search_term_string'
+				}
+			}
+		});
 		const isAuth = this.authService.isAuthenticated();
 		const userType = this.authService.getUserType();
 
