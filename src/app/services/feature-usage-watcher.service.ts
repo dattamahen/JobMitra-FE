@@ -30,7 +30,7 @@ export class FeatureUsageWatcherService {
 		effect(() => {
 			const usage = this._featureUsage();
 			if (usage && usage.remaining_count <= 0) {
-				console.warn('Feature usage exhausted for plan:', usage.plan);
+				// usage exhausted
 			}
 		});
 	}

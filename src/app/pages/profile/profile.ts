@@ -1,8 +1,5 @@
 import { Component, viewChild, AfterViewInit, OnInit, ElementRef, DestroyRef, inject, signal, computed, ChangeDetectionStrategy, ChangeDetectorRef, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { finalize } from 'rxjs/operators';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -16,10 +13,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
 import { ProfileShareComponent } from '../../shared/components/profile-share/profile-share.component';
 import { PROFILE_BASIC_INFO_CONFIG, PROFILE_PROFESSIONAL_CONFIG, PROFILE_SKILLS_CONFIG, PROFILE_EXPERIENCE_CONFIG, PROFILE_EDUCATION_CONFIG, PROFILE_PROJECTS_CONFIG, PROFILE_CERTIFICATIONS_CONFIG, PROFILE_JOB_PREFERENCES_CONFIG } from '../../shared/components/dynamic-form/form-configs';
-import { QUALIFICATION_DISPLAY_MAP, SALARY_RANGE_MAP, PROFILE_FIELD_DISPLAY_NAMES, PROFILE_PATTERN_ERROR_MESSAGES } from './profile.constants';
+import { QUALIFICATION_DISPLAY_MAP, SALARY_RANGE_MAP } from './profile.constants';
 import { PROFILE_TEXT } from '../../data/profile-data';
 import { ProfileSnapshot } from '../../services/profile-share.service';
-import type { UserProfile, UpdateUserRequest } from '../../services';
+import type { UserProfile } from '../../services';
 
 import { UserService } from '../../services';
 import { AuthService } from '../../services/auth.service';
@@ -30,8 +27,6 @@ import { ApiService } from '../../services/api.service';
 @Component({
 	selector: 'app-profile',
 	imports: [
-		CommonModule,
-		ReactiveFormsModule,
 		MatCardModule,
 		MatFormFieldModule,
 		MatInputModule,
@@ -67,7 +62,6 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	}
 
 	private destroyRef = inject(DestroyRef);
-	private fb = inject(FormBuilder);
 	private userService = inject(UserService);
 	private authService = inject(AuthService);
 	private snackBar = inject(MatSnackBar);
@@ -78,7 +72,6 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	isGeneratingSummary = signal(false);
 	isGeneratingJobDesc = signal<string | null>(null);
 	
-	profileForm!: FormGroup;
 	currentUser = signal<UserProfile | null>(null);
 	readonly skills = computed(() => this.resolveSkills(this.currentUser() as any)
 		.map(s => s.version ? `${s.name} (${s.version})` : s.name));
@@ -126,23 +119,19 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	onBasicInfoSubmit(formData: any): void {
 		const updateData: any = {};
 		
-		// Basic Personal Information - strings
 		if (formData.first_name?.trim()) updateData.first_name = formData.first_name.trim();
 		if (formData.last_name?.trim()) updateData.last_name = formData.last_name.trim();
 		if (formData.phone?.trim()) updateData.phone = formData.phone.trim();
 		
-		// Process location field - split into city and state
 		if (formData.location?.trim()) {
 			const locationParts = formData.location.trim().split(',').map((part: string) => part.trim());
 			if (locationParts.length >= 1) updateData.city = locationParts[0];
 			if (locationParts.length >= 2) updateData.state = locationParts[1];
 		}
 		
-		// Direct city/state fields (backend supports both direct and nested)
 		if (formData.city?.trim()) updateData.city = formData.city.trim();
 		if (formData.state?.trim()) updateData.state = formData.state.trim();
 		
-		// date_of_birth - datetime (ISO string)
 		if (formData.date_of_birth) {
 			try {
 				const date = formData.date_of_birth instanceof Date 
@@ -151,11 +140,8 @@ export class ProfilePage implements OnInit, AfterViewInit {
 				if (!isNaN(date.getTime())) {
 					updateData.date_of_birth = date.toISOString();
 				}
-			} catch (e) {
-
-			}
+			} catch (e) {}
 		}
-		
 
 		this.updateProfile(updateData, 'Basic information updated successfully!');
 		this.isBasicInfoEditing.set(false);
@@ -169,13 +155,11 @@ export class ProfilePage implements OnInit, AfterViewInit {
 
 		const updateData: any = {};
 		
-		// Professional Information - strings
 		if (formData.professional_summary?.trim()) updateData.professional_summary = formData.professional_summary.trim();
 		if (formData.current_role?.trim()) updateData.current_role = formData.current_role.trim();
 		if (formData.current_company?.trim()) updateData.current_company = formData.current_company.trim();
 		if (formData.portfolio_link?.trim()) updateData.portfolio_link = formData.portfolio_link.trim();
 		
-		// Professional Information - int (must be >= 0)
 		if (formData.overall_experience_years !== undefined && formData.overall_experience_years !== null && formData.overall_experience_years !== '') {
 			const exp = Number(formData.overall_experience_years);
 			if (!isNaN(exp) && exp >= 0) {
@@ -183,13 +167,10 @@ export class ProfilePage implements OnInit, AfterViewInit {
 			}
 		}
 		
-		// highest_qualification - string
 		if (formData.highest_qualification?.trim()) updateData.highest_qualification = formData.highest_qualification.trim();
 		
-		// Social Links - strings
 		if (formData.linkedin_link?.trim()) updateData.linkedin_link = formData.linkedin_link.trim();
 		if (formData.github_link?.trim()) updateData.github_link = formData.github_link.trim();
-		
 
 		this.updateProfile(updateData, 'Professional information updated successfully!');
 		this.isProfessionalEditing.set(false);
@@ -289,10 +270,8 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	onJobPreferencesSubmit(formData: any): void {
 		const updateData: any = {};
 		
-		// Career preferences
 		if (formData.desired_job_title?.trim()) updateData.desired_job_title = formData.desired_job_title.trim();
 		
-		// Preferences - List[Literal] (arrays of specific string values)
 		if (formData.job_preferences?.trim()) {
 			const validPrefs = ['remote', 'hybrid', 'on-site'];
 			if (validPrefs.includes(formData.job_preferences)) {
@@ -307,7 +286,6 @@ export class ProfilePage implements OnInit, AfterViewInit {
 			}
 		}
 		
-		// Expected salary with currency
 		if (formData.expected_salary !== undefined && formData.expected_salary !== null && formData.expected_salary !== '') {
 			const salary = Number(formData.expected_salary);
 			if (!isNaN(salary) && salary >= 0) {
@@ -327,21 +305,13 @@ export class ProfilePage implements OnInit, AfterViewInit {
 		this.isJobPreferencesEditing.update(v => !v);
 	}
 
-	// Skills handlers
 	onSkillsSubmit(formData: any): void {
-
 		const updateData: any = {};
-		
-		// Process technical skills array and map to simple skills array
 		const skillsArray = this.processDynamicArrayData(formData, 'technical_skills');
-
-		
 		if (skillsArray.length > 0) {
 			updateData.skills = skillsArray.map((skill: any) => skill.name).filter(Boolean);
-			updateData.technical_skills = skillsArray; // Store detailed skills separately
+			updateData.technical_skills = skillsArray;
 		}
-		
-
 		this.updateProfile(updateData, 'Skills updated successfully!');
 		this.isSkillsEditing.set(false);
 	}
@@ -350,20 +320,12 @@ export class ProfilePage implements OnInit, AfterViewInit {
 		this.isSkillsEditing.update(v => !v);
 	}
 
-	// Experience handlers
 	onExperienceSubmit(formData: any): void {
-
 		const updateData: any = {};
-		
-		// Process work experience array
 		const experienceArray = this.processDynamicArrayData(formData, 'experiences');
-
-		
 		if (experienceArray.length > 0) {
 			updateData.work_experience = experienceArray;
 		}
-		
-
 		this.updateProfile(updateData, 'Experience updated successfully!');
 		this.isExperienceEditing.set(false);
 	}
@@ -372,19 +334,12 @@ export class ProfilePage implements OnInit, AfterViewInit {
 		this.isExperienceEditing.update(v => !v);
 	}
 
-	// Education handlers
 	onEducationSubmit(formData: any): void {
-
 		const updateData: any = {};
-		
 		const educationArray = this.processDynamicArrayData(formData, 'education');
-
-		
 		if (educationArray.length > 0) {
 			updateData.education = educationArray;
 		}
-		
-
 		this.updateProfile(updateData, 'Education updated successfully!');
 		this.isEducationEditing.set(false);
 	}
@@ -393,19 +348,12 @@ export class ProfilePage implements OnInit, AfterViewInit {
 		this.isEducationEditing.update(v => !v);
 	}
 
-	// Projects handlers
 	onProjectsSubmit(formData: any): void {
-
 		const updateData: any = {};
-		
 		const projectsArray = this.processDynamicArrayData(formData, 'projects');
-
-		
 		if (projectsArray.length > 0) {
 			updateData.projects = projectsArray;
 		}
-		
-
 		this.updateProfile(updateData, 'Projects updated successfully!');
 		this.isProjectsEditing.set(false);
 	}
@@ -414,19 +362,12 @@ export class ProfilePage implements OnInit, AfterViewInit {
 		this.isProjectsEditing.update(v => !v);
 	}
 
-	// Certifications handlers
 	onCertificationsSubmit(formData: any): void {
-
 		const updateData: any = {};
-		
 		const certificationsArray = this.processDynamicArrayData(formData, 'certifications');
-
-		
 		if (certificationsArray.length > 0) {
 			updateData.certifications = certificationsArray;
 		}
-		
-
 		this.updateProfile(updateData, 'Certifications updated successfully!');
 		this.isCertificationsEditing.set(false);
 	}
@@ -435,46 +376,28 @@ export class ProfilePage implements OnInit, AfterViewInit {
 		this.isCertificationsEditing.update(v => !v);
 	}
 
-	// Helper method to process dynamic array data
 	private processDynamicArrayData(formData: Record<string, any>, arrayName: string): any[] {
 		const result: any[] = [];
 		const keys = Object.keys(formData).filter(key => key.startsWith(arrayName + '_item_'));
-		
-
-		
-		// Group by item ID
 		const itemGroups: { [itemId: string]: any } = {};
 		keys.forEach(key => {
-			// For experiences_item_0_company, extract item_0 and company
 			const match = key.match(new RegExp(`^${arrayName}_(item_\\d+)_(.+)$`));
 			if (match) {
-				const itemId = match[1]; // item_0, item_1, etc.
-				const fieldName = match[2]; // company, position, etc.
+				const itemId = match[1];
+				const fieldName = match[2];
 				if (!itemGroups[itemId]) itemGroups[itemId] = {};
 				itemGroups[itemId][fieldName] = formData[key];
-
 			}
 		});
-		
-
-		
-		// Convert to array and filter out empty items
 		Object.values(itemGroups).forEach(item => {
-			// Check if item has at least one non-empty required field
-			const hasRequiredData = Object.values(item).some(value => 
+			const hasRequiredData = Object.values(item).some(value =>
 				value && value.toString().trim() !== ''
 			);
-			if (hasRequiredData) {
-				result.push(item);
-
-			}
+			if (hasRequiredData) result.push(item);
 		});
-		
-
 		return result;
 	}
 
-	// Methods to populate dynamic array values
 	private resolveSkills(user: any): { name: string; version: string; experience: string }[] {
 		return UserService.resolveSkills(user);
 	}
@@ -499,14 +422,9 @@ export class ProfilePage implements OnInit, AfterViewInit {
 				// Check if it's malformed data (separate objects with empty keys)
 				const hasEmptyKeys = user['work_experience'].some((item: any) => item.hasOwnProperty(''));
 				
-				if (hasEmptyKeys) {
-	
-					// Don't populate malformed data - let user re-enter
-					return values;
-				}
-				
-				// Handle properly formatted data
-				const validExperiences = user['work_experience'].filter((exp: any) => 
+			if (hasEmptyKeys) return values;
+			
+			const validExperiences = user['work_experience'].filter((exp: any) => 
 					exp && (exp.company || exp.position || exp.description)
 				);
 				
@@ -532,10 +450,7 @@ export class ProfilePage implements OnInit, AfterViewInit {
 			// Check for malformed data
 			const hasEmptyKeys = user['education'].some((item: any) => item.hasOwnProperty(''));
 			
-			if (hasEmptyKeys) {
-
-				return values;
-			}
+			if (hasEmptyKeys) return values;
 			
 			const validEducation = user['education'].filter((edu: any) => 
 				edu && (edu.institution || edu.education_type)
@@ -564,8 +479,6 @@ export class ProfilePage implements OnInit, AfterViewInit {
 				values[`projects_${itemId}_description`] = project.description || '';
 				values[`projects_${itemId}_technologies`] = project.technologies || '';
 			});
-		} else {
-
 		}
 		return values;
 	}
@@ -649,8 +562,6 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	private updateFormValues(): void {
 		const user = this.currentUser() as any;
 
-		
-		// Update all form values
 		this.basicInfoValues = {
 			first_name: user?.first_name || '',
 			last_name: user?.last_name || '',
@@ -671,8 +582,6 @@ export class ProfilePage implements OnInit, AfterViewInit {
 			portfolio_link: user?.portfolio_link || user?.social_links?.portfolio || ''
 		};
 		
-
-
 		this.skillsValues = this.populateSkillsValues(user);
 		this.experienceValues = this.populateExperienceValues(user);
 		this.educationValues = this.populateEducationValues(user);
@@ -686,63 +595,36 @@ export class ProfilePage implements OnInit, AfterViewInit {
 			expected_salary: user?.expected_salary || user?.professional_info?.expected_salary || 0,
 			currency: 'INR'
 		};
-		
-
-	}
-
-	constructor() {
-		this.createForm();
 	}
 
 	ngOnInit(): void {
-
 		this.loadUserProfile();
 	}
 
-	ngAfterViewInit(): void {
-		// Forms are now available
-	}
+	ngAfterViewInit(): void {}
 
 	private updateDynamicForms(): void {
 		if (this.formsInitialized) return;
 		
-		setTimeout(() => {
-			const basicFormRef = this.basicForm();
-			const professionalFormRef = this.professionalForm();
-			const skillsFormRef = this.skillsForm();
-			const experienceFormRef = this.experienceForm();
-			const educationFormRef = this.educationForm();
-			const projectsFormRef = this.projectsForm();
-			const certificationsFormRef = this.certificationsForm();
-			const jobPreferencesFormRef = this.jobPreferencesForm();
-			
-			if (basicFormRef && Object.keys(this.basicInfoValues).length > 0) {
-				basicFormRef.patchValue(this.basicInfoValues);
-			}
-			if (professionalFormRef && Object.keys(this.professionalValues).length > 0) {
-				professionalFormRef.patchValue(this.professionalValues);
-			}
-			if (skillsFormRef && Object.keys(this.skillsValues).length > 0) {
-				skillsFormRef.patchValue(this.skillsValues);
-			}
-			if (experienceFormRef && Object.keys(this.experienceValues).length > 0) {
-				experienceFormRef.patchValue(this.experienceValues);
-			}
-			if (educationFormRef && Object.keys(this.educationValues).length > 0) {
-				educationFormRef.patchValue(this.educationValues);
-			}
-			if (projectsFormRef && Object.keys(this.projectsValues).length > 0) {
-				projectsFormRef.patchValue(this.projectsValues);
-			}
-			if (certificationsFormRef && Object.keys(this.certificationsValues).length > 0) {
-				certificationsFormRef.patchValue(this.certificationsValues);
-			}
-			if (jobPreferencesFormRef && Object.keys(this.jobPreferencesValues).length > 0) {
-				jobPreferencesFormRef.patchValue(this.jobPreferencesValues);
-			}
-			
-			this.formsInitialized = true;
-		}, 500);
+		const basicFormRef = this.basicForm();
+		const professionalFormRef = this.professionalForm();
+		const skillsFormRef = this.skillsForm();
+		const experienceFormRef = this.experienceForm();
+		const educationFormRef = this.educationForm();
+		const projectsFormRef = this.projectsForm();
+		const certificationsFormRef = this.certificationsForm();
+		const jobPreferencesFormRef = this.jobPreferencesForm();
+
+		if (basicFormRef && Object.keys(this.basicInfoValues).length > 0) basicFormRef.patchValue(this.basicInfoValues);
+		if (professionalFormRef && Object.keys(this.professionalValues).length > 0) professionalFormRef.patchValue(this.professionalValues);
+		if (skillsFormRef && Object.keys(this.skillsValues).length > 0) skillsFormRef.patchValue(this.skillsValues);
+		if (experienceFormRef && Object.keys(this.experienceValues).length > 0) experienceFormRef.patchValue(this.experienceValues);
+		if (educationFormRef && Object.keys(this.educationValues).length > 0) educationFormRef.patchValue(this.educationValues);
+		if (projectsFormRef && Object.keys(this.projectsValues).length > 0) projectsFormRef.patchValue(this.projectsValues);
+		if (certificationsFormRef && Object.keys(this.certificationsValues).length > 0) certificationsFormRef.patchValue(this.certificationsValues);
+		if (jobPreferencesFormRef && Object.keys(this.jobPreferencesValues).length > 0) jobPreferencesFormRef.patchValue(this.jobPreferencesValues);
+
+		this.formsInitialized = true;
 	}
 
 	// Helper function to convert salary range string to expected_salary object
@@ -779,193 +661,6 @@ export class ProfilePage implements OnInit, AfterViewInit {
 					this.snackBar.open('Error loading profile data', 'Close', { duration: 3000 });
 				}
 			});
-	}
-
-	private createForm(): void {
-		this.profileForm = this.fb.group({
-			fullName: ['', [Validators.required, Validators.minLength(2)]],
-			email: ['', [Validators.required, Validators.email]],
-			phone: ['', [Validators.required, Validators.pattern(/^\+?[\d\s\-\(\)]+$/)]],
-			location: ['', [Validators.required, Validators.minLength(2)]],
-			currentJobTitle: ['', [Validators.required, Validators.minLength(2)]],
-			experience: ['', [Validators.required]],
-			desiredJobTitle: ['', [Validators.required, Validators.minLength(2)]],
-			salaryRange: [''],
-			skills: ['', [Validators.required, Validators.minLength(3)]],
-			summary: ['', [Validators.maxLength(500)]],
-			certifications: this.fb.array([]),
-			areaOfExpertise: [''],
-			githubLink: ['', [Validators.pattern(/^$|^https?:\/\/(www\.)?github\.com\/[a-zA-Z0-9_-]+\/?$/)]],
-			portfolioLink: ['', [Validators.pattern(/^$|^https?:\/\/.+\..+/)]],
-			youtubeChannel: ['', [Validators.pattern(/^$|^https?:\/\/(www\.)?youtube\.com\/@[a-zA-Z0-9_-]+\/?$/)]],
-			contributions: ['', [Validators.maxLength(1000)]],
-			workType: [[]],
-			employmentType: [[]]
-		});
-	}
-
-
-
-	private populateForm(user: UserProfile): void {
-		this.profileForm.patchValue({
-			fullName: user.full_name,
-			email: user.email,
-			phone: user.phone,
-			location: user.location?.city || '',
-			currentJobTitle: user.current_job_title,
-			experience: user.experience_years,
-			desiredJobTitle: user.desired_job_title,
-			salaryRange: this.userService.getSalaryRangeForDropdown(user),
-			skills: user.skills.join(', '),
-			summary: user.professional_summary,
-			areaOfExpertise: user.area_of_expertise.join(', '),
-			githubLink: user.social_links?.github || '',
-			portfolioLink: user.social_links?.portfolio || '',
-			youtubeChannel: user.social_links?.youtube || '',
-			contributions: user.key_contributions,
-			workType: user.preferred_work_types,
-			employmentType: user.preferred_employment_types
-		});
-		
-		// Populate certifications array
-		this.certificationsArray.clear();
-		if (user.certifications && user.certifications.length > 0) {
-			user.certifications.forEach(cert => {
-				this.certificationsArray.push(this.createCertificationGroup(cert));
-			});
-		} else {
-			this.addCertification(); // Add one empty certification by default
-		}
-	}
-
-	// Getter for easy access to form controls
-	get f() { return this.profileForm.controls; }
-
-	saveProfile(): void {
-		if (!this.isSaving()) {
-			this.isSaving.set(true);
-			const formValue = this.profileForm.value;
-			
-			// Convert form data to API format
-			const updateData: UpdateUserRequest = {
-				full_name: formValue.fullName,
-				phone: formValue.phone,
-				current_job_title: formValue.currentJobTitle,
-				desired_job_title: formValue.desiredJobTitle,
-				experience_years: formValue.experience ? Number(formValue.experience) : undefined,
-				skills: formValue.skills.split(',').map((s: string) => s.trim()).filter((s: string) => s),
-				professional_summary: formValue.summary,
-				certifications: this.certificationsArray.value,
-				area_of_expertise: formValue.areaOfExpertise ? formValue.areaOfExpertise.split(',').map((s: string) => s.trim()).filter((s: string) => s) : [],
-				key_contributions: formValue.contributions,
-				preferred_work_types: formValue.workType,
-				preferred_employment_types: formValue.employmentType,
-				expected_salary: this.convertSalaryRangeToObject(formValue.salaryRange),
-				social_links: {
-					github: formValue.githubLink || undefined,
-					portfolio: formValue.portfolioLink || undefined,
-					youtube: formValue.youtubeChannel || undefined
-				},
-				location: formValue.location ? {
-					city: formValue.location,
-					country: 'US', // You might want to add a country field
-					type: 'hybrid' as const
-				} : undefined
-			};
-
-
-			
-			this.userService.updateCurrentUser(updateData)
-				.pipe(
-					takeUntilDestroyed(this.destroyRef),
-					finalize(() => this.isSaving.set(false))
-				)
-				.subscribe({
-					next: (response) => {
-
-						this.snackBar.open('Profile updated successfully!', 'Close', { 
-							duration: 3000,
-							panelClass: ['success-snackbar']
-						});
-					},
-					error: (error) => {
-
-						this.snackBar.open('Error saving profile. Please try again.', 'Close', { 
-							duration: 3000,
-							panelClass: ['error-snackbar']
-						});
-					}
-				});
-	}
-}
-
-	public resetForm(): void {
-		if (this.currentUser()) {
-			this.populateForm(this.currentUser()!);
-		} else {
-			this.profileForm.reset();
-		}
-	}
-
-	getProfileCompletion(): number {
-		const user = this.currentUser();
-		return user ? this.userService.calculateProfileCompletion(user) : 0;
-	}
-
-	private markFormGroupTouched(): void {
-		Object.keys(this.profileForm.controls).forEach(key => {
-			const control = this.profileForm.get(key);
-			control?.markAsTouched();
-		});
-	}
-
-	getSkillsArray(): string[] {
-		const skills = this.profileForm.get('skills')?.value;
-		return skills ? skills.split(',').map((skill: string) => skill.trim()).filter((skill: string) => skill) : [];
-	}
-
-	get certificationsArray(): FormArray {
-		return this.profileForm.get('certifications') as FormArray;
-	}
-
-	createCertificationGroup(cert?: any): FormGroup {
-		return this.fb.group({
-			name: [cert?.name || '', Validators.required],
-			issuer: [cert?.issuer || '', Validators.required],
-			issue_date: [cert?.issue_date || ''],
-			expiry_date: [cert?.expiry_date || ''],
-			credential_id: [cert?.credential_id || ''],
-			link: [cert?.link || '']
-		});
-	}
-
-	addCertification(): void {
-		this.certificationsArray.push(this.createCertificationGroup());
-		this.profileForm.markAsDirty();
-	}
-
-	removeCertification(index: number): void {
-		this.certificationsArray.removeAt(index);
-		this.profileForm.markAsDirty();
-	}
-
-	getCertificationsArray(): any[] {
-		return this.certificationsArray.value;
-	}
-
-	getExpertiseArray(): string[] {
-		const expertise = this.profileForm.get('areaOfExpertise')?.value;
-		return expertise ? expertise.split(',').map((area: string) => area.trim()).filter((area: string) => area) : [];
-	}
-
-	getWorkTypeDisplay(): string {
-		const workType = this.profileForm.get('workType')?.value;
-		return workType && workType.length > 0 ? workType.join(', ') : 'Not specified';
-	}
-
-	getEmploymentTypeDisplay(): string {
-		const employmentType = this.profileForm.get('employmentType')?.value;
-		return employmentType && employmentType.length > 0 ? employmentType.join(', ') : 'Not specified';
 	}
 
 	// Getter methods for profile summary section
@@ -1173,74 +868,4 @@ export class ProfilePage implements OnInit, AfterViewInit {
 			});
 	}
 
-	isBasicInfoComplete(): boolean {
-		return !!(this.f['fullName'].value && this.f['email'].value && this.f['phone'].value && this.f['location'].value);
-	}
-
-	isProfessionalInfoComplete(): boolean {
-		return !!(this.f['currentJobTitle'].value && this.f['skills'].value);
-	}
-
-	isJobPreferencesComplete(): boolean {
-		const workType = this.f['workType'].value;
-		const employmentType = this.f['employmentType'].value;
-		return !!(workType && workType.length > 0 && employmentType && employmentType.length > 0);
-	}
-
-	getFieldErrorMessage(fieldName: string): string {
-		const control = this.profileForm.get(fieldName);
-		if (control?.errors && control.touched) {
-			if (control.errors['required']) {
-				return `${this.getFieldDisplayName(fieldName)} is required`;
-			}
-			if (control.errors['email']) {
-				return 'Please enter a valid email address';
-			}
-			if (control.errors['minlength']) {
-				return `${this.getFieldDisplayName(fieldName)} must be at least ${control.errors['minlength'].requiredLength} characters`;
-			}
-			if (control.errors['maxlength']) {
-				return `${this.getFieldDisplayName(fieldName)} must not exceed ${control.errors['maxlength'].requiredLength} characters`;
-			}
-			if (control.errors['pattern']) {
-				return this.getPatternErrorMessage(fieldName);
-			}
-		}
-		return '';
-	}
-
-	private getPatternErrorMessage(fieldName: string): string {
-		return PROFILE_PATTERN_ERROR_MESSAGES[fieldName] || 'Please enter a valid format';
-	}
-
-	togglePanel(panel: string): void {
-		// Method kept for compatibility but not used with dynamic forms
-	}
-
-	getCompletionSteps() {
-		return [
-			{
-				id: 'basic',
-				label: 'Basic Info',
-				completed: this.isBasicInfoComplete(),
-				icon: 'person'
-			},
-			{
-				id: 'professional',
-				label: 'Professional',
-				completed: this.isProfessionalInfoComplete(),
-				icon: 'work'
-			},
-			{
-				id: 'preferences',
-				label: 'Preferences',
-				completed: this.isJobPreferencesComplete(),
-				icon: 'settings'
-			}
-		];
-	}
-
-	private getFieldDisplayName(fieldName: string): string {
-		return PROFILE_FIELD_DISPLAY_NAMES[fieldName] || fieldName;
-	}
 }

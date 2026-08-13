@@ -57,7 +57,7 @@ export class MockInterviewsPage {
 									this.interviewHistory.set(response.interviews);
 								}
 							},
-							error: (error) => console.warn('Error loading interview history')
+							error: () => {}
 						});
 				}
 			});

@@ -323,25 +323,22 @@ export class LearningService {
 			}[];
 		}>('/learning/analytics')
 			.pipe(
-				catchError(() => {
-					console.warn('🔥 API unavailable - Using mock learning analytics');
-					return of({
-						total_time_spent: 120,
-						resources_completed: 8,
-						resources_in_progress: 3,
-						favorite_categories: ['Frontend Development', 'JavaScript', 'React'],
-						learning_streak: 5,
-						skill_progress: [
-							{ skill: 'JavaScript', level: 4, resources_completed: 5 },
-							{ skill: 'Angular', level: 3, resources_completed: 3 },
-							{ skill: 'TypeScript', level: 3, resources_completed: 2 }
-						],
-						monthly_progress: [
-							{ month: 'June 2025', hours_spent: 40, resources_completed: 3 },
-							{ month: 'July 2025', hours_spent: 35, resources_completed: 5 }
-						]
-					});
-				})
+				catchError(() => of({
+					total_time_spent: 120,
+					resources_completed: 8,
+					resources_in_progress: 3,
+					favorite_categories: ['Frontend Development', 'JavaScript', 'React'],
+					learning_streak: 5,
+					skill_progress: [
+						{ skill: 'JavaScript', level: 4, resources_completed: 5 },
+						{ skill: 'Angular', level: 3, resources_completed: 3 },
+						{ skill: 'TypeScript', level: 3, resources_completed: 2 }
+					],
+					monthly_progress: [
+						{ month: 'June 2025', hours_spent: 40, resources_completed: 3 },
+						{ month: 'July 2025', hours_spent: 35, resources_completed: 5 }
+					]
+				}))
 			);
 	}
 
@@ -441,10 +438,10 @@ export class LearningService {
 	* Load user progress from API and cache
 	*/
 	private loadUserProgress(): void {
-		this.getUserProgress().subscribe(
-			progress => this.currentProgressSubject.next(progress),
-			error => console.error('Error loading user progress:', error)
-		);
+		this.getUserProgress().subscribe({
+			next: progress => this.currentProgressSubject.next(progress),
+			error: () => {}
+		});
 	}
 
 	/**
@@ -456,8 +453,8 @@ export class LearningService {
 			try {
 				const bookmarks = JSON.parse(stored);
 				this.bookmarkedResourcesSubject.next(bookmarks);
-			} catch (error) {
-				console.error('Error parsing bookmarks:', error);
+			} catch {
+				// ignore malformed bookmarks
 			}
 		}
 	}

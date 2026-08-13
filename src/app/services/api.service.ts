@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, firstValueFrom } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { isPlatformBrowser } from '@angular/common';
+import { PLATFORM_ID, inject } from '@angular/core';
 
 export interface ApiResponse<T> {
 	data?: T;
@@ -18,29 +20,19 @@ export interface ApiResponse<T> {
 export class ApiService {
 	private readonly baseUrl = environment.apiUrl || 'http://localhost:8000';
 	private readonly apiBaseUrl = `${this.baseUrl}/api/v1`;
+	private readonly platformId = inject(PLATFORM_ID);
 
 	constructor(private http: HttpClient) {}
 
-	/**
-	* Create HTTP headers with authentication if available
-	*/
 	private createHeaders(): HttpHeaders {
-		let headers = new HttpHeaders({
-			'Content-Type': 'application/json'
-		});
-
-		// Get token from localStorage using correct key (same as AuthService)
-		const token = localStorage.getItem('jobmitra_token');
-		if (token) {
-			headers = headers.set('Authorization', `Bearer ${token}`);
+		let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+		if (isPlatformBrowser(this.platformId)) {
+			const token = localStorage.getItem('jobmitra_token');
+			if (token) headers = headers.set('Authorization', `Bearer ${token}`);
 		}
-
 		return headers;
 	}
 
-	/**
-	* GET request
-	*/
 	get<T>(endpoint: string, params?: any, responseType?: 'json' | 'blob'): Observable<T> {
 		let httpParams = new HttpParams();
 		
@@ -68,9 +60,6 @@ export class ApiService {
 			);
 	}
 
-	/**
-	* POST request
-	*/
 	post<T>(endpoint: string, data: any): Observable<T> {
 		const url = endpoint.startsWith('/api/v1') ? `${this.baseUrl}${endpoint}` : `${this.apiBaseUrl}${endpoint}`;
 		
@@ -81,20 +70,14 @@ export class ApiService {
 			);
 	}
 
-	/**
-	* POST request returning Blob (for file downloads)
-	*/
 	postBlob(endpoint: string, data: any): Promise<Blob> {
 		const url = endpoint.startsWith('/api/v1') ? `${this.baseUrl}${endpoint}` : `${this.apiBaseUrl}${endpoint}`;
-		return this.http.post(url, JSON.stringify(data), {
+		return firstValueFrom(this.http.post(url, JSON.stringify(data), {
 			headers: this.createHeaders(),
 			responseType: 'blob'
-		}).toPromise() as Promise<Blob>;
+		}));
 	}
 
-	/**
-	* PUT request
-	*/
 	put<T>(endpoint: string, data: any): Observable<T> {
 		const url = endpoint.startsWith('/api/v1') ? `${this.baseUrl}${endpoint}` : `${this.apiBaseUrl}${endpoint}`;
 		
@@ -105,9 +88,6 @@ export class ApiService {
 			);
 	}
 
-	/**
-	* DELETE request
-	*/
 	delete<T>(endpoint: string): Observable<T> {
 		const url = endpoint.startsWith('/api/v1') ? `${this.baseUrl}${endpoint}` : `${this.apiBaseUrl}${endpoint}`;
 		
@@ -118,9 +98,6 @@ export class ApiService {
 			);
 	}
 
-	/**
-	* Health check endpoints
-	*/
 	healthCheck(): Observable<any> {
 		return this.http.get(`${this.baseUrl}/`).pipe(
 			catchError(this.handleError)
@@ -131,27 +108,17 @@ export class ApiService {
 		return this.get('/health');
 	}
 
-	/**
-	* Error handling
-	*/
 	private handleError(error: any): Observable<never> {
 		let errorMessage = 'An unknown error occurred!';
-		
 		if (error.error instanceof ErrorEvent) {
-			// Client-side error
 			errorMessage = `Client Error: ${error.error.message}`;
+		} else if (error.status === 0) {
+			errorMessage = 'Cannot connect to server. Please check if the API is running.';
+		} else if (error.error?.detail) {
+			errorMessage = error.error.detail;
 		} else {
-			// Server-side error
-			if (error.status === 0) {
-				errorMessage = 'Cannot connect to server. Please check if the API is running.';
-			} else if (error.error && error.error.detail) {
-				errorMessage = error.error.detail;
-			} else {
-				errorMessage = `Server Error Code: ${error.status}\nMessage: ${error.message}`;
-			}
+			errorMessage = `Server Error Code: ${error.status}\nMessage: ${error.message}`;
 		}
-		
-
 		return throwError(() => new Error(errorMessage));
 	}
 }

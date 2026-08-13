@@ -106,28 +106,14 @@ export class ResumeService {
 	// Load templates on service initialization
 	private loadTemplates(): void {
 		this.getTemplates().subscribe({
-			next: (response) => {
-				this.templatesSignal.set(response.templates || []);
-			},
-			error: (error) => {
-				console.error('Error loading templates:', error);
-			}
+			next: (response) => this.templatesSignal.set(response.templates || []),
+			error: () => {}
 		});
 	}
 
 	// Helper methods
 	private getCurrentUserId(): string {
-		// Get from JWT token or localStorage
-		const token = localStorage.getItem('access_token');
-		if (token) {
-			try {
-				const payload = JSON.parse(atob(token.split('.')[1]));
-				return payload.user_id;
-			} catch (e) {
-				console.error('Error parsing token:', e);
-			}
-		}
-		return localStorage.getItem('userId') || 'user003';
+		return this.authService.getCurrentUserValue()?.user_id ?? '';
 	}
 
 	private getDefaultSections(): ResumeSection {

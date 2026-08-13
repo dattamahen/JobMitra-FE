@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, throwError, of, firstValueFrom } from 'rxjs';
-import { map, catchError, tap, switchMap } from 'rxjs/operators';
+import { map, catchError, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 // Interfaces for authentication
@@ -242,7 +242,6 @@ export class AuthService {
 	private readonly TOKEN_KEY = 'jobmitra_token';
 	private readonly USER_KEY = 'jobmitra_user';
 
-	// BehaviorSubject to track authentication state
 	private authStateSubject = new BehaviorSubject<AuthState>({
 		isAuthenticated: false,
 		user: null,
@@ -262,16 +261,10 @@ export class AuthService {
 		}
 	}
 
-	/**
-	* Check if running in browser environment
-	*/
 	private isBrowser(): boolean {
 		return typeof window !== 'undefined' && typeof localStorage !== 'undefined';
 	}
 
-	/**
-	* Load authentication state from localStorage
-	*/
 	private loadAuthState(): void {
 		if (!this.isBrowser()) return;
 		const token = localStorage.getItem(this.TOKEN_KEY);
@@ -299,9 +292,6 @@ export class AuthService {
 		);
 	}
 
-	/**
-	* Register a new user
-	*/
 	async register(userData: RegisterRequest): Promise<User> {
 		try {
 			return await firstValueFrom(this.http.post<User>(`${this.API_URL}/register`, userData));
@@ -314,7 +304,6 @@ export class AuthService {
 	* Login user with email and password
 	*/
 	login(credentials: LoginRequest): Observable<LoginResponse> {
-
 		return this.http.post<LoginResponse>(`${this.API_URL}/login`, credentials)
 			.pipe(
 				map(response => {
@@ -334,13 +323,7 @@ export class AuthService {
 			);
 	}
 
-	/**
-	* Logout current user
-	*/
 	logout(): Observable<any> {
-
-		
-		// Call backend logout endpoint
 		return this.http.post(`${this.API_URL}/logout`, {}, {
 			headers: this.getAuthHeaders()
 		})
@@ -355,8 +338,6 @@ export class AuthService {
 					this.router.navigate(['/login']);
 				}),
 				catchError(error => {
-					// Even if backend call fails, still clear local data
-
 					this.clearAuthData();
 					this.authStateSubject.next({
 						isAuthenticated: false,
@@ -369,9 +350,6 @@ export class AuthService {
 			);
 	}
 
-	/**
-	* Get current user profile
-	*/
 	getCurrentUser(): Observable<User> {
 		return this.http.get<User>(`${this.API_URL}/me`, {
 			headers: this.getAuthHeaders()
@@ -380,9 +358,6 @@ export class AuthService {
 		);
 	}
 
-	/**
-	* Update user profile
-	*/
 	updateProfile(profileData: Partial<User>): Observable<User> {
 		return this.http.put<User>(`${this.API_URL}/profile`, profileData, {
 			headers: this.getAuthHeaders()
@@ -395,9 +370,6 @@ export class AuthService {
 		);
 	}
 
-	/**
-	* Change user password
-	*/
 	changePassword(currentPassword: string, newPassword: string): Observable<any> {
 		const passwordData = {
 			current_password: currentPassword,
@@ -411,9 +383,6 @@ export class AuthService {
 		);
 	}
 
-	/**
-	* Google Sign-In
-	*/
 	googleSignIn(credential: string): Observable<LoginResponse> {
 		return this.http.post<LoginResponse>(`${this.API_URL}/google-signin`, {
 			credential: credential
@@ -433,31 +402,6 @@ export class AuthService {
 		);
 	}
 
-	/**
-	* Seed users (development only)
-	*/
-	seedUsers(): Observable<any> {
-		return this.http.post(`${this.API_URL}/seed-users`, {}, {
-			headers: this.getAuthHeaders()
-		}).pipe(
-			catchError(this.handleError)
-		);
-	}
-
-	/**
-	* Get all users (admin endpoint)
-	*/
-	getAllUsers(): Observable<{users: User[], count: number}> {
-		return this.http.get<{users: User[], count: number}>(`${this.API_URL}/users`, {
-			headers: this.getAuthHeaders()
-		}).pipe(
-			catchError(this.handleError)
-		);
-	}
-
-	/**
-	* Get authentication headers with token
-	*/
 	private getAuthHeaders(): HttpHeaders {
 		let token = this.authStateSubject.value.token;
 		
@@ -476,116 +420,65 @@ export class AuthService {
 		});
 	}
 
-	/**
-	* Clear authentication data from localStorage
-	*/
 	private clearAuthData(): void {
 		if (this.isBrowser()) {
 			localStorage.removeItem(this.TOKEN_KEY);
 		}
 	}
 
-	/**
-	* Handle HTTP errors
-	*/
-	private handleError(error: any) {
-
-		
-		// If unauthorized, clear auth data
-		if (error.status === 401) {
-			// Clear auth data but don't emit state change to avoid infinite loops
-			if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-				localStorage.removeItem(this.TOKEN_KEY);
-				localStorage.removeItem(this.USER_KEY);
-			}
+	private handleError = (error: any) => {
+		if (error.status === 401 && this.isBrowser()) {
+			localStorage.removeItem(this.TOKEN_KEY);
 		}
-		
 		return throwError(() => error);
 	}
 
-	/**
-	* Clear authentication data (public method for debugging)
-	*/
-	public clearAllAuthData(): void {
+	clearAllAuthData(): void {
 		this.clearAuthData();
-		this.authStateSubject.next({
-			isAuthenticated: false,
-			user: null,
-			token: null
-		});
+		this.authStateSubject.next({ isAuthenticated: false, user: null, token: null });
 	}
 
-	/**
-	* Check if user is authenticated
-	*/
 	isAuthenticated(): boolean {
 		return !!this.authStateSubject.value.token;
 	}
 
-	/**
-	* Get current user
-	*/
 	getCurrentUserValue(): User | null {
 		return this.authStateSubject.value.user;
 	}
 
-	/**
-	* Get current token
-	*/
 	getToken(): string | null {
 		return this.authStateSubject.value.token;
 	}
 
-	/**
-	* Check if user is job seeker
-	*/
 	isJobSeeker(): boolean {
 		const user = this.getCurrentUserValue();
 		return user?.user_type === 'job_seeker' || user?.user_type === 'candidate';
 	}
 
-	/**
-	* Check if user is HR
-	*/
 	isHR(): boolean {
 		const user = this.getCurrentUserValue();
 		return user?.user_type === 'hr' || user?.user_type === 'hire';
 	}
 
-	/**
-	* Check if user is admin
-	*/
 	isAdmin(): boolean {
 		const user = this.getCurrentUserValue();
 		return user?.user_type === 'admin';
 	}
 
-	/**
-	* Get user type
-	*/
 	getUserType(): string | null {
 		return this.getCurrentUserValue()?.user_type || null;
 	}
 
-	/**
-	* Get current user ID
-	*/
 	getCurrentUserId(): string | null {
 		const user = this.getCurrentUserValue();
 		return user?.user_id || user?.email || null;
 	}
 
-	/**
-	* Forgot password - send reset link
-	*/
 	forgotPassword(email: string): Observable<{message: string, token?: string}> {
 		return this.http.post<{message: string, token?: string}>(`${this.API_URL}/forgot-password`, { email })
 			.pipe(catchError(this.handleError));
 	}
 
-	/**
-	* Reset password with token
-	*/
 	resetPassword(token: string, newPassword: string): Observable<{message: string}> {
 		return this.http.post<{message: string}>(`${this.API_URL}/reset-password`, {
 			token,

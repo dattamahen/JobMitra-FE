@@ -3,7 +3,7 @@ import { Observable, BehaviorSubject, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
-import { DashboardData, StatType, DashboardStats, ActivityItem, UserMetrics, StatCardConfig } from '../types/dashboard.types';
+import { DashboardData, StatType, DashboardStats, StatCardConfig } from '../types/dashboard.types';
 
 @Injectable({
 	providedIn: 'root'
@@ -76,28 +76,16 @@ export class DashboardService {
 	};
 
 	getDashboardData(): Observable<DashboardData> {
-		console.log('🔍 DashboardService: getDashboardData() called');
-		console.log('🔍 DashboardService: About to call apiService.get(/dashboard)');
 		return this.apiService.get<any>('/dashboard').pipe(
-			map(data => {
-				console.log('✅ DashboardService: API SUCCESS - Raw response:', data);
-				const transformed = {
-					stats: data.stats || [],
-					recentActivities: (data.recentActivities || []).map((activity: any) => ({
-						...activity,
-						timestamp: new Date(activity.timestamp)
-					})),
-					lastUpdated: new Date(data.lastUpdated || Date.now())
-				};
-				console.log('✅ DashboardService: Transformed data:', transformed);
-				return transformed;
-			}),
-			catchError(error => {
-				console.error('❌ DashboardService: API ERROR:', error);
-				console.error('❌ DashboardService: Error details:', error.message, error.status);
-				console.log('📊 DashboardService: Returning fallback data');
-				return of(this.getInitialDashboardData());
-			})
+			map(data => ({
+				stats: data.stats || [],
+				recentActivities: (data.recentActivities || []).map((activity: any) => ({
+					...activity,
+					timestamp: new Date(activity.timestamp)
+				})),
+				lastUpdated: new Date(data.lastUpdated || Date.now())
+			})),
+			catchError(() => of(this.getInitialDashboardData()))
 		);
 	}
 
@@ -180,12 +168,7 @@ export class DashboardService {
 			lastUpdated: new Date()
 		};
 	}
-
-	private generateId(): string {
-		return Math.random().toString(36).substr(2, 9);
-	}
-
-	formatTimeAgo(date: Date | string): string {
+formatTimeAgo(date: Date | string): string {
 		const now = new Date();
 		const dateObj = typeof date === 'string' ? new Date(date) : date;
 		

@@ -2,7 +2,7 @@
 	<div class="profile-layout">
 		<!-- Profile Form -->
 		<div class="profile-form-section">
-			<form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+			<div class="profile-forms-wrapper">
 				<mat-card class="form-card">
 					<mat-card-content>
 						<app-dynamic-form 
@@ -141,7 +141,7 @@
 					</mat-card-content>
 				</mat-card>
 
-			</form>
+			</div>
 		</div>
 
 		<!-- Right Side - LinkedIn-style Profile Preview -->
