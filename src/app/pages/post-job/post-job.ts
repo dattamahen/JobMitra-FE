@@ -61,7 +61,7 @@ export class PostJobPage {
 	// Form configurations
 	step1Config = POST_JOB_STEP1_CONFIG;
 	step2Config = POST_JOB_STEP2_CONFIG;
-	step3Config = POST_JOB_STEP3_CONFIG;
+	step3Config = { ...POST_JOB_STEP3_CONFIG, showActions: false };
 	step5Config = POST_JOB_STEP5_CONFIG;
 	step6Config = POST_JOB_STEP6_CONFIG;
 	step7Config = POST_JOB_STEP7_CONFIG;

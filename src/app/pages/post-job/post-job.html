@@ -6,238 +6,386 @@
 		</mat-card-header>
 
 		<mat-card-content>
-			<!-- Validation Error Summary -->
 			@if (validationErrors().size > 0) {
-				<div class="validation-error-summary" style="background-color: #ffebee; border-left: 4px solid #f44336; padding: 16px; margin-bottom: 20px; border-radius: 4px;">
-					<h4 style="color: #c62828; margin: 0 0 12px 0; display: flex; align-items: center;">
-						<mat-icon style="margin-right: 8px;">error</mat-icon>
+				<div class="validation-error-summary">
+					<h4 class="validation-error-title">
+						<mat-icon>error</mat-icon>
 						{{TEXT.validationErrorsPrefix}} ({{ validationErrors().size }})
 					</h4>
-					<ul style="margin: 0; padding-left: 20px; color: #d32f2f;">
+					<ul class="validation-error-list">
 						@for (error of validationErrors() | keyvalue; track error.key) {
 							<li><strong>{{ error.key }}:</strong> {{ error.value }}</li>
 						}
 					</ul>
 				</div>
 			}
-			
+
 			<form [formGroup]="jobForm" (ngSubmit)="onSubmit()">
+
+				<!-- Custom Stepper Header -->
+				<div class="stepper-header" role="tablist" aria-label="Job posting steps">
+
+					<div class="step-item" [class.active]="stepper.selectedIndex === 0" [class.completed]="stepper.selectedIndex > 0">
+						<button class="step-btn" type="button" role="tab" [attr.aria-selected]="stepper.selectedIndex === 0">
+							<span class="step-circle">@if (stepper.selectedIndex > 0) { <mat-icon>check</mat-icon> } @else { 1 }</span>
+							<span class="step-label">{{TEXT.steps.basicInfo}}</span>
+						</button>
+					</div>
+
+					<div class="step-connector" [class.done]="stepper.selectedIndex > 0"></div>
+
+					<div class="step-item" [class.active]="stepper.selectedIndex === 1" [class.completed]="stepper.selectedIndex > 1">
+						<button class="step-btn" type="button" role="tab" [attr.aria-selected]="stepper.selectedIndex === 1">
+							<span class="step-circle">@if (stepper.selectedIndex > 1) { <mat-icon>check</mat-icon> } @else { 2 }</span>
+							<span class="step-label">{{TEXT.steps.locationWorkType}}</span>
+						</button>
+					</div>
+
+					<div class="step-connector" [class.done]="stepper.selectedIndex > 1"></div>
+
+					<div class="step-item" [class.active]="stepper.selectedIndex === 2" [class.completed]="stepper.selectedIndex > 2">
+						<button class="step-btn" type="button" role="tab" [attr.aria-selected]="stepper.selectedIndex === 2">
+							<span class="step-circle">@if (stepper.selectedIndex > 2) { <mat-icon>check</mat-icon> } @else { 3 }</span>
+							<span class="step-label">{{TEXT.steps.jobDescription}}</span>
+						</button>
+					</div>
+
+					<div class="step-connector" [class.done]="stepper.selectedIndex > 2"></div>
+
+					<div class="step-item" [class.active]="stepper.selectedIndex === 3" [class.completed]="stepper.selectedIndex > 3">
+						<button class="step-btn" type="button" role="tab" [attr.aria-selected]="stepper.selectedIndex === 3">
+							<span class="step-circle">@if (stepper.selectedIndex > 3) { <mat-icon>check</mat-icon> } @else { 4 }</span>
+							<span class="step-label">{{TEXT.steps.skills}}</span>
+						</button>
+					</div>
+
+					<div class="step-connector" [class.done]="stepper.selectedIndex > 3"></div>
+
+					<div class="step-item" [class.active]="stepper.selectedIndex === 4" [class.completed]="stepper.selectedIndex > 4">
+						<button class="step-btn" type="button" role="tab" [attr.aria-selected]="stepper.selectedIndex === 4">
+							<span class="step-circle">@if (stepper.selectedIndex > 4) { <mat-icon>check</mat-icon> } @else { 5 }</span>
+							<span class="step-label">{{TEXT.steps.compensation}}</span>
+						</button>
+					</div>
+
+					<div class="step-connector" [class.done]="stepper.selectedIndex > 4"></div>
+
+					<div class="step-item" [class.active]="stepper.selectedIndex === 5" [class.completed]="stepper.selectedIndex > 5">
+						<button class="step-btn" type="button" role="tab" [attr.aria-selected]="stepper.selectedIndex === 5">
+							<span class="step-circle">@if (stepper.selectedIndex > 5) { <mat-icon>check</mat-icon> } @else { 6 }</span>
+							<span class="step-label">{{TEXT.steps.companyInfo}}</span>
+						</button>
+					</div>
+
+					<div class="step-connector" [class.done]="stepper.selectedIndex > 5"></div>
+
+					<div class="step-item" [class.active]="stepper.selectedIndex === 6" [class.completed]="stepper.selectedIndex > 6">
+						<button class="step-btn" type="button" role="tab" [attr.aria-selected]="stepper.selectedIndex === 6">
+							<span class="step-circle">@if (stepper.selectedIndex > 6) { <mat-icon>check</mat-icon> } @else { 7 }</span>
+							<span class="step-label">{{TEXT.steps.contactPublish}}</span>
+						</button>
+					</div>
+
+				</div>
+
 				<mat-stepper #stepper linear>
+
 					<!-- Step 1: Basic Information -->
 					<mat-step [label]="TEXT.steps.basicInfo">
-						<app-dynamic-form 
-							[config]="step1Config" 
-							(formSubmit)="onStep1Submit($event)"
-							[submitButtonText]="TEXT.buttons.next">
-						</app-dynamic-form>
+						<div class="step-content-area">
+							<div class="step-title-bar">
+								<div class="step-title-icon"><mat-icon>work_outline</mat-icon></div>
+								<div>
+									<p class="step-title-text">{{TEXT.steps.basicInfo}}</p>
+									<p class="step-title-sub">Step 1 of 7</p>
+								</div>
+							</div>
+							<app-dynamic-form
+								[config]="step1Config"
+								(formSubmit)="onStep1Submit($event)"
+								[submitButtonText]="TEXT.buttons.next">
+							</app-dynamic-form>
+						</div>
 					</mat-step>
 
-				<!-- Step 2: Location & Work Type -->
-				<mat-step [label]="TEXT.steps.locationWorkType">
-					<app-dynamic-form 
-						[config]="step2Config" 
-						(formSubmit)="onStep2Submit($event)"
-						[submitButtonText]="TEXT.buttons.next"
-						[showBackButton]="true"
-						(backClick)="stepper.previous()">
-					</app-dynamic-form>
-				</mat-step>
+					<!-- Step 2: Location & Work Type -->
+					<mat-step [label]="TEXT.steps.locationWorkType">
+						<div class="step-content-area">
+							<div class="step-title-bar">
+								<div class="step-title-icon"><mat-icon>location_on</mat-icon></div>
+								<div>
+									<p class="step-title-text">{{TEXT.steps.locationWorkType}}</p>
+									<p class="step-title-sub">Step 2 of 7</p>
+								</div>
+							</div>
+							<app-dynamic-form
+								[config]="step2Config"
+								(formSubmit)="onStep2Submit($event)"
+								[submitButtonText]="TEXT.buttons.next"
+								[showBackButton]="true"
+								(backClick)="stepper.previous()">
+							</app-dynamic-form>
+						</div>
+					</mat-step>
 
-				<!-- Step 3: Job Description -->
-				<mat-step [label]="TEXT.steps.jobDescription">
-					<app-dynamic-form 
-						[config]="step3Config" 
-						(formSubmit)="onStep3Submit($event)"
-						[submitButtonText]="TEXT.buttons.next"
-						[showBackButton]="true"
-						(backClick)="stepper.previous()">
-					</app-dynamic-form>
-					
-					<!-- Custom sections for arrays -->
-					<div class="form-section">
-						<div class="form-row">
-							<h4>{{TEXT.responsibilities.title}} <span style="color: red;">({{TEXT.responsibilities.minimumRequired}} {{JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS}} {{TEXT.responsibilities.requiredSuffix}})</span></h4>
-							<div formArrayName="responsibilities">
-								@for (responsibility of responsibilities.controls; track $index; let i = $index) {
-									<div class="array-item">
-										<mat-form-field appearance="fill" class="array-input">
-											<mat-label>{{TEXT.responsibilities.labelPrefix}} {{ i + 1 }}</mat-label>
-											<input matInput [formControlName]="i" [placeholder]="TEXT.responsibilities.placeholder">
-											<mat-error>{{TEXT.responsibilities.fieldRequired}}</mat-error>
-										</mat-form-field>
-										<button mat-icon-button type="button" (click)="removeResponsibility(i)" 
-														[disabled]="responsibilities.length <= JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS">
-											<mat-icon>delete</mat-icon>
-										</button>
+					<!-- Step 3: Job Description -->
+					<mat-step [label]="TEXT.steps.jobDescription">
+						<div class="step-content-area">
+							<div class="step-title-bar">
+								<div class="step-title-icon"><mat-icon>description</mat-icon></div>
+								<div>
+									<p class="step-title-text">{{TEXT.steps.jobDescription}}</p>
+									<p class="step-title-sub">Step 3 of 7</p>
+								</div>
+							</div>
+							<app-dynamic-form
+								[config]="step3Config"
+								(formSubmit)="onStep3Submit($event)">
+							</app-dynamic-form>
+
+							<div class="array-sections-grid">
+
+								<!-- Responsibilities -->
+								<div class="array-section-card">
+									<div class="array-section-header">
+										<div class="array-section-title-row">
+											<div class="array-section-icon resp-icon">
+												<mat-icon>assignment_turned_in</mat-icon>
+											</div>
+											<div>
+												<h4 class="array-section-title">{{TEXT.responsibilities.title}}</h4>
+												<p class="array-section-hint">Min. {{JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS}} required &bull; {{responsibilities.length}} added</p>
+											</div>
+										</div>
+										<span class="array-count-badge" [class.badge-ok]="responsibilities.length >= JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS">{{responsibilities.length}}/{{JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS}}+</span>
 									</div>
-								}
-							</div>
-							<button mat-stroked-button type="button" (click)="addResponsibility()">
-								<mat-icon>add</mat-icon> {{TEXT.responsibilities.add}}
-							</button>
-						</div>
-
-						<div class="form-row">
-							<h4>{{TEXT.requirements.title}} <span style="color: red;">({{TEXT.requirements.minimumRequired}} {{JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS}} {{TEXT.requirements.requiredSuffix}})</span></h4>
-							<div formArrayName="requirements">
-								@for (requirement of requirements.controls; track $index; let i = $index) {
-									<div class="array-item">
-										<mat-form-field appearance="fill" class="array-input">
-											<mat-label>{{TEXT.requirements.labelPrefix}} {{ i + 1 }}</mat-label>
-											<input matInput [formControlName]="i" [placeholder]="TEXT.requirements.placeholder">
-											<mat-error>{{TEXT.requirements.fieldRequired}}</mat-error>
-										</mat-form-field>
-										<button mat-icon-button type="button" (click)="removeRequirement(i)" 
-														[disabled]="requirements.length <= JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS">
-											<mat-icon>delete</mat-icon>
-										</button>
+									<div class="array-items-list" formArrayName="responsibilities">
+										@for (responsibility of responsibilities.controls; track $index; let i = $index) {
+											<div class="array-list-item">
+												<span class="item-number">{{i + 1}}</span>
+												<input class="item-input" [formControlName]="i" [placeholder]="TEXT.responsibilities.placeholder" />
+												<button class="item-remove-btn" type="button" (click)="removeResponsibility(i)"
+													[disabled]="responsibilities.length <= JOB_VALIDATION.RESPONSIBILITIES.MIN_ITEMS"
+													[attr.aria-label]="'Remove responsibility ' + (i + 1)">
+													<mat-icon>close</mat-icon>
+												</button>
+											</div>
+										}
 									</div>
-								}
-							</div>
-							<button mat-stroked-button type="button" (click)="addRequirement()">
-								<mat-icon>add</mat-icon> {{TEXT.requirements.add}}
-							</button>
-						</div>
-					</div>
-				</mat-step>
+									<button class="array-add-btn" type="button" (click)="addResponsibility()">
+										<mat-icon>add</mat-icon> {{TEXT.responsibilities.add}}
+									</button>
+								</div>
 
-				<!-- Step 4: Skills -->
-				<mat-step [label]="TEXT.steps.skills">
-					<div class="form-section">
-						<h2>{{TEXT.skills.requiredSkillsTitle}}</h2>
-						
-						<div class="skills-section">
-							<h4>{{TEXT.skills.requiredSkillsTitle}} <span style="color: red;">({{TEXT.responsibilities.minimumRequired}} {{JOB_VALIDATION.SKILLS_REQUIRED.MIN_ITEMS}} {{TEXT.responsibilities.requiredSuffix}})</span></h4>
-							<div class="skills-input">
-								<mat-form-field appearance="fill" class="skill-select">
-									<mat-label>{{TEXT.skills.addRequiredSkill}}</mat-label>
-									<input matInput
-										[formControl]="requiredSkillInput"
-										[matAutocomplete]="requiredAuto"
-										(input)="onSkillFilterChange('required', requiredSkillInput.value || '')"
-										(keydown)="onSkillInputKeydown('required', $event)"
-										[placeholder]="TEXT.skills.searchPlaceholder">
-									<mat-autocomplete #requiredAuto="matAutocomplete" (optionSelected)="onSkillSelected('required', $event)">
-										@for (skill of filteredRequiredSkills(); track skill) {
-											<mat-option [value]="skill">{{ skill }}</mat-option>
+								<!-- Requirements -->
+								<div class="array-section-card">
+									<div class="array-section-header">
+										<div class="array-section-title-row">
+											<div class="array-section-icon req-icon">
+												<mat-icon>checklist</mat-icon>
+											</div>
+											<div>
+												<h4 class="array-section-title">{{TEXT.requirements.title}}</h4>
+												<p class="array-section-hint">Min. {{JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS}} required &bull; {{requirements.length}} added</p>
+											</div>
+										</div>
+										<span class="array-count-badge" [class.badge-ok]="requirements.length >= JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS">{{requirements.length}}/{{JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS}}+</span>
+									</div>
+									<div class="array-items-list" formArrayName="requirements">
+										@for (requirement of requirements.controls; track $index; let i = $index) {
+											<div class="array-list-item">
+												<span class="item-number">{{i + 1}}</span>
+												<input class="item-input" [formControlName]="i" [placeholder]="TEXT.requirements.placeholder" />
+												<button class="item-remove-btn" type="button" (click)="removeRequirement(i)"
+													[disabled]="requirements.length <= JOB_VALIDATION.REQUIREMENTS.MIN_ITEMS"
+													[attr.aria-label]="'Remove requirement ' + (i + 1)">
+													<mat-icon>close</mat-icon>
+												</button>
+											</div>
 										}
-									</mat-autocomplete>
-								</mat-form-field>
+									</div>
+									<button class="array-add-btn" type="button" (click)="addRequirement()">
+										<mat-icon>add</mat-icon> {{TEXT.requirements.add}}
+									</button>
+								</div>
+
 							</div>
-							
-							<div formArrayName="skills_required" class="skills-chips">
-								<mat-chip-set>
-									@for (skill of skillsRequired.controls; track $index; let i = $index) {
-										<mat-chip (removed)="removeSkill('required', i)">
-											{{ skill.value }}
-											<mat-icon matChipRemove>cancel</mat-icon>
-										</mat-chip>
-									}
-								</mat-chip-set>
+
+							<div class="navigation-buttons">
+								<button mat-button type="button" (click)="stepper.previous()">{{TEXT.buttons.back}}</button>
+								<button mat-raised-button color="primary" type="button" (click)="onStep3Submit(null)">{{TEXT.buttons.next}}</button>
 							</div>
 						</div>
+					</mat-step>
 
-						<div class="skills-section">
-							<h4>{{TEXT.skills.preferredSkillsTitle}}</h4>
-							<div class="skills-input">
-								<mat-form-field appearance="fill" class="skill-select">
-									<mat-label>{{TEXT.skills.addPreferredSkill}}</mat-label>
-									<input matInput
-										[formControl]="preferredSkillInput"
-										[matAutocomplete]="preferredAuto"
-										(input)="onSkillFilterChange('preferred', preferredSkillInput.value || '')"
-										(keydown)="onSkillInputKeydown('preferred', $event)"
-										[placeholder]="TEXT.skills.searchPlaceholder">
-									<mat-autocomplete #preferredAuto="matAutocomplete" (optionSelected)="onSkillSelected('preferred', $event)">
-										@for (skill of filteredPreferredSkills(); track skill) {
-											<mat-option [value]="skill">{{ skill }}</mat-option>
+					<!-- Step 4: Skills -->
+					<mat-step [label]="TEXT.steps.skills">
+						<div class="step-content-area">
+							<div class="step-title-bar">
+								<div class="step-title-icon"><mat-icon>psychology</mat-icon></div>
+								<div>
+									<p class="step-title-text">{{TEXT.steps.skills}}</p>
+									<p class="step-title-sub">Step 4 of 7</p>
+								</div>
+							</div>
+
+							<div class="skills-section">
+								<h4>{{TEXT.skills.requiredSkillsTitle}} <span class="required-badge">Min. {{JOB_VALIDATION.SKILLS_REQUIRED.MIN_ITEMS}}</span></h4>
+								<div class="skills-input">
+									<mat-form-field appearance="fill" class="skill-select">
+										<mat-label>{{TEXT.skills.addRequiredSkill}}</mat-label>
+										<input matInput
+											[formControl]="requiredSkillInput"
+											[matAutocomplete]="requiredAuto"
+											(input)="onSkillFilterChange('required', requiredSkillInput.value || '')"
+											(keydown)="onSkillInputKeydown('required', $event)"
+											[placeholder]="TEXT.skills.searchPlaceholder">
+										<mat-autocomplete #requiredAuto="matAutocomplete" (optionSelected)="onSkillSelected('required', $event)">
+											@for (skill of filteredRequiredSkills(); track skill) {
+												<mat-option [value]="skill">{{ skill }}</mat-option>
+											}
+										</mat-autocomplete>
+									</mat-form-field>
+								</div>
+								<div formArrayName="skills_required" class="skills-chips">
+									<mat-chip-set>
+										@for (skill of skillsRequired.controls; track $index; let i = $index) {
+											<mat-chip (removed)="removeSkill('required', i)">
+												{{ skill.value }}
+												<mat-icon matChipRemove>cancel</mat-icon>
+											</mat-chip>
 										}
-									</mat-autocomplete>
-								</mat-form-field>
+									</mat-chip-set>
+								</div>
 							</div>
-							
-							<div formArrayName="skills_preferred" class="skills-chips">
-								<mat-chip-set>
-									@for (skill of skillsPreferred.controls; track $index; let i = $index) {
-										<mat-chip (removed)="removeSkill('preferred', i)">
-											{{ skill.value }}
-											<mat-icon matChipRemove>cancel</mat-icon>
-										</mat-chip>
-									}
-								</mat-chip-set>
+
+							<div class="skills-section">
+								<h4>{{TEXT.skills.preferredSkillsTitle}}</h4>
+								<div class="skills-input">
+									<mat-form-field appearance="fill" class="skill-select">
+										<mat-label>{{TEXT.skills.addPreferredSkill}}</mat-label>
+										<input matInput
+											[formControl]="preferredSkillInput"
+											[matAutocomplete]="preferredAuto"
+											(input)="onSkillFilterChange('preferred', preferredSkillInput.value || '')"
+											(keydown)="onSkillInputKeydown('preferred', $event)"
+											[placeholder]="TEXT.skills.searchPlaceholder">
+										<mat-autocomplete #preferredAuto="matAutocomplete" (optionSelected)="onSkillSelected('preferred', $event)">
+											@for (skill of filteredPreferredSkills(); track skill) {
+												<mat-option [value]="skill">{{ skill }}</mat-option>
+											}
+										</mat-autocomplete>
+									</mat-form-field>
+								</div>
+								<div formArrayName="skills_preferred" class="skills-chips">
+									<mat-chip-set>
+										@for (skill of skillsPreferred.controls; track $index; let i = $index) {
+											<mat-chip (removed)="removeSkill('preferred', i)">
+												{{ skill.value }}
+												<mat-icon matChipRemove>cancel</mat-icon>
+											</mat-chip>
+										}
+									</mat-chip-set>
+								</div>
+							</div>
+
+							<div class="navigation-buttons">
+								<button mat-button matStepperPrevious type="button">{{TEXT.buttons.back}}</button>
+								<button mat-raised-button color="primary" matStepperNext type="button">{{TEXT.buttons.next}}</button>
 							</div>
 						</div>
+					</mat-step>
 
-						<div class="navigation-buttons">
-							<button mat-button matStepperPrevious type="button">{{TEXT.buttons.back}}</button>
-							<button mat-raised-button color="primary" matStepperNext type="button">{{TEXT.buttons.next}}</button>
+					<!-- Step 5: Compensation & Benefits -->
+					<mat-step [label]="TEXT.steps.compensation">
+						<div class="step-content-area">
+							<div class="step-title-bar">
+								<div class="step-title-icon"><mat-icon>payments</mat-icon></div>
+								<div>
+									<p class="step-title-text">{{TEXT.steps.compensation}}</p>
+									<p class="step-title-sub">Step 5 of 7</p>
+								</div>
+							</div>
+							<app-dynamic-form
+								[config]="step5Config"
+								(formSubmit)="onStep5Submit($event)"
+								[submitButtonText]="TEXT.buttons.next"
+								[showBackButton]="true"
+								(backClick)="stepper.previous()">
+							</app-dynamic-form>
+
+							<mat-divider></mat-divider>
+
+							<div class="benefits-section">
+								<h4>{{TEXT.benefits.title}}</h4>
+								<div class="benefits-input">
+									<mat-form-field appearance="fill" class="benefit-select">
+										<mat-label>{{TEXT.benefits.addBenefit}}</mat-label>
+										<mat-select #benefitSelect (selectionChange)="addBenefit(benefitSelect.value); benefitSelect.value = ''">
+											@for (benefit of commonBenefits; track benefit) {
+												<mat-option [value]="benefit">{{ benefit }}</mat-option>
+											}
+										</mat-select>
+									</mat-form-field>
+								</div>
+								<div formArrayName="benefits" class="benefits-chips">
+									<mat-chip-set>
+										@for (benefit of benefits.controls; track $index; let i = $index) {
+											<mat-chip (removed)="removeBenefit(i)">
+												{{ benefit.value }}
+												<mat-icon matChipRemove>cancel</mat-icon>
+											</mat-chip>
+										}
+									</mat-chip-set>
+								</div>
+							</div>
 						</div>
-					</div>
-				</mat-step>
+					</mat-step>
 
-				<!-- Step 5: Compensation & Benefits -->
-				<mat-step [label]="TEXT.steps.compensation">
-					<app-dynamic-form 
-						[config]="step5Config" 
-						(formSubmit)="onStep5Submit($event)"
-						[submitButtonText]="TEXT.buttons.next"
-						[showBackButton]="true"
-						(backClick)="stepper.previous()">
-					</app-dynamic-form>
-					
-					<mat-divider></mat-divider>
-
-					<div class="benefits-section">
-						<h4>{{TEXT.benefits.title}}</h4>
-						<div class="benefits-input">
-							<mat-form-field appearance="fill" class="benefit-select">
-								<mat-label>{{TEXT.benefits.addBenefit}}</mat-label>
-								<mat-select #benefitSelect (selectionChange)="addBenefit(benefitSelect.value); benefitSelect.value = ''">
-									@for (benefit of commonBenefits; track benefit) {
-										<mat-option [value]="benefit">{{ benefit }}</mat-option>
-									}
-								</mat-select>
-							</mat-form-field>
+					<!-- Step 6: Company Information -->
+					<mat-step [label]="TEXT.steps.companyInfo">
+						<div class="step-content-area">
+							<div class="step-title-bar">
+								<div class="step-title-icon"><mat-icon>business</mat-icon></div>
+								<div>
+									<p class="step-title-text">{{TEXT.steps.companyInfo}}</p>
+									<p class="step-title-sub">Step 6 of 7</p>
+								</div>
+							</div>
+							<app-dynamic-form
+								[config]="step6Config"
+								(formSubmit)="onStep6Submit($event)"
+								[submitButtonText]="TEXT.buttons.next"
+								[showBackButton]="true"
+								(backClick)="stepper.previous()">
+							</app-dynamic-form>
 						</div>
-						
-						<div formArrayName="benefits" class="benefits-chips">
-							<mat-chip-set>
-								@for (benefit of benefits.controls; track $index; let i = $index) {
-									<mat-chip (removed)="removeBenefit(i)">
-										{{ benefit.value }}
-										<mat-icon matChipRemove>cancel</mat-icon>
-									</mat-chip>
-								}
-							</mat-chip-set>
+					</mat-step>
+
+					<!-- Step 7: HR Contact & Final Details -->
+					<mat-step [label]="TEXT.steps.contactPublish">
+						<div class="step-content-area">
+							<div class="step-title-bar">
+								<div class="step-title-icon"><mat-icon>publish</mat-icon></div>
+								<div>
+									<p class="step-title-text">{{TEXT.steps.contactPublish}}</p>
+									<p class="step-title-sub">Step 7 of 7</p>
+								</div>
+							</div>
+							<app-dynamic-form
+								[config]="step7Config"
+								(formSubmit)="onStep7Submit($event)"
+								[submitButtonText]="TEXT.buttons.postJob"
+								[showBackButton]="true"
+								(backClick)="stepper.previous()">
+							</app-dynamic-form>
+							<div class="navigation-buttons">
+								<button mat-button type="button" (click)="onCancel()">{{TEXT.buttons.cancel}}</button>
+							</div>
 						</div>
-					</div>
-				</mat-step>
+					</mat-step>
 
-				<!-- Step 6: Company Information -->
-				<mat-step [label]="TEXT.steps.companyInfo">
-					<app-dynamic-form 
-						[config]="step6Config" 
-						(formSubmit)="onStep6Submit($event)"
-						[submitButtonText]="TEXT.buttons.next"
-						[showBackButton]="true"
-						(backClick)="stepper.previous()">
-					</app-dynamic-form>
-				</mat-step>
-
-				<!-- Step 7: HR Contact & Final Details -->
-				<mat-step [label]="TEXT.steps.contactPublish">
-					<app-dynamic-form 
-						[config]="step7Config" 
-						(formSubmit)="onStep7Submit($event)"
-						[submitButtonText]="TEXT.buttons.postJob"
-						[showBackButton]="true"
-						(backClick)="stepper.previous()">
-					</app-dynamic-form>
-					<div class="navigation-buttons">
-						<button mat-button type="button" (click)="onCancel()">{{TEXT.buttons.cancel}}</button>
-					</div>
-				</mat-step>
-			</mat-stepper>
+				</mat-stepper>
 			</form>
 		</mat-card-content>
 	</mat-card>
