@@ -99,19 +99,12 @@ export class JobApplicationService {
 	}
 
 	private handleError(error: any) {
-		console.error('Job Application service error:', error);
-		
 		let errorMessage = 'An error occurred';
-		
 		if (error.error?.detail) {
 			errorMessage = error.error.detail;
 		} else if (error.message) {
 			errorMessage = error.message;
 		}
-		
-		return throwError(() => ({
-			...error,
-			userMessage: errorMessage
-		}));
+		return throwError(() => ({ ...error, userMessage: errorMessage }));
 	}
 }

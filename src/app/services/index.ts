@@ -66,8 +66,5 @@ export type {
 	JobListing as HRJobListing,
 	HRDashboardStats
 } from './hr.service';
-export type {
-
-} from './resume.service';
 export type { ProfileSnapshot } from '../types/profile.types';
 // ImageUploadService has no exported types

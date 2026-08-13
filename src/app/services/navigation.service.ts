@@ -117,14 +117,8 @@ export class NavigationService {
 
 	getNavigationItems(): NavItem[] {
 		const userType = this.authService.getUserType();
-		if (!userType) {
-
-			return [];
-		}
-		const filteredItems = this.allNavItems.filter(item => 
-			item.userTypes.includes(userType as any)
-		);
-		return filteredItems;
+		if (!userType) return [];
+		return this.allNavItems.filter(item => item.userTypes.includes(userType as any));
 	}
 
 	getDefaultRoute(): string {

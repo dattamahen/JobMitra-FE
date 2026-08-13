@@ -12,22 +12,10 @@ export class GlobalErrorHandler implements ErrorHandler {
 	handleError(error: unknown): void {
 		const unwrapped = this.unwrapError(error);
 
-		// HTTP errors are already handled by the interceptor — skip
-		if (unwrapped instanceof HttpErrorResponse) {
-			return;
-		}
+		if (unwrapped instanceof HttpErrorResponse) return;
+		if (this.isChunkLoadError(unwrapped)) return;
 
-		console.error('[GlobalErrorHandler]', unwrapped);
-
-		if (this.isChunkLoadError(unwrapped)) {
-			return;
-		}
-
-		// Runtime errors — show toast, don't navigate away
-		const message = unwrapped instanceof Error
-			? unwrapped.message
-			: 'An unexpected error occurred';
-
+		const message = unwrapped instanceof Error ? unwrapped.message : 'An unexpected error occurred';
 		this.notificationService.show(message, 'error');
 	}
 

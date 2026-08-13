@@ -20,16 +20,7 @@ export class ApplicationService {
 	* Create a new job application
 	*/
 	createApplication(applicationData: CreateApplicationRequest): Observable<{ message: string; application_id: string }> {
-		return this.apiService.post<{ message: string; application_id: string }>('/applications', applicationData)
-			.pipe(
-				catchError(error => {
-					console.warn('🔥 API unavailable - Application creation failed, using mock response:', error.message);
-					return of({
-						message: 'Application submitted successfully (mock data)',
-						application_id: `app_${Date.now()}`
-					});
-				})
-			);
+		return this.apiService.post<{ message: string; application_id: string }>('/applications', applicationData);
 	}
 
 	/**
@@ -59,12 +50,7 @@ export class ApplicationService {
 
 		return this.apiService.get<ApplicationsResponse>('/applications', params)
 			.pipe(
-				map(response => {
-					return response;
-				}),
-				catchError(error => {
-					return of(this.getMockApplicationsResponse(filters, page, perPage));
-				})
+				catchError(() => of(this.getMockApplicationsResponse(filters, page, perPage)))
 			);
 	}
 
@@ -256,11 +242,7 @@ export class ApplicationService {
 	hasAppliedToJob(jobId: string): Observable<boolean> {
 		return this.apiService.get<{ has_applied: boolean }>(`/applications/check/${jobId}`).pipe(
 			map(response => response.has_applied),
-			catchError(error => {
-				console.warn('🔥 API unavailable - Using mock application check:', error.message);
-				// Mock: randomly return true/false
-				return of(Math.random() > 0.7);
-			})
+			catchError(() => of(false))
 		);
 	}
 
