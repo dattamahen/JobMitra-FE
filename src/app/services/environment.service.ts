@@ -5,15 +5,7 @@ import { environment } from '../../environments/environment';
 	providedIn: 'root'
 })
 export class EnvironmentService {
-	getGeminiApiKey(): string {
-		return environment.geminiApiKey;
-	}
-
-	getGeminiApiBaseUrl(): string {
-		return environment.geminiApiBaseUrl;
-	}
-
-	getGeminiModel(): string {
-		return environment.geminiModel;
+	getApiUrl(): string {
+		return environment.apiUrl;
 	}
 }
