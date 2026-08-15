@@ -1,20 +1,18 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
+import { ApiService } from './api.service';
 import { MockInterviewModalComponent } from '../components/mock-interview-modal/mock-interview-modal.component';
 import type { InterviewEvaluation } from '../types/mock-interview.types';
-import { environment } from '../../environments/environment';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class MockInterviewService {
-	private readonly baseUrl = `${environment.apiUrl}/api/v1/mock-interview`;
 
 	constructor(
 		private dialog: MatDialog,
-		private http: HttpClient
+		private apiService: ApiService
 	) {}
 
 	startInterview(type: string = 'technical', aiResponse?: any): void {
@@ -51,7 +49,7 @@ export class MockInterviewService {
 
 
 	submitAnswer(sessionId: string, questionId: string, answer: string): Observable<any> {
-		return this.http.post(`${this.baseUrl}/submit-answer`, {
+		return this.apiService.post('/mock-interview/submit-answer', {
 			session_id: sessionId,
 			question_id: questionId,
 			answer: answer
@@ -59,17 +57,17 @@ export class MockInterviewService {
 	}
 
 	evaluateInterview(sessionId: string, answers: Array<{question_id: string, answer: string}>): Observable<InterviewEvaluation> {
-		return this.http.post<InterviewEvaluation>(`${this.baseUrl}/evaluate`, {
+		return this.apiService.post<InterviewEvaluation>('/mock-interview/evaluate', {
 			session_id: sessionId,
 			answers: answers
 		});
 	}
 
 	submitInterviewForEvaluation(interviewData: any): Observable<any> {
-		return this.http.post(`${this.baseUrl}/submit-for-evaluation`, interviewData);
+		return this.apiService.post('/mock-interview/submit-for-evaluation', interviewData);
 	}
 
 	getInterviewHistory(userId: string, limit: number = 10): Observable<any> {
-		return this.http.get(`${this.baseUrl}/history/${userId}?limit=${limit}`);
+		return this.apiService.get(`/mock-interview/history/${userId}?limit=${limit}`);
 	}
 }

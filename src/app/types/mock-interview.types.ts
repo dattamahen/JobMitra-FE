@@ -25,12 +25,7 @@ export type InterviewHistorySession = {
 export type InterviewEvaluation = {
 	session_id: string;
 	overall_score: number;
-	feedback: string;
-	question_scores: Array<{
-		question_id: string;
-		score: number;
-		feedback: string;
-	}>;
+	feedback_points: string[];
 };
 
 export type InterviewSubmissionData = {

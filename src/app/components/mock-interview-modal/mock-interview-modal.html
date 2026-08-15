@@ -80,7 +80,7 @@
 					<button 
 						mat-raised-button
 						[class.recording]="isRecording()"
-						[disabled]="isLoading() || isTransitioning()"
+						[disabled]="isLoading() || isTransitioning() || isSpeaking()"
 						(click)="isRecording() ? stopRecording() : startRecording()"
 						class="record-btn">
 						<mat-icon>{{isRecording() ? 'stop' : 'mic'}}</mat-icon>
@@ -130,20 +130,13 @@
 							<p>{{TEXT.evaluation.overallPerformance}}</p>
 						</div>
 					</div>
-					
 					<div class="feedback-section">
 						<h2>{{TEXT.evaluation.detailedFeedback}}</h2>
-						<p>{{evaluation()!.feedback}}</p>
-					</div>
-
-					<div class="question-scores">
-						<h2>{{TEXT.evaluation.questionAnalysis}}</h2>
-						@for (score of evaluation()!.question_scores; track score.question_id) {
-							<div class="question-score">
-								<div class="score-badge">{{score.score}}%</div>
-								<div class="score-feedback">{{score.feedback}}</div>
-							</div>
-						}
+						<ul class="feedback-points">
+							@for (point of evaluation()!.feedback_points; track point) {
+								<li>{{point}}</li>
+							}
+						</ul>
 					</div>
 				</mat-card-content>
 			</mat-card>

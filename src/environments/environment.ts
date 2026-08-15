@@ -16,4 +16,5 @@ export const environment = {
 
 	// Feature flags
 	enableLogging: true,
+	mockInterview: false,
 };

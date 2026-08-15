@@ -43,7 +43,8 @@ export class MockInterviewModalComponent {
 	readonly phase = signal<'instructions' | 'generating' | 'loading' | 'interview' | 'completed' | 'evaluation'>('instructions');
 	readonly isGeneratingQuestions = signal(false);
 	readonly isTransitioning = signal(false);
-	
+	readonly isSpeaking = computed(() => this.voiceService.isSpeaking());
+
 	readonly instructions = INTERVIEW_INSTRUCTIONS;
 
 	constructor(
