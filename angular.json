@@ -14,11 +14,7 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "src/main.ts",
-            "server": "src/main.server.ts",
-            "outputPath": "dist/tech-profile",
-            "ssr": {
-              "entry": "src/server.ts"
-            },
+            "outputPath": "dist/tech-profile/browser",
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
