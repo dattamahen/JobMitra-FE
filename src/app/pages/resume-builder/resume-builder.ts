@@ -21,10 +21,8 @@ import { ApiService } from '../../services/api.service';
 import type { Resume, ResumeTemplate, Experience, Education, Project, Certification } from '../../types/resume.types';
 import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
-import { FeatureUsageService } from '../../services/feature-usage.service';
 import { CreditsService } from '../../services/credits.service';
 import { RESUME_BUILDER_TEXT } from '../../data/resume-builder-data';
-import { FeatureGuardDirective } from '../../shared/directives/feature-guard.directive';
 import { 
 	RESUME_PERSONAL_INFO_CONFIG, 
 	RESUME_SUMMARY_CONFIG,
@@ -56,7 +54,6 @@ import { RESUME_SECTIONS, CV_TEMPLATES } from './resume-builder.constants';
 		MatDialogModule,
 		DynamicFormComponent,
 		LoadingComponent,
-		FeatureGuardDirective
 	],
 	templateUrl: './resume-builder.html',
 	styleUrls: ['./resume-builder.css']
@@ -74,6 +71,7 @@ export class ResumeBuilderPage implements OnInit {
 	// Local signals
 	showPreview = signal(false);
 	isOptimizing = signal(false);
+	isDownloading = signal(false);
 	
 	private destroyRef = inject(DestroyRef);
 	private resumeService = inject(ResumeService);
@@ -81,7 +79,6 @@ export class ResumeBuilderPage implements OnInit {
 	private fb = inject(FormBuilder);
 	private snackBar = inject(MatSnackBar);
 	private dialog = inject(MatDialog);
-	private featureUsageService = inject(FeatureUsageService);
 	private creditsService = inject(CreditsService);
 	private apiService = inject(ApiService);
 	
@@ -1194,6 +1191,7 @@ export class ResumeBuilderPage implements OnInit {
 	}
 
 	async downloadPDF(): Promise<void> {
+		if (this.isDownloading()) return;
 		const confirmed = await this.dialog.open(ConfirmationDialogComponent, {
 			data: {
 				title: 'Confirm Download',
@@ -1203,12 +1201,17 @@ export class ResumeBuilderPage implements OnInit {
 			}
 		}).afterClosed().toPromise();
 		if (!confirmed) return;
-		const allowed = await this.creditsService.gate('cv_download');
-		if (!allowed) {
-			this.snackBar.open('No CV download credits remaining. Please purchase more.', 'Close', { duration: 5000 });
-			return;
+		this.isDownloading.set(true);
+		try {
+			const allowed = await this.creditsService.gate('cv_download');
+			if (!allowed) {
+				this.snackBar.open('No CV download credits remaining. Please purchase more.', 'Close', { duration: 5000 });
+				return;
+			}
+			await this.generatePDF();
+		} finally {
+			this.isDownloading.set(false);
 		}
-		this.generatePDF();
 	}
 
 	private async generatePDF(): Promise<void> {
