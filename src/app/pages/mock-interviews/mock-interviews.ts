@@ -83,9 +83,9 @@ export class MockInterviewsPage {
 				if (!user) return;
 
 				const userProfile = {
-					role: user.professional_info?.current_role || 'Software Engineer',
+					role: user.professional_info?.current_role || '',
 					experience_years: user.overall_experience_years || 3,
-					skills: user.skills || ['JavaScript', 'Python'],
+					skills: user.skills?.length ? user.skills : [],
 					user_id: user.user_id
 				};
 
