@@ -147,13 +147,11 @@
 				}
 				
 				<div class="resume-actions">
-					<div *appFeatureGuard="'resume_download'; showWhenDisabled: true; let canUse = canUseFeature">
-						<button mat-raised-button [color]="canUse ? 'primary' : 'warn'" 
-										(click)="downloadPDF()" [disabled]="!canUse">
-							<mat-icon>download</mat-icon>
-							{{ canUse ? TEXT.buttons.downloadPDF : TEXT.buttons.upgradeRequired }}
-						</button>
-					</div>
+					<button mat-raised-button color="primary"
+							(click)="downloadPDF()" [disabled]="isDownloading()">
+						<mat-icon>{{ isDownloading() ? 'hourglass_empty' : 'download' }}</mat-icon>
+						{{ isDownloading() ? 'Generating...' : TEXT.buttons.downloadPDF }}
+					</button>
 				</div>
 			</div>
 		</div>
