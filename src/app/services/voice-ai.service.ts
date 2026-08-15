@@ -1,8 +1,6 @@
 import { Injectable, signal, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { EnvironmentService } from './environment.service';
 
-// Web Speech API type declarations
 declare global {
 	interface Window {
 		SpeechRecognition: any;
@@ -22,25 +20,14 @@ interface SpeechRecognition extends EventTarget {
 	onerror: ((this: SpeechRecognition, ev: any) => any) | null;
 }
 
-export interface VoiceResponse {
-	text: string;
-	sources?: { uri: string; title: string }[];
-}
-
 @Injectable({
 	providedIn: 'root'
 })
 export class VoiceAiService {
-	private readonly API_BASE_URL: string;
-	private readonly MODEL_NAME: string;
-	private readonly apiKey: string;
-
-	// Speech recognition and synthesis
 	private recognition?: any;
 	private synthesis?: SpeechSynthesis;
 	private platformId = inject(PLATFORM_ID);
 
-	// Signals for reactive state
 	isListening = signal(false);
 	isProcessing = signal(false);
 	isSpeaking = signal(false);
@@ -48,10 +35,7 @@ export class VoiceAiService {
 	currentResponse = signal('');
 	error = signal('');
 
-	constructor(private envService: EnvironmentService) {
-		this.apiKey = this.envService.getGeminiApiKey();
-		this.API_BASE_URL = this.envService.getGeminiApiBaseUrl();
-		this.MODEL_NAME = this.envService.getGeminiModel();
+	constructor() {
 		if (isPlatformBrowser(this.platformId)) {
 			this.synthesis = window.speechSynthesis;
 			this.initSpeechRecognition();
@@ -60,9 +44,9 @@ export class VoiceAiService {
 
 	private initSpeechRecognition(): void {
 		if (!isPlatformBrowser(this.platformId)) return;
-		
+
 		const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-		
+
 		if (!SpeechRecognition) {
 			this.error.set('Speech recognition not supported in this browser');
 			return;
@@ -78,7 +62,7 @@ export class VoiceAiService {
 			this.error.set('');
 		};
 
-		this.recognition.onresult = (event:any) => {
+		this.recognition.onresult = (event: any) => {
 			const transcript = event.results[0][0].transcript;
 			this.currentTranscript.set(transcript);
 		};
@@ -87,7 +71,7 @@ export class VoiceAiService {
 			this.isListening.set(false);
 		};
 
-		this.recognition.onerror = (event:any) => {
+		this.recognition.onerror = (event: any) => {
 			this.isListening.set(false);
 			let message = 'Speech recognition error';
 			if (event.error === 'not-allowed') {
@@ -101,7 +85,6 @@ export class VoiceAiService {
 
 	startListening(): void {
 		if (!this.recognition || this.isListening()) return;
-		
 		try {
 			this.recognition.start();
 		} catch (e) {
@@ -128,7 +111,7 @@ export class VoiceAiService {
 		utterance.onerror = () => this.isSpeaking.set(false);
 
 		const voices = this.synthesis.getVoices();
-		const preferredVoice = voices.find(voice => 
+		const preferredVoice = voices.find(voice =>
 			voice.name.includes('Google') && voice.lang.startsWith('en')
 		);
 		if (preferredVoice) {
