@@ -1,7 +1,5 @@
 import { Injectable, signal, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Observable, from } from 'rxjs';
 import { EnvironmentService } from './environment.service';
 
 // Web Speech API type declarations
@@ -45,14 +43,12 @@ export class VoiceAiService {
 	// Signals for reactive state
 	isListening = signal(false);
 	isProcessing = signal(false);
+	isSpeaking = signal(false);
 	currentTranscript = signal('');
 	currentResponse = signal('');
 	error = signal('');
 
-	constructor(
-		private http: HttpClient,
-		private envService: EnvironmentService
-	) {
+	constructor(private envService: EnvironmentService) {
 		this.apiKey = this.envService.getGeminiApiKey();
 		this.API_BASE_URL = this.envService.getGeminiApiBaseUrl();
 		this.MODEL_NAME = this.envService.getGeminiModel();
@@ -85,7 +81,6 @@ export class VoiceAiService {
 		this.recognition.onresult = (event:any) => {
 			const transcript = event.results[0][0].transcript;
 			this.currentTranscript.set(transcript);
-			this.processQuery(transcript);
 		};
 
 		this.recognition.onend = () => {
@@ -120,68 +115,6 @@ export class VoiceAiService {
 		}
 	}
 
-	private async processQuery(query: string): Promise<void> {
-		this.isProcessing.set(true);
-		this.speak('One moment, please.');
-
-		try {
-			const response = await this.callGemini(query);
-			this.currentResponse.set(response.text);
-			this.speak(response.text);
-		} catch (error) {
-			const errorMsg = 'An error occurred while processing your request';
-			this.currentResponse.set(errorMsg);
-			this.speak(errorMsg);
-			this.error.set(errorMsg);
-		} finally {
-			this.isProcessing.set(false);
-		}
-	}
-
-	private async callGemini(prompt: string): Promise<VoiceResponse> {
-		const apiUrl = `${this.API_BASE_URL}/${this.MODEL_NAME}:generateContent?key=${this.apiKey}`;
-
-		const payload = {
-			contents: [{ parts: [{ text: prompt }] }],
-			tools: [{ "google_search": {} }],
-			systemInstruction: {
-				parts: [{ text: "You are a helpful, concise AI voice assistant. Answer briefly and informatively." }],
-			},
-		};
-
-		const response = await fetch(apiUrl, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(payload),
-		});
-
-		if (!response.ok) {
-			throw new Error(`API error: ${response.status}`);
-		}
-
-		const result = await response.json();
-		const candidate = result.candidates?.[0];
-
-		if (!candidate?.content?.parts?.[0]?.text) {
-			throw new Error('No response generated');
-		}
-
-		const text = candidate.content.parts[0].text;
-		let sources: { uri: string; title: string }[] = [];
-
-		const groundingMetadata = candidate.groundingMetadata;
-		if (groundingMetadata?.groundingAttributions) {
-			sources = groundingMetadata.groundingAttributions
-				.map((attr: any) => ({
-					uri: attr.web?.uri,
-					title: attr.web?.title,
-				}))
-				.filter((source: any) => source.uri && source.title);
-		}
-
-		return { text, sources };
-	}
-
 	speak(text: string): void {
 		if (!this.synthesis) return;
 
@@ -190,6 +123,9 @@ export class VoiceAiService {
 		utterance.rate = 1.0;
 		utterance.pitch = 1.0;
 		utterance.volume = 1.0;
+		utterance.onstart = () => this.isSpeaking.set(true);
+		utterance.onend = () => this.isSpeaking.set(false);
+		utterance.onerror = () => this.isSpeaking.set(false);
 
 		const voices = this.synthesis.getVoices();
 		const preferredVoice = voices.find(voice => 
