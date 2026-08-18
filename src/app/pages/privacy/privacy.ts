@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
+import { PRIVACY_CONSTANTS } from './privacy.constants';
 
 @Component({
 	selector: 'app-privacy',
@@ -8,7 +9,7 @@ import { Router } from '@angular/router';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PrivacyPage {
-	readonly effectiveDate = 'June 1, 2025';
+	readonly policy = PRIVACY_CONSTANTS;
 
 	constructor(private router: Router) {}
 

@@ -10,7 +10,6 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatDividerModule } from '@angular/material/divider';
 
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
-import { CvBootstrapComponent } from '../../shared/components/cv-bootstrap/cv-bootstrap.component';
 import { DashboardData, DashboardStats, ActivityItem } from '../../types/dashboard.types';
 import { ACTIVITY_TYPE_COLOR_MAP, ACTIVITY_STATUS_ICON_MAP } from './dashboard.constants';
 import { DASHBOARD_TEXT } from '../../data/dashboard-data';
@@ -28,8 +27,7 @@ import { AuthService } from '../../services/auth.service';
 		MatButtonModule,
 		MatBadgeModule,
 		MatDividerModule,
-		LoadingComponent,
-		CvBootstrapComponent
+		LoadingComponent
 	],
 	templateUrl: './dashboard.html',
 	styleUrls: ['./dashboard.css'],

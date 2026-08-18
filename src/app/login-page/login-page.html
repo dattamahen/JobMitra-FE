@@ -15,7 +15,7 @@
 		</div>
 		<div class="nav-actions">
 			<a class="nav-login" (click)="openPanel()" (keydown.enter)="openPanel()" tabindex="0">Log in</a>
-			<button class="nav-cta" (click)="openPanel('signup')">Get started free</button>
+			<button class="nav-cta" (click)="openPanel()">Get started free</button>
 		</div>
 	</nav>
 
@@ -29,7 +29,7 @@
 				<h1 class="hero-title">Land your dream job <span class="brand-highlight">in 14 days, not 60</span></h1>
 				<p class="hero-description">AI builds your resume, matches you to the right roles, and preps you for interviews — so you show up confident and get hired faster.</p>
 				<div class="hero-actions">
-					<button class="btn-primary" (click)="openPanel('signup')"><i class="ti ti-rocket" aria-hidden="true"></i> Start for free</button>
+					<button class="btn-primary" (click)="openPanel()"><i class="ti ti-rocket" aria-hidden="true"></i> Start for free</button>
 					<button class="btn-secondary" (click)="openPanel()"><i class="ti ti-player-play" aria-hidden="true"></i> Watch demo</button>
 				</div>
 				<div class="hero-social-proof">
@@ -215,7 +215,7 @@
 							<i [class]="f.included ? 'ti ti-check' : 'ti ti-x'" aria-hidden="true"></i> {{f.text}}
 						</div>
 					}
-					<button class="btn-price" [class]="'btn-price ' + plan.btnClass" (click)="openPanel('signup')">{{plan.btnText}}</button>
+					<button class="btn-price" [class]="'btn-price ' + plan.btnClass" (click)="openPanel()">{{plan.btnText}}</button>
 				</div>
 			}
 		</div>
@@ -226,8 +226,8 @@
 		<h2>Your next opportunity is one click away</h2>
 		<p>Join 2,400+ professionals already using JobMouka to build careers they love.</p>
 		<div class="cta-actions">
-			<button class="btn-white" (click)="openPanel('signup')">Get started — it's free</button>
-			<button class="btn-ghost" (click)="openPanel()">Talk to sales</button>
+			<button class="btn-white" (click)="openPanel()">Get started — it's free</button>
+			<button class="btn-ghost" (click)="openSalesEmail()">Talk to sales</button>
 		</div>
 	</div>
 
@@ -249,20 +249,20 @@
 			</div>
 			<div class="footer-col">
 				<h5>Products</h5>
-				@for (link of footerLinks.products; track link) {
-					<a>{{link}}</a>
+				@for (link of footerLinks.products; track link.label) {
+					<a (click)="onFooterLink(link.action)" style="cursor:pointer">{{link.label}}</a>
 				}
 			</div>
 			<div class="footer-col">
 				<h5>Company</h5>
-				@for (link of footerLinks.company; track link) {
-					<a>{{link}}</a>
+				@for (link of footerLinks.company; track link.label) {
+					<a (click)="onFooterLink(link.action)" style="cursor:pointer">{{link.label}}</a>
 				}
 			</div>
 			<div class="footer-col">
 				<h5>Support</h5>
-				@for (link of footerLinks.support; track link) {
-					<a>{{link}}</a>
+				@for (link of footerLinks.support; track link.label) {
+					<a (click)="onFooterLink(link.action)" style="cursor:pointer">{{link.label}}</a>
 				}
 			</div>
 		</div>

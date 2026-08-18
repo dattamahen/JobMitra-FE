@@ -16,6 +16,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ResumeService } from '../../services/resume.service';
 import { ResumeTemplateService } from '../../services/resume-template.service';
+import { ResumeTailorService } from '../../services/resume-tailor.service';
 import { UserService } from '../../services/user.service';
 import { ApiService } from '../../services/api.service';
 import type { Resume, ResumeTemplate, Experience, Education, Project, Certification } from '../../types/resume.types';
@@ -72,10 +73,19 @@ export class ResumeBuilderPage implements OnInit {
 	showPreview = signal(false);
 	isOptimizing = signal(false);
 	isDownloading = signal(false);
+	showDownloadModal = signal(false);
+	showJdModal = signal(false);
+	jdModalStep = signal<1 | 2>(1);
+	jdText = signal('');
+	jdFileName = signal('');
+	isTailoringByJd = signal(false);
+	tailoredJdData = signal<{ summary: string; skills: string[]; matchPct: number } | null>(null);
+	private jdFile: File | null = null;
 	
 	private destroyRef = inject(DestroyRef);
 	private resumeService = inject(ResumeService);
 	private resumeTemplateService = inject(ResumeTemplateService);
+	private resumeTailorService = inject(ResumeTailorService);
 	private fb = inject(FormBuilder);
 	private snackBar = inject(MatSnackBar);
 	private dialog = inject(MatDialog);
@@ -1428,6 +1438,125 @@ export class ResumeBuilderPage implements OnInit {
 		this.skillsForm?.markAsPristine();
 		this.projectsForm?.markAsPristine();
 		this.certificationsForm?.markAsPristine();
+	}
+
+	openDownloadModal(): void {
+		this.showDownloadModal.set(true);
+	}
+
+	onDownloadOverlayClick(event: MouseEvent): void {
+		if ((event.target as HTMLElement).classList.contains('jd-modal-overlay')) {
+			this.showDownloadModal.set(false);
+		}
+	}
+
+	async downloadWithTemplate(templateId: string): Promise<void> {
+		this.showDownloadModal.set(false);
+		this.selectedTemplate.set(templateId);
+		await this.downloadPDF();
+	}
+
+	openJdModal(): void {
+		this.jdText.set('');
+		this.jdFileName.set('');
+		this.jdFile = null;
+		this.tailoredJdData.set(null);
+		this.jdModalStep.set(1);
+		this.showJdModal.set(true);
+	}
+
+	closeJdModal(): void {
+		this.showJdModal.set(false);
+	}
+
+	onJdOverlayClick(event: MouseEvent): void {
+		if ((event.target as HTMLElement).classList.contains('jd-modal-overlay')) {
+			this.closeJdModal();
+		}
+	}
+
+	onJdFileSelected(event: Event): void {
+		const file = (event.target as HTMLInputElement).files?.[0];
+		if (file) {
+			this.jdFile = file;
+			this.jdFileName.set(file.name);
+			this.jdText.set('');
+		}
+	}
+
+	onJdTextInput(event: Event): void {
+		this.jdText.set((event.target as HTMLTextAreaElement).value);
+		if (this.jdText()) {
+			this.jdFile = null;
+			this.jdFileName.set('');
+		}
+	}
+
+	async generateCvByJd(): Promise<void> {
+		if (this.isTailoringByJd()) return;
+		const text = this.jdText();
+		if (!text && !this.jdFile) {
+			this.snackBar.open('Please paste a JD or upload a file.', 'Close', { duration: 3000 });
+			return;
+		}
+		const allowed = await this.creditsService.gate('cv_download');
+		if (!allowed) {
+			this.snackBar.open('No CV download credits remaining. Please purchase more.', 'Close', { duration: 5000 });
+			return;
+		}
+		this.isTailoringByJd.set(true);
+		try {
+			const result = await this.resumeTailorService.tailorResumeByJd(text, this.jdFile ?? undefined);
+			this.tailoredJdData.set({ summary: result.tailored_summary, skills: result.tailored_skills, matchPct: result.match_percentage });
+			this.jdModalStep.set(2);
+		} catch {
+			this.snackBar.open('Failed to tailor resume. Please try again.', 'Close', { duration: 3000 });
+		} finally {
+			this.isTailoringByJd.set(false);
+		}
+	}
+
+	async downloadJdCv(templateId: string): Promise<void> {
+		const tailored = this.tailoredJdData();
+		if (!tailored) return;
+		this.isDownloading.set(true);
+		try {
+			this.saveAllSections();
+			const resume = this.currentResume();
+			if (!resume) return;
+			// Override summary and skills with tailored data
+			const tailoredResume = {
+				...resume,
+				sections: {
+					...resume.sections,
+					summary: tailored.summary,
+					skills: { technical: tailored.skills.map(s => ({ name: s, version: '', last_used: '' })), soft: resume.sections.skills?.soft || [] }
+				}
+			};
+			const html = this.resumeTemplateService.getTemplateHTML(templateId, {
+				personalInfo: this.personalInfoForm.value,
+				summary: tailored.summary,
+				experience: this.convertExperienceValues().length ? this.convertExperienceValues() : this.convertRawExperienceValues(),
+				education: this.convertEducationValues().length ? this.convertEducationValues() : this.convertRawEducationValues(),
+				skills: { technical: tailored.skills.map(s => ({ name: s })), soft: [] },
+				projects: this.convertProjectsValues().length ? this.convertProjectsValues() : this.convertRawProjectsValues(),
+				certifications: this.convertCertificationsValues().length ? this.convertCertificationsValues() : this.convertRawCertificationsValues()
+			});
+			const filename = resume.sections.personal_info?.full_name || 'Resume';
+			const blob = await this.apiService.postBlob('/resume/generate-pdf', { html, filename });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = `${filename}_JD_Tailored.pdf`;
+			a.click();
+			URL.revokeObjectURL(url);
+			this.tailoredJdData.set(null);
+			this.closeJdModal();
+		} catch {
+			this.snackBar.open('Error generating PDF', 'Close', { duration: 3000 });
+		} finally {
+			this.isDownloading.set(false);
+		}
 	}
 }
 

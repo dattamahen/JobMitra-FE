@@ -9,7 +9,7 @@ import { FormConfig } from '../shared/interfaces/form.interfaces';
 import { LOGIN_FORM_CONFIG, SIGNUP_FORM_CONFIG, FORGOT_PASSWORD_FORM_CONFIG, RESET_PASSWORD_FORM_CONFIG } from '../shared/components/dynamic-form/form-configs';
 import {
 	LOGIN_PAGE_TEXT, TRUST_LOGOS,
-	PRODUCT_CARDS, STATS, STEPS, TESTIMONIALS, PRICING, FOOTER_LINKS, PricingCard, StatItem
+	PRODUCT_CARDS, STATS, STEPS, TESTIMONIALS, PRICING, FOOTER_LINKS, FooterLink, PricingCard, StatItem
 } from '../data/login-page-data';
 import { LOGIN_PAGE_CONSTANTS } from './login-page.constants';
 
@@ -225,6 +225,22 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 			});
 			this.pricing.set(updated);
 		} catch { /* keep static fallback */ }
+	}
+
+	openSalesEmail(): void {
+		window.location.href = 'mailto:sales@jobmouka.com';
+	}
+
+	onFooterLink(action: string): void {
+		switch (action) {
+			case 'about':   window.open('https://www.sancham-tech.com', '_blank', 'noopener,noreferrer'); break;
+			case 'careers': window.location.href = 'mailto:careers@jobmouka.com'; break;
+			case 'contact': window.location.href = 'mailto:contact@jobmouka.com'; break;
+			case 'support': window.location.href = 'mailto:contact@jobmouka.com'; break;
+			case 'privacy': this.router.navigate(['/privacy']); break;
+			case 'refund':  window.location.href = 'mailto:contact@jobmouka.com'; break;
+			case 'login':   this.openPanel(); break;
+		}
 	}
 
 	openPanel(mode: 'login' | 'signup' = 'login'): void {

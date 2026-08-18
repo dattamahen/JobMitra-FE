@@ -194,10 +194,28 @@ export const PRICING: PricingCard[] = [
 	}
 ];
 
-export const FOOTER_LINKS = {
-	products: ['Job Portal', 'Resume Builder', 'Mock Interviews', 'Skill Assessment', 'Match Analysis'],
-	company: ['About us', 'Blog', 'Careers', 'Contact'],
-	support: ['Help center', 'Privacy policy', 'Terms of service', 'Refund policy']
+export interface FooterLink { label: string; action: string; }
+
+export const FOOTER_LINKS: { products: FooterLink[]; company: FooterLink[]; support: FooterLink[] } = {
+	products: [
+		{ label: 'Job Portal', action: 'login' },
+		{ label: 'Resume Builder', action: 'login' },
+		{ label: 'Mock Interviews', action: 'login' },
+		{ label: 'Skill Assessment', action: 'login' },
+		{ label: 'Match Analysis', action: 'login' }
+	],
+	company: [
+		{ label: 'About us', action: 'about' },
+		{ label: 'Blog', action: 'login' },
+		{ label: 'Careers', action: 'careers' },
+		{ label: 'Contact', action: 'contact' }
+	],
+	support: [
+		{ label: 'Help center', action: 'support' },
+		{ label: 'Privacy policy', action: 'privacy' },
+		{ label: 'Terms of service', action: 'privacy' },
+		{ label: 'Refund policy', action: 'refund' }
+	]
 };
 
 export const LOGIN_PAGE_TEXT = {

@@ -88,6 +88,30 @@ export class LandingPage implements OnInit {
 		this.router.navigate(['/privacy']);
 	}
 
+	openSalesEmail(): void {
+		window.location.href = 'mailto:sales@jobmouka.com';
+	}
+
+	openAboutUs(): void {
+		window.open('https://www.sancham-tech.com', '_blank', 'noopener,noreferrer');
+	}
+
+	openCareers(): void {
+		window.location.href = 'mailto:careers@jobmouka.com';
+	}
+
+	openContact(): void {
+		window.location.href = 'mailto:contact@jobmouka.com';
+	}
+
+	openSupport(): void {
+		window.location.href = 'mailto:contact@jobmouka.com';
+	}
+
+	openRefund(): void {
+		window.location.href = 'mailto:contact@jobmouka.com';
+	}
+
 	openAuthPanel(): void {
 		this.showAuthPanel.set(true);
 		this.initializeGoogleSignIn();
