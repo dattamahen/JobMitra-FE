@@ -36,8 +36,23 @@ h1, h2 {
 }
 
 .skills-list {
-	max-height: 400px;
+	max-height: calc(5 * 46px);
 	overflow-y: auto;
+	scrollbar-width: thin;
+	scrollbar-color: #cbd5e1 transparent;
+}
+
+.skills-list::-webkit-scrollbar {
+	width: 4px;
+}
+
+.skills-list::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.skills-list::-webkit-scrollbar-thumb {
+	background: #cbd5e1;
+	border-radius: 4px;
 }
 
 .skill-item {

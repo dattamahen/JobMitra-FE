@@ -1,8 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
+import { environment } from '../../environments/environment';
 
 // Request Models
+export interface TailorByJdResponse {
+	tailored_summary: string;
+	tailored_skills: string[];
+	match_percentage: number;
+	message: string;
+}
+
 export interface TailorRequest {
 	job_id: string;
 }
@@ -88,6 +96,19 @@ export interface ApplyJobResponse {
 })
 export class ResumeTailorService {
 	constructor(private apiService: ApiService) {}
+
+	tailorResumeByJd(jdText: string, jdFile?: File): Promise<TailorByJdResponse> {
+		const form = new FormData();
+		form.append('jd_text', jdText);
+		if (jdFile) form.append('jd_file', jdFile);
+		const baseUrl = environment.apiUrl || 'http://localhost:8000';
+		const token = localStorage.getItem('jobmitra_token');
+		return fetch(`${baseUrl}/api/v1/tailor-resume-by-jd`, {
+			method: 'POST',
+			headers: token ? { Authorization: `Bearer ${token}` } : {},
+			body: form,
+		}).then(r => { if (!r.ok) throw new Error('Tailor failed'); return r.json(); });
+	}
 
 	tailorResume(jobId: string): Observable<TailorResponse> {
 		return this.apiService.post<TailorResponse>(`/jobs/${jobId}/tailor-resume`, {});
