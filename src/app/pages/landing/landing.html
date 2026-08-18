@@ -13,7 +13,7 @@
   </div>
   <div class="nav-right">
     <a class="nav-login" (click)="openAuthPanel()">Log in</a>
-    <button class="nav-cta" (click)="openSignupPanel()">Get started free</button>
+    <button class="nav-cta" (click)="openAuthPanel()">Get started free</button>
   </div>
 </nav>
 
@@ -316,7 +316,7 @@
       <div class="pf-item muted"><i class="ti ti-x"></i> AI recommendations</div>
       <div class="pf-item muted"><i class="ti ti-x"></i> Unlimited mock interviews</div>
       <div class="pf-item muted"><i class="ti ti-x"></i> Recruiter messaging</div>
-      <button class="btn-price outline" (click)="openSignupPanel()">Get started free</button>
+      <button class="btn-price outline" (click)="openAuthPanel()">Get started free</button>
     </div>
     <div class="price-card popular">
       <div class="popular-badge">Most popular</div>
@@ -329,7 +329,7 @@
       <div class="pf-item"><i class="ti ti-check"></i> AI keyword suggestions</div>
       <div class="pf-item"><i class="ti ti-check"></i> Resume score & tips</div>
       <div class="pf-item muted"><i class="ti ti-x"></i> Direct recruiter messaging</div>
-      <button class="btn-price primary" (click)="openSignupPanel()">Start 30-day free trial</button>
+      <button class="btn-price primary" (click)="openAuthPanel()">Start 30-day free trial</button>
     </div>
     <div class="price-card">
       <div class="price-tier">Business</div>
@@ -341,7 +341,7 @@
       <div class="pf-item"><i class="ti ti-check"></i> Interview prep kit</div>
       <div class="pf-item"><i class="ti ti-check"></i> Salary negotiation guide</div>
       <div class="pf-item"><i class="ti ti-check"></i> Dedicated career advisor</div>
-      <button class="btn-price outline" (click)="openSignupPanel()">Get Business</button>
+      <button class="btn-price outline" (click)="openAuthPanel()">Get Business</button>
     </div>
   </div>
 </div>
@@ -351,8 +351,8 @@
   <h2>Your next opportunity is one click away</h2>
   <p>Join 2,400+ professionals already using JobMouka to build careers they love.</p>
   <div class="cta-actions">
-    <button class="btn-white" (click)="openSignupPanel()">Get started — it's free</button>
-    <button class="btn-ghost">Talk to sales</button>
+    <button class="btn-white" (click)="openAuthPanel()">Get started — it's free</button>
+    <button class="btn-ghost" (click)="openSalesEmail()">Talk to sales</button>
   </div>
 </div>
 
@@ -382,18 +382,18 @@
     </div>
     <div class="footer-col">
       <h5>Company</h5>
-      <a>About us</a>
+      <a (click)="openAboutUs()" style="cursor:pointer">About us</a>
       <a>Blog</a>
-      <a>Careers</a>
+      <a (click)="openCareers()" style="cursor:pointer">Careers</a>
       <a>Press</a>
-      <a>Contact</a>
+      <a (click)="openContact()" style="cursor:pointer">Contact</a>
     </div>
     <div class="footer-col">
       <h5>Support</h5>
-      <a>Help center</a>
-      <a>Privacy policy</a>
-      <a>Terms of service</a>
-      <a>Cookie policy</a>
+      <a (click)="openSupport()" style="cursor:pointer">Help center</a>
+      <a (click)="openPrivacy()" style="cursor:pointer">Privacy policy</a>
+      <a (click)="openPrivacy()" style="cursor:pointer">Terms of service</a>
+      <a (click)="openPrivacy()" style="cursor:pointer">Cookie policy</a>
       <a>Security</a>
     </div>
   </div>
@@ -401,8 +401,9 @@
     <span>© 2025 JobMouka Technologies Pvt. Ltd. All rights reserved.</span>
     <div class="footer-links">
       <a (click)="openPrivacy()" style="cursor:pointer">Privacy</a>
-      <a>Terms</a>
-      <a>Cookies</a>
+      <a (click)="openPrivacy()" style="cursor:pointer">Terms</a>
+      <a (click)="openRefund()" style="cursor:pointer">Refund</a>
+      <a (click)="openPrivacy()" style="cursor:pointer">Cookies</a>
     </div>
   </div>
 </footer>
