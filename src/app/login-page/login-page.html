@@ -287,20 +287,28 @@
 			<i class="ti ti-x"></i>
 		</button>
 
-		<div class="auth-container">
-			<div class="auth-header">
-				<div class="auth-logo">
+		<!-- Panel Hero -->
+		<div class="panel-hero">
+			<div class="panel-hero-shapes">
+				<div class="phs phs-1"></div>
+				<div class="phs phs-2"></div>
+				<div class="phs phs-3"></div>
+			</div>
+			<div class="panel-hero-content">
+				<div class="panel-logo-wrap">
 					<div class="logo-mark logo-mark-solid">JM</div>
-					<span class="logo-name logo-name-dark">Job<span class="brand-text-dark">Mouka</span></span>
 				</div>
-				<h1 class="auth-title">{{TEXT.welcome}}</h1>
-				<p class="auth-subtitle">
+				<h1 class="panel-brand">Job<span class="panel-brand-accent">Mouka</span></h1>
+				<p class="panel-tagline">
 					{{ isSignupMode() ? TEXT.subtitles.signup :
 					   isForgotPasswordMode() ? TEXT.subtitles.forgotPassword :
 					   isResetPasswordMode() ? TEXT.subtitles.resetPassword :
 					   TEXT.subtitles.login }}
 				</p>
 			</div>
+		</div>
+
+		<div class="auth-container">
 
 			@if (errorMessage) {
 				<div class="error-message">

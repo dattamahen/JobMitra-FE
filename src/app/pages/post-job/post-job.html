@@ -6,18 +6,20 @@
 		</mat-card-header>
 
 		<mat-card-content>
-			@if (validationErrors().size > 0) {
-				<div class="validation-error-summary">
-					<h4 class="validation-error-title">
-						<mat-icon>error</mat-icon>
-						{{TEXT.validationErrorsPrefix}} ({{ validationErrors().size }})
-					</h4>
-					<ul class="validation-error-list">
-						@for (error of validationErrors() | keyvalue; track error.key) {
-							<li><strong>{{ error.key }}:</strong> {{ error.value }}</li>
-						}
-					</ul>
-				</div>
+			@if (validationErrors() | keyvalue; as errors) {
+				@if (errors.length > 0) {
+					<div class="validation-error-summary" role="alert" aria-live="polite">
+						<h4 class="validation-error-title">
+							<mat-icon>error</mat-icon>
+							{{TEXT.validationErrorsPrefix}} ({{ errors.length }})
+						</h4>
+						<ul class="validation-error-list">
+							@for (error of errors; track error.key) {
+								<li><strong>{{ error.key }}:</strong> {{ error.value }}</li>
+							}
+						</ul>
+					</div>
+				}
 			}
 
 			<form [formGroup]="jobForm" (ngSubmit)="onSubmit()">
@@ -213,7 +215,7 @@
 
 							<div class="navigation-buttons">
 								<button mat-button type="button" (click)="stepper.previous()">{{TEXT.buttons.back}}</button>
-								<button mat-raised-button color="primary" type="button" (click)="onStep3Submit(null)">{{TEXT.buttons.next}}</button>
+								<button mat-raised-button color="primary" type="button" (click)="stepper.next()">{{TEXT.buttons.next}}</button>
 							</div>
 						</div>
 					</mat-step>
