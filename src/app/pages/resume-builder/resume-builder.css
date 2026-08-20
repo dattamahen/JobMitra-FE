@@ -107,7 +107,14 @@
 	flex-shrink: 0;
 }
 
+@keyframes ai-shimmer {
+	0%   { background-position: -200% center; }
+	100% { background-position: 200% center; }
+}
+
 .jd-open-btn {
+	position: relative;
+	overflow: hidden;
 	width: 100%;
 	border-radius: 10px !important;
 	border-color: #1a73e8 !important;
@@ -123,8 +130,22 @@
 	gap: 6px;
 }
 
+.jd-open-btn::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(105deg, transparent 40%, rgba(26,115,232,0.12) 50%, transparent 60%);
+	background-size: 200% 100%;
+	animation: ai-shimmer 2.4s linear infinite;
+	pointer-events: none;
+}
+
 .jd-open-btn:hover {
-	background: #e8f0fe !important;
+	background: #f5f3ff !important;
+}
+
+.jd-open-btn:hover::after {
+	animation-play-state: paused;
 }
 
 /* ── Main Form Area ───────────────────────────────────────── */
