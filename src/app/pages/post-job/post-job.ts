@@ -1,5 +1,5 @@
 import { Component, signal, computed, viewChild, inject, ChangeDetectionStrategy, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, KeyValuePipe } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -27,6 +27,7 @@ import { HrService } from '../../services/hr.service';
 	selector: 'app-post-job',
 	imports: [
 		CommonModule,
+		KeyValuePipe,
 		ReactiveFormsModule,
 		MatCardModule,
 		MatButtonModule,
@@ -82,7 +83,7 @@ export class PostJobPage {
 	commonSkills = COMMON_SKILLS;
 	commonBenefits = COMMON_BENEFITS;
 
-	validationErrors = signal<Map<string, string>>(new Map());
+	validationErrors = signal<Record<string, string>>({});
 
 	// Skill autocomplete
 	requiredSkillInput = new FormControl('');
@@ -139,6 +140,7 @@ export class PostJobPage {
 	}
 
 	private updateFormData(formData: any): void {
+		if (!formData) return;
 		// Convert dot notation to nested objects
 		const nestedData: any = {};
 		Object.keys(formData).forEach(key => {
@@ -381,27 +383,28 @@ export class PostJobPage {
 		
 		if (this.jobForm.invalid || validationErrors.length > 0) {
 			this.markFormGroupTouched(this.jobForm);
-			
-			// Create detailed error message
-			const fieldErrors = Object.keys(formErrors).map(field => {
-				const errorTypes = Object.keys(formErrors[field]);
-				return `${field} (${errorTypes.join(', ')})`;
+
+			const errorRecord: Record<string, string> = {};
+			Object.keys(formErrors).forEach(field => {
+				const errs = formErrors[field];
+				if (errs['required']) errorRecord[field] = 'This field is required';
+				else if (errs['minlength']) errorRecord[field] = `Min ${errs['minlength'].requiredLength} characters required`;
+				else if (errs['maxlength']) errorRecord[field] = `Max ${errs['maxlength'].requiredLength} characters allowed`;
+				else if (errs['invalidEmail']) errorRecord[field] = 'Invalid email address';
+				else errorRecord[field] = Object.keys(errs).join(', ');
 			});
-			
-			const allErrors = [...fieldErrors, ...validationErrors];
-			const errorMessage = allErrors.length > 0 
-				? `Missing required fields: ${allErrors.join(', ')}`
-				: 'Please fill in all required fields';
-			
-			this.snackBar.open(errorMessage, this.TEXT.snackbar.close, {
-				duration: 10000,
+			validationErrors.forEach(msg => errorRecord[msg] = msg);
+
+			this.validationErrors.set(errorRecord);
+			this.snackBar.open('Please fix the errors shown above before submitting.', this.TEXT.snackbar.close, {
+				duration: 5000,
 				panelClass: ['error-snackbar']
 			});
 			return;
 		}
 
 		this.isSubmitting = true;
-		this.validationErrors.set(new Map());
+		this.validationErrors.set({});
 
 		try {
 			const jobData = { ...this.jobForm.value };
@@ -463,38 +466,27 @@ export class PostJobPage {
 	}
 
 	private handleBackendValidationErrors(errorResponse: any): void {
-		const errorMap = new Map<string, string>();
-		const errorMessages: string[] = [];
-		
+		const errorRecord: Record<string, string> = {};
 		errorResponse.errors.forEach((error: any) => {
 			const fieldPath = error.field.replace(/ -> /g, '.');
-			errorMap.set(fieldPath, error.message);
-			errorMessages.push(`${error.field}: ${error.message}`);
+			errorRecord[fieldPath] = error.message;
 		});
-
-		this.validationErrors.set(errorMap);
-		
-		const message = `Validation failed (${errorResponse.error_count} errors):\n${errorMessages.join('\n')}`;
-		this.snackBar.open(message, this.TEXT.snackbar.close, {
-			duration: 10000,
+		this.validationErrors.set(errorRecord);
+		this.snackBar.open(`${errorResponse.error_count} validation error(s) — see details above.`, this.TEXT.snackbar.close, {
+			duration: 5000,
 			panelClass: ['error-snackbar']
 		});
-		
-		// Scroll to first error
 		setTimeout(() => {
-			const firstError = document.querySelector('.field-error');
-			if (firstError) {
-				firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-			}
+			document.querySelector('.validation-error-summary')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 		}, 100);
 	}
 
 	hasFieldError(fieldName: string): boolean {
-		return this.validationErrors().has(fieldName);
+		return fieldName in this.validationErrors();
 	}
 
 	getFieldError(fieldName: string): string | undefined {
-		return this.validationErrors().get(fieldName);
+		return this.validationErrors()[fieldName];
 	}
 
 	onCancel(): void {

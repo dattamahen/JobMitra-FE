@@ -66,8 +66,8 @@
 							</app-dynamic-form>
 							
 							<div class="form-actions">
-								<button mat-stroked-button type="button">
-									<mat-icon>psychology</mat-icon>
+								<button class="btn-ai" type="button" aria-label="Generate summary with AI">
+									<mat-icon>auto_awesome</mat-icon>
 									{{TEXT.buttons.aiEnhance}}
 								</button>
 							</div>
@@ -93,6 +93,12 @@
 								(formSubmit)="saveExperience()"
 								(formChange)="updateExperience($event)">
 							</app-dynamic-form>
+							<div class="form-actions">
+								<button class="btn-ai" type="button" aria-label="Generate roles and responsibilities with AI">
+									<mat-icon>auto_awesome</mat-icon>
+									Generate Roles &amp; Responsibilities
+								</button>
+							</div>
 						</div>
 					}
 
