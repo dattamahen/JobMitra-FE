@@ -30,28 +30,12 @@
 					</div>
 				</div>
 
-				@if (currentResume(); as resume) {
-					<div class="builder-templates">
-						<div class="template-section">
-							<h4>
-								<mat-icon>palette</mat-icon>
-								{{TEXT.sidebar.cvTemplates}}
-							</h4>
-							<div class="template-grid">
-								@for (template of cvTemplates; track template.id) {
-									<div class="template-card" 
-											[class.active]="selectedTemplate() === template.id"
-											(click)="selectTemplate(template.id)">
-										<div class="template-preview">
-											<mat-icon>{{ template.icon }}</mat-icon>
-										</div>
-										<span class="template-name">{{ template.name }}</span>
-									</div>
-								}
-							</div>
-						</div>
-					</div>
-				}
+				<div class="builder-jd-action">
+					<button mat-stroked-button class="jd-open-btn" (click)="openJdModal()">
+						<mat-icon>auto_awesome</mat-icon>
+						CV as per JD
+					</button>
+				</div>
 			</div>
 			
 			<div class="builder-main">
@@ -82,8 +66,8 @@
 							</app-dynamic-form>
 							
 							<div class="form-actions">
-								<button mat-stroked-button type="button">
-									<mat-icon>psychology</mat-icon>
+								<button class="btn-ai" type="button" aria-label="Generate summary with AI">
+									<mat-icon>auto_awesome</mat-icon>
 									{{TEXT.buttons.aiEnhance}}
 								</button>
 							</div>
@@ -109,6 +93,12 @@
 								(formSubmit)="saveExperience()"
 								(formChange)="updateExperience($event)">
 							</app-dynamic-form>
+							<div class="form-actions">
+								<button class="btn-ai" type="button" aria-label="Generate roles and responsibilities with AI">
+									<mat-icon>auto_awesome</mat-icon>
+									Generate Roles &amp; Responsibilities
+								</button>
+							</div>
 						</div>
 					}
 
@@ -148,11 +138,118 @@
 				
 				<div class="resume-actions">
 					<button mat-raised-button color="primary"
-							(click)="downloadPDF()" [disabled]="isDownloading()">
+							(click)="openDownloadModal()" [disabled]="isDownloading()">
 						<mat-icon>{{ isDownloading() ? 'hourglass_empty' : 'download' }}</mat-icon>
-						{{ isDownloading() ? 'Generating...' : TEXT.buttons.downloadPDF }}
+						{{ isDownloading() ? 'Generating...' : 'Download CV' }}
 					</button>
 				</div>
+
+			</div>
+		</div>
+	}
+
+	<!-- Download CV: template picker modal -->
+	@if (showDownloadModal()) {
+		<div class="jd-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="dl-modal-title" (click)="onDownloadOverlayClick($event)">
+			<div class="jd-modal">
+				<div class="jd-modal-header">
+					<h3 id="dl-modal-title">
+						<mat-icon>download</mat-icon>
+						Select CV Template
+					</h3>
+					<button mat-icon-button (click)="showDownloadModal.set(false)" aria-label="Close">
+						<mat-icon>close</mat-icon>
+					</button>
+				</div>
+				<p class="jd-modal-hint">Choose a template to download your CV.</p>
+				<div class="template-grid">
+					@for (template of cvTemplates; track template.id) {
+						<button class="template-card" (click)="downloadWithTemplate(template.id)" [disabled]="isDownloading()" [attr.aria-label]="'Download with ' + template.name + ' template'">
+							<mat-icon>{{ template.icon }}</mat-icon>
+							<span>{{ template.name }}</span>
+						</button>
+					}
+				</div>
+				<div class="jd-modal-actions">
+					<button mat-button (click)="showDownloadModal.set(false)">Cancel</button>
+				</div>
+			</div>
+		</div>
+	}
+
+	<!-- JD Modal: outside layout so overlay covers full viewport -->
+	@if (showJdModal()) {
+		<div class="jd-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="jd-modal-title" (click)="onJdOverlayClick($event)">
+			<div class="jd-modal">
+
+				@if (jdModalStep() === 1) {
+					<div class="jd-modal-header">
+						<h3 id="jd-modal-title">
+							<mat-icon>auto_awesome</mat-icon>
+							CV as per Job Description
+						</h3>
+						<button mat-icon-button (click)="closeJdModal()" aria-label="Close">
+							<mat-icon>close</mat-icon>
+						</button>
+					</div>
+
+					<p class="jd-modal-hint">Paste the JD or upload a file — we'll tailor your CV to match it.</p>
+
+					<textarea
+						class="jd-textarea"
+						placeholder="Paste job description here..."
+						[value]="jdText()"
+						(input)="onJdTextInput($event)"
+						rows="8"
+						aria-label="Paste job description">
+					</textarea>
+
+					<div class="jd-divider"><span>or</span></div>
+
+					<label class="jd-file-label" for="jd-file-input">
+						<mat-icon>upload_file</mat-icon>
+						{{ jdFileName() || 'Upload JD file (.txt / .pdf)' }}
+					</label>
+					<input id="jd-file-input" type="file" accept=".txt,.pdf" (change)="onJdFileSelected($event)" class="jd-file-input" aria-label="Upload job description file">
+
+					<div class="jd-modal-actions">
+						<button mat-button (click)="closeJdModal()">Cancel</button>
+						<button mat-raised-button color="primary" (click)="generateCvByJd()" [disabled]="isTailoringByJd() || (!jdText() && !jdFileName())">
+							<mat-icon>{{ isTailoringByJd() ? 'hourglass_empty' : 'auto_awesome' }}</mat-icon>
+							{{ isTailoringByJd() ? 'Processing...' : 'Process' }}
+						</button>
+					</div>
+				}
+
+				@if (jdModalStep() === 2) {
+					<div class="jd-modal-header">
+						<h3 id="jd-modal-title">
+							<mat-icon>check_circle</mat-icon>
+							Pick a Template
+						</h3>
+						<button mat-icon-button (click)="closeJdModal()" aria-label="Close">
+							<mat-icon>close</mat-icon>
+						</button>
+					</div>
+
+					@if (tailoredJdData(); as td) {
+						<p class="jd-match-badge">Estimated match: <strong>{{ td.matchPct }}%</strong></p>
+					}
+
+					<div class="template-grid">
+						@for (template of cvTemplates; track template.id) {
+							<button class="template-card" (click)="downloadJdCv(template.id)" [disabled]="isDownloading()" [attr.aria-label]="'Download with ' + template.name + ' template'">
+								<mat-icon>{{ template.icon }}</mat-icon>
+								<span>{{ template.name }}</span>
+							</button>
+						}
+					</div>
+
+					<div class="jd-modal-actions">
+						<button mat-button (click)="jdModalStep.set(1)">← Back</button>
+					</div>
+				}
+
 			</div>
 		</div>
 	}
