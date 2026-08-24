@@ -126,9 +126,9 @@ export const POST_JOB_STEP1_CONFIG: FormConfig = {
 			label: 'Job Title',
 			placeholder: 'e.g. Senior Software Engineer',
 			required: true,
-			hint: '10-100 characters required',
+			hint: '5-100 characters required',
 			width: 'quarter',
-			validators: { minLength: 10, maxLength: 100 }
+			validators: { minLength: 5, maxLength: 100 }
 		},
 		{
 			name: 'company',
@@ -236,8 +236,8 @@ export const POST_JOB_STEP3_CONFIG: FormConfig = {
 			placeholder: 'Describe the role, what the candidate will do, and what makes this opportunity exciting...',
 			required: true,
 			rows: 6,
-			hint: '100-2000 characters required',
-			validators: { minLength: 100, maxLength: 2000 }
+			hint: '50-2000 characters required',
+			validators: { minLength: 50, maxLength: 2000 }
 		}
 	]
 };
