@@ -142,7 +142,10 @@
 							</div>
 							<app-dynamic-form
 								[config]="step3Config"
-								(formSubmit)="onStep3Submit($event)">
+								(formSubmit)="onStep3Submit($event)"
+								[submitButtonText]="TEXT.buttons.next"
+								[showBackButton]="true"
+								(backClick)="stepper.previous()">
 							</app-dynamic-form>
 
 							<div class="array-sections-grid">
@@ -213,10 +216,7 @@
 
 							</div>
 
-							<div class="navigation-buttons">
-								<button mat-button type="button" (click)="stepper.previous()">{{TEXT.buttons.back}}</button>
-								<button mat-raised-button color="primary" type="button" (click)="stepper.next()">{{TEXT.buttons.next}}</button>
-							</div>
+
 						</div>
 					</mat-step>
 
