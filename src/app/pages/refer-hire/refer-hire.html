@@ -1,0 +1,354 @@
+<div class="page-container">
+
+  <!-- ═══════════════════════════════════════════════════════ LIST VIEW -->
+  @if (view() === 'list') {
+    <div class="page-header">
+      <button mat-raised-button color="primary" (click)="openPostView()">Post a Job</button>
+    </div>
+
+    @if (listLoading()) {
+      <div class="loading-container">
+        <mat-spinner></mat-spinner>
+        <p>Loading your job posts...</p>
+      </div>
+    } @else if (jobs().length === 0) {
+      <div class="empty-state">
+        <mat-icon>work_off</mat-icon>
+        <h3>No jobs posted yet</h3>
+        <p>Share a job opening from your company and help fellow job seekers find opportunities.</p>
+        <button mat-raised-button color="primary" (click)="openPostView()">Post Your First Job</button>
+      </div>
+    } @else {
+      <div class="jobs-list">
+        @for (job of jobs(); track job.internal_job_id) {
+          <mat-card class="job-card" [class.expired]="!job.is_active">
+            <mat-card-content>
+              <div class="job-layout">
+                <div class="job-main">
+                  <div class="job-title-row">
+                    <h3 class="job-title">{{ job.title }}</h3>
+                    @if (job.is_active) {
+                      <mat-chip class="chip-active">Active</mat-chip>
+                    } @else {
+                      <mat-chip class="chip-expired">Expired</mat-chip>
+                    }
+                  </div>
+                  <span class="company-name">{{ job.company }}</span>
+                  <div class="meta-row">
+                    <span class="meta-item"><mat-icon>location_on</mat-icon>{{ locationStr(job) }}</span>
+                    <span class="meta-item"><mat-icon>work</mat-icon>{{ job.employment_type }}</span>
+                    <span class="meta-item"><mat-icon>trending_up</mat-icon>{{ job.experience_level }}</span>
+                    <span class="meta-item"><mat-icon>schedule</mat-icon>{{ formatDate(job.posted_date) }}</span>
+                    @if (job.is_active) {
+                      <span class="meta-item expires" [class.urgent]="daysLeft(job.expires_at) <= 3">
+                        <mat-icon>timer</mat-icon>{{ daysLeft(job.expires_at) }} days left
+                      </span>
+                    }
+                  </div>
+                  <div class="skills-row">
+                    @for (skill of job.skills_required.slice(0, 5); track skill) {
+                      <mat-chip class="skill-chip">{{ skill }}</mat-chip>
+                    }
+                    @if (job.skills_required.length > 5) {
+                      <mat-chip class="skill-chip">+{{ job.skills_required.length - 5 }}</mat-chip>
+                    }
+                  </div>
+                </div>
+                <div class="job-actions">
+                  <mat-chip class="apps-chip" [class.has-apps]="job.applications_count > 0">
+                    <mat-icon matChipIcon>people</mat-icon>{{ job.applications_count }} applied
+                  </mat-chip>
+                  <button mat-icon-button (click)="toggleExpand(job.internal_job_id)"
+                    [attr.aria-label]="isExpanded(job.internal_job_id) ? 'Collapse' : 'Expand'">
+                    <mat-icon>{{ isExpanded(job.internal_job_id) ? 'expand_less' : 'expand_more' }}</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" (click)="removeJob(job)" matTooltip="Remove job" aria-label="Remove job">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </div>
+
+              @if (isExpanded(job.internal_job_id)) {
+                <div class="expanded-content">
+                  <p class="description">{{ job.description }}</p>
+                  @if (job.requirements?.length) {
+                    <div class="section">
+                      <h4>Requirements</h4>
+                      <ul>@for (r of job.requirements; track r) { <li>{{ r }}</li> }</ul>
+                    </div>
+                  }
+                  @if (job.responsibilities?.length) {
+                    <div class="section">
+                      <h4>Responsibilities</h4>
+                      <ul>@for (r of job.responsibilities; track r) { <li>{{ r }}</li> }</ul>
+                    </div>
+                  }
+                  <p class="official-email-note">
+                    <mat-icon>email</mat-icon> Applications notify: <strong>{{ job.official_email }}</strong>
+                  </p>
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    }
+  }
+
+  <!-- ═══════════════════════════════════════════════════════ POST VIEW -->
+  @if (view() === 'post') {
+    <div class="page-header">
+      <button mat-icon-button (click)="backToList()" aria-label="Back to list">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <h2>Post an Internal Job</h2>
+        <p class="subtitle">Share a job opening from your company</p>
+      </div>
+    </div>
+
+    <!-- Step: Verify Email -->
+    @if (postStep() === 'verify-email') {
+      <mat-card class="step-card">
+        <mat-card-content>
+          <div class="step-header">
+            <mat-icon>verified</mat-icon>
+            <h3>Verify Your Company Email</h3>
+            <p>We'll send a one-time password to confirm you're posting from a valid company email.</p>
+          </div>
+          <form [formGroup]="emailForm" class="email-form">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Official Company Email</mat-label>
+              <input matInput formControlName="official_email" type="email" placeholder="you@yourcompany.com">
+              <mat-icon matSuffix>business</mat-icon>
+              @if (emailForm.get('official_email')?.hasError('email') && emailForm.get('official_email')?.touched) {
+                <mat-error>Enter a valid email address</mat-error>
+              }
+            </mat-form-field>
+            @if (!otpSent()) {
+              <button mat-raised-button color="primary"
+                [disabled]="postLoading() || emailForm.get('official_email')?.invalid"
+                (click)="sendOtp()">
+                @if (postLoading()) { <mat-spinner diameter="20"></mat-spinner> } @else { Send OTP }
+              </button>
+            } @else {
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Enter OTP</mat-label>
+                <input matInput formControlName="otp" placeholder="6-digit OTP" maxlength="6">
+                <mat-icon matSuffix>lock</mat-icon>
+              </mat-form-field>
+              <div class="btn-row">
+                <button mat-raised-button color="primary" [disabled]="postLoading()" (click)="verifyOtp()">
+                  @if (postLoading()) { <mat-spinner diameter="20"></mat-spinner> } @else { Verify & Continue }
+                </button>
+                <button mat-button type="button" (click)="sendOtp()">Resend OTP</button>
+              </div>
+            }
+          </form>
+          <div class="info-box">
+            <mat-icon>info</mat-icon>
+            <span>Personal email providers (Gmail, Yahoo, Outlook) are not accepted.</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <!-- Step: Input -->
+    @if (postStep() === 'input') {
+      <mat-card class="step-card">
+        <mat-card-content>
+          <div class="mode-selector" role="group" aria-label="Input method">
+            <button mat-stroked-button [class.active-mode]="postMode() === 'manual'" (click)="postMode.set('manual')">
+              <mat-icon>edit</mat-icon> Manual Entry
+            </button>
+            <button mat-stroked-button [class.active-mode]="postMode() === 'image'" (click)="postMode.set('image')">
+              <mat-icon>image</mat-icon> Upload Image
+            </button>
+            <button mat-stroked-button [class.active-mode]="postMode() === 'csv'" (click)="postMode.set('csv')">
+              <mat-icon>table_chart</mat-icon> Paste CSV / Text
+            </button>
+          </div>
+
+          <!-- Manual -->
+          @if (postMode() === 'manual') {
+            <form [formGroup]="manualForm" class="manual-form">
+              <div class="form-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>Job Title *</mat-label>
+                  <input matInput formControlName="title" placeholder="e.g. Senior React Developer">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Company *</mat-label>
+                  <input matInput formControlName="company" placeholder="Your company name">
+                </mat-form-field>
+              </div>
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Job Description *</mat-label>
+                <textarea matInput formControlName="description" rows="4" placeholder="Describe the role..."></textarea>
+              </mat-form-field>
+              <div class="form-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>Experience Level</mat-label>
+                  <mat-select formControlName="experience_level">
+                    <mat-option value="entry">Entry Level</mat-option>
+                    <mat-option value="mid">Mid Level</mat-option>
+                    <mat-option value="senior">Senior</mat-option>
+                    <mat-option value="lead">Lead / Principal</mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Employment Type</mat-label>
+                  <mat-select formControlName="employment_type">
+                    <mat-option value="full-time">Full Time</mat-option>
+                    <mat-option value="part-time">Part Time</mat-option>
+                    <mat-option value="contract">Contract</mat-option>
+                    <mat-option value="internship">Internship</mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Work Mode</mat-label>
+                  <mat-select formControlName="job_type">
+                    <mat-option value="onsite">On-site</mat-option>
+                    <mat-option value="remote">Remote</mat-option>
+                    <mat-option value="hybrid">Hybrid</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="form-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>City *</mat-label>
+                  <input matInput formControlName="location_city" placeholder="e.g. Bangalore">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>State</mat-label>
+                  <input matInput formControlName="location_state" placeholder="e.g. Karnataka">
+                </mat-form-field>
+              </div>
+              <div class="skills-section">
+                <h4>Required Skills *</h4>
+                <div class="skill-input-row">
+                  <mat-form-field appearance="outline" class="skill-input">
+                    <mat-label>Add a skill</mat-label>
+                    <input matInput formControlName="skills_input" placeholder="e.g. React"
+                      (keydown.enter)="$event.preventDefault(); addSkill()">
+                  </mat-form-field>
+                  <button mat-icon-button color="primary" type="button" (click)="addSkill()" aria-label="Add skill">
+                    <mat-icon>add_circle</mat-icon>
+                  </button>
+                </div>
+                <mat-chip-set>
+                  @for (skill of skillsArray.controls; track $index; let i = $index) {
+                    <mat-chip (removed)="removeSkill(i)">{{ skill.value }}<mat-icon matChipRemove>cancel</mat-icon></mat-chip>
+                  }
+                </mat-chip-set>
+              </div>
+              <div class="array-section">
+                <h4>Requirements</h4>
+                @for (ctrl of requirementsArray.controls; track $index; let i = $index) {
+                  <div class="array-row">
+                    <input class="array-input" [value]="ctrl.value"
+                      (input)="ctrl.setValue($any($event.target).value)" placeholder="Requirement {{i+1}}">
+                    <button mat-icon-button type="button" (click)="removeRequirement(i)" aria-label="Remove"><mat-icon>close</mat-icon></button>
+                  </div>
+                }
+                <button mat-button type="button" (click)="addRequirement()"><mat-icon>add</mat-icon> Add</button>
+              </div>
+              <div class="array-section">
+                <h4>Responsibilities</h4>
+                @for (ctrl of responsibilitiesArray.controls; track $index; let i = $index) {
+                  <div class="array-row">
+                    <input class="array-input" [value]="ctrl.value"
+                      (input)="ctrl.setValue($any($event.target).value)" placeholder="Responsibility {{i+1}}">
+                    <button mat-icon-button type="button" (click)="removeResponsibility(i)" aria-label="Remove"><mat-icon>close</mat-icon></button>
+                  </div>
+                }
+                <button mat-button type="button" (click)="addResponsibility()"><mat-icon>add</mat-icon> Add</button>
+              </div>
+              <div class="btn-row">
+                <button mat-raised-button color="primary" type="button" (click)="goToPreviewFromManual()">Preview &amp; Post</button>
+              </div>
+            </form>
+          }
+
+          <!-- Image Upload -->
+          @if (postMode() === 'image') {
+            <div class="upload-zone">
+              <mat-icon class="upload-icon">image</mat-icon>
+              <p>Upload a job posting image (PNG, JPG)</p>
+              <p class="hint">Our AI will extract the job details automatically</p>
+              <input type="file" accept="image/*" (change)="onFileSelected($event)" #fileInput style="display:none" aria-label="Upload image">
+              <button mat-stroked-button (click)="fileInput.click()"><mat-icon>upload</mat-icon> Choose Image</button>
+              @if (selectedFile()) {
+                <p class="file-name">{{ selectedFile()!.name }}</p>
+                <button mat-raised-button color="primary" [disabled]="postLoading()" (click)="parseFile()">
+                  @if (postLoading()) { <mat-spinner diameter="20"></mat-spinner> } @else { Extract &amp; Preview }
+                </button>
+              }
+            </div>
+          }
+
+          <!-- CSV / Text -->
+          @if (postMode() === 'csv') {
+            <div class="csv-zone">
+              <p>Paste job details from a CSV, spreadsheet, or any text format</p>
+              <textarea class="csv-textarea" rows="10" placeholder="Paste job details here..."
+                [value]="csvText()" (input)="csvText.set($any($event.target).value)"></textarea>
+              <button mat-raised-button color="primary" [disabled]="postLoading() || !csvText().trim()" (click)="parseCsvText()">
+                @if (postLoading()) { <mat-spinner diameter="20"></mat-spinner> } @else { Parse &amp; Preview }
+              </button>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <!-- Step: Preview -->
+    @if (postStep() === 'preview') {
+      <mat-card class="step-card">
+        <mat-card-content>
+          <div class="step-header">
+            <mat-icon>preview</mat-icon>
+            <h3>Review Before Posting</h3>
+            <p>This post will be live for 15 days and then automatically removed.</p>
+          </div>
+          <table mat-table [dataSource]="previewRows" class="preview-table">
+            <ng-container matColumnDef="field">
+              <th mat-header-cell *matHeaderCellDef>Field</th>
+              <td mat-cell *matCellDef="let row" class="field-cell">{{ row.field }}</td>
+            </ng-container>
+            <ng-container matColumnDef="value">
+              <th mat-header-cell *matHeaderCellDef>Value</th>
+              <td mat-cell *matCellDef="let row">{{ row.value }}</td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="previewColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: previewColumns;"></tr>
+          </table>
+          <div class="info-box warning">
+            <mat-icon>warning</mat-icon>
+            <span>Jobs with inappropriate content (adult, illegal, government exam) will be rejected.</span>
+          </div>
+          <div class="btn-row">
+            <button mat-button (click)="postStep.set('input')"><mat-icon>edit</mat-icon> Edit</button>
+            <button mat-raised-button color="primary" [disabled]="postLoading()" (click)="submitJob()">
+              @if (postLoading()) { <mat-spinner diameter="20"></mat-spinner> } @else { Post Job }
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <!-- Step: Done -->
+    @if (postStep() === 'done') {
+      <mat-card class="step-card done-card">
+        <mat-card-content>
+          <mat-icon class="done-icon">check_circle</mat-icon>
+          <h3>Job Posted Successfully!</h3>
+          <p>Your job is now live on the Internal Job Market for <strong>15 days</strong>.</p>
+          <p>You'll be notified by email whenever someone applies.</p>
+          <button mat-raised-button color="primary" (click)="doneAndRefresh()">View My Posts</button>
+        </mat-card-content>
+      </mat-card>
+    }
+  }
+
+</div>

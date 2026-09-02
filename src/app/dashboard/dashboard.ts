@@ -40,6 +40,8 @@ export class Dashboard implements OnInit {
 		'applications-received': () => import('../pages/applications-received/applications-received').then(m => m.ApplicationsReceivedPage),
 		'subscription':          () => import('../pages/subscription/subscription').then(m => m.SubscriptionPage),
 		'project-contest':       () => import('../pages/project-contest/project-contest').then(m => m.ProjectContestPage),
+		'refer-hire':            () => import('../pages/refer-hire/refer-hire').then(m => m.ReferHirePage),
+		'internal-job-market':   () => import('../pages/internal-job-market/internal-job-market').then(m => m.InternalJobMarketPage),
 	};
 
 	readonly pageInputs = {
