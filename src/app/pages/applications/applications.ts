@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, DestroyRef, inject, signal, input, ChangeDetectionStrategy, computed } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -13,6 +13,7 @@ import { APPLICATIONS_TEXT } from '../../data/applications-data';
 
 import { JobService } from '../../services/job.service';
 import { UserService } from '../../services/user.service';
+import { InternalJobService } from '../../services/internal-job.service';
 
 @Component({
 	selector: 'app-applications-page',
@@ -38,6 +39,7 @@ export class ApplicationsPage {
 	private jobService = inject(JobService);
 	private userService = inject(UserService);
 	private snackBar = inject(MatSnackBar);
+	private internalJobService = inject(InternalJobService);
 
 	readonly TEXT = APPLICATIONS_TEXT;
 
@@ -61,8 +63,18 @@ export class ApplicationsPage {
 				this.jobService.getUserAppliedJobs(currentUser.user_id)
 					.pipe(takeUntilDestroyed(this.destroyRef))
 					.subscribe({
-						next: (response) => {
-							this.applications.set(response.applications as unknown as ApplicationData[] || []);
+						next: async (response) => {
+							const regular = (response.applications as unknown as ApplicationData[]) || [];
+							let internal: ApplicationData[] = [];
+							try {
+								const res = await this.internalJobService.getMyApplications();
+								internal = res.applications || [];
+							} catch { /* non-fatal */ }
+							const merged = [
+								...internal,
+								...regular
+							].sort((a, b) => new Date(b.applied_date).getTime() - new Date(a.applied_date).getTime());
+							this.applications.set(merged);
 							this.isLoading.set(false);
 						},
 						error: (error) => {

@@ -29,21 +29,27 @@ export class NavigationService {
 			userTypes: ['job_seeker', 'candidate']
 		},
 		{ 
+			id: 'resume-builder', 
+			label: 'Resume Builder', 
+			matIcon: 'description',
+			userTypes: ['job_seeker', 'candidate']
+		},
+		{ 
 			id: 'job-search', 
 			label: 'Job Search', 
 			matIcon: 'search',
 			userTypes: ['job_seeker', 'candidate']
 		},
 		{ 
-			id: 'applications', 
-			label: 'My Applications', 
-			matIcon: 'assignment',
+			id: 'internal-job-market', 
+			label: 'Internal Job Market', 
+			matIcon: 'storefront',
 			userTypes: ['job_seeker', 'candidate']
 		},
 		{ 
-			id: 'resume-builder', 
-			label: 'Resume Builder', 
-			matIcon: 'description',
+			id: 'applications', 
+			label: 'My Applications', 
+			matIcon: 'assignment',
 			userTypes: ['job_seeker', 'candidate']
 		},
 		{ 
@@ -56,6 +62,12 @@ export class NavigationService {
 			id: 'mock-interviews', 
 			label: 'Mock Interviews', 
 			matIcon: 'record_voice_over',
+			userTypes: ['job_seeker', 'candidate']
+		},
+		{ 
+			id: 'refer-hire', 
+			label: 'Refer & Hire', 
+			matIcon: 'handshake',
 			userTypes: ['job_seeker', 'candidate']
 		},
 		{ 
