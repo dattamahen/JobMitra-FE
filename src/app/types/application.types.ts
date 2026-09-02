@@ -119,6 +119,7 @@ export type ApplicationData = {
 	company: string;
 	status: 'applied' | 'under_review' | 'interview_scheduled' | 'interviewed' | 'offer_received' | 'rejected' | 'withdrawn';
 	applied_date: string;
+	application_source?: 'direct' | 'referral' | 'job_board' | 'company_website' | 'internal_referral' | 'other';
 	interview_stages?: {
 		stage_id: string;
 		stage_name: string;

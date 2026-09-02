@@ -25,10 +25,15 @@
 		</div>
 		} @else {
 		@for (application of applications(); track application.application_id) {
-		<mat-card class="application-card">
+		<mat-card class="application-card" [class.internal-referral]="application.application_source === 'internal_referral'">
 			<mat-card-header>
 				<mat-card-title>{{application.job_title}}</mat-card-title>
-				<mat-card-subtitle>{{application.company}}</mat-card-subtitle>
+				<mat-card-subtitle>
+					{{application.company}}
+					@if (application.application_source === 'internal_referral') {
+						<span class="internal-badge"><mat-icon>verified</mat-icon> Internal Referral</span>
+					}
+				</mat-card-subtitle>
 				<div class="header-actions">
 					<button mat-raised-button color="primary" (click)="prepareForInterview(application.application_id)">
 						<mat-icon>mic</mat-icon>

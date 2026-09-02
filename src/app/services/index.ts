@@ -68,3 +68,5 @@ export type {
 } from './hr.service';
 export type { ProfileSnapshot } from '../types/profile.types';
 // ImageUploadService has no exported types
+export { InternalJobService } from './internal-job.service';
+export type { InternalJob, InternalJobSearchResult, ParsedJobPreview } from './internal-job.service';

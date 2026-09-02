@@ -11,6 +11,31 @@
 	box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
 }
 
+.application-card.internal-referral {
+	border-left: 3px solid #4831af;
+	background: linear-gradient(to right, #f5f3ff 0%, #ffffff 60%);
+}
+
+.internal-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	margin-left: 8px;
+	padding: 2px 8px;
+	border-radius: 12px;
+	background: #ede9fe;
+	color: #4831af;
+	font-size: 0.7rem;
+	font-weight: 600;
+	vertical-align: middle;
+}
+
+.internal-badge mat-icon {
+	font-size: 13px;
+	width: 13px;
+	height: 13px;
+}
+
 .application-card mat-card-header {
 	position: relative;
 }

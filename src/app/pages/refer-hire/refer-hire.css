@@ -1,0 +1,71 @@
+.page-container { padding: 24px; max-width: 900px; margin: 0 auto; }
+.page-header { display: flex; align-items: center; margin-bottom: 24px; justify-content: flex-end; }
+.loading-container { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 60px; }
+.empty-state { text-align: center; padding: 60px 24px; }
+.empty-state mat-icon { font-size: 56px; width: 56px; height: 56px; color: #d1d5db; }
+.empty-state h3 { font-size: 18px; font-weight: 600; margin: 16px 0 8px; }
+.empty-state p { color: #6b7280; margin: 0 0 24px; }
+.jobs-list { display: flex; flex-direction: column; gap: 16px; }
+.job-card { border-radius: 12px; }
+.job-card.expired { opacity: 0.65; }
+.job-layout { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.job-main { flex: 1; }
+.job-title-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
+.job-title { margin: 0; font-size: 16px; font-weight: 700; }
+.company-name { font-size: 14px; color: #6b7280; display: block; margin-bottom: 10px; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 10px; }
+.meta-item { display: flex; align-items: center; gap: 4px; font-size: 13px; color: #6b7280; }
+.meta-item mat-icon { font-size: 16px; width: 16px; height: 16px; }
+.expires { color: #f59e0b; }
+.expires.urgent { color: #ef4444; font-weight: 600; }
+.skills-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.skill-chip { font-size: 12px; height: 24px; }
+.job-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.apps-chip { cursor: default; }
+.apps-chip.has-apps { background: #ede9fe; color: #4831af; }
+.chip-active { background: #dcfce7; color: #16a34a; }
+.chip-expired { background: #fee2e2; color: #dc2626; }
+.expanded-content { margin-top: 16px; padding-top: 16px; border-top: 1px solid #f3f4f6; }
+.description { font-size: 14px; color: #374151; margin: 0 0 12px; }
+.section h4 { font-size: 13px; font-weight: 600; margin: 0 0 6px; }
+.section ul { margin: 0 0 12px; padding-left: 20px; }
+.section li { font-size: 13px; color: #4b5563; margin-bottom: 4px; }
+.official-email-note { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #6b7280; margin: 8px 0 0; }
+.official-email-note mat-icon { font-size: 16px; width: 16px; height: 16px; }
+/* Post flow */
+.step-card { border-radius: 12px; margin-bottom: 24px; }
+.step-header { text-align: center; margin-bottom: 24px; }
+.step-header mat-icon { font-size: 40px; width: 40px; height: 40px; color: #4831af; }
+.step-header h3 { margin: 8px 0 4px; font-size: 18px; font-weight: 600; }
+.step-header p { color: #6b7280; font-size: 14px; margin: 0; }
+.email-form { display: flex; flex-direction: column; gap: 16px; max-width: 480px; margin: 0 auto; }
+.full-width { width: 100%; }
+.btn-row { display: flex; gap: 12px; align-items: center; margin-top: 16px; flex-wrap: wrap; }
+.info-box { display: flex; align-items: flex-start; gap: 8px; background: #f0f4ff; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #374151; margin-top: 16px; }
+.info-box.warning { background: #fff8e1; }
+.info-box mat-icon { color: #4831af; font-size: 18px; flex-shrink: 0; }
+.mode-selector { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.mode-selector button { flex: 1; min-width: 140px; }
+.active-mode { background: #4831af !important; color: #fff !important; }
+.manual-form { display: flex; flex-direction: column; gap: 16px; }
+.form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+.skills-section, .array-section { margin-top: 8px; }
+.skills-section h4, .array-section h4 { font-size: 14px; font-weight: 600; margin: 0 0 8px; }
+.skill-input-row { display: flex; align-items: center; gap: 8px; }
+.skill-input { flex: 1; }
+.array-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.array-input { flex: 1; border: 1px solid #d1d5db; border-radius: 6px; padding: 8px 12px; font-size: 14px; outline: none; }
+.array-input:focus { border-color: #4831af; }
+.upload-zone, .csv-zone { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 40px 24px; border: 2px dashed #d1d5db; border-radius: 12px; text-align: center; }
+.upload-icon { font-size: 48px; width: 48px; height: 48px; color: #9ca3af; }
+.hint { color: #9ca3af !important; font-size: 13px !important; }
+.file-name { font-size: 13px; color: #4831af; font-weight: 500; }
+.csv-textarea { width: 100%; border: 1px solid #d1d5db; border-radius: 8px; padding: 12px; font-size: 14px; resize: vertical; outline: none; font-family: inherit; }
+.csv-textarea:focus { border-color: #4831af; }
+.preview-table { width: 100%; margin-bottom: 16px; }
+.field-cell { font-weight: 600; color: #374151; width: 160px; }
+.done-card { text-align: center; padding: 40px 24px; }
+.done-icon { font-size: 64px; width: 64px; height: 64px; color: #22c55e; }
+.done-card h3 { font-size: 22px; font-weight: 700; margin: 16px 0 8px; }
+.done-card p { color: #6b7280; margin: 0 0 8px; }
+.done-card button { margin-top: 24px; }
