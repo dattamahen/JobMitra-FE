@@ -14,6 +14,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { InternalJobService, InternalJob, ParsedJobPreview } from '../../services/internal-job.service';
+import { MotivationBannerComponent } from '../../shared/components/motivation-banner/motivation-banner.component';
+import { getRandomPosterMotivationGroup, type MotivationGroup } from '../../data/motivation-lines.data';
 
 type View = 'list' | 'post';
 type PostMode = 'manual' | 'image' | 'csv';
@@ -25,13 +27,16 @@ type PostStep = 'verify-email' | 'input' | 'preview' | 'done';
   imports: [
     ReactiveFormsModule, MatCardModule, MatButtonModule, MatIconModule,
     MatChipsModule, MatProgressSpinnerModule, MatSnackBarModule, MatTooltipModule,
-    MatFormFieldModule, MatInputModule, MatSelectModule, MatTableModule
+    MatFormFieldModule, MatInputModule, MatSelectModule, MatTableModule,
+    MotivationBannerComponent
   ],
   templateUrl: './refer-hire.html',
   styleUrl: './refer-hire.css'
 })
 export class ReferHirePage implements OnInit {
   navigateToPage = input<(event: { page: string }) => void>();
+
+  readonly posterMotivation: MotivationGroup = getRandomPosterMotivationGroup();
 
   private svc = inject(InternalJobService);
   private fb = inject(FormBuilder);
