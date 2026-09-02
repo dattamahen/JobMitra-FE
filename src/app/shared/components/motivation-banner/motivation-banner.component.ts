@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, input, Signal, InputSignal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { getRandomMotivationGroup, type MotivationGroup } from '../../../data/motivation-lines.data';
 
@@ -10,5 +10,6 @@ import { getRandomMotivationGroup, type MotivationGroup } from '../../../data/mo
 	styleUrl: './motivation-banner.component.css'
 })
 export class MotivationBannerComponent {
-	readonly group: MotivationGroup = getRandomMotivationGroup();
+	readonly customGroup: InputSignal<MotivationGroup | null> = input<MotivationGroup | null>(null);
+	readonly group: Signal<MotivationGroup> = computed(() => this.customGroup() ?? getRandomMotivationGroup());
 }

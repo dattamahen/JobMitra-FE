@@ -1,159 +1,145 @@
 <div class="page-container">
 
+  <!-- Banner -->
+  <app-motivation-banner [customGroup]="seekerMotivation" />
 
-  <!-- Paywall -->
-  @if (!isPaid()) {
-    <div class="paywall-card">
-      <mat-icon class="lock-icon">lock</mat-icon>
-      <h3>Premium Feature</h3>
-      <p>Access the Internal Job Market with a <strong>₹149/month</strong> subscription.</p>
-      <ul class="feature-list">
-        <li><mat-icon>check</mat-icon> Browse exclusive internal job referrals</li>
-        <li><mat-icon>check</mat-icon> Apply directly to company insiders</li>
-        <li><mat-icon>check</mat-icon> Standard CV downloads</li>
-        <li><mat-icon>check</mat-icon> Mock interview sessions</li>
-      </ul>
-      <button mat-raised-button color="primary" (click)="goToSubscription()">
-        <mat-icon>card_membership</mat-icon> Subscribe — ₹149/month
-      </button>
+  <!-- Filter -->
+  <app-job-filter
+    [filterConfig]="filterConfig()"
+    [filterOptions]="filterOptions"
+    [resultsCount]="totalCount()"
+    searchLabel="Search internal jobs"
+    searchPlaceholder="Job title, skills, company..."
+    searchButtonLabel="Search Jobs"
+    resultsLabel="job"
+    [showEmploymentType]="true"
+    (filterChange)="onFilterChange($event)"
+    (search)="search(1)">
+  </app-job-filter>
+
+  <!-- Results -->
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Searching internal jobs...</p>
     </div>
-  } @else {
-    <!-- Filter -->
-    <app-job-filter
-      [filterConfig]="filterConfig()"
-      [filterOptions]="filterOptions"
-      [resultsCount]="totalCount()"
-      searchLabel="Search internal jobs"
-      searchPlaceholder="Job title, skills, company..."
-      searchButtonLabel="Search Jobs"
-      resultsLabel="job"
-      [showEmploymentType]="true"
-      (filterChange)="onFilterChange($event)"
-      (search)="search(1)">
-    </app-job-filter>
-
-    <!-- Results -->
-    @if (loading()) {
-      <div class="loading-container">
-        <mat-spinner></mat-spinner>
-        <p>Searching internal jobs...</p>
+  } @else if (jobs().length === 0) {
+    <mat-card>
+      <div class="empty-state">
+        <mat-icon>search_off</mat-icon>
+        <h3>No jobs found</h3>
+        <p>Try different keywords or filters</p>
       </div>
-    } @else if (jobs().length === 0) {
-      <mat-card>
-        <div class="empty-state">
-          <mat-icon>search_off</mat-icon>
-          <h3>No jobs found</h3>
-          <p>Try different keywords or filters</p>
-        </div>
-      </mat-card>
-    } @else {
-      <div class="jobs-list">
-        @for (job of jobs(); track job.internal_job_id) {
-          <mat-card class="job-card">
-            <div class="job-card-content">
-              <!-- Company Avatar -->
-              <div class="company-avatar">
-                <div class="avatar-initials">{{ getCompanyInitials(job.company) }}</div>
-              </div>
-
-              <!-- Job Details -->
-              <div class="job-details">
-                <div class="job-header">
-                  <h3 class="job-title">{{ job.title }}</h3>
-                  <mat-chip class="employment-type-chip">{{ job.employment_type }}</mat-chip>
-                  <span class="referral-badge"><mat-icon>verified</mat-icon> Internal Referral</span>
-                </div>
-
-                <p class="company-name">{{ job.company }}</p>
-
-                <div class="job-meta">
-                  <span class="meta-item"><mat-icon>location_on</mat-icon>{{ locationStr(job) }}</span>
-                  <span class="meta-item"><mat-icon>work_history</mat-icon>{{ job.experience_level }} level</span>
-                  <span class="meta-item"><mat-icon>schedule</mat-icon>{{ formatDate(job.posted_date) }}</span>
-                  <span class="meta-item expires" [class.urgent]="daysLeft(job.expires_at) <= 3">
-                    <mat-icon>timer</mat-icon>{{ daysLeft(job.expires_at) }}d left
-                  </span>
-                </div>
-
-                @if (job.skills_required?.length) {
-                  <div class="job-skills">
-                    @for (skill of job.skills_required.slice(0, 6); track skill) {
-                      <mat-chip class="skill-chip">{{ skill }}</mat-chip>
-                    }
-                    @if (job.skills_required.length > 6) {
-                      <mat-chip class="skill-chip more-skills">+{{ job.skills_required.length - 6 }}</mat-chip>
-                    }
-                  </div>
-                }
-              </div>
-
-              <!-- Applied badge -->
-              <div class="job-actions-right">
-                @if (appliedIds().has(job.internal_job_id)) {
-                  <div class="applied-status">
-                    <mat-icon class="applied-icon">check_circle</mat-icon>
-                    <span>Applied</span>
-                  </div>
-                }
-              </div>
+    </mat-card>
+  } @else {
+    <div class="jobs-list">
+      @for (job of jobs(); track job.internal_job_id) {
+        <mat-card class="job-card">
+          <div class="job-card-content">
+            <!-- Company Avatar -->
+            <div class="company-avatar">
+              <div class="avatar-initials">{{ getCompanyInitials(job.company) }}</div>
             </div>
 
-            <!-- Expanded details -->
-            @if (isExpanded(job.internal_job_id)) {
-              <div class="expanded-section">
-                <p class="desc">{{ job.description }}</p>
-                @if (job.requirements?.length) {
-                  <div class="section">
-                    <h4>Requirements</h4>
-                    <ul>@for (r of job.requirements; track r) { <li>{{ r }}</li> }</ul>
-                  </div>
-                }
-                @if (job.responsibilities?.length) {
-                  <div class="section">
-                    <h4>Responsibilities</h4>
-                    <ul>@for (r of job.responsibilities; track r) { <li>{{ r }}</li> }</ul>
-                  </div>
-                }
+            <!-- Job Details -->
+            <div class="job-details">
+              <div class="job-header">
+                <h3 class="job-title">{{ job.title }}</h3>
+                <mat-chip class="employment-type-chip">{{ job.employment_type }}</mat-chip>
+                <span class="referral-badge"><mat-icon>verified</mat-icon> Internal Referral</span>
               </div>
-            }
 
-            <!-- Action Buttons -->
-            <div class="action-buttons">
-              <button mat-stroked-button class="action-btn"
-                (click)="toggleExpand(job.internal_job_id)"
-                [attr.aria-label]="isExpanded(job.internal_job_id) ? 'Collapse details' : 'View details'">
-                <mat-icon>{{ isExpanded(job.internal_job_id) ? 'expand_less' : 'expand_more' }}</mat-icon>
-                <span>{{ isExpanded(job.internal_job_id) ? 'Less' : 'Details' }}</span>
-              </button>
+              <p class="company-name">{{ job.company }}</p>
 
-              @if (!appliedIds().has(job.internal_job_id)) {
-                <button mat-raised-button color="primary" class="apply-btn"
-                  [disabled]="applyingId() === job.internal_job_id"
-                  (click)="apply(job)">
-                  @if (applyingId() === job.internal_job_id) {
-                    <mat-spinner diameter="18"></mat-spinner>
-                  } @else {
-                    Apply Now
+              <div class="job-meta">
+                <span class="meta-item"><mat-icon>location_on</mat-icon>{{ locationStr(job) }}</span>
+                <span class="meta-item"><mat-icon>work_history</mat-icon>{{ job.experience_level }} level</span>
+                <span class="meta-item"><mat-icon>schedule</mat-icon>{{ formatDate(job.posted_date) }}</span>
+                <span class="meta-item expires" [class.urgent]="daysLeft(job.expires_at) <= 3">
+                  <mat-icon>timer</mat-icon>{{ daysLeft(job.expires_at) }}d left
+                </span>
+              </div>
+
+              @if (job.skills_required?.length) {
+                <div class="job-skills">
+                  @for (skill of job.skills_required.slice(0, 6); track skill) {
+                    <mat-chip class="skill-chip">{{ skill }}</mat-chip>
                   }
-                </button>
+                  @if (job.skills_required.length > 6) {
+                    <mat-chip class="skill-chip more-skills">+{{ job.skills_required.length - 6 }}</mat-chip>
+                  }
+                </div>
               }
             </div>
-          </mat-card>
-        }
-      </div>
 
-      <!-- Pagination -->
-      @if (totalPages() > 1) {
-        <div class="pagination">
-          <button mat-icon-button [disabled]="currentPage() === 1" (click)="search(currentPage() - 1)">
-            <mat-icon>chevron_left</mat-icon>
-          </button>
-          <span class="page-info">Page {{ currentPage() }} of {{ totalPages() }} ({{ totalCount() }} jobs)</span>
-          <button mat-icon-button [disabled]="currentPage() >= totalPages()" (click)="search(currentPage() + 1)">
-            <mat-icon>chevron_right</mat-icon>
-          </button>
-        </div>
+            <!-- Applied badge -->
+            <div class="job-actions-right">
+              @if (appliedIds().has(job.internal_job_id)) {
+                <div class="applied-status">
+                  <mat-icon class="applied-icon">check_circle</mat-icon>
+                  <span>Applied</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Expanded details -->
+          @if (isExpanded(job.internal_job_id)) {
+            <div class="expanded-section">
+              <p class="desc">{{ job.description }}</p>
+              @if (job.requirements?.length) {
+                <div class="section">
+                  <h4>Requirements</h4>
+                  <ul>@for (r of job.requirements; track r) { <li>{{ r }}</li> }</ul>
+                </div>
+              }
+              @if (job.responsibilities?.length) {
+                <div class="section">
+                  <h4>Responsibilities</h4>
+                  <ul>@for (r of job.responsibilities; track r) { <li>{{ r }}</li> }</ul>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Action Buttons -->
+          <div class="action-buttons">
+            <button mat-stroked-button class="action-btn"
+              (click)="toggleExpand(job.internal_job_id)"
+              [attr.aria-label]="isExpanded(job.internal_job_id) ? 'Collapse details' : 'View details'">
+              <mat-icon>{{ isExpanded(job.internal_job_id) ? 'expand_less' : 'expand_more' }}</mat-icon>
+              <span>{{ isExpanded(job.internal_job_id) ? 'Less' : 'Details' }}</span>
+            </button>
+
+            @if (!appliedIds().has(job.internal_job_id)) {
+              <button mat-raised-button color="primary" class="apply-btn"
+                [disabled]="applyingId() === job.internal_job_id"
+                (click)="apply(job)">
+                @if (applyingId() === job.internal_job_id) {
+                  <mat-spinner diameter="18"></mat-spinner>
+                } @else if (isPaid()) {
+                  Apply Now
+                } @else {
+                  <mat-icon>lock</mat-icon> Apply
+                }
+              </button>
+            }
+          </div>
+        </mat-card>
       }
+    </div>
+
+    <!-- Pagination -->
+    @if (totalPages() > 1) {
+      <div class="pagination">
+        <button mat-icon-button [disabled]="currentPage() === 1" (click)="search(currentPage() - 1)">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <span class="page-info">Page {{ currentPage() }} of {{ totalPages() }} ({{ totalCount() }} jobs)</span>
+        <button mat-icon-button [disabled]="currentPage() >= totalPages()" (click)="search(currentPage() + 1)">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
     }
   }
 </div>

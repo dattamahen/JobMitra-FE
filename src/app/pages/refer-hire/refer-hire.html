@@ -2,7 +2,7 @@
 
   <!-- ═══════════════════════════════════════════════════════ LIST VIEW -->
   @if (view() === 'list') {
-    <div class="page-header">
+    <div class="page-header list-header">
       <button mat-raised-button color="primary" (click)="openPostView()">Post a Job</button>
     </div>
 
@@ -103,7 +103,6 @@
       </button>
       <div>
         <h2>Post an Internal Job</h2>
-        <p class="subtitle">Share a job opening from your company</p>
       </div>
     </div>
 
@@ -112,9 +111,9 @@
       <mat-card class="step-card">
         <mat-card-content>
           <div class="step-header">
-            <mat-icon>verified</mat-icon>
-            <h3>Verify Your Company Email</h3>
-            <p>We'll send a one-time password to confirm you're posting from a valid company email.</p>
+            <mat-icon>verified_user</mat-icon>
+            <h3>Verification Required</h3>
+            <p>Your one post can help thousands find their next opportunity.</p>
           </div>
           <form [formGroup]="emailForm" class="email-form">
             <mat-form-field appearance="outline" class="full-width">
@@ -145,9 +144,10 @@
               </div>
             }
           </form>
+          <app-motivation-banner [customGroup]="posterMotivation" />
           <div class="info-box">
             <mat-icon>info</mat-icon>
-            <span>Personal email providers (Gmail, Yahoo, Outlook) are not accepted.</span>
+            <span>To keep this space spam-free, we verify that every job comes from a real company email before it goes live. Personal providers like Gmail, Yahoo, and Outlook are not allowed.</span>
           </div>
         </mat-card-content>
       </mat-card>
@@ -172,97 +172,128 @@
           <!-- Manual -->
           @if (postMode() === 'manual') {
             <form [formGroup]="manualForm" class="manual-form">
-              <div class="form-row">
-                <mat-form-field appearance="outline">
-                  <mat-label>Job Title *</mat-label>
-                  <input matInput formControlName="title" placeholder="e.g. Senior React Developer">
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                  <mat-label>Company *</mat-label>
-                  <input matInput formControlName="company" placeholder="Your company name">
-                </mat-form-field>
-              </div>
-              <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Job Description *</mat-label>
-                <textarea matInput formControlName="description" rows="4" placeholder="Describe the role..."></textarea>
-              </mat-form-field>
-              <div class="form-row">
-                <mat-form-field appearance="outline">
-                  <mat-label>Experience Level</mat-label>
-                  <mat-select formControlName="experience_level">
-                    <mat-option value="entry">Entry Level</mat-option>
-                    <mat-option value="mid">Mid Level</mat-option>
-                    <mat-option value="senior">Senior</mat-option>
-                    <mat-option value="lead">Lead / Principal</mat-option>
-                  </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                  <mat-label>Employment Type</mat-label>
-                  <mat-select formControlName="employment_type">
-                    <mat-option value="full-time">Full Time</mat-option>
-                    <mat-option value="part-time">Part Time</mat-option>
-                    <mat-option value="contract">Contract</mat-option>
-                    <mat-option value="internship">Internship</mat-option>
-                  </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                  <mat-label>Work Mode</mat-label>
-                  <mat-select formControlName="job_type">
-                    <mat-option value="onsite">On-site</mat-option>
-                    <mat-option value="remote">Remote</mat-option>
-                    <mat-option value="hybrid">Hybrid</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-              <div class="form-row">
-                <mat-form-field appearance="outline">
-                  <mat-label>City *</mat-label>
-                  <input matInput formControlName="location_city" placeholder="e.g. Bangalore">
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                  <mat-label>State</mat-label>
-                  <input matInput formControlName="location_state" placeholder="e.g. Karnataka">
-                </mat-form-field>
-              </div>
-              <div class="skills-section">
-                <h4>Required Skills *</h4>
-                <div class="skill-input-row">
-                  <mat-form-field appearance="outline" class="skill-input">
-                    <mat-label>Add a skill</mat-label>
-                    <input matInput formControlName="skills_input" placeholder="e.g. React"
-                      (keydown.enter)="$event.preventDefault(); addSkill()">
+
+              <div class="form-section">
+                <div class="section-label">Basic Info</div>
+                <div class="form-row">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Job Title *</mat-label>
+                    <input matInput formControlName="title" placeholder="e.g. Senior React Developer">
                   </mat-form-field>
-                  <button mat-icon-button color="primary" type="button" (click)="addSkill()" aria-label="Add skill">
-                    <mat-icon>add_circle</mat-icon>
+                  <mat-form-field appearance="outline">
+                    <mat-label>Company *</mat-label>
+                    <input matInput formControlName="company" placeholder="Your company name">
+                  </mat-form-field>
+                </div>
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Job Description *</mat-label>
+                  <textarea matInput formControlName="description" rows="4" placeholder="Describe the role, responsibilities and what makes it exciting..."></textarea>
+                </mat-form-field>
+              </div>
+
+              <div class="form-section">
+                <div class="section-label">Job Details</div>
+                <div class="form-row">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Experience Level</mat-label>
+                    <mat-select formControlName="experience_level">
+                      <mat-option value="entry">Entry Level</mat-option>
+                      <mat-option value="mid">Mid Level</mat-option>
+                      <mat-option value="senior">Senior</mat-option>
+                      <mat-option value="lead">Lead / Principal</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <mat-form-field appearance="outline">
+                    <mat-label>Employment Type</mat-label>
+                    <mat-select formControlName="employment_type">
+                      <mat-option value="full-time">Full Time</mat-option>
+                      <mat-option value="part-time">Part Time</mat-option>
+                      <mat-option value="contract">Contract</mat-option>
+                      <mat-option value="internship">Internship</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <mat-form-field appearance="outline">
+                    <mat-label>Work Mode</mat-label>
+                    <mat-select formControlName="job_type">
+                      <mat-option value="onsite">On-site</mat-option>
+                      <mat-option value="remote">Remote</mat-option>
+                      <mat-option value="hybrid">Hybrid</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="form-row">
+                  <mat-form-field appearance="outline">
+                    <mat-label>City *</mat-label>
+                    <input matInput formControlName="location_city" placeholder="e.g. Bangalore">
+                  </mat-form-field>
+                  <mat-form-field appearance="outline">
+                    <mat-label>State</mat-label>
+                    <input matInput formControlName="location_state" placeholder="e.g. Karnataka">
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <div class="section-label">Required Skills *</div>
+                <div class="skills-section">
+                  <div class="skill-input-row">
+                    <mat-form-field appearance="outline" class="skill-input">
+                      <mat-label>Add a skill</mat-label>
+                      <input matInput formControlName="skills_input" placeholder="e.g. React"
+                        (keydown.enter)="$event.preventDefault(); addSkill()">
+                    </mat-form-field>
+                    <button mat-flat-button color="primary" type="button" (click)="addSkill()" class="add-skill-btn" aria-label="Add skill">
+                      <mat-icon>add</mat-icon> Add
+                    </button>
+                  </div>
+                  <mat-chip-set>
+                    @for (skill of skillsArray.controls; track $index; let i = $index) {
+                      <mat-chip (removed)="removeSkill(i)">{{ skill.value }}<mat-icon matChipRemove>cancel</mat-icon></mat-chip>
+                    }
+                  </mat-chip-set>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <div class="section-label">Requirements</div>
+                <div class="array-section">
+                  @for (ctrl of requirementsArray.controls; track $index; let i = $index) {
+                    <div class="array-row">
+                      <mat-form-field appearance="outline" class="array-field">
+                        <mat-label>Requirement {{ i + 1 }}</mat-label>
+                        <input matInput [value]="ctrl.value"
+                          (input)="ctrl.setValue($any($event.target).value)">
+                        <button matSuffix mat-icon-button type="button" (click)="removeRequirement(i)" aria-label="Remove">
+                          <mat-icon>close</mat-icon>
+                        </button>
+                      </mat-form-field>
+                    </div>
+                  }
+                  <button mat-stroked-button type="button" class="add-btn" (click)="addRequirement()">
+                    <mat-icon>add</mat-icon> Add Requirement
                   </button>
                 </div>
-                <mat-chip-set>
-                  @for (skill of skillsArray.controls; track $index; let i = $index) {
-                    <mat-chip (removed)="removeSkill(i)">{{ skill.value }}<mat-icon matChipRemove>cancel</mat-icon></mat-chip>
+              </div>
+
+              <div class="form-section">
+                <div class="section-label">Responsibilities</div>
+                <div class="array-section">
+                  @for (ctrl of responsibilitiesArray.controls; track $index; let i = $index) {
+                    <div class="array-row">
+                      <mat-form-field appearance="outline" class="array-field">
+                        <mat-label>Responsibility {{ i + 1 }}</mat-label>
+                        <input matInput [value]="ctrl.value"
+                          (input)="ctrl.setValue($any($event.target).value)">
+                        <button matSuffix mat-icon-button type="button" (click)="removeResponsibility(i)" aria-label="Remove">
+                          <mat-icon>close</mat-icon>
+                        </button>
+                      </mat-form-field>
+                    </div>
                   }
-                </mat-chip-set>
-              </div>
-              <div class="array-section">
-                <h4>Requirements</h4>
-                @for (ctrl of requirementsArray.controls; track $index; let i = $index) {
-                  <div class="array-row">
-                    <input class="array-input" [value]="ctrl.value"
-                      (input)="ctrl.setValue($any($event.target).value)" placeholder="Requirement {{i+1}}">
-                    <button mat-icon-button type="button" (click)="removeRequirement(i)" aria-label="Remove"><mat-icon>close</mat-icon></button>
-                  </div>
-                }
-                <button mat-button type="button" (click)="addRequirement()"><mat-icon>add</mat-icon> Add</button>
-              </div>
-              <div class="array-section">
-                <h4>Responsibilities</h4>
-                @for (ctrl of responsibilitiesArray.controls; track $index; let i = $index) {
-                  <div class="array-row">
-                    <input class="array-input" [value]="ctrl.value"
-                      (input)="ctrl.setValue($any($event.target).value)" placeholder="Responsibility {{i+1}}">
-                    <button mat-icon-button type="button" (click)="removeResponsibility(i)" aria-label="Remove"><mat-icon>close</mat-icon></button>
-                  </div>
-                }
-                <button mat-button type="button" (click)="addResponsibility()"><mat-icon>add</mat-icon> Add</button>
+                  <button mat-stroked-button type="button" class="add-btn" (click)="addResponsibility()">
+                    <mat-icon>add</mat-icon> Add Responsibility
+                  </button>
+                </div>
               </div>
               <div class="btn-row">
                 <button mat-raised-button color="primary" type="button" (click)="goToPreviewFromManual()">Preview &amp; Post</button>
