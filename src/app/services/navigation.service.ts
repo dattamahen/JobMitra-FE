@@ -66,7 +66,7 @@ export class NavigationService {
 		},
 		{ 
 			id: 'refer-hire', 
-			label: 'Refer & Hire', 
+			label: 'Refer & Earn', 
 			matIcon: 'handshake',
 			userTypes: ['job_seeker', 'candidate']
 		},

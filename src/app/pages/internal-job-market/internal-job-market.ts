@@ -10,6 +10,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AuthService } from '../../services/auth.service';
 import { InternalJobService, InternalJob } from '../../services/internal-job.service';
 import { JobFilterComponent, JobFilterConfig } from '../../shared/components/job-filter/job-filter.component';
+import { MotivationBannerComponent } from '../../shared/components/motivation-banner/motivation-banner.component';
+import { getRandomSeekerMotivationGroup, type MotivationGroup } from '../../data/motivation-lines.data';
 
 @Component({
   selector: 'app-internal-job-market',
@@ -17,13 +19,14 @@ import { JobFilterComponent, JobFilterConfig } from '../../shared/components/job
   imports: [
     MatCardModule, MatButtonModule, MatIconModule,
     MatChipsModule, MatProgressSpinnerModule, MatSnackBarModule,
-    JobFilterComponent
+    JobFilterComponent, MotivationBannerComponent
   ],
   templateUrl: './internal-job-market.html',
   styleUrl: './internal-job-market.css'
 })
 export class InternalJobMarketPage implements OnInit {
   navigateToPage = input<(event: { page: string }) => void>();
+  readonly seekerMotivation: MotivationGroup = getRandomSeekerMotivationGroup();
 
   private svc = inject(InternalJobService);
   private authService = inject(AuthService);
@@ -57,7 +60,7 @@ export class InternalJobMarketPage implements OnInit {
   };
 
   async ngOnInit(): Promise<void> {
-    if (this.isPaid()) await this.search();
+    await this.search();
   }
 
   onFilterChange(config: JobFilterConfig): void {
@@ -96,6 +99,10 @@ export class InternalJobMarketPage implements OnInit {
   isExpanded(id: string): boolean { return this.expandedIds().has(id); }
 
   async apply(job: InternalJob): Promise<void> {
+    if (!this.isPaid()) {
+      this.goToSubscription();
+      return;
+    }
     this.applyingId.set(job.internal_job_id);
     try {
       const res = await this.svc.applyJob(job.internal_job_id, false);
