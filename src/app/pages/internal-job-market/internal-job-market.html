@@ -47,6 +47,9 @@
                 <h3 class="job-title">{{ job.title }}</h3>
                 <mat-chip class="employment-type-chip">{{ job.employment_type }}</mat-chip>
                 <span class="referral-badge"><mat-icon>verified</mat-icon> Internal Referral</span>
+                @if (matchScores()[job.internal_job_id] !== undefined) {
+                  <mat-chip class="match-chip">{{ matchScores()[job.internal_job_id] }}% Match</mat-chip>
+                }
               </div>
 
               <p class="company-name">{{ job.company }}</p>
@@ -111,10 +114,29 @@
               <span>{{ isExpanded(job.internal_job_id) ? 'Less' : 'Details' }}</span>
             </button>
 
+            <button mat-stroked-button color="accent" class="action-btn"
+              [disabled]="analyzingId() === job.internal_job_id || matchScores()[job.internal_job_id] !== undefined"
+              (click)="performMatchAnalysis(job)"
+              aria-label="Match analysis">
+              @if (analyzingId() === job.internal_job_id) {
+                <mat-spinner diameter="18"></mat-spinner>
+              } @else {
+                <mat-icon>analytics</mat-icon>
+              }
+              <span>{{ matchScores()[job.internal_job_id] !== undefined ? matchScores()[job.internal_job_id] + '% Match' : 'Analyse' }}</span>
+            </button>
+
+            <button mat-stroked-button color="primary" class="action-btn"
+              (click)="goToMockInterview(job)"
+              aria-label="Mock interview practice">
+              <mat-icon>mic</mat-icon>
+              <span>Practice</span>
+            </button>
+
             @if (!appliedIds().has(job.internal_job_id)) {
               <button mat-raised-button color="primary" class="apply-btn"
                 [disabled]="applyingId() === job.internal_job_id"
-                (click)="apply(job)">
+                (click)="openTailorModal(job)">
                 @if (applyingId() === job.internal_job_id) {
                   <mat-spinner diameter="18"></mat-spinner>
                 } @else if (isPaid()) {

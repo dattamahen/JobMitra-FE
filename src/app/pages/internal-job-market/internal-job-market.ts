@@ -1,14 +1,19 @@
 import {
-  ChangeDetectionStrategy, Component, inject, signal, computed, input, OnInit
+  ChangeDetectionStrategy, Component, inject, signal, computed, input, OnInit, DestroyRef
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AuthService } from '../../services/auth.service';
 import { InternalJobService, InternalJob } from '../../services/internal-job.service';
+import { JobService } from '../../services/job.service';
+import { ResumeTailorService } from '../../services/resume-tailor.service';
+import { ResumeTailorModalComponent } from '../../components/mock-interview-modal/resume-tailor-modal.component';
 import { JobFilterComponent, JobFilterConfig } from '../../shared/components/job-filter/job-filter.component';
 import { MotivationBannerComponent } from '../../shared/components/motivation-banner/motivation-banner.component';
 import { getRandomSeekerMotivationGroup, type MotivationGroup } from '../../data/motivation-lines.data';
@@ -18,7 +23,7 @@ import { getRandomSeekerMotivationGroup, type MotivationGroup } from '../../data
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCardModule, MatButtonModule, MatIconModule,
-    MatChipsModule, MatProgressSpinnerModule, MatSnackBarModule,
+    MatChipsModule, MatProgressSpinnerModule, MatSnackBarModule, MatDialogModule,
     JobFilterComponent, MotivationBannerComponent
   ],
   templateUrl: './internal-job-market.html',
@@ -31,6 +36,10 @@ export class InternalJobMarketPage implements OnInit {
   private svc = inject(InternalJobService);
   private authService = inject(AuthService);
   private snack = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
+  private jobService = inject(JobService);
+  private tailorService = inject(ResumeTailorService);
+  private destroyRef = inject(DestroyRef);
 
   isPaid = computed(() => {
     const plan = (this.authService.getCurrentUserValue()?.user_plan || 'F').toUpperCase();
@@ -45,6 +54,8 @@ export class InternalJobMarketPage implements OnInit {
   expandedIds = signal<Set<string>>(new Set());
   appliedIds = signal<Set<string>>(new Set());
   applyingId = signal<string | null>(null);
+  matchScores = signal<Record<string, number>>({});
+  analyzingId = signal<string | null>(null);
 
   filterConfig = signal<JobFilterConfig>({
     searchQuery: '',
@@ -98,26 +109,53 @@ export class InternalJobMarketPage implements OnInit {
 
   isExpanded(id: string): boolean { return this.expandedIds().has(id); }
 
-  async apply(job: InternalJob): Promise<void> {
-    if (!this.isPaid()) {
-      this.goToSubscription();
-      return;
-    }
-    this.applyingId.set(job.internal_job_id);
-    try {
-      const res = await this.svc.applyJob(job.internal_job_id, false);
-      if (res.show_confirm) {
-        if (confirm(`Apply for "${job.title}" at ${job.company}?`)) {
-          await this.svc.applyJob(job.internal_job_id, true);
+  openTailorModal(job: InternalJob): void {
+    if (!this.isPaid()) { this.goToSubscription(); return; }
+    const dialogRef = this.dialog.open(ResumeTailorModalComponent, {
+      width: '800px',
+      maxHeight: '90vh',
+      data: { jobId: job.internal_job_id, jobTitle: job.title }
+    });
+    dialogRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(result => {
+      if (!result || result.action === 'cancel') return;
+      const apply$ = result.action === 'apply_with_tailor'
+        ? this.tailorService.applyWithTailoredResume(job.internal_job_id)
+        : this.tailorService.applyWithoutTailoring(job.internal_job_id);
+      this.applyingId.set(job.internal_job_id);
+      apply$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: (res) => {
           this.appliedIds.update(s => new Set([...s, job.internal_job_id]));
-          this.snack.open('Application submitted! The poster will be notified.', 'Close', { duration: 4000 });
+          this.snack.open(res.message || 'Application submitted!', 'Close', { duration: 4000 });
+          this.applyingId.set(null);
+        },
+        error: (e: any) => {
+          this.snack.open(e.error?.detail || 'Failed to apply', 'Close', { duration: 5000 });
+          this.applyingId.set(null);
         }
-      }
-    } catch (e: any) {
-      this.snack.open(e.error?.detail || 'Failed to apply', 'Close', { duration: 5000 });
-    } finally {
-      this.applyingId.set(null);
-    }
+      });
+    });
+  }
+
+  performMatchAnalysis(job: InternalJob): void {
+    if (this.analyzingId()) return;
+    this.analyzingId.set(job.internal_job_id);
+    this.jobService.performMatchAnalysis(job.internal_job_id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.matchScores.update(s => ({ ...s, [job.internal_job_id]: res.match_percentage }));
+          this.snack.open(res.message, 'Close', { duration: 3000 });
+          this.analyzingId.set(null);
+        },
+        error: (e: any) => {
+          this.snack.open(e.error?.detail || 'Match analysis failed', 'Close', { duration: 3000 });
+          this.analyzingId.set(null);
+        }
+      });
+  }
+
+  goToMockInterview(job: InternalJob): void {
+    this.navigateToPage()?.({ page: 'mock-interviews' });
   }
 
   goToSubscription(): void {
