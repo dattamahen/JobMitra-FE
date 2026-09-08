@@ -159,7 +159,7 @@
         <mat-card-content>
           <!-- Paste Text -->
           <div class="csv-zone">
-            <p>Paste job details from a CSV, spreadsheet, or any text format</p>
+            <p>Paste job details from a CSV, spreadsheet, or any text format.</p>
             <textarea class="csv-textarea" rows="10" placeholder="Paste job details here..."
               [value]="csvText()" (input)="csvText.set($any($event.target).value)"></textarea>
             <button mat-raised-button color="primary" [disabled]="postLoading() || !csvText().trim()" (click)="parseCsvText()">
