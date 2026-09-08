@@ -115,7 +115,7 @@ export class ReferHirePage implements OnInit {
     this.listLoading.set(true);
     try {
       const res = await this.svc.getMyPosts();
-      this.jobs.set(res.jobs);
+      this.jobs.set(res.jobs.filter((j: InternalJob) => j.is_active));
     } catch (e: any) {
       this.snack.open(e.error?.detail || 'Failed to load your job posts', 'Close', { duration: 5000 });
     } finally {
