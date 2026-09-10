@@ -248,8 +248,8 @@ export class JobService {
 		return this.apiService.get<{ applications: JobListing[]; total_count: number }>(`/users/${userId}/applications`);
 	}
 
-	performMatchAnalysis(jobId: string): Observable<{ match_percentage: number; message: string; analysis_done: boolean }> {
-		return this.apiService.post<{ match_percentage: number; message: string; analysis_done: boolean }>('/api/v1/match-analysis', { job_id: jobId });
+	performMatchAnalysis(jobId: string, source: 'jobs' | 'internal_jobs' = 'jobs'): Observable<{ match_percentage: number; message: string; analysis_done: boolean }> {
+		return this.apiService.post<{ match_percentage: number; message: string; analysis_done: boolean }>('/api/v1/match-analysis', { job_id: jobId, source });
 	}
 
 	tailorResume(jobId: string): Observable<{ match_percentage: number; message: string; tailor_done: boolean }> {

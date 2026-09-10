@@ -7,6 +7,9 @@ export interface UserProfile {
 	experience_years: number;
 	skills: string[];
 	user_id?: string;
+	job_title?: string;
+	job_description?: string;
+	job_skills_required?: string[];
 }
 
 export interface InterviewPrompt {
