@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, DestroyRef, inject, ChangeDetectionStrategy, computed, signal, input, Inject } from '@angular/core';
+import { Component, DestroyRef, inject, ChangeDetectionStrategy, computed, signal, input, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -51,7 +51,6 @@ export class JobSearchPage {
 	private readonly jobService = inject(JobService);
 	private readonly userService = inject(UserService);
 	private readonly snackBar = inject(MatSnackBar);
-	private readonly cdr = inject(ChangeDetectorRef);
 	private readonly dialog = inject(MatDialog);
 	private readonly featureUsageService = inject(FeatureUsageService);
 	private readonly mockInterviewService = inject(MockInterviewService);
@@ -65,7 +64,7 @@ export class JobSearchPage {
 	userSkills = signal<string[]>([]);
 	private jobMap = new Map<string, JobListing>();
 	filterOptions: any = {};
-	isLoading = true;
+	isLoading = signal(true);
 	totalJobs = 0;
 	currentPage = signal(1);
 	perPage = 5;
@@ -153,7 +152,7 @@ export class JobSearchPage {
 	}
 
 	private loadJobs(): void {
-		this.isLoading = true;
+		this.isLoading.set(true);
 		const filters: JobSearchFilters = {};
 		
 		this.jobService.searchJobs(filters, 1, 100)
@@ -167,20 +166,15 @@ export class JobSearchPage {
 					this.totalJobs = this.filteredJobListings().length;
 					this.currentPage.set(1);
 					
-					// Handle backend filtering messages
 					if ((response as any).message) {
 						this.snackBar.open((response as any).message, this.TEXT.snackbar.close, { duration: 5000 });
 					}
-					
 					if (response.filters) {
 						this.filterOptions = response.filters;
 					}
-					
-					this.isLoading = false;
-					this.cdr.markForCheck();
+					this.isLoading.set(false);
 				},
 				error: (error) => {
-					// Handle specific skill-related errors
 					if (error.error?.detail?.includes('skills')) {
 						this.snackBar.open(
 							'Please add at least 2 skills to your profile to see job recommendations.',
@@ -188,8 +182,7 @@ export class JobSearchPage {
 							{ duration: 7000 }
 						);
 					}
-					this.isLoading = false;
-					this.cdr.markForCheck();
+					this.isLoading.set(false);
 				}
 			});
 	}
@@ -198,12 +191,7 @@ export class JobSearchPage {
 		this.userService.getCurrentUser()
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe(user => {
-				if (user?.skills) {
-					this.userSkills.set(user.skills);
-				} else {
-					this.userSkills.set([]);
-				}
-				this.cdr.markForCheck();
+				this.userSkills.set(user?.skills ?? []);
 			});
 	}
 
@@ -257,7 +245,6 @@ export class JobSearchPage {
 		this.filterConfig.set(config);
 		this.currentPage.set(1);
 		this.totalJobs = this.filteredJobListings().length;
-		this.cdr.markForCheck();
 	}
 
 	goToPage(page: number): void {
@@ -360,11 +347,8 @@ export class JobSearchPage {
 					job.already_applied = true;
 					job.match_analysis_done = true;
 					job.tailor_resume_done = true;
-					if (response.match_percentage) {
-						job.match_percentage = response.match_percentage;
-					}
+					if (response.match_percentage) job.match_percentage = response.match_percentage;
 				}
-				this.cdr.markForCheck();
 				this.snackBar.open(this.TEXT.snackbar.appliedWithTailor, this.TEXT.snackbar.close, { duration: 3000 });
 			},
 			error: (error) => {
@@ -466,11 +450,8 @@ export class JobSearchPage {
 					job.already_applied = true;
 					job.match_analysis_done = true;
 					job.tailor_resume_done = true;
-					if (response.match_percentage) {
-						job.match_percentage = response.match_percentage;
-					}
+					if (response.match_percentage) job.match_percentage = response.match_percentage;
 				}
-				this.cdr.markForCheck();
 				this.snackBar.open(response.message || this.TEXT.snackbar.appliedSuccess, this.TEXT.snackbar.close, { duration: 3000 });
 			},
 			error: (error) => {
