@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component, inject, signal, computed, input, OnInit, DestroyRef, Inject
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { from } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -131,6 +132,11 @@ export class InternalJobMarketPage implements OnInit {
       this.snack.open('Resume already tailored for this job', 'Close', { duration: 3000 });
       return;
     }
+    // If match analysis already done, skip tailor modal and apply directly
+    if (job.match_analysis_done) {
+      this.submitInternalApply(job, false);
+      return;
+    }
     // Fix 1: show confirmation dialog first, same as job-search
     const confirmRef = this.dialog.open(InternalJobApplyConfirmDialog, {
       width: '400px',
@@ -145,31 +151,38 @@ export class InternalJobMarketPage implements OnInit {
       });
       dialogRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(result => {
         if (!result || result.action === 'cancel') return;
-        const apply$ = result.action === 'apply_with_tailor'
-          ? this.tailorService.applyWithTailoredResume(job.internal_job_id, 'internal_jobs')
-          : this.tailorService.applyWithoutTailoring(job.internal_job_id, 'internal_jobs');
-        this.applyingId.set(job.internal_job_id);
-        apply$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-          next: (res) => {
-            // Fix 3: update local job state
-            this.appliedIds.update(s => new Set([...s, job.internal_job_id]));
-            this.jobs.update(list => list.map(j =>
-              j.internal_job_id === job.internal_job_id
-                ? { ...j, already_applied: true, tailor_resume_done: result.action === 'apply_with_tailor', match_analysis_done: true,
-                    match_percentage: res.match_percentage ?? j.match_percentage }
-                : j
-            ));
-            if (res.match_percentage) this.matchScores.update(s => ({ ...s, [job.internal_job_id]: res.match_percentage! }));
-            this.snack.open(res.message || 'Application submitted!', 'Close', { duration: 4000 });
-            this.applyingId.set(null);
-          },
-          error: (e: any) => {
-            this.snack.open(e.error?.detail || 'Failed to apply', 'Close', { duration: 5000 });
-            this.applyingId.set(null);
-          }
-        });
+        // If user chose tailor, run tailor first then apply via internal endpoint
+        if (result.action === 'apply_with_tailor') {
+          this.tailorService.tailorResume(job.internal_job_id, 'internal_jobs')
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({ next: () => this.submitInternalApply(job, true), error: () => this.submitInternalApply(job, true) });
+        } else {
+          this.submitInternalApply(job, false);
+        }
       });
     });
+  }
+
+  private submitInternalApply(job: InternalJob, tailored: boolean): void {
+    this.applyingId.set(job.internal_job_id);
+    from(this.svc.applyJob(job.internal_job_id, true))
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.appliedIds.update(s => new Set([...s, job.internal_job_id]));
+          this.jobs.update(list => list.map(j =>
+            j.internal_job_id === job.internal_job_id
+              ? { ...j, already_applied: true, tailor_resume_done: tailored, match_analysis_done: true }
+              : j
+          ));
+          this.snack.open(res.message || 'Application submitted!', 'Close', { duration: 4000 });
+          this.applyingId.set(null);
+        },
+        error: (e: any) => {
+          this.snack.open(e.error?.detail || 'Failed to apply', 'Close', { duration: 5000 });
+          this.applyingId.set(null);
+        }
+      });
   }
 
   performMatchAnalysis(job: InternalJob): void {
