@@ -1,5 +1,7 @@
-import { Component, DestroyRef, inject, signal, input, ChangeDetectionStrategy, computed } from '@angular/core';
+import { Component, DestroyRef, inject, signal, input, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { firstValueFrom, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,7 +14,6 @@ import { APPLICATION_STATUS_CLASSES, APPLICATION_STATUS_LABELS, APPLICATION_PROG
 import { APPLICATIONS_TEXT } from '../../data/applications-data';
 
 import { JobService } from '../../services/job.service';
-import { UserService } from '../../services/user.service';
 import { InternalJobService } from '../../services/internal-job.service';
 
 @Component({
@@ -37,7 +38,6 @@ export class ApplicationsPage {
 
 	private destroyRef = inject(DestroyRef);
 	private jobService = inject(JobService);
-	private userService = inject(UserService);
 	private snackBar = inject(MatSnackBar);
 	private internalJobService = inject(InternalJobService);
 
@@ -48,41 +48,22 @@ export class ApplicationsPage {
 	}
 
 	loadApplications(): void {
-		this.userService.getCurrentUser()
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe(currentUser => {
-				if (!currentUser) {
-					this.error.set(this.TEXT.snackbar.loginRequired);
-					this.isLoading.set(false);
-					return;
-				}
-
-				this.isLoading.set(true);
-				this.error.set('');
-
-				this.jobService.getUserAppliedJobs(currentUser.user_id)
-					.pipe(takeUntilDestroyed(this.destroyRef))
-					.subscribe({
-						next: async (response) => {
-							const regular = (response.applications as unknown as ApplicationData[]) || [];
-							let internal: ApplicationData[] = [];
-							try {
-								const res = await this.internalJobService.getMyApplications();
-								internal = res.applications || [];
-							} catch { /* non-fatal */ }
-							const merged = [
-								...internal,
-								...regular
-							].sort((a, b) => new Date(b.applied_date).getTime() - new Date(a.applied_date).getTime());
-							this.applications.set(merged);
-							this.isLoading.set(false);
-						},
-						error: (error) => {
-							this.error.set(error.error?.detail || this.TEXT.snackbar.loadFailed);
-							this.isLoading.set(false);
-						}
-					});
-			});
+		this.isLoading.set(true);
+		this.error.set('');
+		// Load both regular and internal applications in parallel
+		Promise.all([
+			firstValueFrom(this.jobService.getUserAppliedJobs('').pipe(catchError(() => of({ applications: [] })))),
+			this.internalJobService.getMyApplications().catch(() => ({ applications: [] as ApplicationData[], total_count: 0 }))
+		]).then(([regularRes, internalRes]) => {
+			const regular = (regularRes.applications as unknown as ApplicationData[]) || [];
+			const internal = internalRes.applications || [];
+			const merged = [...internal, ...regular]
+				.sort((a, b) => new Date(b.applied_date).getTime() - new Date(a.applied_date).getTime());
+			this.applications.set(merged);
+			this.isLoading.set(false);
+		}).catch(() => {
+			this.isLoading.set(false);
+		});
 	}
 
 	getStatusClass(status: string): string {

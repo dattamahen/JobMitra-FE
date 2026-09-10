@@ -8,7 +8,7 @@
 	</app-job-filter>
 
 	<div class="job-listings">
-		@if (isLoading) {
+		@if (isLoading()) {
 			<app-loading 
 				[title]="TEXT.loading.title"
 				[message]="TEXT.loading.message"
