@@ -250,7 +250,6 @@ export class JobSearchPage {
 	goToPage(page: number): void {
 		if (page < 1 || page > this.totalPages()) return;
 		this.currentPage.set(page);
-		this.cdr.markForCheck();
 	}
 
 	toggleJobExpansion(jobId: string): void {
@@ -415,7 +414,6 @@ export class JobSearchPage {
 						job.already_applied = true;
 						job.match_analysis_done = true;
 						job.tailor_resume_done = true;
-						this.cdr.markForCheck();
 						this.snackBar.open(response.message, this.TEXT.snackbar.close, { duration: 3000 });
 					}
 				},
