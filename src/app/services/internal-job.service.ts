@@ -26,6 +26,12 @@ export interface InternalJob {
   views_count: number;
   applications_count: number;
   hr_contact?: { name: string; email: string; phone: string };
+  // match & apply state
+  match_score?: number;
+  match_percentage?: number;
+  match_analysis_done?: boolean;
+  tailor_resume_done?: boolean;
+  already_applied?: boolean;
 }
 
 export interface InternalJobSearchResult {

@@ -32,7 +32,7 @@ export class ResumeTailorModalComponent implements OnInit {
 
 	constructor(
 		public dialogRef: MatDialogRef<ResumeTailorModalComponent>,
-		@Inject(MAT_DIALOG_DATA) public data: { jobId: string; jobTitle: string },
+		@Inject(MAT_DIALOG_DATA) public data: { jobId: string; jobTitle: string; source?: 'jobs' | 'internal_jobs' },
 		private tailorService: ResumeTailorService,
 		private cdr: ChangeDetectorRef
 	) {}
@@ -47,7 +47,7 @@ export class ResumeTailorModalComponent implements OnInit {
 	private loadPreview(): void {
 		this.isLoading = true;
 		this.cdr.detectChanges();
-		this.tailorService.getTailorPreview(this.data.jobId).subscribe({
+		this.tailorService.getTailorPreview(this.data.jobId, this.data.source ?? 'jobs').subscribe({
 			next: (preview) => {
 				this.previewData = preview;
 				this.isLoading = false;

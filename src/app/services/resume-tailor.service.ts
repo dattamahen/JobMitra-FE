@@ -110,27 +110,29 @@ export class ResumeTailorService {
 		}).then(r => { if (!r.ok) throw new Error('Tailor failed'); return r.json(); });
 	}
 
-	tailorResume(jobId: string): Observable<TailorResponse> {
-		return this.apiService.post<TailorResponse>(`/jobs/${jobId}/tailor-resume`, {});
+	tailorResume(jobId: string, source: 'jobs' | 'internal_jobs' = 'jobs'): Observable<TailorResponse> {
+		return this.apiService.post<TailorResponse>(`/jobs/${jobId}/tailor-resume?source=${source}`, {});
 	}
 
-	getTailorPreview(jobId: string): Observable<TailorPreviewData> {
-		return this.apiService.get<TailorPreviewData>(`/jobs/${jobId}/tailor-preview`);
+	getTailorPreview(jobId: string, source: 'jobs' | 'internal_jobs' = 'jobs'): Observable<TailorPreviewData> {
+		return this.apiService.get<TailorPreviewData>(`/jobs/${jobId}/tailor-preview?source=${source}`);
 	}
 
-	applyWithTailoredResume(jobId: string): Observable<ApplyJobResponse> {
+	applyWithTailoredResume(jobId: string, source: 'jobs' | 'internal_jobs' = 'jobs'): Observable<ApplyJobResponse> {
 		return this.apiService.post<ApplyJobResponse>('/api/v1/apply-job', {
 			job_id: jobId,
 			force_apply: true,
-			use_tailored: true
+			use_tailored: true,
+			source
 		});
 	}
 
-	applyWithoutTailoring(jobId: string): Observable<ApplyJobResponse> {
+	applyWithoutTailoring(jobId: string, source: 'jobs' | 'internal_jobs' = 'jobs'): Observable<ApplyJobResponse> {
 		return this.apiService.post<ApplyJobResponse>('/api/v1/apply-job', {
 			job_id: jobId,
 			force_apply: true,
-			use_tailored: false
+			use_tailored: false,
+			source
 		});
 	}
 }
