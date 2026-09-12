@@ -44,12 +44,13 @@ export type JobListing = {
 	tags: string[];
 	views_count: number;
 	applications_count: number;
-	source: 'internal' | 'linkedin' | 'indeed' | 'glassdoor' | 'other';
+	source: 'internal' | 'internal_jobs' | 'linkedin' | 'indeed' | 'glassdoor' | 'other';
 	job_score?: number;
 	match_percentage?: number;
 	already_applied?: boolean;
 	match_analysis_done?: boolean;
 	tailor_resume_done?: boolean;
+	is_own_post?: boolean;
 	// New skill-based matching fields from backend
 	match_score?: number;
 	matched_skills_count?: number;

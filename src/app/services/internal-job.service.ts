@@ -32,6 +32,8 @@ export interface InternalJob {
   match_analysis_done?: boolean;
   tailor_resume_done?: boolean;
   already_applied?: boolean;
+  // poster view
+  applications_received?: { user_id: string; user_name: string; user_email: string; applied_date: string; status: string }[];
 }
 
 export interface InternalJobSearchResult {
