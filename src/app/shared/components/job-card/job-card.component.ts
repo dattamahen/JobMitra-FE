@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import type { JobListing } from '../../../types/job.types';
 
 @Component({
@@ -15,7 +16,8 @@ import type { JobListing } from '../../../types/job.types';
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './job-card.component.html',
   styleUrl: './job-card.component.css',
@@ -28,12 +30,53 @@ export class JobCardComponent {
   isTailorResumeDisabled = input<boolean>(false);
   matchAnalysisText = input<string>('Match analysis');
   tailorResumeText = input<string>('Tailor resume');
+  isApplyLocked = input<boolean>(false);
+  isMatchAnalysisLoading = input<boolean>(false);
+  isTailorLoading = input<boolean>(false);
+  isMockInterviewLoading = input<boolean>(false);
+  isOwnPost = input<boolean>(false);
 
   // Outputs
   matchAnalysisClick = output<string>();
   tailorResumeClick = output<string>();
   mockInterviewClick = output<string>();
   applyClick = output<string>();
+
+  private _shareText(): string {
+    const j = this.job();
+    const loc = [j.location?.city, j.location?.state].filter(Boolean).join(', ') || (j.location?.is_remote ? 'Remote' : '');
+    const lines: string[] = [
+      `🚀 *${j.title}* at *${j.company}*`,
+    ];
+    if (loc)                          lines.push(`📍 ${loc}${j.location?.is_remote ? ' (Remote)' : ''}`);
+    if (j.experience_level)           lines.push(`🎯 ${j.experience_level} · ${j.employment_type || ''}`.replace(/ · $/, ''));
+    if (j.skills_required?.length)    lines.push(`🛠 Skills: ${j.skills_required.slice(0, 5).join(', ')}${j.skills_required.length > 5 ? ' & more' : ''}`);
+    if (j.responsibilities?.length) {
+      lines.push(``, `📌 *Key Responsibilities:*`);
+      j.responsibilities.slice(0, 3).forEach(r => lines.push(`• ${r}`));
+    }
+    lines.push(``, `👉 Apply now on JobMouka:`, `🌐 https://www.jobmouka.com`, `📱 https://play.google.com/store/apps/details?id=com.jobmouka.app`);
+    return lines.join('\n');
+  }
+
+  shareOnWhatsApp(): void {
+    window.open(`https://wa.me/?text=${encodeURIComponent(this._shareText())}`, '_blank');
+  }
+
+  shareOnLinkedIn(): void {
+    const j = this.job();
+    const params = new URLSearchParams({
+      mini: 'true',
+      url: 'https://www.jobmouka.com',
+      title: `${j.title} at ${j.company}`,
+      summary: `${j.experience_level ? j.experience_level + ' · ' : ''}${j.employment_type ? j.employment_type + ' · ' : ''}${j.skills_required?.slice(0, 4).join(', ') || ''} — Apply on JobMouka`,
+    });
+    window.open(`https://www.linkedin.com/shareArticle?${params}`, '_blank');
+  }
+
+  shareOnTelegram(): void {
+    window.open(`https://t.me/share/url?url=${encodeURIComponent('https://www.jobmouka.com')}&text=${encodeURIComponent(this._shareText())}`, '_blank');
+  }
 
   // Get company initials for avatar
   getCompanyInitials(company: string): string {

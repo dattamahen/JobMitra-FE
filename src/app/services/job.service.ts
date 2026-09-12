@@ -245,7 +245,7 @@ export class JobService {
 	}
 
 	getUserAppliedJobs(userId: string): Observable<{ applications: JobListing[]; total_count: number }> {
-		return this.apiService.get<{ applications: JobListing[]; total_count: number }>(`/users/${userId}/applications`);
+		return this.apiService.get<{ applications: JobListing[]; total_count: number }>('/api/v1/applications');
 	}
 
 	performMatchAnalysis(jobId: string, source: 'jobs' | 'internal_jobs' = 'jobs'): Observable<{ match_percentage: number; message: string; analysis_done: boolean }> {

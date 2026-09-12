@@ -251,6 +251,12 @@ export const JOB_SEARCH_TEXT = {
 		actionLabel: 'Update Profile',
 		actionRoute: '/dashboard/profile',
 	},
+	emptyStateInternal: {
+		icon: 'rocket_launch',
+		title: 'Your Next Opportunity is One Skill Away',
+		message: 'Add more skills to your profile and unlock internal referral jobs posted by real employees at top companies.',
+		actionLabel: 'Add Skills to Profile',
+	},
 
 	chips: {
 		mockInterview: 'Mock Interview',

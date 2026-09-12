@@ -83,6 +83,25 @@
   padding: 0 6px !important;
 }
 
+.referral-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-size: 0.625rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 10px;
+  border: 1px solid #c8e6c9;
+}
+
+.referral-badge mat-icon {
+  font-size: 12px;
+  width: 12px;
+  height: 12px;
+}
+
 .company-name {
   font-size: 0.875rem;
   color: #666;
@@ -381,6 +400,41 @@
   min-width: 100px !important;
 }
 
+.apply-btn-locked {
+  background: #f3f4f6 !important;
+  color: #6b7280 !important;
+  border: 1px dashed #d1d5db !important;
+  gap: 4px;
+}
+
+.apply-btn-locked mat-icon {
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
+}
+
+.own-post-banner {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: #15803d;
+  font-weight: 500;
+  width: 100%;
+}
+
+.own-post-banner mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .job-card-content {
@@ -510,4 +564,67 @@
   .job-meta {
     gap: 8px;
   }
+}
+
+/* ── Share Footer ───────────────────────────────────────────────────────── */
+.share-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.share-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+.share-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.wa-btn, .li-btn, .tg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 11px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  line-height: 1;
+  transition: filter 0.18s, transform 0.15s;
+}
+
+.wa-btn { background: #25D366; }
+.li-btn { background: #0A66C2; }
+.tg-btn { background: #229ED9; }
+
+.wa-btn:hover, .li-btn:hover, .tg-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.wa-btn:active, .li-btn:active, .tg-btn:active {
+  transform: translateY(0);
+}
+
+.share-icon {
+  width: 14px;
+  height: 14px;
+  fill: #fff;
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .share-footer { padding: 8px 16px 12px; gap: 8px; }
+  .wa-btn, .li-btn, .tg-btn { flex: 1; justify-content: center; }
 }

@@ -16,13 +16,23 @@
 			</app-loading>
 		} @else if (filteredJobListings().length === 0) {
 			<mat-card>
-				<app-empty-state
-					[icon]="TEXT.emptyState.icon"
-					[title]="TEXT.emptyState.title"
-					[message]="TEXT.emptyState.message"
-					[actionLabel]="TEXT.emptyState.actionLabel"
-					[actionRoute]="TEXT.emptyState.actionRoute">
-				</app-empty-state>
+				@if (source() === 'internal_jobs') {
+					<app-empty-state
+						[icon]="TEXT.emptyStateInternal.icon"
+						[title]="TEXT.emptyStateInternal.title"
+						[message]="TEXT.emptyStateInternal.message"
+						[actionLabel]="TEXT.emptyStateInternal.actionLabel"
+						(actionClick)="navigateToPage()?.({ page: 'profile' })">
+					</app-empty-state>
+				} @else {
+					<app-empty-state
+						[icon]="TEXT.emptyState.icon"
+						[title]="TEXT.emptyState.title"
+						[message]="TEXT.emptyState.message"
+						[actionLabel]="TEXT.emptyState.actionLabel"
+						[actionRoute]="TEXT.emptyState.actionRoute">
+					</app-empty-state>
+				}
 			</mat-card>
 		} @else {
 			@for (job of paginatedJobs(); track job.job_id) {
@@ -32,6 +42,11 @@
 					[isTailorResumeDisabled]="isTailorResumeDisabled(job.job_id)"
 					[matchAnalysisText]="getMatchAnalysisText(job.job_id)"
 					[tailorResumeText]="getTailorResumeText(job.job_id)"
+					[isApplyLocked]="source() === 'internal_jobs' && !isSubscribed()"
+					[isMatchAnalysisLoading]="matchAnalysisLoadingId() === job.job_id"
+					[isTailorLoading]="tailorLoadingId() === job.job_id"
+					[isMockInterviewLoading]="mockInterviewLoadingId() === job.job_id"
+					[isOwnPost]="!!job.is_own_post"
 					(matchAnalysisClick)="takeMatchAnalysis($event)"
 					(tailorResumeClick)="modifyCV($event)"
 					(mockInterviewClick)="takeMockInterview($event)"
