@@ -73,7 +73,7 @@ export interface User {
 	// User Classification
 	user_type: 'candidate' | 'hire' | 'job_seeker' | 'hr' | 'admin'; // Extended for backward compatibility
 	user_status: 'active' | 'inactive';
-	user_plan: 'free' | 'subscribed' | 'pro';
+	user_plan: 'free' | 'paid' | 'subscribed' | 'pro';
 	
 	// Feature Usage Tracking
 	feature_usage_count?: number;

@@ -13,6 +13,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { InternalJobService, InternalJob, ParsedJobPreview } from '../../services/internal-job.service';
 import { MotivationBannerComponent } from '../../shared/components/motivation-banner/motivation-banner.component';
 import { getRandomPosterMotivationGroup, type MotivationGroup } from '../../data/motivation-lines.data';
@@ -28,7 +30,7 @@ type PostStep = 'verify-email' | 'input' | 'preview' | 'done';
     ReactiveFormsModule, MatCardModule, MatButtonModule, MatIconModule,
     MatChipsModule, MatProgressSpinnerModule, MatSnackBarModule, MatTooltipModule,
     MatFormFieldModule, MatInputModule, MatSelectModule, MatTableModule,
-    MotivationBannerComponent
+    MatDialogModule, MotivationBannerComponent, ConfirmDialogComponent
   ],
   templateUrl: './refer-hire.html',
   styleUrl: './refer-hire.css'
@@ -41,6 +43,7 @@ export class ReferHirePage implements OnInit {
   private svc = inject(InternalJobService);
   private fb = inject(FormBuilder);
   private snack = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
 
   // ── List view ──────────────────────────────────────────────
   view = signal<View>('list');
@@ -132,7 +135,11 @@ export class ReferHirePage implements OnInit {
   isExpanded(id: string): boolean { return this.expandedIds().has(id); }
 
   async removeJob(job: InternalJob): Promise<void> {
-    if (!confirm(`Remove "${job.title}"?`)) return;
+    const confirmed = await this.dialog.open(ConfirmDialogComponent, {
+      data: { title: 'Remove Job', message: `Remove "${job.title}"? This will permanently delete the post and all associated applications. This cannot be undone.`, confirmLabel: 'Remove', confirmColor: 'warn' },
+      width: '360px'
+    }).afterClosed().toPromise();
+    if (!confirmed) return;
     try {
       await this.svc.deleteMyPost(job.internal_job_id);
       this.jobs.update(list => list.filter(j => j.internal_job_id !== job.internal_job_id));
@@ -282,5 +289,39 @@ export class ReferHirePage implements OnInit {
   async doneAndRefresh(): Promise<void> {
     this.view.set('list');
     await this.loadJobs();
+  }
+
+  private _jobShareText(job: InternalJob): string {
+    const loc = [job.location?.city, job.location?.state].filter(Boolean).join(', ') || (job.location?.is_remote ? 'Remote' : '');
+    const lines: string[] = [
+      `🚀 *${job.title}* at *${job.company}*`,
+    ];
+    if (loc)                              lines.push(`📍 ${loc}${job.location?.is_remote ? ' (Remote)' : ''}`);
+    if (job.experience_level)             lines.push(`🎯 ${job.experience_level} · ${job.employment_type || ''}`.replace(/ · $/, ''));
+    if (job.skills_required?.length)      lines.push(`🛠 Skills: ${job.skills_required.slice(0, 5).join(', ')}${job.skills_required.length > 5 ? ' & more' : ''}`);
+    if (job.responsibilities?.length) {
+      lines.push(``, `📌 *Key Responsibilities:*`);
+      job.responsibilities.slice(0, 3).forEach(r => lines.push(`• ${r}`));
+    }
+    lines.push(``, `👉 Apply now on JobMouka:`, `🌐 https://www.jobmouka.com`, `📱 https://play.google.com/store/apps/details?id=com.jobmouka.app`);
+    return lines.join('\n');
+  }
+
+  shareOnWhatsApp(job: InternalJob): void {
+    window.open(`https://wa.me/?text=${encodeURIComponent(this._jobShareText(job))}`, '_blank');
+  }
+
+  shareOnLinkedIn(job: InternalJob): void {
+    const params = new URLSearchParams({
+      mini: 'true',
+      url: 'https://www.jobmouka.com',
+      title: `${job.title} at ${job.company}`,
+      summary: `${job.experience_level ? job.experience_level + ' · ' : ''}${job.employment_type ? job.employment_type + ' · ' : ''}${job.skills_required?.slice(0, 4).join(', ') || ''} — Apply on JobMouka`,
+    });
+    window.open(`https://www.linkedin.com/shareArticle?${params}`, '_blank');
+  }
+
+  shareOnTelegram(job: InternalJob): void {
+    window.open(`https://t.me/share/url?url=${encodeURIComponent('https://www.jobmouka.com')}&text=${encodeURIComponent(this._jobShareText(job))}`, '_blank');
   }
 }

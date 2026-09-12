@@ -118,6 +118,13 @@ export class FeatureUsageService {
 	}
 
 	/**
+	* Get current subscription plan
+	*/
+	getUserSubscriptionPlan(): UserPlan {
+		return this.featureUsageSubject.value?.plan ?? 'F';
+	}
+
+	/**
 	* Check if user can use paid features
 	*/
 	canUsePaidFeatures(): boolean {
@@ -138,7 +145,9 @@ export class FeatureUsageService {
 	getUserPlan(userPlan?: string): UserPlan {
 		switch (userPlan) {
 			case 'subscribed': return 'P';
+			case 'paid': return 'P';
 			case 'pro': return 'S';
+			case 'premium': return 'S';
 			default: return 'F';
 		}
 	}

@@ -1,4 +1,4 @@
-import { Component, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,10 +14,16 @@ import { EMPTY_STATE_DEFAULTS } from '../../../data/shared-components-data';
 			<mat-icon class="empty-icon">{{ icon() }}</mat-icon>
 			<h3>{{ title() }}</h3>
 			<p>{{ message() }}</p>
-			@if (actionLabel() && actionRoute()) {
-				<a mat-raised-button color="primary" [routerLink]="actionRoute()" class="action-btn">
-					{{ actionLabel() }}
-				</a>
+			@if (actionLabel()) {
+				@if (actionRoute()) {
+					<a mat-raised-button color="primary" [routerLink]="actionRoute()" class="action-btn">
+						{{ actionLabel() }}
+					</a>
+				} @else {
+					<button mat-raised-button color="primary" class="action-btn" (click)="actionClick.emit()">
+						{{ actionLabel() }}
+					</button>
+				}
 			}
 		</div>
 	`,
@@ -65,4 +71,5 @@ export class EmptyStateComponent {
 	message = input<string>(EMPTY_STATE_DEFAULTS.message);
 	actionLabel = input<string>('');
 	actionRoute = input<string>('');
+	actionClick = output<void>();
 }
