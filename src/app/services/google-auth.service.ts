@@ -25,8 +25,11 @@ export class GoogleAuthService {
 			if (typeof google !== 'undefined' && google?.accounts?.id) {
 				google.accounts.id.initialize({
 					client_id: this.clientId,
-					callback: this.handleCredentialResponse.bind(this)
+					callback: this.handleCredentialResponse.bind(this),
+					auto_select: false,
+					cancel_on_tap_outside: true
 				});
+				google.accounts.id.disableAutoSelect();
 				resolve();
 			} else {
 				const script = document.createElement('script');
@@ -35,8 +38,11 @@ export class GoogleAuthService {
 					if (typeof google !== 'undefined' && google?.accounts?.id) {
 						google.accounts.id.initialize({
 							client_id: this.clientId,
-							callback: this.handleCredentialResponse.bind(this)
+							callback: this.handleCredentialResponse.bind(this),
+							auto_select: false,
+							cancel_on_tap_outside: true
 						});
+						google.accounts.id.disableAutoSelect();
 					}
 					resolve();
 				};
