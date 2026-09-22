@@ -12,6 +12,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { environment } from '../../../environments/environment';
 
+import { SkeletonStatGridComponent, SkeletonFormComponent } from '../../shared/components/skeletons';
 import { ProjectContestService, ContestEntry } from '../../services/project-contest.service';
 import { AuthService } from '../../services/auth.service';
 import { CreditsService } from '../../services/credits.service';
@@ -31,6 +32,7 @@ import {
 		MatCardModule, MatButtonModule, MatIconModule,
 		MatFormFieldModule, MatInputModule, MatSelectModule,
 		MatProgressSpinnerModule, MatDividerModule, MatDialogModule,
+		SkeletonStatGridComponent, SkeletonFormComponent
 	],
 	templateUrl: './project-contest.html',
 	styleUrl: './project-contest.css',

@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, DestroyRef, inject, signal, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { SkeletonStatGridComponent } from '../../shared/components/skeletons';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,7 +20,8 @@ import { MOCK_INTERVIEWS_TEXT } from '../../data/mock-interviews-page-data';
 
 @Component({
 	selector: 'app-mock-interviews-page',
-	imports: [MatButtonModule, MatCardModule, MatIconModule, FeatureGuardDirective, InterviewHistoryComponent, MotivationBannerComponent],
+	imports: [MatButtonModule, MatCardModule, MatIconModule, FeatureGuardDirective, InterviewHistoryComponent, MotivationBannerComponent,
+		SkeletonStatGridComponent],
 	templateUrl: './mock-interviews.html',
 	styleUrl: './mock-interviews.css',
 	changeDetection: ChangeDetectionStrategy.OnPush
@@ -29,6 +31,7 @@ export class MockInterviewsPage {
 	navigateToPage = input<(event: { page: string }) => void>();
 	interviewTypes = INTERVIEW_TYPES;
 	interviewHistory = signal<InterviewHistorySession[]>([]);
+	isLoading = signal(true);
 	private readonly destroyRef = inject(DestroyRef);
 	private readonly mockInterviewService = inject(MockInterviewService);
 	private readonly featureUsageService = inject(FeatureUsageService);
@@ -56,8 +59,9 @@ export class MockInterviewsPage {
 								if (response.success && response.interviews) {
 									this.interviewHistory.set(response.interviews);
 								}
+								this.isLoading.set(false);
 							},
-							error: () => {}
+							error: () => { this.isLoading.set(false); }
 						});
 				}
 			});

@@ -1,0 +1,27 @@
+<div
+	class="skeleton-stat-grid"
+	[style]="gridStyle()"
+	role="status"
+	aria-label="Loading statistics"
+	aria-busy="true">
+	@for (item of items(); track $index) {
+		<div class="skeleton-stat-card" [style.min-height]="cardHeight()">
+			<div class="skeleton-stat-card__header">
+				@if (showIcon()) {
+					<div class="skeleton-block skeleton-icon" aria-hidden="true"></div>
+				}
+				@if (showTrend()) {
+					<div class="skeleton-block skeleton-trend" aria-hidden="true"></div>
+				}
+			</div>
+			<div class="skeleton-stat-card__body">
+				<div class="skeleton-block skeleton-value" aria-hidden="true"></div>
+				<div class="skeleton-block skeleton-label" aria-hidden="true"></div>
+				@if (showTrend()) {
+					<div class="skeleton-block skeleton-period" aria-hidden="true"></div>
+				}
+			</div>
+		</div>
+	}
+	<span class="sr-only">Loading dashboard statistics, please wait.</span>
+</div>

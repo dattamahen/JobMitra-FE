@@ -1,11 +1,12 @@
 <div class="page-container">
 	<!-- Loading indicator -->
 	@if (isLoading()) {
-		<app-loading 
-			[title]="TEXT.loading.title"
-			[message]="TEXT.loading.message"
-			[icon]="TEXT.loading.icon">
-		</app-loading>
+		<app-skeleton-list-rows
+			[count]="5"
+			[showLeadingCircle]="true"
+			[showTrailingBadge]="true"
+			[rowHeight]="'tall'">
+		</app-skeleton-list-rows>
 	}
 
 	<!-- Applications list -->

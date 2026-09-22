@@ -12,6 +12,23 @@
 	</div>
 
 	<!-- Top Cards Row -->
+	@if (loading()) {
+		<app-skeleton-stat-grid
+			[count]="2"
+			[columns]="{ default: 2, tablet: 2, mobile: 1 }"
+			[showTrend]="false"
+			[cardHeight]="'100px'">
+		</app-skeleton-stat-grid>
+		<app-skeleton-form
+			[repeat]="1"
+			[rows]="4"
+			[columns]="2"
+			[showTitle]="true"
+			[showTextarea]="true"
+			[showButton]="true">
+		</app-skeleton-form>
+	} @else {
+	<!-- Top Cards Row -->
 	<div class="top-cards">
 		<!-- Leaderboard Card -->
 		<mat-card class="info-card leaderboard-card">
@@ -91,6 +108,8 @@
 				<button mat-raised-button color="primary" (click)="backToForm()">Submit Another Project</button>
 			</mat-card-content>
 		</mat-card>
+	}
+
 	}
 
 	<!-- Registration Form (Collapsible) -->

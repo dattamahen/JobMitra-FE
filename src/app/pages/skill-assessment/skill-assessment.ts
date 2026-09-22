@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 
+import { SkeletonListRowsComponent } from '../../shared/components/skeletons';
 import { InterviewHistoryComponent } from '../../shared/components/interview-history/interview-history.component';
 import { JobSearchDataService, LearningResource } from '../../data/job-search-data';
 import type { SkillAssessment } from '../../types/skill-assessment.types';
@@ -17,7 +18,7 @@ import { SKILL_ASSESSMENT_TEXT } from '../../data/skill-assessment-data';
 
 @Component({
 	selector: 'app-skill-assessment-page',
-	imports: [MatIconModule, InterviewHistoryComponent],
+	imports: [MatIconModule, InterviewHistoryComponent, SkeletonListRowsComponent],
 	templateUrl: './skill-assessment.html',
 	styleUrls: ['./skill-assessment.css'],
 	changeDetection: ChangeDetectionStrategy.OnPush
@@ -27,6 +28,7 @@ export class SkillAssessmentPage implements OnInit {
 	navigateToPage = input<(event: { page: string }) => void>();
 	skillAssessments = signal<SkillAssessment[]>([]);
 	interviewHistory = signal<InterviewHistorySession[]>([]);
+	isLoading = signal(true);
 
 	technicalSkills = computed(() => this.skillAssessments().filter(s => s.category === 'technical' && !s.isRecommended));
 	softSkills = computed(() => this.skillAssessments().filter(s => s.category === 'soft-skills'));
@@ -87,6 +89,7 @@ export class SkillAssessmentPage implements OnInit {
 						...technicalSkills,
 						...current.filter(s => s.category !== 'technical' && !s.isRecommended)
 					]);
+					this.isLoading.set(false);
 					this.cdr.markForCheck();
 				},
 				error: () => {}

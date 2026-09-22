@@ -1,6 +1,14 @@
 <div class="page-container">
 	<div class="assessment-content">
-		@if (hasSkills()) {
+		@if (isLoading()) {
+			<app-skeleton-list-rows
+				[count]="5"
+				[showLeadingCircle]="false"
+				[showProgressBar]="true"
+				[showTrailingBadge]="true"
+				[rowHeight]="'normal'">
+			</app-skeleton-list-rows>
+		} @else if (hasSkills()) {
 			<div class="skill-categories">
 				<div class="category-card">
 					<h2><mat-icon>computer</mat-icon> {{TEXT.categories.technicalSkills}}</h2>

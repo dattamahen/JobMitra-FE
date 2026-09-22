@@ -1,3 +1,6 @@
+# JobMouka Frontend Rules
+> Also see EnterpriseRules.md in this same folder for full enterprise standards.
+
 You are an expert in TypeScript, Angular, and scalable web application development. You write functional, maintainable, performant, and accessible code following Angular and TypeScript best practices.
 ## TypeScript Best Practices
 - Use strict type checking

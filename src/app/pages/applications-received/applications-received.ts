@@ -14,7 +14,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatMenuModule } from '@angular/material/menu';
 
-import { LoadingComponent } from '../../shared/components/loading/loading.component';
+import { SkeletonListRowsComponent } from '../../shared/components/skeletons';
 import { APPLICATION_RECEIVED_STATUS_COLORS } from './applications-received.constants';
 import { APPLICATIONS_RECEIVED_TEXT } from '../../data/applications-received-data';
 
@@ -61,7 +61,7 @@ export interface JobOption {
 		MatMenuModule,
 		MatTooltipModule,
 		FormsModule,
-		LoadingComponent
+		SkeletonListRowsComponent
 	],
 	templateUrl: './applications-received.html',
 	styleUrls: ['./applications-received.css'],

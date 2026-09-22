@@ -1,11 +1,19 @@
 <div class="page-container">
 	<div class="dashboard-content">
 		@if (isLoading()) {
-			<app-loading 
-				[title]="TEXT.loading.title"
-				[message]="TEXT.loading.message"
-				[icon]="TEXT.loading.icon">
-			</app-loading>
+			<app-skeleton-stat-grid
+				[count]="4"
+				[columns]="{ default: 4, tablet: 2, mobile: 2 }"
+				[showTrend]="true"
+				[cardHeight]="'120px'">
+			</app-skeleton-stat-grid>
+			<app-skeleton-list-rows
+				[count]="5"
+				[showLeadingCircle]="true"
+				[showTrailingBadge]="true"
+				[showSecondLine]="false"
+				[cardTitle]="TEXT.recentActivity">
+			</app-skeleton-list-rows>
 		} @else {
 			@if (dashboardData(); as data) {
 				<div class="stats-grid">

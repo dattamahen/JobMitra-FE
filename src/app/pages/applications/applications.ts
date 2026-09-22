@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
-import { LoadingComponent } from '../../shared/components/loading/loading.component';
+import { SkeletonListRowsComponent } from '../../shared/components/skeletons';
 import type { ApplicationData } from '../../types/application.types';
 import { APPLICATION_STATUS_CLASSES, APPLICATION_STATUS_LABELS, APPLICATION_PROGRESS_MAP } from './applications.constants';
 import { APPLICATIONS_TEXT } from '../../data/applications-data';
@@ -24,7 +24,7 @@ import { InternalJobService } from '../../services/internal-job.service';
 		MatIconModule,
 		MatButtonModule,
 		MatSnackBarModule,
-		LoadingComponent
+		SkeletonListRowsComponent
 	],
 	templateUrl: './applications.html',
 	styleUrls: ['./applications.css'],

@@ -1,0 +1,42 @@
+<div role="status" aria-label="Loading list" aria-busy="true">
+
+	@if (cardTitle()) {
+		<div class="skeleton-list-card__title-bar" aria-hidden="true">
+			<div class="skeleton-block skeleton-card-title"></div>
+		</div>
+	}
+
+	<div class="skeleton-list-rows" [class]="'skeleton-list-rows--' + rowHeight()">
+		@for (item of items(); track $index) {
+			<div class="skeleton-list-row">
+
+				@if (showLeadingCircle()) {
+					<div class="skeleton-block skeleton-circle" aria-hidden="true"></div>
+				}
+
+				<div class="skeleton-list-row__content">
+					<div class="skeleton-block skeleton-row-title" aria-hidden="true"></div>
+					@if (showSecondLine()) {
+						<div class="skeleton-block skeleton-row-subtitle" aria-hidden="true"></div>
+					}
+					@if (showProgressBar()) {
+						<div class="skeleton-block skeleton-progress-bar" aria-hidden="true"></div>
+					}
+				</div>
+
+				@if (showTrailingBadge()) {
+					<div class="skeleton-list-row__trailing" aria-hidden="true">
+						<div class="skeleton-block skeleton-badge" aria-hidden="true"></div>
+						<div class="skeleton-block skeleton-timestamp" aria-hidden="true"></div>
+					</div>
+				}
+			</div>
+
+			@if (showDivider() && $index < items().length - 1) {
+				<div class="skeleton-divider" aria-hidden="true"></div>
+			}
+		}
+	</div>
+
+	<span class="sr-only">Loading content, please wait.</span>
+</div>

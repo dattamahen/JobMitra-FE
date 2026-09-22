@@ -8,6 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 
+import { SkeletonJobCardListComponent } from '../../shared/components/skeletons';
 import { JobFilterComponent, JobFilterConfig, JobFilterOptions } from '../../shared/components/job-filter/job-filter.component';
 import { EMPLOYMENT_TYPE_DISPLAY, EXPERIENCE_LEVEL_DISPLAY, JOB_TYPE_DISPLAY } from './my-jobs.constants';
 import { MY_JOBS_TEXT } from '../../data/my-jobs-data';
@@ -79,7 +80,8 @@ export interface FilterOptions {
 		MatProgressSpinnerModule,
 		MatTooltipModule,
 		MatSnackBarModule,
-		JobFilterComponent
+		JobFilterComponent,
+		SkeletonJobCardListComponent
 	],
 	templateUrl: './my-jobs.html',
 	styleUrls: ['./my-jobs.css'],
