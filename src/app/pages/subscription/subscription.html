@@ -5,10 +5,12 @@
 	</div>
 
 	@if (loading()) {
-		<div class="loading-container">
-			<mat-spinner diameter="40"></mat-spinner>
-			<p>{{TEXT.loading}}</p>
-		</div>
+		<app-skeleton-stat-grid
+			[count]="2"
+			[columns]="{ default: 2, tablet: 2, mobile: 1 }"
+			[showTrend]="false"
+			[cardHeight]="'100px'">
+		</app-skeleton-stat-grid>
 	} @else if (credits()) {
 		<div class="credits-grid">
 			<mat-card class="credit-card cv-card">

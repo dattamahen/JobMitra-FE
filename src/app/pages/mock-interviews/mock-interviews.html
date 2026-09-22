@@ -2,6 +2,14 @@
 	<app-motivation-banner />
 
 	<div class="interview-options">
+		@if (isLoading()) {
+			<app-skeleton-stat-grid
+				[count]="4"
+				[columns]="{ default: 4, tablet: 2, mobile: 1 }"
+				[showTrend]="false"
+				[cardHeight]="'160px'">
+			</app-skeleton-stat-grid>
+		} @else {
 		@for (interview of interviewTypes; track interview.id) {
 			<mat-card class="interview-card">
 				<mat-card-content>
@@ -52,6 +60,7 @@
 					}
 				</mat-card-content>
 			</mat-card>
+		}
 		}
 	</div>
 	

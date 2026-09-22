@@ -1,4 +1,5 @@
 import { Component, OnInit, signal, inject, ChangeDetectionStrategy, input } from '@angular/core';
+import { SkeletonStatGridComponent } from '../../shared/components/skeletons';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,7 +14,8 @@ import { SUBSCRIPTION_TEXT } from '../../data/subscription-data';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	imports: [
 		MatCardModule, MatButtonModule, MatIconModule,
-		MatDialogModule, MatProgressSpinnerModule
+		MatDialogModule, MatProgressSpinnerModule,
+		SkeletonStatGridComponent
 	],
 	templateUrl: './subscription.html',
 	styleUrl: './subscription.css'

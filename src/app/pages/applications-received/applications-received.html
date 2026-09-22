@@ -21,11 +21,12 @@
 	</mat-card>
 
 	@if (isLoading()) {
-		<app-loading 
-			[title]="TEXT.loading.title"
-			[message]="TEXT.loading.message"
-			[icon]="TEXT.loading.icon">
-		</app-loading>
+		<app-skeleton-list-rows
+			[count]="5"
+			[showLeadingCircle]="false"
+			[showTrailingBadge]="true"
+			[rowHeight]="'compact'">
+		</app-skeleton-list-rows>
 	} @else if (applications().length === 0) {
 		<mat-card class="no-applications">
 			<mat-card-content>

@@ -9,12 +9,14 @@
 
 	<div class="job-listings">
 		@if (isLoading()) {
-			<app-loading 
-				[title]="TEXT.loading.title"
-				[message]="TEXT.loading.message"
-				[icon]="TEXT.loading.icon">
-			</app-loading>
-		} @else if (filteredJobListings().length === 0) {
+		<app-skeleton-job-card-list
+			[count]="5"
+			[showFilter]="true"
+			[showActions]="true"
+			[showAvatar]="true"
+			[showChips]="true">
+		</app-skeleton-job-card-list>
+	} @else if (filteredJobListings().length === 0) {
 			<mat-card>
 				@if (source() === 'internal_jobs') {
 					<app-empty-state

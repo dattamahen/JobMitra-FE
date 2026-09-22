@@ -50,3 +50,6 @@ src/environments/environment.prod.ts
 playwright-report/
 e2e/reports/
 test-results/
+
+# Amazon Q rules (local only)
+.amazonq/
