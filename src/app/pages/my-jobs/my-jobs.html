@@ -15,10 +15,11 @@
 
 	<div class="job-listings">
 		@if (isLoading()) {
-		<div class="loading-container">
-			<mat-spinner></mat-spinner>
-			<p>{{TEXT.loading}}</p>
-		</div>
+			<app-skeleton-job-card-list
+				[count]="5"
+				[showFilter]="false"
+				[showActions]="false">
+			</app-skeleton-job-card-list>
 		} @else if (filteredJobs().length === 0) {
 		<div class="no-jobs-container">
 			<mat-icon class="no-jobs-icon">{{TEXT.emptyState.icon}}</mat-icon>

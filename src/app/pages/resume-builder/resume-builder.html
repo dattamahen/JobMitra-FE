@@ -1,10 +1,13 @@
 <div class="page-container">
 	@if (isLoading()) {
-		<app-loading 
-			[title]="TEXT.loading.title"
-			[message]="TEXT.loading.message"
-			[icon]="TEXT.loading.icon">
-		</app-loading>
+		<app-skeleton-form
+			[showSidebar]="true"
+			[sidebarItems]="7"
+			[rows]="3"
+			[columns]="2"
+			[showTitle]="true"
+			[showButton]="true">
+		</app-skeleton-form>
 	} @else {
 		<div class="resume-builder-content full-width">
 			<div class="builder-left">

@@ -21,7 +21,7 @@ import { UserService } from '../../services/user.service';
 import { ApiService } from '../../services/api.service';
 import type { Resume, ResumeTemplate, Experience, Education, Project, Certification } from '../../types/resume.types';
 import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
-import { LoadingComponent } from '../../shared/components/loading/loading.component';
+import { SkeletonFormComponent } from '../../shared/components/skeletons';
 import { CreditsService } from '../../services/credits.service';
 import { RESUME_BUILDER_TEXT } from '../../data/resume-builder-data';
 import { 
@@ -54,7 +54,7 @@ import { RESUME_SECTIONS, CV_TEMPLATES } from './resume-builder.constants';
 		MatTooltipModule,
 		MatDialogModule,
 		DynamicFormComponent,
-		LoadingComponent,
+		SkeletonFormComponent,
 	],
 	templateUrl: './resume-builder.html',
 	styleUrls: ['./resume-builder.css']

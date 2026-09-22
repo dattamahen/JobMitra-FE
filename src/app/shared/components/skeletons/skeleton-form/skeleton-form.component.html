@@ -1,0 +1,54 @@
+<div role="status" aria-label="Loading form" aria-busy="true">
+
+	@if (showSidebar()) {
+		<div class="skeleton-form-layout--with-sidebar">
+			<div class="skeleton-form-sidebar" aria-hidden="true">
+				@for (item of sidebarRows(); track $index) {
+					<div class="skeleton-block skeleton-sidebar-item"></div>
+				}
+			</div>
+			<div class="skeleton-form-main">
+				<ng-container *ngTemplateOutlet="formCards"></ng-container>
+			</div>
+		</div>
+	} @else {
+		<ng-container *ngTemplateOutlet="formCards"></ng-container>
+	}
+
+	<ng-template #formCards>
+		@for (card of cards(); track $index) {
+			<div class="skeleton-form-card" aria-hidden="true">
+				@if (showTitle()) {
+					<div class="skeleton-form-card__header">
+						<div class="skeleton-block skeleton-form-title"></div>
+					</div>
+				}
+				<div class="skeleton-form-card__body">
+					@for (row of fieldRows(); track $index) {
+						<div class="skeleton-form-row" [style.grid-template-columns]="'repeat(' + columns() + ', 1fr)'">
+							@for (col of fieldCols(); track $index) {
+								<div class="skeleton-form-field">
+									<div class="skeleton-block skeleton-field-label" aria-hidden="true"></div>
+									<div class="skeleton-block skeleton-field-input" aria-hidden="true"></div>
+								</div>
+							}
+						</div>
+					}
+					@if (showTextarea()) {
+						<div class="skeleton-form-field">
+							<div class="skeleton-block skeleton-field-label" aria-hidden="true"></div>
+							<div class="skeleton-block skeleton-field-textarea" aria-hidden="true"></div>
+						</div>
+					}
+				</div>
+				@if (showButton()) {
+					<div class="skeleton-form-card__footer" aria-hidden="true">
+						<div class="skeleton-block skeleton-form-btn"></div>
+					</div>
+				}
+			</div>
+		}
+	</ng-template>
+
+	<span class="sr-only">Loading form, please wait.</span>
+</div>

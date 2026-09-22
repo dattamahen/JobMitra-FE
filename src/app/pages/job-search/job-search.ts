@@ -11,7 +11,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { LoadingComponent } from '../../shared/components/loading/loading.component';
+import { SkeletonJobCardListComponent } from '../../shared/components/skeletons';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { JobFilterComponent, JobFilterConfig } from '../../shared/components/job-filter/job-filter.component';
 import { JobCardComponent } from '../../shared/components/job-card/job-card.component';
@@ -40,7 +40,7 @@ import { AuthService } from '../../services/auth.service';
 		MatTooltipModule,
 		MatSnackBarModule,
 		MatDialogModule,
-		LoadingComponent,
+		SkeletonJobCardListComponent,
 		EmptyStateComponent,
 		JobFilterComponent,
 		JobCardComponent

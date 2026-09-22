@@ -10,10 +10,12 @@
     </div>
 
     @if (listLoading()) {
-      <div class="loading-container">
-        <mat-spinner></mat-spinner>
-        <p>Loading your job posts...</p>
-      </div>
+      <app-skeleton-job-card-list
+        [count]="4"
+        [showFilter]="false"
+        [showActions]="false"
+        [showShareFooter]="true">
+      </app-skeleton-job-card-list>
     } @else if (jobs().length === 0) {
       <div class="empty-state">
         <mat-icon>rocket_launch</mat-icon>

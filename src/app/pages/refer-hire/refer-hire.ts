@@ -15,6 +15,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
+import { SkeletonJobCardListComponent } from '../../shared/components/skeletons';
 import { InternalJobService, InternalJob, ParsedJobPreview } from '../../services/internal-job.service';
 import { MotivationBannerComponent } from '../../shared/components/motivation-banner/motivation-banner.component';
 import { getRandomPosterMotivationGroup, type MotivationGroup } from '../../data/motivation-lines.data';
@@ -30,7 +31,8 @@ type PostStep = 'verify-email' | 'input' | 'preview' | 'done';
     ReactiveFormsModule, MatCardModule, MatButtonModule, MatIconModule,
     MatChipsModule, MatProgressSpinnerModule, MatSnackBarModule, MatTooltipModule,
     MatFormFieldModule, MatInputModule, MatSelectModule, MatTableModule,
-    MatDialogModule, MotivationBannerComponent, ConfirmDialogComponent
+    MatDialogModule, MotivationBannerComponent, ConfirmDialogComponent,
+    SkeletonJobCardListComponent
   ],
   templateUrl: './refer-hire.html',
   styleUrl: './refer-hire.css'

@@ -1,0 +1,71 @@
+<div role="status" aria-label="Loading job listings" aria-busy="true">
+
+	@if (showFilter()) {
+		<div class="skeleton-filter-bar" aria-hidden="true">
+			<div class="skeleton-block skeleton-filter-input"></div>
+			<div class="skeleton-filter-chips">
+				<div class="skeleton-block skeleton-filter-chip"></div>
+				<div class="skeleton-block skeleton-filter-chip"></div>
+				<div class="skeleton-block skeleton-filter-chip"></div>
+			</div>
+		</div>
+	}
+
+	<div class="skeleton-job-list">
+		@for (item of items(); track $index) {
+			<div class="skeleton-job-card" aria-hidden="true">
+				<div class="skeleton-job-card__body">
+
+					@if (showAvatar()) {
+						<div class="skeleton-block skeleton-avatar"></div>
+					}
+
+					<div class="skeleton-job-card__details">
+						<div class="skeleton-job-card__header">
+							<div class="skeleton-block skeleton-title"></div>
+							<div class="skeleton-block skeleton-chip-sm"></div>
+						</div>
+						<div class="skeleton-block skeleton-company"></div>
+
+						<div class="skeleton-job-card__meta">
+							@for (m of metas(); track $index) {
+								<div class="skeleton-block skeleton-meta-item"></div>
+							}
+						</div>
+
+						@if (showChips()) {
+							<div class="skeleton-job-card__chips">
+								@for (c of chips(); track $index) {
+									<div class="skeleton-block skeleton-skill-chip"></div>
+								}
+							</div>
+						}
+					</div>
+
+					<div class="skeleton-job-card__match" aria-hidden="true">
+						<div class="skeleton-block skeleton-match-circle"></div>
+					</div>
+				</div>
+
+				@if (showActions()) {
+					<div class="skeleton-job-card__actions" aria-hidden="true">
+						<div class="skeleton-block skeleton-action-btn"></div>
+						<div class="skeleton-block skeleton-action-btn"></div>
+						<div class="skeleton-block skeleton-action-btn"></div>
+						<div class="skeleton-block skeleton-apply-btn"></div>
+					</div>
+				}
+
+				@if (showShareFooter()) {
+					<div class="skeleton-job-card__share" aria-hidden="true">
+						<div class="skeleton-block skeleton-share-btn"></div>
+						<div class="skeleton-block skeleton-share-btn"></div>
+						<div class="skeleton-block skeleton-share-btn"></div>
+					</div>
+				}
+			</div>
+		}
+	</div>
+
+	<span class="sr-only">Loading job listings, please wait.</span>
+</div>
