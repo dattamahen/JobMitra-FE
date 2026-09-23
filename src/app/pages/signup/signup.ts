@@ -1,4 +1,4 @@
-import { Component, signal, inject, ChangeDetectionStrategy, computed } from '@angular/core';
+import { Component, signal, inject, ChangeDetectionStrategy, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -36,7 +36,7 @@ import { passwordStrengthValidator } from '../../validators/password.validator';
 		MatIconModule
 	],
 })
-export class SignupPage {
+export class SignupPage implements OnInit {
 	signupForm: FormGroup;
 	isLoading = signal(false);
 	showPassword = signal(false);
@@ -75,6 +75,13 @@ export class SignupPage {
 		this.signupForm.get('confirmPassword')!.valueChanges
 			.pipe(takeUntilDestroyed())
 			.subscribe(v => this.confirmValue.set(v ?? ''));
+	}
+
+	ngOnInit(): void {
+		this.signupForm.reset({ user_type: 'candidate' });
+		this.isLoading.set(false);
+		this.showPassword.set(false);
+		this.showConfirmPassword.set(false);
 	}
 
 	async onSubmit() {

@@ -113,7 +113,7 @@ export class DashboardService {
 				{ 
 					id: 'matching-jobs', 
 					value: 45, 
-					label: 'Total Jobs Available',
+					label: 'Total Jobs Posted',
 					icon: 'work',
 					color: 'warn',
 					trend: { direction: 'neutral', percentage: 0, period: 'today' }
