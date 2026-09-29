@@ -1,29 +1,29 @@
 <div class="subscription-dialog">
-	<h2 mat-dialog-title>{{TEXT.plans.title}}</h2>
+	<h2 mat-dialog-title>{{TEXT.title}}</h2>
 	<mat-dialog-content>
-		<app-motivation-banner />
+		@if (!isInternalJobsContext) { <app-motivation-banner /> }
 		<div class="invest-card">
 			<div class="invest-benefits">
-				@for (benefit of TEXT.plans.benefits; track benefit.icon) {
+				@for (benefit of TEXT.benefits; track benefit.icon) {
 					<div class="benefit-row">
 						<mat-icon>{{benefit.icon}}</mat-icon>
 						<span><strong>{{benefit.text}}</strong> — {{benefit.detail}}</span>
 					</div>
 				}
 			</div>
-			<p class="invest-result">{{TEXT.plans.investResult}}</p>
+			<p class="invest-result">{{TEXT.investResult}}</p>
 			<button mat-raised-button color="primary" class="invest-cta"
 				(click)="pay()" [disabled]="loading()">
 				@if (loading()) {
 					<mat-spinner diameter="20"></mat-spinner>
 				} @else {
 					<mat-icon>bolt</mat-icon>
-					{{TEXT.plans.ctaPrefix}} ₹{{AMOUNT}}
+					{{TEXT.ctaPrefix}} ₹{{AMOUNT}}
 				}
 			</button>
 		</div>
 	</mat-dialog-content>
 	<mat-dialog-actions align="end">
-		<button mat-button (click)="close()">{{TEXT.plans.maybeLater}}</button>
+		<button mat-button (click)="close()">{{TEXT.maybeLater}}</button>
 	</mat-dialog-actions>
 </div>

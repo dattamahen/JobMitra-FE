@@ -78,6 +78,14 @@ export class LandingPage implements OnInit {
 				this.showAuthPanel.set(true);
 			}
 		});
+
+		this.initHeroGoogleSignIn();
+	}
+
+	private async initHeroGoogleSignIn(): Promise<void> {
+		if (!isPlatformBrowser(this.platformId)) return;
+		await this.googleAuthService.initializeGoogleSignIn();
+		setTimeout(() => this.googleAuthService.renderSignInButton('hero-google-signin'), 300);
 	}
 
 	openYoutubeDemo(): void {

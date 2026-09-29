@@ -30,14 +30,16 @@ export const SIGNUP_FORM_CONFIG: FormConfig = {
 			label: 'First Name',
 			type: 'text',
 			placeholder: 'First name',
-			required: true
+			required: true,
+			validators: { minLength: 2 }
 		},
 		{
 			name: 'last_name',
 			label: 'Last Name',
 			type: 'text',
 			placeholder: 'Last name',
-			required: true
+			required: true,
+			validators: { minLength: 1 }
 		},
 		{
 			name: 'email',

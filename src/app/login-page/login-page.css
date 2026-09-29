@@ -259,6 +259,11 @@
 	color: var(--brand);
 }
 
+.hero-google-signin {
+	display: flex;
+	align-items: center;
+}
+
 /* Social Proof */
 .hero-social-proof {
 	display: flex;
@@ -437,6 +442,45 @@
 	font-weight: 800;
 	color: #0f172a;
 	letter-spacing: -0.5px;
+}
+
+/* ── GOOGLE SIGN-IN LOADING OVERLAY ── */
+.gsignin-loading-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(255, 255, 255, 0.85);
+	backdrop-filter: blur(4px);
+	z-index: 200;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.gsignin-loading-box {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 16px;
+}
+
+.gsignin-loading-box p {
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--brand);
+	margin: 0;
+}
+
+.gsignin-spinner {
+	width: 44px;
+	height: 44px;
+	border: 3px solid var(--brand-light);
+	border-top-color: var(--brand);
+	border-radius: 50%;
+	animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+	to { transform: rotate(360deg); }
 }
 
 /* ── OVERLAY ── */
@@ -821,9 +865,12 @@
 		align-items: stretch;
 	}
 
-	.btn-primary,
-	.btn-secondary {
+	.btn-primary {
 		justify-content: center;
+	}
+
+	.hero-google-signin {
+		width: 100%;
 	}
 
 	.nav-login {

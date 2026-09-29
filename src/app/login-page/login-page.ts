@@ -41,6 +41,7 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 	readonly isSignupMode = signal(false);
 	readonly isForgotPasswordMode = signal(false);
 	readonly isResetPasswordMode = signal(false);
+	readonly googleSignInLoading = signal(false);
 	errorMessage = '';
 	successMessage = '';
 	resetToken = '';
@@ -105,14 +106,21 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 			});
 
 		if (isPlatformBrowser(this.platformId)) {
-			const handler = (e: Event) => {
+			const errorHandler = (e: Event) => {
 				this.errorMessage = (e as CustomEvent<string>).detail;
 			};
-			window.addEventListener('google-signin-error', handler);
-			this.destroyRef.onDestroy(() => window.removeEventListener('google-signin-error', handler));
+			const loadingHandler = (e: Event) => {
+				this.googleSignInLoading.set((e as CustomEvent<boolean>).detail);
+			};
+			window.addEventListener('google-signin-error', errorHandler);
+			window.addEventListener('google-signin-loading', loadingHandler);
+			this.destroyRef.onDestroy(() => {
+				window.removeEventListener('google-signin-error', errorHandler);
+				window.removeEventListener('google-signin-loading', loadingHandler);
+			});
 		}
 
-		this.initializeGoogleSignIn();
+		this.initializeGoogleSignIn().then(() => this.renderHeroGoogleButton());
 		this.loadDynamicPricing();
 	}
 
@@ -289,6 +297,18 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 				this.googleAuthService.renderSignInButton('google-signin-button');
 			}
 		}, 150);
+	}
+
+	private renderHeroGoogleButton(): void {
+		if (!isPlatformBrowser(this.platformId)) return;
+		setTimeout(() => {
+			const container = document.getElementById('hero-google-signin');
+			const primaryBtn = document.querySelector('.hero-actions .btn-primary') as HTMLElement | null;
+			const width = primaryBtn ? Math.max(primaryBtn.offsetWidth, 200) : 200;
+			if (container) {
+				this.googleAuthService.renderSignInButton('hero-google-signin', width);
+			}
+		}, 300);
 	}
 
 	onLogin(formData: any): void {
