@@ -28,6 +28,7 @@ import { MockInterviewService } from '../../services/mock-interview.service';
 import { ResumeTailorService } from '../../services/resume-tailor.service';
 import { InternalJobService } from '../../services/internal-job.service';
 import { AuthService } from '../../services/auth.service';
+import { SubscriptionDialogComponent } from '../../shared/components/subscription-dialog/subscription-dialog.component';
 
 @Component({
 	selector: 'app-job-search-page',
@@ -197,10 +198,6 @@ export class JobSearchPage implements OnInit {
 					},
 					error: (err) => {
 					this.isLoading.set(false);
-					if (err?.status === 402) {
-						this.snackBar.open('Subscribe to access the Internal Job Market.', 'Subscribe', { duration: 6000 })
-							.onAction().subscribe(() => this.navigateToPage()?.({ page: 'subscription' }));
-					}
 				}
 				});
 			return;
@@ -378,11 +375,11 @@ export class JobSearchPage implements OnInit {
 		}
 	}
 
+	private openInternalJobSubscribeDialog(): void {
+		this.dialog.open(SubscriptionDialogComponent, { width: '560px', disableClose: false, data: { context: 'internal_jobs' } });
+	}
+
 	takeMatchAnalysis(jobId: string): void {
-		if (this.source() === 'internal_jobs' && !this.isSubscribed()) {
-			this.navigateToPage()?.({ page: 'subscription' });
-			return;
-		}
 		const job = this.getJobById(jobId);
 		if (!job) return;
 		if (job.match_analysis_done) {
@@ -409,10 +406,6 @@ export class JobSearchPage implements OnInit {
 	}
 
 	modifyCV(jobId: string): void {
-		if (this.source() === 'internal_jobs' && !this.isSubscribed()) {
-			this.navigateToPage()?.({ page: 'subscription' });
-			return;
-		}
 		const job = this.getJobById(jobId);
 		if (!job) return;
 		if (job.tailor_resume_done) {
@@ -509,7 +502,7 @@ export class JobSearchPage implements OnInit {
 
 		if (this.source() === 'internal_jobs') {
 			if (!this.isSubscribed()) {
-				this.navigateToPage()?.({ page: 'subscription' });
+				this.openInternalJobSubscribeDialog();
 				return;
 			}
 			from(this.internalJobService.applyJob(jobId, true))

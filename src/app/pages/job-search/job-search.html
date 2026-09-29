@@ -44,7 +44,6 @@
 					[isTailorResumeDisabled]="isTailorResumeDisabled(job.job_id)"
 					[matchAnalysisText]="getMatchAnalysisText(job.job_id)"
 					[tailorResumeText]="getTailorResumeText(job.job_id)"
-					[isApplyLocked]="source() === 'internal_jobs' && !isSubscribed()"
 					[isMatchAnalysisLoading]="matchAnalysisLoadingId() === job.job_id"
 					[isTailorLoading]="tailorLoadingId() === job.job_id"
 					[isMockInterviewLoading]="mockInterviewLoadingId() === job.job_id"

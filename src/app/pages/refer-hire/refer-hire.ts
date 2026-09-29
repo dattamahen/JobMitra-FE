@@ -153,8 +153,23 @@ export class ReferHirePage implements OnInit {
 
   openPostView(): void {
     this.postStep.set('verify-email');
+    this.postMode.set('manual');
     this.otpSent.set(false);
+    this.otpToken.set('');
+    this.officialEmail.set('');
+    this.parsedJob.set(null);
+    this.selectedFile.set(null);
+    this.csvText.set('');
     this.emailForm.reset();
+    this.skillsArray.clear();
+    while (this.requirementsArray.length) this.requirementsArray.removeAt(0);
+    while (this.responsibilitiesArray.length) this.responsibilitiesArray.removeAt(0);
+    this.requirementsArray.push(this.fb.control("Bachelor's degree or equivalent experience"));
+    this.requirementsArray.push(this.fb.control('Strong communication skills'));
+    this.requirementsArray.push(this.fb.control('Ability to work in a team'));
+    this.responsibilitiesArray.push(this.fb.control('Execute assigned tasks with quality'));
+    this.responsibilitiesArray.push(this.fb.control('Collaborate with cross-functional teams'));
+    this.responsibilitiesArray.push(this.fb.control('Deliver work on time'));
     this.manualForm.reset({ experience_level: 'mid', employment_type: 'full-time', job_type: 'onsite' });
     this.view.set('post');
   }

@@ -45,11 +45,9 @@ export class JobCardComponent {
   private _shareText(): string {
     const j = this.job();
     const loc = [j.location?.city, j.location?.state].filter(Boolean).join(', ') || (j.location?.is_remote ? 'Remote' : '');
-    const lines: string[] = [
-      `🚀 *${j.title}* at *${j.company}*`,
-    ];
+    const lines: string[] = [`🚀 *${j.title}* at *${j.company}*`];
     if (loc)                          lines.push(`📍 ${loc}${j.location?.is_remote ? ' (Remote)' : ''}`);
-    if (j.experience_level)           lines.push(`🎯 ${j.experience_level} · ${j.employment_type || ''}`.replace(/ · $/, ''));
+    if (j.experience_level)           lines.push(`🎯 ${j.experience_level}${j.employment_type ? ' · ' + j.employment_type : ''}`);
     if (j.skills_required?.length)    lines.push(`🛠 Skills: ${j.skills_required.slice(0, 5).join(', ')}${j.skills_required.length > 5 ? ' & more' : ''}`);
     if (j.responsibilities?.length) {
       lines.push(``, `📌 *Key Responsibilities:*`);
@@ -60,7 +58,14 @@ export class JobCardComponent {
   }
 
   shareOnWhatsApp(): void {
-    window.open(`https://wa.me/?text=${encodeURIComponent(this._shareText())}`, '_blank');
+    const text = this._shareText();
+    if (navigator.share) {
+      navigator.share({ text }).catch(() => {
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+      });
+    } else {
+      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    }
   }
 
   shareOnLinkedIn(): void {
