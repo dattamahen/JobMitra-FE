@@ -1,5 +1,6 @@
 import { Component, viewChild, AfterViewInit, OnInit, ElementRef, DestroyRef, inject, signal, computed, ChangeDetectionStrategy, ChangeDetectorRef, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CvUploadService } from '../../services/cv-upload.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -69,6 +70,18 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	private imageUploadService = inject(ImageUploadService);
 	private cdr = inject(ChangeDetectorRef);
 	private apiService = inject(ApiService);
+	private cvUploadService = inject(CvUploadService);
+
+	// Entry screen: 'entry' | 'upload' | 'form'
+	profileMode = signal<'entry' | 'upload' | 'form'>('entry');
+
+	// CV upload flow state
+	cvUploadStep = signal<'idle' | 'processing' | 'preview' | 'saving'>('idle');
+	cvUploadError = signal<string | null>(null);
+	cvExtracted = signal<Record<string, unknown> | null>(null);
+	cvWarnings = signal<string[]>([]);
+	cvDragOver = signal(false);
+
 	isGeneratingSummary = signal(false);
 	isGeneratingJobDesc = signal<string | null>(null);
 	
@@ -637,6 +650,23 @@ export class ProfilePage implements OnInit, AfterViewInit {
 		return undefined;
 	}
 
+	private hasExistingProfile(user: any): boolean {
+		if (!user) return false;
+		// Primary signal: explicit flag set when user intentionally fills profile
+		if (user.profile_setup_done === true) return true;
+		// Fallback for existing users created before the flag existed:
+		// check fields that are NOT auto-populated on registration
+		return !!(
+			user.current_role ||
+			user.phone ||
+			user.city ||
+			(user.work_experience?.length > 0) ||
+			(user.education?.length > 0) ||
+			(user.technical_skills?.length > 0) ||
+			(user.projects?.length > 0)
+		);
+	}
+
 	private loadUserProfile(): void {
 		if (!this.authService.isAuthenticated()) {
 			return;
@@ -649,6 +679,9 @@ export class ProfilePage implements OnInit, AfterViewInit {
 				next: (user: any) => {
 					this.isLoading.set(false);
 					this.currentUser.set(user as any);
+					if (this.profileMode() === 'entry') {
+						this.profileMode.set(this.hasExistingProfile(user) ? 'form' : 'entry');
+					}
 					this.updateFormValues();
 					this.updateDynamicForms();
 					this.cdr.markForCheck();
@@ -866,6 +899,133 @@ export class ProfilePage implements OnInit, AfterViewInit {
 					});
 				}
 			});
+	}
+
+	// ── Entry screen ────────────────────────────────────────────────────────
+
+	selectManualEntry(): void {
+		this.profileMode.set('form');
+	}
+
+	selectCvUpload(): void {
+		this.profileMode.set('upload');
+		this.cvUploadStep.set('idle');
+		this.cvUploadError.set(null);
+		this.cvExtracted.set(null);
+		this.cvWarnings.set([]);
+	}
+
+	backToEntry(): void {
+		this.profileMode.set('entry');
+	}
+
+	// ── CV upload drag-and-drop ──────────────────────────────────────────────
+
+	onCvDragOver(event: DragEvent): void {
+		event.preventDefault();
+		this.cvDragOver.set(true);
+	}
+
+	onCvDragLeave(): void {
+		this.cvDragOver.set(false);
+	}
+
+	onCvDrop(event: DragEvent): void {
+		event.preventDefault();
+		this.cvDragOver.set(false);
+		const file = event.dataTransfer?.files?.[0];
+		if (file) this.processCvFile(file);
+	}
+
+	onCvFileSelected(event: Event): void {
+		const input = event.target as HTMLInputElement;
+		const file = input.files?.[0];
+		if (file) this.processCvFile(file);
+		input.value = '';
+	}
+
+	private processCvFile(file: File): void {
+		const allowed = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+		if (!allowed.includes(file.type)) {
+			this.cvUploadError.set('Only PDF and DOCX files are supported.');
+			return;
+		}
+		if (file.size > 10 * 1024 * 1024) {
+			this.cvUploadError.set('File must be under 10 MB.');
+			return;
+		}
+
+		this.cvUploadStep.set('processing');
+		this.cvUploadError.set(null);
+
+		this.cvUploadService.uploadForPreview(file)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (res) => {
+					this.cvExtracted.set(res.extracted);
+					this.cvWarnings.set(res.warnings);
+					this.cvUploadStep.set('preview');
+					this.cdr.markForCheck();
+				},
+				error: (err) => {
+					this.cvUploadStep.set('idle');
+					this.cvUploadError.set(err?.error?.detail ?? 'Failed to process document. Please try again.');
+					this.cdr.markForCheck();
+				}
+			});
+	}
+
+	confirmCvSave(): void {
+		const extracted = this.cvExtracted();
+		if (!extracted) return;
+
+		this.cvUploadStep.set('saving');
+
+		this.cvUploadService.confirmSave(extracted)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: () => {
+					this.snackBar.open('Profile updated from your CV!', 'Close', {
+						duration: 3000,
+						panelClass: ['success-snackbar']
+					});
+					this.profileMode.set('form');
+					this.formsInitialized = false;
+					this.loadUserProfile();
+				},
+				error: (err) => {
+					this.cvUploadStep.set('preview');
+					this.snackBar.open(err?.error?.detail ?? 'Failed to save profile.', 'Close', {
+						duration: 3000,
+						panelClass: ['error-snackbar']
+					});
+				}
+			});
+	}
+
+	getCvPreviewScalars(): { label: string; value: string }[] {
+		const e = this.cvExtracted();
+		if (!e) return [];
+		const map: Record<string, string> = {
+			first_name: 'First Name', last_name: 'Last Name', email: 'Email',
+			phone: 'Phone', city: 'City', state: 'State',
+			current_role: 'Current Role', current_company: 'Company',
+			overall_experience_years: 'Experience (yrs)', highest_qualification: 'Qualification',
+			desired_job_title: 'Desired Title',
+		};
+		return Object.entries(map)
+			.filter(([k]) => e[k] != null && e[k] !== '')
+			.map(([k, label]) => ({ label, value: String(e[k]) }));
+	}
+
+	getCvPreviewSkills(): string[] {
+		const e = this.cvExtracted();
+		return Array.isArray(e?.['skills']) ? (e!['skills'] as string[]).slice(0, 12) : [];
+	}
+
+	getCvPreviewArrayCount(key: string): number {
+		const e = this.cvExtracted();
+		return Array.isArray(e?.[key]) ? (e![key] as unknown[]).length : 0;
 	}
 
 }

@@ -30,7 +30,7 @@
 				<p class="hero-description">AI builds your resume, matches you to the right roles, and preps you for interviews — so you show up confident and get hired faster.</p>
 				<div class="hero-actions">
 					<button class="btn-primary" (click)="openPanel()"><i class="ti ti-sparkles" aria-hidden="true"></i> Start for free</button>
-					<button class="btn-secondary" (click)="openPanel()"><i class="ti ti-player-play" aria-hidden="true"></i> Watch demo</button>
+					<div id="hero-google-signin" class="hero-google-signin"></div>
 				</div>
 				<div class="hero-social-proof">
 					<div class="avatar-stack">
@@ -275,6 +275,16 @@
 			</div>
 		</div>
 	</footer>
+
+	<!-- Google Sign-in Loading Overlay -->
+	@if (googleSignInLoading()) {
+		<div class="gsignin-loading-overlay" aria-live="polite" aria-label="Signing in with Google">
+			<div class="gsignin-loading-box">
+				<div class="gsignin-spinner"></div>
+				<p>Signing you in...</p>
+			</div>
+		</div>
+	}
 
 	<!-- Overlay -->
 	@if (isPanelOpen()) {

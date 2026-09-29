@@ -1,4 +1,138 @@
 <div class="page-container">
+	<!-- Entry Screen -->
+	@if (profileMode() === 'entry') {
+		<div class="entry-screen">
+			<div class="entry-tiles">
+				<button class="entry-tile" (click)="selectCvUpload()">
+					<mat-icon>upload_file</mat-icon>
+					<span class="tile-title">Upload CV</span>
+					<span class="tile-desc">Auto-fill your profile from a PDF or DOCX resume</span>
+				</button>
+				<button class="entry-tile" (click)="selectManualEntry()">
+					<mat-icon>edit_note</mat-icon>
+					<span class="tile-title">Fill Manually</span>
+					<span class="tile-desc">Enter your details step by step in the form</span>
+				</button>
+			</div>
+		</div>
+	}
+
+	<!-- CV Upload Flow -->
+	@if (profileMode() === 'upload') {
+		<div class="cv-upload-screen">
+			<div style="display:flex;align-items:center;gap:12px">
+				<button mat-icon-button (click)="backToEntry()" [disabled]="cvUploadStep() === 'processing' || cvUploadStep() === 'saving'" aria-label="Back">
+					<mat-icon>arrow_back</mat-icon>
+				</button>
+				<h2>Upload Your CV</h2>
+			</div>
+
+			@if (cvUploadStep() === 'idle' || cvUploadStep() === 'processing') {
+				<div class="upload-drop-zone" [class.drag-over]="cvDragOver()"
+					[class.disabled]="cvUploadStep() === 'processing'"
+					(dragover)="cvUploadStep() !== 'processing' && onCvDragOver($event)" (dragleave)="onCvDragLeave()" (drop)="cvUploadStep() !== 'processing' && onCvDrop($event)"
+					(click)="cvUploadStep() !== 'processing' && cvFileInput.click()" role="button" tabindex="0"
+					(keydown.enter)="cvUploadStep() !== 'processing' && cvFileInput.click()" aria-label="Upload CV file">
+					<mat-icon>cloud_upload</mat-icon>
+					<p>Drag &amp; drop your CV here, or click to browse</p>
+					<span class="file-hint">PDF or DOCX · Max 10 MB · No password-protected files</span>
+					<input #cvFileInput type="file" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+						style="display:none" (change)="onCvFileSelected($event)" aria-hidden="true">
+				</div>
+
+				@if (cvUploadStep() === 'processing') {
+					<div class="upload-status processing">
+						<mat-icon class="spin">sync</mat-icon>
+						<span>Analysing your CV with AI — this may take a few seconds…</span>
+					</div>
+				}
+
+				@if (cvUploadError()) {
+					<div class="upload-status error">
+						<mat-icon>error_outline</mat-icon>
+						<span>{{ cvUploadError() }}</span>
+					</div>
+				}
+			}
+
+			@if (cvUploadStep() === 'preview' || cvUploadStep() === 'saving') {
+				@if (cvWarnings().length > 0) {
+					<div class="warnings-list">
+						@for (w of cvWarnings(); track w) {
+							<div class="warning-item">
+								<mat-icon>warning_amber</mat-icon>
+								<span>{{ w }}</span>
+							</div>
+						}
+					</div>
+				}
+
+				<div class="preview-section">
+					<h3>Extracted Details — Review before saving</h3>
+					<div class="preview-fields">
+						@for (field of getCvPreviewScalars(); track field.label) {
+							<div class="preview-field">
+								<label>{{ field.label }}</label>
+								<span>{{ field.value }}</span>
+							</div>
+						}
+					</div>
+
+					@if (getCvPreviewSkills().length > 0) {
+						<div class="preview-array">
+							<label>Skills</label>
+							<div class="preview-chips">
+								@for (s of getCvPreviewSkills(); track s) {
+									<span class="preview-chip">{{ s }}</span>
+								}
+							</div>
+						</div>
+					}
+
+					@if (getCvPreviewArrayCount('work_experience') > 0) {
+						<div class="preview-field">
+							<label>Work Experience</label>
+							<span>{{ getCvPreviewArrayCount('work_experience') }} entries found</span>
+						</div>
+					}
+					@if (getCvPreviewArrayCount('education') > 0) {
+						<div class="preview-field">
+							<label>Education</label>
+							<span>{{ getCvPreviewArrayCount('education') }} entries found</span>
+						</div>
+					}
+					@if (getCvPreviewArrayCount('projects') > 0) {
+						<div class="preview-field">
+							<label>Projects</label>
+							<span>{{ getCvPreviewArrayCount('projects') }} entries found</span>
+						</div>
+					}
+					@if (getCvPreviewArrayCount('certifications') > 0) {
+						<div class="preview-field">
+							<label>Certifications</label>
+							<span>{{ getCvPreviewArrayCount('certifications') }} entries found</span>
+						</div>
+					}
+				</div>
+
+				<div class="cv-upload-actions">
+					<button mat-stroked-button (click)="selectCvUpload()" [disabled]="cvUploadStep() === 'saving'">
+						Upload Different File
+					</button>
+					<button mat-flat-button color="primary" (click)="confirmCvSave()" [disabled]="cvUploadStep() === 'saving'">
+						@if (cvUploadStep() === 'saving') {
+							<mat-icon class="spin">sync</mat-icon> Saving…
+						} @else {
+							<mat-icon>check</mat-icon> Save to Profile
+						}
+					</button>
+				</div>
+			}
+		</div>
+	}
+
+	<!-- Manual Form (existing) -->
+	@if (profileMode() === 'form') {
 	<div class="profile-layout">
 		<!-- Profile Form -->
 		<div class="profile-form-section">
@@ -322,4 +456,5 @@
 			</mat-card>
 		</div>
 	</div>
+	} <!-- end profileMode === 'form' -->
 </div>

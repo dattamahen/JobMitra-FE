@@ -1,5 +1,5 @@
 import { Component, signal, inject, ChangeDetectionStrategy, OnInit } from '@angular/core';
-import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogRef, MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -7,6 +7,10 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CreditsService, SubscriptionPlan } from '../../../services/credits.service';
 import { MotivationBannerComponent } from '../motivation-banner/motivation-banner.component';
 import { SUBSCRIPTION_DIALOG_TEXT } from '../../../data/shared-components-data';
+
+export interface SubscriptionDialogData {
+	context?: 'internal_jobs';
+}
 
 @Component({
 	selector: 'app-subscription-dialog',
@@ -19,10 +23,18 @@ import { SUBSCRIPTION_DIALOG_TEXT } from '../../../data/shared-components-data';
 	styleUrl: './subscription-dialog.component.css'
 })
 export class SubscriptionDialogComponent implements OnInit {
-	readonly TEXT = SUBSCRIPTION_DIALOG_TEXT;
 	private dialogRef = inject(MatDialogRef<SubscriptionDialogComponent>);
 	private creditsService = inject(CreditsService);
 	private snackBar = inject(MatSnackBar);
+	private data: SubscriptionDialogData | null = inject(MAT_DIALOG_DATA, { optional: true });
+
+	get TEXT() {
+		return this.data?.context === 'internal_jobs'
+			? SUBSCRIPTION_DIALOG_TEXT.internalJobs
+			: SUBSCRIPTION_DIALOG_TEXT.plans;
+	}
+
+	get isInternalJobsContext(): boolean { return this.data?.context === 'internal_jobs'; }
 
 	loading = signal(false);
 	plan = signal<SubscriptionPlan | null>(null);

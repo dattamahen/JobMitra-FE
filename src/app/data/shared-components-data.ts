@@ -19,6 +19,18 @@ export const SUBSCRIPTION_DIALOG_TEXT = {
 		ctaPrefix: 'Get Interview Ready —',
 		maybeLater: 'Maybe Later',
 	},
+	internalJobs: {
+		title: '🔥 This Opportunity Won\'t Wait',
+		benefits: [
+			{ icon: 'description', text: '10 CV Downloads', detail: 'apply to companies across the platform' },
+			{ icon: 'record_voice_over', text: '10 AI Mock Interviews', detail: 'walk in prepared, not nervous' },
+			{ icon: 'lock_open', text: 'Full Internal Job Market Access', detail: 'exclusive roles not listed anywhere else' },
+			{ icon: 'repeat', text: 'Apply to Any Number of Internal Jobs', detail: 'keep applying until your credits run out' },
+		],
+		investResult: '🚀 Don\'t let another candidate take this role — subscribe and apply now',
+		ctaPrefix: 'Unlock & Apply —',
+		maybeLater: 'No thanks, I\'ll skip this opportunity',
+	},
 	payment: {
 		title: 'Complete Payment',
 		payTo: 'Pay',
