@@ -1,0 +1,44 @@
+<mat-card class="form-card">
+	<mat-card-content>
+		<div class="view-header">
+			<button mat-icon-button (click)="back.emit()" aria-label="Back">
+				<mat-icon>arrow_back</mat-icon>
+			</button>
+			<div>
+				<h2 class="section-title">Level 2 — Blueprint Questionnaire</h2>
+				<p class="section-hint">Answer all 12 questions thoroughly. AI evaluates across 4 dimensions.</p>
+			</div>
+		</div>
+
+		@if (loading()) {
+			<app-skeleton-form [repeat]="3" [rows]="2" [columns]="1" [showTitle]="true" />
+		} @else {
+			@for (section of sections(); track section) {
+				<div class="blueprint-section">
+					<h3 class="blueprint-section-title">{{ section }}</h3>
+					@for (q of questionsForSection(section); track q.question_number) {
+						<div class="blueprint-question">
+							<div class="question-header">
+								<span class="question-num">Q{{ q.question_number }}</span>
+								<p class="question-text">{{ q.question }}</p>
+							</div>
+							<p class="question-why">{{ q.why_we_ask }}</p>
+							<mat-form-field appearance="fill" class="full-width">
+								<mat-label>Your Answer</mat-label>
+								<textarea matInput rows="4" [(ngModel)]="blueprintAnswers[q.question_number]" [name]="'q' + q.question_number"></textarea>
+							</mat-form-field>
+						</div>
+					}
+				</div>
+			}
+
+			<div class="form-actions">
+				<button mat-stroked-button type="button" (click)="back.emit()">Cancel</button>
+				<button mat-raised-button color="primary" [disabled]="submitting()" (click)="submit()">
+					@if (submitting()) { <mat-spinner diameter="18"></mat-spinner> }
+					Submit Blueprint
+				</button>
+			</div>
+		}
+	</mat-card-content>
+</mat-card>

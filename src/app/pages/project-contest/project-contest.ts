@@ -1,8 +1,7 @@
 import {
 	Component, OnInit, signal, inject, ChangeDetectionStrategy,
-	input, computed,
+	input, computed, linkedSignal,
 } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { FormBuilder, FormArray, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,19 +18,20 @@ import { SkeletonFormComponent } from '../../shared/components/skeletons';
 import {
 	ProjectContestService,
 	ContestEntry,
-	BlueprintQuestion,
-	BlueprintAnswer,
-	InterviewQuestion,
 } from '../../services/project-contest.service';
 import { AuthService } from '../../services/auth.service';
 import { CreditsService } from '../../services/credits.service';
 import { ContestPaymentDialogComponent } from './contest-payment-dialog.component';
+import { ContestTrackerComponent } from './contest-tracker';
+import { ContestBlueprintComponent } from './contest-blueprint';
+import { ContestProofComponent } from './contest-proof';
+import { ContestInterviewComponent } from './contest-interview';
+import { ContestPipelineComponent } from './contest-pipeline';
 import {
 	PROJECT_CONTEST_TEXT,
 	TECHNICAL_CATEGORIES,
 	NON_TECHNICAL_CATEGORIES,
 	CONTEST_LEVELS,
-	STATUS_LEVEL_MAP,
 	STATUS_LABELS,
 	ContestCategory,
 } from '../../data/project-contest-data';
@@ -43,13 +43,17 @@ type EntryView = 'tracker' | 'blueprint' | 'proof' | 'interview';
 	selector: 'app-project-contest',
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	imports: [
-		DecimalPipe,
 		ReactiveFormsModule, FormsModule,
 		MatCardModule, MatButtonModule, MatIconModule,
 		MatFormFieldModule, MatInputModule, MatSelectModule,
 		MatProgressSpinnerModule, MatDividerModule, MatDialogModule,
 		MatCheckboxModule,
 		SkeletonFormComponent,
+		ContestTrackerComponent,
+		ContestBlueprintComponent,
+		ContestProofComponent,
+		ContestInterviewComponent,
+		ContestPipelineComponent,
 	],
 	templateUrl: './project-contest.html',
 	styleUrl: './project-contest.css',
@@ -61,6 +65,7 @@ export class ProjectContestPage implements OnInit {
 	readonly technicalCategories = TECHNICAL_CATEGORIES;
 	readonly nonTechnicalCategories = NON_TECHNICAL_CATEGORIES;
 
+
 	navigateToPage = input<(event: { page: string }) => void>();
 
 	private fb = inject(FormBuilder);
@@ -71,41 +76,18 @@ export class ProjectContestPage implements OnInit {
 
 	// Page state
 	pageMode = signal<PageMode>(null);
-	entryView = signal<EntryView>('tracker');
 	activeEntry = signal<ContestEntry | null>(null);
+	// entryView auto-resets to 'tracker' whenever activeEntry changes
+	entryView = linkedSignal<ContestEntry | null, EntryView>({
+		source: this.activeEntry,
+		computation: () => 'tracker',
+	});
 
 	// Form state
 	submitting = signal(false);
+	refining = signal(false);
 	ideaResult = signal<{ entry_id: string; refined_title: string; refined_description: string; inferred_domain: string; inferred_problem_statement: string; inferred_target_users: string; idea_quality_score: number; amount: number } | null>(null);
 	categories = signal<ContestCategory[]>(TECHNICAL_CATEGORIES);
-
-	// Blueprint state
-	blueprintQuestions = signal<BlueprintQuestion[]>([]);
-	blueprintAnswers: Record<number, string> = {};
-	loadingBlueprint = signal(false);
-	submittingBlueprint = signal(false);
-
-	// Proof state
-	proofForm!: FormGroup;
-	submittingProof = signal(false);
-
-	// Interview state
-	currentQuestion = signal<InterviewQuestion | null>(null);
-	currentRoundNumber = signal(1);
-	currentRoundName = signal('');
-	currentQuestionIndex = signal(0);
-	interviewAnswer = '';
-	submittingAnswer = signal(false);
-	lastEvaluation = signal<{ score: number; what_was_strong: string; what_was_missing: string } | null>(null);
-	interviewComplete = signal(false);
-	startingInterview = signal(false);
-
-	// Computed
-	currentLevel = computed(() => {
-		const entry = this.activeEntry();
-		if (!entry) return 0;
-		return STATUS_LEVEL_MAP[entry.status] ?? 1;
-	});
 
 	currentUserFirstName = '';
 	currentUserLastName = '';
@@ -139,11 +121,6 @@ export class ProjectContestPage implements OnInit {
 			this.ideaForm.get('category')!.setValue('');
 		});
 
-		this.proofForm = this.fb.group({
-			youtube_url: ['', [Validators.required, Validators.pattern(/^https?:\/\/.+/)]],
-			github_url: ['', [Validators.required, Validators.pattern(/^https?:\/\/.+/)]],
-			demo_url: [''],
-		});
 	}
 
 	get teamMembers(): FormArray {
@@ -171,8 +148,11 @@ export class ProjectContestPage implements OnInit {
 	private async loadMyEntries() {
 		try {
 			const res = await this.contestService.getMyEntries();
-			if (res.entries.length > 0) {
-				this.activeEntry.set(res.entries[0]);
+			const active = (res.entries ?? []).find(
+				(e: ContestEntry) => e.payment_status === 'confirmed'
+			);
+			if (active) {
+				this.activeEntry.set(active);
 				this.pageMode.set('has-entry');
 			} else {
 				this.pageMode.set('no-entry');
@@ -182,19 +162,20 @@ export class ProjectContestPage implements OnInit {
 		}
 	}
 
-	async onSubmitIdea() {
-		if (this.ideaForm.invalid) {
-			this.ideaForm.markAllAsTouched();
-			return;
-		}
-		this.submitting.set(true);
+	async onRefineIdea() {
+		const name = this.ideaForm.get('raw_project_name');
+		const desc = this.ideaForm.get('raw_description');
+		name?.markAsTouched();
+		desc?.markAsTouched();
+		if (name?.invalid || desc?.invalid) return;
+		this.refining.set(true);
 		try {
 			const val = this.ideaForm.value;
 			const result = await this.contestService.submitIdea({
 				raw_project_name: val.raw_project_name,
 				raw_description: val.raw_description,
 				project_type: val.project_type,
-				category: val.category,
+				category: val.category || '',
 				tech_stack: val.tech_stack
 					? val.tech_stack.split(',').map((s: string) => s.trim()).filter(Boolean)
 					: [],
@@ -206,8 +187,20 @@ export class ProjectContestPage implements OnInit {
 		} catch {
 			// error handled by interceptor
 		} finally {
-			this.submitting.set(false);
+			this.refining.set(false);
 		}
+	}
+
+	async onSubmitIdea() {
+		if (this.ideaForm.invalid) {
+			this.ideaForm.markAllAsTouched();
+			return;
+		}
+		if (!this.ideaResult()) {
+			await this.onRefineIdea();
+			return;
+		}
+		await this.onConfirmIdea();
 	}
 
 	async onConfirmIdea() {
@@ -244,178 +237,22 @@ export class ProjectContestPage implements OnInit {
 		});
 	}
 
-	// ── Blueprint ──────────────────────────────────────────────────────────────
+	// ── Navigation ─────────────────────────────────────────────────────────────
 
-	async openBlueprint() {
-		const entry = this.activeEntry();
-		if (!entry) return;
-		this.entryView.set('blueprint');
-		this.loadingBlueprint.set(true);
-		try {
-			const res = entry.blueprint_questions?.length
-				? { questions: entry.blueprint_questions }
-				: await this.contestService.getBlueprintQuestions(entry.entry_id);
-			this.blueprintQuestions.set(res.questions);
-			// Pre-fill existing answers
-			entry.blueprint_answers?.forEach(a => {
-				this.blueprintAnswers[a.question_number] = a.answer;
-			});
-		} catch {
-			// error handled by interceptor
-		} finally {
-			this.loadingBlueprint.set(false);
-		}
-	}
-
-	async submitBlueprint() {
-		const entry = this.activeEntry();
-		if (!entry) return;
-		const answers: BlueprintAnswer[] = this.blueprintQuestions().map(q => ({
-			question_number: q.question_number,
-			answer: this.blueprintAnswers[q.question_number] || '',
-		}));
-		if (answers.some(a => !a.answer.trim())) return;
-		this.submittingBlueprint.set(true);
-		try {
-			await this.contestService.submitBlueprint(entry.entry_id, answers);
-			await this.loadMyEntries();
-			this.entryView.set('tracker');
-		} catch {
-			// error handled by interceptor
-		} finally {
-			this.submittingBlueprint.set(false);
-		}
-	}
-
-	// ── Proof ──────────────────────────────────────────────────────────────────
-
-	openProof() {
-		this.entryView.set('proof');
-	}
-
-	async submitProof() {
-		if (this.proofForm.invalid) {
-			this.proofForm.markAllAsTouched();
-			return;
-		}
-		const entry = this.activeEntry();
-		if (!entry) return;
-		this.submittingProof.set(true);
-		try {
-			const val = this.proofForm.value;
-			await this.contestService.submitProof(entry.entry_id, {
-				youtube_url: val.youtube_url,
-				github_url: val.github_url,
-				demo_url: val.demo_url || undefined,
-			});
-			await this.loadMyEntries();
-			this.entryView.set('tracker');
-		} catch {
-			// error handled by interceptor
-		} finally {
-			this.submittingProof.set(false);
-		}
-	}
-
-	// ── Interview ──────────────────────────────────────────────────────────────
-
-	async openInterview() {
-		const entry = this.activeEntry();
-		if (!entry) return;
-		this.entryView.set('interview');
-		this.startingInterview.set(true);
-		try {
-			const res = await this.contestService.startInterview(entry.entry_id);
-			this.currentQuestion.set(res.question);
-			this.currentRoundNumber.set(res.round_number);
-			this.currentRoundName.set(res.round_name);
-			this.currentQuestionIndex.set(res.question_index);
-		} catch {
-			this.entryView.set('tracker');
-		} finally {
-			this.startingInterview.set(false);
-		}
-	}
-
-	async submitAnswer() {
-		const entry = this.activeEntry();
-		const question = this.currentQuestion();
-		if (!entry || !question || !this.interviewAnswer.trim()) return;
-		this.submittingAnswer.set(true);
-		this.lastEvaluation.set(null);
-		try {
-			const res = await this.contestService.submitInterviewAnswer(
-				entry.entry_id,
-				question.id,
-				this.interviewAnswer,
-			);
-			this.lastEvaluation.set(res.evaluation);
-			this.interviewAnswer = '';
-			if (res.interview_complete) {
-				this.interviewComplete.set(true);
-				await this.loadMyEntries();
-			} else if (res.next_question) {
-				this.currentQuestion.set(res.next_question);
-				this.currentRoundNumber.set(res.round_number);
-				this.currentQuestionIndex.set(res.question_index);
-			}
-		} catch {
-			// error handled by interceptor
-		} finally {
-			this.submittingAnswer.set(false);
-		}
+	openView(view: string) {
+		this.entryView.set(view as EntryView);
 	}
 
 	backToTracker() {
 		this.entryView.set('tracker');
-		this.lastEvaluation.set(null);
-		this.interviewComplete.set(false);
+	}
+
+	async onChildSubmitted() {
+		await this.loadMyEntries();
+		this.entryView.set('tracker');
 	}
 
 	// ── Helpers ────────────────────────────────────────────────────────────────
-
-	getActionForStatus(status: string): { label: string; action: () => void } | null {
-		switch (status) {
-			case 'blueprint_open':
-				return { label: 'Answer Blueprint Questions', action: () => this.openBlueprint() };
-			case 'proof_open':
-				return { label: 'Submit Demo Links', action: () => this.openProof() };
-			case 'interview_scheduled':
-				return { label: 'Start AI Interview', action: () => this.openInterview() };
-			case 'interview_in_progress':
-				return { label: 'Continue Interview', action: () => this.openInterview() };
-			default:
-				return null;
-		}
-	}
-
-	getLevelStatus(levelNumber: number): 'completed' | 'active' | 'upcoming' {
-		const current = this.currentLevel();
-		if (levelNumber < current) return 'completed';
-		if (levelNumber === current) return 'active';
-		return 'upcoming';
-	}
-
-	getScoreForLevel(level: number): number | null {
-		const entry = this.activeEntry();
-		if (!entry) return null;
-		switch (level) {
-			case 1: return entry.idea_quality_score || null;
-			case 2: return entry.blueprint_score || null;
-			case 3: return entry.demo_score || null;
-			case 4: return entry.team_interview_score || null;
-			default: return null;
-		}
-	}
-
-	blueprintSections(): string[] {
-		const questions = this.blueprintQuestions();
-		return [...new Set(questions.map(q => q.section))];
-	}
-
-	questionsForSection(section: string): BlueprintQuestion[] {
-		return this.blueprintQuestions().filter(q => q.section === section);
-	}
 
 	isEliminated(): boolean {
 		return this.activeEntry()?.status === 'eliminated';
@@ -427,5 +264,24 @@ export class ProjectContestPage implements OnInit {
 
 	isFinalist(): boolean {
 		return this.activeEntry()?.status === 'finalist';
+	}
+
+	// ── DEV ONLY: status cycler ────────────────────────────────────────────────
+	private readonly devStatuses = [
+		'spark_confirmed', 'blueprint_open', 'blueprint_evaluated',
+		'proof_open', 'proof_evaluated', 'interview_scheduled',
+		'interview_complete', 'finalist', 'winner',
+	];
+
+	devCycleStatus() {
+		const entry = this.activeEntry();
+		if (!entry) {
+			this.activeEntry.set({ status: 'spark_confirmed' } as ContestEntry);
+			this.pageMode.set('has-entry');
+			return;
+		}
+		const idx = this.devStatuses.indexOf(entry.status);
+		const next = this.devStatuses[(idx + 1) % this.devStatuses.length];
+		this.activeEntry.set({ ...entry, status: next });
 	}
 }

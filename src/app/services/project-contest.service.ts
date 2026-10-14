@@ -104,17 +104,20 @@ export class ProjectContestService {
 		graduation_year?: number;
 		team_members: TeamMember[];
 	}): Promise<{ entry_id: string; refined_title: string; refined_description: string; inferred_domain: string; inferred_problem_statement: string; inferred_target_users: string; idea_quality_score: number; amount: number }> {
-		return firstValueFrom(this.api.post('/project-contest/submit', {
+		const res: any = await firstValueFrom(this.api.post('/project-contest/submit', {
 			...data,
 			lead_user_id: this.getUserId(),
 		}));
+		return res?.data ?? res;
 	}
 
 	async confirmIdea(entryId: string): Promise<{ amount: number; pricing_tier: string }> {
-		return firstValueFrom(this.api.post('/project-contest/confirm-idea', {
+		const res: any = await firstValueFrom(this.api.post('/project-contest/confirm-idea', {
 			entry_id: entryId,
 			user_id: this.getUserId(),
+			confirmed: true,
 		}));
+		return res?.data ?? res;
 	}
 
 	async confirmPayment(entryId: string, upiTransactionId: string, amount: number): Promise<any> {
@@ -127,11 +130,13 @@ export class ProjectContestService {
 	}
 
 	async getMyEntries(): Promise<{ entries: ContestEntry[]; count: number }> {
-		return firstValueFrom(this.api.get(`/project-contest/my-entries`));
+		const res: any = await firstValueFrom(this.api.get(`/project-contest/my-entries`));
+		return res?.data ?? res;
 	}
 
 	async getEntry(entryId: string): Promise<ContestEntry> {
-		return firstValueFrom(this.api.get(`/project-contest/entry/${entryId}`));
+		const res: any = await firstValueFrom(this.api.get(`/project-contest/entry/${entryId}`));
+		return res?.data ?? res;
 	}
 
 	async generateBlueprintQuestions(entryId: string): Promise<{ questions: BlueprintQuestion[] }> {
@@ -146,7 +151,13 @@ export class ProjectContestService {
 		return firstValueFrom(this.api.post(`/project-contest/entry/${entryId}/blueprint/submit`, { answers }));
 	}
 
-	async submitProof(entryId: string, data: { youtube_url: string; github_url: string; demo_url?: string }): Promise<any> {
+	async submitProof(entryId: string, data: {
+		youtube_url: string;
+		github_url?: string;
+		demo_url?: string;
+		document_url?: string;
+		report_url?: string;
+	}): Promise<any> {
 		return firstValueFrom(this.api.post(`/project-contest/entry/${entryId}/proof/submit`, data));
 	}
 

@@ -12,4 +12,7 @@ export const environment = {
 	// Feature flags
 	enableLogging: true,
 	mockInterview: false,
+
+	// Contest pricing (dev: reduced for testing)
+	contestFees: { solo: 2, team: 10 },
 };

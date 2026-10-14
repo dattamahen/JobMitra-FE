@@ -1,16 +1,20 @@
+import { environment } from '../../environments/environment';
+
+export const CONTEST_FEES = environment.contestFees;
+
 export const PROJECT_CONTEST_TEXT = {
 	pageTitle: 'Project Contest',
 	pageSubtitle: 'A national-level AI-driven contest. 5 levels. 4 months. ₹25,000 prize.',
-	heroBadge: 'National Level Contest',
+	heroBadge: 'Open Market Contest',
 	heroTitle: 'Turn Your Project Into a Career Launchpad',
 	heroSubtitle: 'Submit your idea, get AI-refined feedback, answer deep technical questions, demo your work, and prove your knowledge in a live AI interview. The best team wins ₹25,000.',
 	prizeLabel: 'First Prize',
 	prizeAmount: '₹25,000',
 	entryFeeLabel: 'Entry Fee',
-	soloFee: '₹49',
-	teamFee: '₹99',
+	soloFee: `₹${CONTEST_FEES.solo}`,
+	teamFee: `₹${CONTEST_FEES.team}`,
 	journeyTitle: 'The 5-Level Journey',
-	journeySubtitle: 'Every level is evaluated by AI — no human bias, no delays.',
+	journeySubtitle: '',
 	registerTitle: 'Register Your Project',
 	registerSubtitle: 'Submit your raw idea. Our AI will refine it and ask you to confirm before payment.',
 	myEntryTitle: 'Your Contest Entry',
