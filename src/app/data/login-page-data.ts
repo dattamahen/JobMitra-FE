@@ -102,7 +102,7 @@ export const TRUST_LOGOS = [
 export const PRODUCT_CARDS: ProductCard[] = [
 	{
 		title: 'ATS-Optimised CV',
-		description: 'Generate a recruiter-ready, ATS-compliant CV in seconds. AI structures your experience with the right keywords so you pass every automated screen.',
+		description: 'AI builds a recruiter-ready, keyword-optimised CV in seconds — so you pass every automated screen.',
 		features: [
 			'Instant AI-generated professional CV',
 			'ATS keyword optimisation built-in',
@@ -118,7 +118,7 @@ export const PRODUCT_CARDS: ProductCard[] = [
 	},
 	{
 		title: 'JD-Matched CV Generation',
-		description: 'Upload any job description and receive a CV precision-crafted to mirror its language, requirements, and priorities — maximising your match score instantly.',
+		description: 'Paste a JD and get a CV rewritten to mirror its exact language — maximising your ATS match score per role.',
 		features: [
 			'Paste or upload any job description',
 			'CV rewritten to match JD language',
@@ -134,7 +134,7 @@ export const PRODUCT_CARDS: ProductCard[] = [
 	},
 	{
 		title: 'CV Tailoring',
-		description: 'Already have a CV? Paste a JD and let AI intelligently rewrite and reorder your existing content to align perfectly with the role you are targeting.',
+		description: 'Already have a CV? AI rewrites and reorders your content to align perfectly with any role you target.',
 		features: [
 			'Rewrite existing CV for any role',
 			'Preserve your voice, improve fit',
@@ -150,7 +150,7 @@ export const PRODUCT_CARDS: ProductCard[] = [
 	},
 	{
 		title: 'Match Analysis',
-		description: 'Get a detailed compatibility score between your profile and any job description — with actionable insights on exactly where you stand and what to improve.',
+		description: 'See your compatibility score against any JD — with clear, actionable insights on exactly what to improve.',
 		features: [
 			'Percentage match score per job',
 			'Skill gap breakdown at a glance',
@@ -166,7 +166,7 @@ export const PRODUCT_CARDS: ProductCard[] = [
 	},
 	{
 		title: 'Skill Gap Analysis',
-		description: 'Identify the precise skills separating you from your target role. Receive a prioritised learning roadmap so you close gaps with confidence and speed.',
+		description: 'Pinpoint the exact skills holding you back and get a prioritised roadmap to close them fast.',
 		features: [
 			'Role-specific skill gap report',
 			'Prioritised learning roadmap',
@@ -182,7 +182,7 @@ export const PRODUCT_CARDS: ProductCard[] = [
 	},
 	{
 		title: 'AI Mock Interviews',
-		description: 'Practice role-specific interviews with an AI interviewer that asks real questions, evaluates your answers, and delivers detailed feedback — available 24/7.',
+		description: 'Practice with an AI interviewer that asks real questions, scores your answers, and gives detailed feedback — 24/7.',
 		features: [
 			'Role & JD-specific questions',
 			'Real-time answer scoring',
@@ -198,7 +198,7 @@ export const PRODUCT_CARDS: ProductCard[] = [
 	},
 	{
 		title: 'Internal Job Market',
-		description: 'Discover exclusive, curated opportunities within a trusted professional network. Access roles that never reach public job boards — before anyone else does.',
+		description: 'Access exclusive roles that never reach public boards — verified postings inside a trusted professional network.',
 		features: [
 			'Exclusive roles not on public boards',
 			'Verified company postings only',
@@ -214,7 +214,7 @@ export const PRODUCT_CARDS: ProductCard[] = [
 	},
 	{
 		title: 'Open Job Posting',
-		description: 'Hiring? Post your vacancy to thousands of qualified candidates in minutes. No gatekeeping — any organisation can list roles and connect with top talent directly.',
+		description: 'Post a vacancy in minutes and reach thousands of qualified candidates — no recruiter fees, no gatekeeping.',
 		features: [
 			'Post a job in under 5 minutes',
 			'Reach thousands of active candidates',

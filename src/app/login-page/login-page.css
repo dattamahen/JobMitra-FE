@@ -15,10 +15,6 @@
 	overflow-x: hidden;
 }
 
-.background-pattern {
-	display: none;
-}
-
 /* ── NAV ── */
 .login-nav {
 	display: flex;
@@ -237,26 +233,6 @@
 
 .btn-primary:hover::after {
 	animation-play-state: paused;
-}
-
-.btn-secondary {
-	background: #fff;
-	color: #0f172a;
-	padding: 8px 16px;
-	border-radius: 8px;
-	font-size: 13px;
-	font-weight: 600;
-	cursor: pointer;
-	border: 1.5px solid #e2e8f0;
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-	transition: all 0.2s;
-}
-
-.btn-secondary:hover {
-	border-color: var(--brand-border);
-	color: var(--brand);
 }
 
 .hero-google-signin {
@@ -595,11 +571,6 @@
 	to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes fadeRight {
-	from { opacity: 0; transform: translateX(-20px); }
-	to { opacity: 1; transform: translateX(0); }
-}
-
 @keyframes fadeLeft {
 	from { opacity: 0; transform: translateX(20px); }
 	to { opacity: 1; transform: translateX(0); }
@@ -608,16 +579,6 @@
 @keyframes floatY {
 	0%, 100% { transform: translateY(0); }
 	50% { transform: translateY(-8px); }
-}
-
-@keyframes scaleIn {
-	from { opacity: 0; transform: scale(0.92); }
-	to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes cardSlideUp {
-	from { opacity: 0; transform: translateY(24px); }
-	to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ── SLIDE PANEL ── */
@@ -717,17 +678,6 @@
 	border: 1px solid rgba(255,255,255,0.25);
 }
 
-.panel-logo-wrap .logo-mark-solid {
-	width: 36px;
-	height: 36px;
-	background: transparent;
-	border: none;
-	font-size: 15px;
-	color: #fff;
-	font-weight: 800;
-	letter-spacing: -0.5px;
-}
-
 .panel-brand {
 	font-family: 'Poppins', sans-serif;
 	font-size: 26px;
@@ -761,12 +711,6 @@
 	position: relative;
 	z-index: 2;
 	box-shadow: 0 -4px 24px rgba(72,49,175,0.08);
-}
-
-.logo-mark-solid {
-	background: var(--brand);
-	border: none;
-	color: #fff;
 }
 
 /* Google Sign-in */
@@ -1021,14 +965,6 @@
 	margin-bottom: 14px;
 }
 
-.logos-row {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	gap: 48px;
-	flex-wrap: wrap;
-}
-
 .logos-marquee {
 	overflow: hidden;
 	position: relative;
@@ -1113,6 +1049,8 @@
 	padding: 20px;
 	position: relative;
 	overflow: hidden;
+	display: flex;
+	flex-direction: column;
 }
 
 .product-card.purple {
@@ -1179,6 +1117,7 @@
 	color: #64748b;
 	line-height: 1.5;
 	margin-bottom: 14px;
+	text-align: justify;
 }
 
 .feature-item {
@@ -1205,7 +1144,8 @@
 	font-size: 14px;
 	font-weight: 700;
 	cursor: pointer;
-	margin-top: 20px;
+	margin-top: auto;
+	padding-top: 16px;
 }
 
 .product-link i {
@@ -1333,8 +1273,8 @@
 }
 
 .step-col.step-visible {
-	opacity: 1;
-	transform: translateY(0);
+	opacity: 1 !important;
+	transform: translateY(0) !important;
 }
 
 .step-bubble {
@@ -1423,8 +1363,8 @@
 
 .step-badge-card.badge-visible,
 .steps-badges.badges-visible .step-badge-card {
-	opacity: 1;
-	transform: translateY(0);
+	opacity: 1 !important;
+	transform: translateY(0) !important;
 }
 
 .step-badge-card.active {
@@ -1474,26 +1414,45 @@
 	color: #0f172a !important;
 }
 
-.test-grid {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 16px;
-	margin-top: 24px;
+.test-carousel {
+	max-width: 680px;
+	margin: 24px auto 0;
+	text-align: center;
 }
 
-.test-card {
+.test-card-active {
 	background: #fff;
-	border-radius: 12px;
-	padding: 18px;
+	border-radius: 16px;
+	padding: 28px 32px;
 	border: 1px solid #e2e8f0;
-	opacity: 0;
-	transform: translateY(24px);
-	transition: opacity 0.5s ease, transform 0.5s ease;
+	box-shadow: 0 8px 32px rgba(72, 49, 175, 0.08);
+	animation: testFadeIn 0.5s ease both;
 }
 
-.test-card.card-visible {
-	opacity: 1;
-	transform: translateY(0);
+@keyframes testFadeIn {
+	from { opacity: 0; transform: translateY(12px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+
+.test-dots {
+	display: flex;
+	justify-content: center;
+	gap: 6px;
+	margin-top: 20px;
+}
+
+.test-dot {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: var(--brand-border);
+	transition: background 0.3s, width 0.3s;
+}
+
+.test-dot.active {
+	width: 22px;
+	border-radius: 4px;
+	background: var(--brand);
 }
 
 .stars {
@@ -1510,6 +1469,7 @@
 	line-height: 1.6;
 	margin-bottom: 14px;
 	font-style: italic;
+	text-align: justify;
 }
 
 .test-author {
@@ -1557,19 +1517,17 @@
 	background: #fff;
 	opacity: 0;
 	transform: translateY(24px);
-	transition: border-color 0.2s;
+	transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.2s;
 }
 
 .price-card.card-visible {
-	opacity: 1;
-	transform: translateY(0);
-	animation: cardSlideUp 0.5s ease both;
+	opacity: 1 !important;
+	transform: translateY(0) !important;
 }
 
 .price-card.card-visible:hover {
 	border-color: var(--brand-border);
-	transform: translateY(-4px);
-	transition: border-color 0.2s, transform 0.2s;
+	transform: translateY(-4px) !important;
 }
 
 .price-card.popular {
@@ -1907,10 +1865,6 @@
 
 	.steps-badges {
 		grid-template-columns: repeat(3, 1fr);
-	}
-
-	.test-grid {
-		grid-template-columns: 1fr;
 	}
 
 	.pricing-grid {
