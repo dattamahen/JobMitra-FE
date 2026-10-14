@@ -47,15 +47,15 @@ export interface PricingCard {
 export const NAV_LINKS = ['Features', 'Job Portal', 'Resume Builder', 'Pricing'];
 
 export const TRUST_LOGOS = [
+	{ icon: 'ti ti-brand-google', name: 'Google' },
+	{ icon: 'ti ti-brand-microsoft', name: 'Microsoft' },
+	{ icon: 'ti ti-brand-amazon', name: 'Amazon' },
+	{ icon: 'ti ti-brand-meta', name: 'Meta' },
 	{ icon: 'ti ti-building-skyscraper', name: 'Infosys' },
 	{ icon: 'ti ti-building-community', name: 'TCS' },
-	{ icon: 'ti ti-brand-google', name: 'Google' },
 	{ icon: 'ti ti-building', name: 'Wipro' },
-	{ icon: 'ti ti-brand-apple', name: 'Apple' },
 	{ icon: 'ti ti-building-bank', name: 'Razorpay' },
-	{ icon: 'ti ti-brand-amazon', name: 'Amazon' },
-	{ icon: 'ti ti-brand-microsoft', name: 'Microsoft' },
-	{ icon: 'ti ti-brand-meta', name: 'Meta' },
+	{ icon: 'ti ti-brand-apple', name: 'Apple' },
 	{ icon: 'ti ti-brand-netflix', name: 'Netflix' },
 	{ icon: 'ti ti-brand-spotify', name: 'Spotify' },
 	{ icon: 'ti ti-brand-slack', name: 'Slack' },
@@ -65,79 +65,205 @@ export const TRUST_LOGOS = [
 	{ icon: 'ti ti-building-estate', name: 'Deloitte' },
 	{ icon: 'ti ti-brand-github', name: 'GitHub' },
 	{ icon: 'ti ti-brand-stripe', name: 'Stripe' },
+	{ icon: 'ti ti-building-arch', name: 'HCL Tech' },
+	{ icon: 'ti ti-building-store', name: 'Flipkart' },
+	{ icon: 'ti ti-motorbike', name: 'Swiggy' },
+	{ icon: 'ti ti-building-hospital', name: 'PhonePe' },
+	{ icon: 'ti ti-building-bridge', name: 'Paytm' },
+	{ icon: 'ti ti-building-lighthouse', name: 'Zepto' },
+	{ icon: 'ti ti-building-pavilion', name: 'Meesho' },
+	{ icon: 'ti ti-building-warehouse', name: 'Zomato' },
+	{ icon: 'ti ti-building-cottage', name: 'CRED' },
+	{ icon: 'ti ti-building-castle', name: 'Groww' },
+	{ icon: 'ti ti-building-monument', name: 'Zerodha' },
+	{ icon: 'ti ti-building-circus', name: 'Freshworks' },
+	{ icon: 'ti ti-building-stadium', name: 'Zoho' },
+	{ icon: 'ti ti-building-tower', name: 'Mphasis' },
+	{ icon: 'ti ti-building-skyscraper', name: 'Cognizant' },
+	{ icon: 'ti ti-building-community', name: 'Tech Mahindra' },
+	{ icon: 'ti ti-building', name: 'Capgemini' },
+	{ icon: 'ti ti-building-bank', name: 'HDFC Bank' },
+	{ icon: 'ti ti-building-factory', name: 'IBM India' },
+	{ icon: 'ti ti-building-estate', name: 'EY' },
+	{ icon: 'ti ti-building-arch', name: 'KPMG' },
+	{ icon: 'ti ti-building-store', name: 'PwC' },
+	{ icon: 'ti ti-building-bridge', name: 'Nykaa' },
+	{ icon: 'ti ti-building-lighthouse', name: 'Urban Company' },
+	{ icon: 'ti ti-building-pavilion', name: 'Lenskart' },
+	{ icon: 'ti ti-building-warehouse', name: 'Ola' },
+	{ icon: 'ti ti-building-cottage', name: 'Dunzo' },
+	{ icon: 'ti ti-building-castle', name: 'BrowserStack' },
+	{ icon: 'ti ti-building-monument', name: 'Postman' },
+	{ icon: 'ti ti-building-circus', name: 'Chargebee' },
+	{ icon: 'ti ti-building-stadium', name: 'Clevertap' },
+	{ icon: 'ti ti-building-tower', name: 'Darwinbox' },
 ];
 
 export const PRODUCT_CARDS: ProductCard[] = [
 	{
-		title: 'Job Portal',
-		description: 'AI-powered job matching that connects you with the right opportunities. Apply in one click, track applications in real-time, and get HR contact details directly.',
+		title: 'ATS-Optimised CV',
+		description: 'Generate a recruiter-ready, ATS-compliant CV in seconds. AI structures your experience with the right keywords so you pass every automated screen.',
 		features: [
-			'AI match analysis for every job listing',
-			'One-click apply with tailored resume',
-			'Real-time application status tracking',
-			'Direct HR contact details',
-			'Smart filters: location, salary, skills'
-		],
-		icon: 'ti ti-briefcase',
-		tag: 'Core feature',
-		tagClass: 'tag-popular',
-		cardClass: 'purple',
-		iconClass: 'solid',
-		linkText: 'Explore Job Portal'
-	},
-	{
-		title: 'AI Resume Builder',
-		description: 'Build an ATS-optimized resume in minutes. AI enhances your content, suggests improvements, and lets you download professional PDFs tailored to each job.',
-		features: [
-			'AI-powered content enhancement',
-			'ATS-friendly professional templates',
-			'Auto-tailor resume per job description',
+			'Instant AI-generated professional CV',
+			'ATS keyword optimisation built-in',
 			'Download as PDF with one click',
 			'Resume score & improvement tips'
 		],
-		icon: 'ti ti-file-text',
+		icon: 'ti ti-file-certificate',
+		tag: 'AI powered',
+		tagClass: 'tag-popular',
+		cardClass: 'purple',
+		iconClass: 'solid',
+		linkText: 'Build your CV'
+	},
+	{
+		title: 'JD-Matched CV Generation',
+		description: 'Upload any job description and receive a CV precision-crafted to mirror its language, requirements, and priorities — maximising your match score instantly.',
+		features: [
+			'Paste or upload any job description',
+			'CV rewritten to match JD language',
+			'Maximise ATS match score per role',
+			'Ready to apply in under 60 seconds'
+		],
+		icon: 'ti ti-file-import',
 		tag: 'AI powered',
 		tagClass: 'tag-new',
 		cardClass: 'white',
 		iconClass: 'light',
-		linkText: 'Explore Resume Builder'
+		linkText: 'Try JD matching'
+	},
+	{
+		title: 'CV Tailoring',
+		description: 'Already have a CV? Paste a JD and let AI intelligently rewrite and reorder your existing content to align perfectly with the role you are targeting.',
+		features: [
+			'Rewrite existing CV for any role',
+			'Preserve your voice, improve fit',
+			'Highlight the most relevant experience',
+			'One click from job listing'
+		],
+		icon: 'ti ti-wand',
+		tag: 'AI powered',
+		tagClass: 'tag-popular',
+		cardClass: 'purple',
+		iconClass: 'solid',
+		linkText: 'Tailor your CV'
+	},
+	{
+		title: 'Match Analysis',
+		description: 'Get a detailed compatibility score between your profile and any job description — with actionable insights on exactly where you stand and what to improve.',
+		features: [
+			'Percentage match score per job',
+			'Skill gap breakdown at a glance',
+			'Actionable improvement suggestions',
+			'Available on every job listing'
+		],
+		icon: 'ti ti-chart-dots',
+		tag: 'AI powered',
+		tagClass: 'tag-new',
+		cardClass: 'white',
+		iconClass: 'light',
+		linkText: 'Analyse your fit'
+	},
+	{
+		title: 'Skill Gap Analysis',
+		description: 'Identify the precise skills separating you from your target role. Receive a prioritised learning roadmap so you close gaps with confidence and speed.',
+		features: [
+			'Role-specific skill gap report',
+			'Prioritised learning roadmap',
+			'Track progress over time',
+			'Aligned to real job market demand'
+		],
+		icon: 'ti ti-trending-up',
+		tag: 'AI powered',
+		tagClass: 'tag-popular',
+		cardClass: 'purple',
+		iconClass: 'solid',
+		linkText: 'Find your gaps'
+	},
+	{
+		title: 'AI Mock Interviews',
+		description: 'Practice role-specific interviews with an AI interviewer that asks real questions, evaluates your answers, and delivers detailed feedback — available 24/7.',
+		features: [
+			'Role & JD-specific questions',
+			'Real-time answer scoring',
+			'Detailed feedback per response',
+			'Practice anytime, unlimited sessions'
+		],
+		icon: 'ti ti-microphone',
+		tag: 'AI powered',
+		tagClass: 'tag-new',
+		cardClass: 'white',
+		iconClass: 'light',
+		linkText: 'Start practising'
+	},
+	{
+		title: 'Internal Job Market',
+		description: 'Discover exclusive, curated opportunities within a trusted professional network. Access roles that never reach public job boards — before anyone else does.',
+		features: [
+			'Exclusive roles not on public boards',
+			'Verified company postings only',
+			'Apply with your tailored CV',
+			'Early access before public listing'
+		],
+		icon: 'ti ti-building-community',
+		tag: 'New',
+		tagClass: 'tag-popular',
+		cardClass: 'purple',
+		iconClass: 'solid',
+		linkText: 'Explore internal jobs'
+	},
+	{
+		title: 'Open Job Posting',
+		description: 'Hiring? Post your vacancy to thousands of qualified candidates in minutes. No gatekeeping — any organisation can list roles and connect with top talent directly.',
+		features: [
+			'Post a job in under 5 minutes',
+			'Reach thousands of active candidates',
+			'No recruiter fees or gatekeeping',
+			'Manage applications in one place'
+		],
+		icon: 'ti ti-briefcase-upload',
+		tag: 'Free',
+		tagClass: 'tag-new',
+		cardClass: 'white',
+		iconClass: 'light',
+		linkText: 'Post a job'
 	}
 ];
 
 export const STATS: StatItem[] = [
-	{ number: '0', target: 10, suffix: 'K+', label: 'Active job listings', sub: 'Updated daily' },
-	{ number: '0', target: 5, suffix: 'K+', label: 'Resumes built', sub: 'ATS-optimized' },
+	{ number: '0', target: 3, suffix: 'x', label: 'More interview callbacks', sub: 'With AI-matched CV' },
 	{ number: '0', target: 87, suffix: '%', label: 'Interview success rate', sub: 'After mock prep' },
-	{ number: '0', target: 14, suffix: 'd', label: 'Avg time to placement', sub: 'vs 60d industry avg' }
+	{ number: '0', target: 2900, suffix: '+', label: 'Professionals on board', sub: 'And growing daily' },
+	{ number: '0', target: 8, suffix: '', label: 'AI-powered features', sub: 'In one platform' }
 ];
 
 export const STEPS: StepItem[] = [
-	{ icon: 'ti ti-user-plus', title: 'Create your profile', description: 'Sign up in 60 seconds. Add your skills, experience, and career preferences.', active: true, badge: '60 sec signup' },
-	{ icon: 'ti ti-file-check', title: 'Build your resume', description: 'AI generates an ATS-optimized CV from your profile. Download or tailor per job.', active: false, badge: 'AI builds CV' },
-	{ icon: 'ti ti-microphone', title: 'Practice interviews', description: 'AI mock interviews with real-time voice feedback and scoring per skill.', active: false, badge: 'Voice AI prep' },
-	{ icon: 'ti ti-target', title: 'Apply with confidence', description: 'Match analysis shows fit %. One-click apply with tailored resume attached.', active: false, badge: 'Smart apply' },
-	{ icon: 'ti ti-trophy', title: 'Get placed', description: 'Track applications, connect with HR directly, and land your dream role.', active: false, badge: 'Get the offer' }
+	{ icon: 'ti ti-user-plus', title: 'Create your account', description: 'Sign up in under 60 seconds. Tell us your role, experience, and ambitions.', active: true, badge: '60 sec signup' },
+	{ icon: 'ti ti-file-certificate', title: 'Generate your ATS CV', description: 'One click. AI builds a polished, keyword-rich CV tailored to your target role.', active: false, badge: 'AI builds CV' },
+	{ icon: 'ti ti-file-import', title: 'Tailor to every JD', description: 'Upload a job description and receive a precision-matched CV and fit score instantly.', active: false, badge: 'JD matching' },
+	{ icon: 'ti ti-microphone', title: 'Ace the mock interview', description: 'Practice with our AI interviewer, get scored feedback, and walk in fully prepared.', active: false, badge: 'AI interview prep' },
+	{ icon: 'ti ti-trophy', title: 'Land the offer', description: 'Apply with confidence, close skill gaps, and secure the role you deserve.', active: false, badge: 'Get the offer' }
 ];
 
 export const TESTIMONIALS: TestimonialItem[] = [
 	{
-		text: 'The AI resume builder and match analysis got me 3x more callbacks. I could see exactly how well I fit each role before applying.',
+		text: 'The JD-matched CV feature is extraordinary. I uploaded the job description, got a tailored CV in seconds, and received an interview call within 48 hours.',
 		name: 'Arjun K.',
-		role: 'SDE-2, placed via JobMouka',
+		role: 'Senior Engineer, placed via JobMouka',
 		initials: 'AK',
 		color: '#6366f1'
 	},
 	{
-		text: 'Mock interviews with voice AI made all the difference. I practiced 5 sessions and felt fully prepared. Got placed in 2 weeks.',
+		text: 'The skill gap analysis showed me exactly what was holding me back. I followed the roadmap, closed the gaps, and landed a role 40% above my previous salary.',
 		name: 'Sneha P.',
-		role: 'Product Manager, Bangalore',
+		role: 'Product Manager at Razorpay',
 		initials: 'SP',
 		color: '#059669'
 	},
 	{
-		text: 'The resume tailoring feature is a game changer — one click and my CV is optimized for each job description. Saved me hours.',
+		text: 'I did five AI mock interview sessions before my final round. The feedback was brutally honest and incredibly useful. I walked in prepared for every question.',
 		name: 'Rahul T.',
-		role: 'Full Stack Developer',
+		role: 'Engineering Lead at Swiggy',
 		initials: 'RT',
 		color: '#4831af'
 	}
@@ -196,13 +322,41 @@ export const PRICING: PricingCard[] = [
 
 export interface FooterLink { label: string; action: string; }
 
+export interface HeroProfile {
+	name: string;
+	role: string;
+	initials: string;
+	color: string;
+	atsScore: number;
+	matchPct: number;
+	offer: string;
+	sessions: number;
+}
+
+export const HERO_PROFILES: HeroProfile[] = [
+	{ name: 'Arjun Kumar',    role: 'Senior Software Engineer', initials: 'AK', color: '#4831af', atsScore: 92, matchPct: 87, offer: '₹24 LPA', sessions: 5 },
+	{ name: 'Priya Sharma',   role: 'Product Manager',          initials: 'PS', color: '#0891b2', atsScore: 88, matchPct: 91, offer: '₹18 LPA', sessions: 4 },
+	{ name: 'Rahul Mehta',    role: 'Data Scientist',           initials: 'RM', color: '#059669', atsScore: 95, matchPct: 83, offer: '₹32 LPA', sessions: 7 },
+	{ name: 'Sneha Iyer',     role: 'UX Designer',              initials: 'SI', color: '#7c3aed', atsScore: 90, matchPct: 89, offer: '₹16 LPA', sessions: 3 },
+	{ name: 'Vikram Nair',    role: 'DevOps Engineer',          initials: 'VN', color: '#b45309', atsScore: 86, matchPct: 94, offer: '₹28 LPA', sessions: 6 },
+	{ name: 'Ananya Bose',    role: 'Business Analyst',         initials: 'AB', color: '#be185d', atsScore: 93, matchPct: 88, offer: '₹14 LPA', sessions: 4 },
+	{ name: 'Karan Joshi',    role: 'Full Stack Developer',     initials: 'KJ', color: '#0f766e', atsScore: 89, matchPct: 92, offer: '₹22 LPA', sessions: 8 },
+	{ name: 'Divya Reddy',    role: 'Marketing Manager',        initials: 'DR', color: '#c2410c', atsScore: 91, matchPct: 85, offer: '₹12 LPA', sessions: 3 },
+	{ name: 'Aditya Patel',   role: 'Cloud Architect',          initials: 'AP', color: '#1d4ed8', atsScore: 97, matchPct: 90, offer: '₹40 LPA', sessions: 9 },
+	{ name: 'Meera Krishnan', role: 'HR Business Partner',      initials: 'MK', color: '#6d28d9', atsScore: 84, matchPct: 86, offer: '₹11 LPA', sessions: 2 },
+];
+
+
 export const FOOTER_LINKS: { products: FooterLink[]; company: FooterLink[]; support: FooterLink[] } = {
 	products: [
-		{ label: 'Job Portal', action: 'login' },
-		{ label: 'Resume Builder', action: 'login' },
-		{ label: 'Mock Interviews', action: 'login' },
-		{ label: 'Skill Assessment', action: 'login' },
-		{ label: 'Match Analysis', action: 'login' }
+		{ label: 'ATS CV Builder', action: 'login' },
+		{ label: 'JD-Matched CV', action: 'login' },
+		{ label: 'CV Tailoring', action: 'login' },
+		{ label: 'Match Analysis', action: 'login' },
+		{ label: 'Skill Gap Analysis', action: 'login' },
+		{ label: 'AI Mock Interviews', action: 'login' },
+		{ label: 'Internal Job Market', action: 'login' },
+		{ label: 'Open Job Posting', action: 'login' }
 	],
 	company: [
 		{ label: 'About us', action: 'about' },

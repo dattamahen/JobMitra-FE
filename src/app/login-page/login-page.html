@@ -24,10 +24,10 @@
 		<div class="hero-grid">
 			<div class="hero-text">
 				<div class="hero-badge">
-					<i class="ti ti-bolt" aria-hidden="true"></i> Now in public beta — free for 30 days
+					<i class="ti ti-sparkles" aria-hidden="true"></i> AI-Powered Career Intelligence Platform
 				</div>
-				<h1 class="hero-title">Land your dream job <span class="brand-highlight">in 14 days, not 60</span></h1>
-				<p class="hero-description">AI builds your resume, matches you to the right roles, and preps you for interviews — so you show up confident and get hired faster.</p>
+				<h1 class="hero-title">Your career deserves <span class="brand-highlight">smarter tools</span></h1>
+				<p class="hero-description">From an ATS-optimised CV to AI mock interviews — JobMouka gives every professional the unfair advantage they need to land the right role, faster.</p>
 				<div class="hero-actions">
 					<button class="btn-primary" (click)="openPanel()"><i class="ti ti-sparkles" aria-hidden="true"></i> Start for free</button>
 					<div id="hero-google-signin" class="hero-google-signin"></div>
@@ -39,47 +39,68 @@
 						<div class="avatar" style="background:#0891b2">SP</div>
 						<div class="avatar" style="background:#059669">YT</div>
 					</div>
-					<span class="social-proof-text"><strong>2,400+ professionals</strong> already using JobMouka</span>
+					<span class="social-proof-text"><strong>2,900+ professionals</strong> already using JobMouka</span>
 				</div>
 			</div>
 
 			<!-- Hero Visual -->
 			<div class="hero-visual">
+				<!-- Main dashboard card -->
 				<div class="visual-card visual-card-main">
-					<div class="visual-icon-row">
-						<div class="visual-icon vi-purple"><i class="ti ti-briefcase" aria-hidden="true"></i></div>
-						<div class="visual-icon vi-green"><i class="ti ti-file-check" aria-hidden="true"></i></div>
-						<div class="visual-icon vi-blue"><i class="ti ti-microphone" aria-hidden="true"></i></div>
+					<!-- Card header — carousel -->
+					<div class="vc-header">
+						<div class="vc-avatar" [style.background]="activeProfile().color">{{activeProfile().initials}}</div>
+						<div class="vc-header-text">
+							<div class="vc-name">{{activeProfile().name}}</div>
+							<div class="vc-role">{{activeProfile().role}}</div>
+						</div>
+						<div class="vc-ats-ring" [attr.aria-label]="'ATS score ' + activeProfile().atsScore">
+							<svg viewBox="0 0 44 44" aria-hidden="true">
+								<circle cx="22" cy="22" r="18" fill="none" stroke="#eeebf9" stroke-width="4"/>
+								<circle cx="22" cy="22" r="18" fill="none" [attr.stroke]="activeProfile().color" stroke-width="4"
+									[attr.stroke-dasharray]="(activeProfile().atsScore / 100 * 113) + ' 113'"
+									stroke-dashoffset="28" stroke-linecap="round"/>
+							</svg>
+							<span>{{activeProfile().atsScore}}</span>
+						</div>
 					</div>
-					<div class="visual-bar-group">
-						<div class="visual-bar" style="width:90%"></div>
-						<div class="visual-bar" style="width:72%"></div>
-						<div class="visual-bar" style="width:85%"></div>
+					<!-- ATS label -->
+					<div class="vc-ats-label"><i class="ti ti-circle-check" aria-hidden="true"></i> ATS Score — Excellent</div>
+					<!-- Match bar -->
+					<div class="vc-match-row">
+						<span class="vc-match-label">Job match</span>
+						<div class="vc-match-bar">
+							<div class="vc-match-fill" [style.width.%]="activeProfile().matchPct"></div>
+						</div>
+						<span class="vc-match-pct">{{activeProfile().matchPct}}%</span>
 					</div>
-					<div class="visual-stats-row">
-						<div class="visual-stat">
-							<span class="vs-number">50K+</span>
-							<span class="vs-label">Jobs</span>
-						</div>
-						<div class="visual-stat">
-							<span class="vs-number">2.4M</span>
-							<span class="vs-label">Resumes</span>
-						</div>
-						<div class="visual-stat">
-							<span class="vs-number">87%</span>
-							<span class="vs-label">Success</span>
-						</div>
+					<!-- Carousel dots -->
+					<div class="vc-dots" aria-hidden="true">
+						@for (p of heroProfiles; track p.name) {
+							<span class="vc-dot" [class.active]="p.name === activeProfile().name"></span>
+						}
+					</div>
+					<!-- Feature pills -->
+					<div class="vc-pills">
+						<span class="vc-pill pill-purple"><i class="ti ti-file-certificate" aria-hidden="true"></i> ATS CV</span>
+						<span class="vc-pill pill-green"><i class="ti ti-wand" aria-hidden="true"></i> CV Tailor</span>
+						<span class="vc-pill pill-blue"><i class="ti ti-microphone" aria-hidden="true"></i> Mock Interview</span>
+						<span class="vc-pill pill-orange"><i class="ti ti-chart-dots" aria-hidden="true"></i> Match Analysis</span>
+						<span class="vc-pill pill-teal"><i class="ti ti-trending-up" aria-hidden="true"></i> Skill Gap</span>
+						<span class="vc-pill pill-purple"><i class="ti ti-building-community" aria-hidden="true"></i> Job Market</span>
 					</div>
 				</div>
+				<!-- Floating: interview ready -->
 				<div class="floating-card fc-top-right">
-					<div class="fc-icon"><i class="ti ti-trending-up" aria-hidden="true"></i></div>
-					<div class="fc-label">Profile strength</div>
-					<div class="fc-value">94%</div>
-				</div>
-				<div class="floating-card fc-bottom-left">
 					<div class="fc-icon"><i class="ti ti-checks" aria-hidden="true"></i></div>
-					<div class="fc-label">Interviews scheduled</div>
-					<div class="fc-value">6</div>
+					<div class="fc-label">Interview ready</div>
+					<div class="fc-value">{{activeProfile().sessions}} sessions</div>
+				</div>
+				<!-- Floating: offer received -->
+				<div class="floating-card fc-bottom-left">
+					<div class="fc-icon fc-icon-green"><i class="ti ti-trophy" aria-hidden="true"></i></div>
+					<div class="fc-label">Offer received</div>
+					<div class="fc-value">{{activeProfile().offer}}</div>
 				</div>
 			</div>
 		</div>
@@ -104,9 +125,9 @@
 
 	<!-- Products -->
 	<div class="section" id="products">
-		<div class="section-label">Our products</div>
-		<h2 class="section-title">Two tools. One platform.</h2>
-		<p class="section-sub">Everything you need — whether you're a job seeker or a hiring team.</p>
+		<div class="section-label">Our features</div>
+		<h2 class="section-title">Eight tools. One platform. Zero compromise.</h2>
+		<p class="section-sub">Every feature is purpose-built to close the gap between where you are and where you want to be.</p>
 		<div class="products-grid">
 			@for (product of products; track product.title) {
 				<div class="product-card" [class]="'product-card ' + product.cardClass">
@@ -143,8 +164,8 @@
 	<!-- How it works — 5 Steps -->
 	<div class="section" id="resume-builder">
 		<div class="section-label">How it works</div>
-		<h2 class="section-title">From zero to placed — in 5 steps</h2>
-		<p class="section-sub">A clear path from sign-up to your dream job offer.</p>
+		<h2 class="section-title">From sign-up to offer letter — in five steps</h2>
+		<p class="section-sub">A clear, guided path that removes every obstacle between you and your next role.</p>
 		<div class="steps-row">
 			@for (step of steps; track step.title; let i = $index) {
 				<div class="step-col">
@@ -223,8 +244,8 @@
 
 	<!-- CTA -->
 	<div class="cta-section">
-		<h2>Your next opportunity is one click away</h2>
-		<p>Join 2,400+ professionals already using JobMouka to build careers they love.</p>
+		<h2>Your next role is closer than you think</h2>
+		<p>Join 2,900+ professionals using JobMouka to build careers they are proud of.</p>
 		<div class="cta-actions">
 			<button class="btn-white" (click)="openPanel()"><i class="ti ti-sparkles"></i> Get started — it's free</button>
 			<button class="btn-ghost" (click)="openSalesEmail()">Talk to sales</button>
