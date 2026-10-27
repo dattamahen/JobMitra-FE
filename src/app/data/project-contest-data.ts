@@ -1,7 +1,3 @@
-import { environment } from '../../environments/environment';
-
-export const CONTEST_FEES = environment.contestFees;
-
 export const PROJECT_CONTEST_TEXT = {
 	pageTitle: 'Project Contest',
 	pageSubtitle: 'A national-level AI-driven contest. 5 levels. 4 months. ₹25,000 prize.',
@@ -11,8 +7,8 @@ export const PROJECT_CONTEST_TEXT = {
 	prizeLabel: 'First Prize',
 	prizeAmount: '₹25,000',
 	entryFeeLabel: 'Entry Fee',
-	soloFee: `₹${CONTEST_FEES.solo}`,
-	teamFee: `₹${CONTEST_FEES.team}`,
+	soloFee: '₹149',
+	teamFee: '₹599',
 	journeyTitle: 'The 5-Level Journey',
 	journeySubtitle: '',
 	registerTitle: 'Register Your Project',
