@@ -9,7 +9,7 @@ import { FormConfig } from '../shared/interfaces/form.interfaces';
 import { LOGIN_FORM_CONFIG, SIGNUP_FORM_CONFIG, FORGOT_PASSWORD_FORM_CONFIG, RESET_PASSWORD_FORM_CONFIG } from '../shared/components/dynamic-form/form-configs';
 import {
 	LOGIN_PAGE_TEXT, TRUST_LOGOS,
-	PRODUCT_CARDS, STATS, STEPS, TESTIMONIALS, PRICING, FOOTER_LINKS, FooterLink, PricingCard, StatItem
+	PRODUCT_CARDS, STATS, STEPS, TESTIMONIALS, PRICING, FOOTER_LINKS, FooterLink, PricingCard, StatItem, HERO_PROFILES, HeroProfile
 } from '../data/login-page-data';
 import { LOGIN_PAGE_CONSTANTS } from './login-page.constants';
 
@@ -34,8 +34,15 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 	readonly stats = signal<StatItem[]>(STATS.map(s => ({ ...s })));
 	readonly steps = STEPS;
 	readonly testimonials = TESTIMONIALS;
+	readonly activeTestimonial = signal(TESTIMONIALS[0]);
+	readonly activeTestimonialIndex = signal(0);
+	private testimonialInterval?: ReturnType<typeof setInterval>;
 	pricing = signal<PricingCard[]>(PRICING);
 	readonly footerLinks = FOOTER_LINKS;
+
+	readonly heroProfiles = HERO_PROFILES;
+	readonly activeProfile = signal<HeroProfile>(HERO_PROFILES[0]);
+	private profileInterval?: ReturnType<typeof setInterval>;
 
 	readonly isPanelOpen = signal(false);
 	readonly isSignupMode = signal(false);
@@ -55,7 +62,6 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 
 	private statsObserver?: IntersectionObserver;
 	private stepsObserver?: IntersectionObserver;
-	private testimonialsObserver?: IntersectionObserver;
 	private pricingObserver?: IntersectionObserver;
 
 	private platformId = inject(PLATFORM_ID);
@@ -122,83 +128,109 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 
 		this.initializeGoogleSignIn().then(() => this.renderHeroGoogleButton());
 		this.loadDynamicPricing();
+		this.startProfileCarousel();
+		this.startTestimonialCarousel();
 	}
 
 	ngAfterViewInit(): void {
 		this.initStatsAnimation();
 		this.initStepsAnimation();
-		this.initTestimonialsAnimation();
 		this.initPricingAnimation();
 	}
 
 	ngOnDestroy(): void {
 		this.statsObserver?.disconnect();
 		this.stepsObserver?.disconnect();
-		this.testimonialsObserver?.disconnect();
 		this.pricingObserver?.disconnect();
+		if (this.profileInterval) clearInterval(this.profileInterval);
+		if (this.testimonialInterval) clearInterval(this.testimonialInterval);
+	}
+
+	private startProfileCarousel(): void {
+		if (!isPlatformBrowser(this.platformId)) return;
+		let i = 0;
+		this.profileInterval = setInterval(() => {
+			i = (i + 1) % HERO_PROFILES.length;
+			this.activeProfile.set(HERO_PROFILES[i]);
+		}, 2500);
+	}
+
+	private startTestimonialCarousel(): void {
+		if (!isPlatformBrowser(this.platformId)) return;
+		let i = 0;
+		this.testimonialInterval = setInterval(() => {
+			i = (i + 1) % TESTIMONIALS.length;
+			this.activeTestimonialIndex.set(i);
+			this.activeTestimonial.set(TESTIMONIALS[i]);
+		}, 4000);
 	}
 
 	private initStatsAnimation(): void {
 		if (!isPlatformBrowser(this.platformId)) return;
 		const section = document.querySelector('.stats-section');
 		if (!section) return;
+		const run = () => STATS.forEach((stat, i) => this.animateStat(i, stat.target));
 		this.statsObserver = new IntersectionObserver(([entry]) => {
 			if (!entry.isIntersecting) return;
 			this.statsObserver!.disconnect();
-			STATS.forEach((stat, i) => this.animateStat(i, stat.target));
-		}, { threshold: 0.3 });
+			run();
+		}, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
 		this.statsObserver.observe(section);
+		setTimeout(run, 2000);
 	}
 
 	private initPricingAnimation(): void {
 		if (!isPlatformBrowser(this.platformId)) return;
 		const grid = document.querySelector('.pricing-grid');
 		if (!grid) return;
+		let shown = false;
 		grid.querySelectorAll('.price-card').forEach((el, i) => {
 			(el as HTMLElement).style.transitionDelay = `${i * 0.15}s`;
 		});
+		const show = () => {
+			if (shown) return;
+			shown = true;
+			grid.querySelectorAll('.price-card').forEach(el => el.classList.add('card-visible'));
+		};
 		this.pricingObserver = new IntersectionObserver(([entry]) => {
 			if (!entry.isIntersecting) return;
 			this.pricingObserver!.disconnect();
-			grid.querySelectorAll('.price-card').forEach(el => el.classList.add('card-visible'));
-		}, { threshold: 0.2 });
+			show();
+		}, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
 		this.pricingObserver.observe(grid);
-	}
-
-	private initTestimonialsAnimation(): void {
-		if (!isPlatformBrowser(this.platformId)) return;
-		const grid = document.querySelector('.test-grid');
-		if (!grid) return;
-		grid.querySelectorAll('.test-card').forEach((el, i) => {
-			(el as HTMLElement).style.transitionDelay = `${i * 0.15}s`;
-		});
-		this.testimonialsObserver = new IntersectionObserver(([entry]) => {
-			if (!entry.isIntersecting) return;
-			this.testimonialsObserver!.disconnect();
-			grid.querySelectorAll('.test-card').forEach(el => el.classList.add('card-visible'));
-		}, { threshold: 0.2 });
-		this.testimonialsObserver.observe(grid);
+		setTimeout(show, 2000);
 	}
 
 	private initStepsAnimation(): void {
 		if (!isPlatformBrowser(this.platformId)) return;
 		const section = document.querySelector('.steps-row');
+		const badgesEl = document.querySelector('.steps-badges');
 		if (!section) return;
-		// Set stagger delays upfront via inline style
+		let shown = false;
 		section.querySelectorAll('.step-col').forEach((el, i) => {
 			(el as HTMLElement).style.transitionDelay = `${i * 0.12}s`;
 		});
 		document.querySelectorAll('.step-badge-card').forEach((el, i) => {
 			(el as HTMLElement).style.transitionDelay = `${0.4 + i * 0.1}s`;
 		});
+		const showBadges = () => {
+			badgesEl?.classList.add('badges-visible');
+			document.querySelectorAll('.step-badge-card').forEach(el => el.classList.add('badge-visible'));
+		};
+		const showSteps = () => {
+			if (shown) return;
+			shown = true;
+			section.classList.add('steps-visible');
+			section.querySelectorAll('.step-col').forEach(el => el.classList.add('step-visible'));
+			showBadges();
+		};
 		this.stepsObserver = new IntersectionObserver(([entry]) => {
 			if (!entry.isIntersecting) return;
 			this.stepsObserver!.disconnect();
-			section.classList.add('steps-visible');
-			section.querySelectorAll('.step-col').forEach(el => el.classList.add('step-visible'));
-			document.querySelectorAll('.step-badge-card').forEach(el => el.classList.add('badge-visible'));
-		}, { threshold: 0.2 });
+			showSteps();
+		}, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
 		this.stepsObserver.observe(section);
+		setTimeout(showSteps, 2000);
 	}
 
 	private animateStat(index: number, target: number): void {
@@ -232,6 +264,10 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 				return card;
 			});
 			this.pricing.set(updated);
+			// Re-apply card-visible after DOM re-render
+			setTimeout(() => {
+				document.querySelectorAll('.price-card').forEach(el => el.classList.add('card-visible'));
+			}, 50);
 		} catch { /* keep static fallback */ }
 	}
 
@@ -308,7 +344,7 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 			if (container) {
 				this.googleAuthService.renderSignInButton('hero-google-signin', width);
 			}
-		}, 300);
+		}, 600);
 	}
 
 	onLogin(formData: any): void {

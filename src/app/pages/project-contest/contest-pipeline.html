@@ -1,0 +1,34 @@
+<mat-card class="pipeline-card">
+	<mat-card-content>
+		<h3 class="pipeline-title">Your Progress</h3>
+		<div class="pipeline">
+			@for (step of steps(); track step.number) {
+				<div class="pipeline-step" [class]="'step-' + step.status">
+					<div class="step-track">
+						<div class="step-line step-line-left" [class.hidden]="step.number === 1" [class.filled]="step.status !== 'upcoming'"></div>
+						<div class="step-circle"
+							[class.step-circle-active]="step.status === 'active'"
+							[style.border-color]="step.status !== 'upcoming' ? step.color : ''"
+							[style.background]="step.status === 'completed' ? step.color : ''">
+							@if (step.status === 'completed') {
+								<mat-icon class="step-check">check</mat-icon>
+							} @else if (step.status === 'active') {
+								<mat-icon [style.color]="step.color">{{ step.icon }}</mat-icon>
+							} @else {
+								<mat-icon style="color:#d1d5db">{{ step.icon }}</mat-icon>
+							}
+						</div>
+						<div class="step-line step-line-right" [class.hidden]="step.number === 5" [class.filled]="step.status === 'completed'"></div>
+					</div>
+					<div class="step-info">
+						<span class="step-title" [style.color]="step.status !== 'upcoming' ? step.color : ''">{{ step.title }}</span>
+						<span class="step-subtitle">{{ step.subtitle }}</span>
+						@if (step.score) {
+							<span class="step-score">{{ step.score }}/100</span>
+						}
+					</div>
+				</div>
+			}
+		</div>
+	</mat-card-content>
+</mat-card>

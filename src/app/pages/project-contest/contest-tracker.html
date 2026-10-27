@@ -1,0 +1,104 @@
+<!-- Entry Header Card -->
+<mat-card class="entry-header-card">
+	<mat-card-content>
+
+
+		<div class="active-level-panel">
+			@switch (activeLevel()) {
+				@case (1) {
+					<div class="level-panel-waiting">
+						<mat-icon style="color:#f59e0b">check_circle</mat-icon>
+						<span>Your idea has been submitted and confirmed. Waiting for Blueprint to open.</span>
+					</div>
+				}
+				@case (2) {
+					<div class="level-panel-cta">
+						<div class="level-panel-desc">
+							<mat-icon style="color:#3b82f6">architecture</mat-icon>
+							<div>
+								<strong>Blueprint Questionnaire</strong>
+								<p>Answer 12 in-depth questions. AI evaluates across 4 dimensions.</p>
+							</div>
+						</div>
+						<button mat-raised-button color="primary" (click)="ctaClicked.emit('blueprint')">
+							<mat-icon>arrow_forward</mat-icon>Answer Blueprint Questions
+						</button>
+					</div>
+				}
+				@case (3) {
+					<div class="level-panel-cta">
+						<div class="level-panel-desc">
+							<mat-icon style="color:#8b5cf6">play_circle</mat-icon>
+							<div>
+								<strong>Submit Your Demo</strong>
+								<p>Upload your YouTube demo, GitHub repo, and live demo link for AI evaluation.</p>
+							</div>
+						</div>
+						<button mat-raised-button color="primary" (click)="ctaClicked.emit('proof')">
+							<mat-icon>arrow_forward</mat-icon>Submit Demo Links
+						</button>
+					</div>
+				}
+				@case (4) {
+					<div class="level-panel-cta">
+						<div class="level-panel-desc">
+							<mat-icon style="color:#ec4899">record_voice_over</mat-icon>
+							<div>
+								<strong>AI Interrogation — 3 Rounds × 8 Questions</strong>
+								<p>Each team member is interviewed independently by AI in real-time.</p>
+							</div>
+						</div>
+						<button mat-raised-button color="primary" (click)="ctaClicked.emit('interview')">
+							<mat-icon>arrow_forward</mat-icon>Start AI Interview
+						</button>
+					</div>
+				}
+				@case (5) {
+					<div class="level-panel-waiting">
+						<mat-icon style="color:#10b981">hourglass_top</mat-icon>
+						<span>Final composite scores are being calculated. Winner will be announced soon.</span>
+					</div>
+				}
+			}
+		</div>
+	</mat-card-content>
+</mat-card>
+
+<!-- Score Breakdown -->
+@if (entry().idea_quality_score > 0) {
+	<mat-card class="scores-card">
+		<mat-card-content>
+			<h3 class="scores-title">Score Breakdown</h3>
+			<div class="scores-grid">
+				<div class="score-item">
+					<span class="score-label">L1 Idea Quality <span class="score-weight">(10%)</span></span>
+					<div class="score-bar-wrap">
+						<div class="score-bar" [style.width]="(entry().idea_quality_score || 0) + '%'" style="background:#f59e0b"></div>
+					</div>
+					<span class="score-val">{{ entry().idea_quality_score || '—' }}</span>
+				</div>
+				<div class="score-item">
+					<span class="score-label">L2 Blueprint <span class="score-weight">(20%)</span></span>
+					<div class="score-bar-wrap">
+						<div class="score-bar" [style.width]="(entry().blueprint_score || 0) + '%'" style="background:#3b82f6"></div>
+					</div>
+					<span class="score-val">{{ entry().blueprint_score || '—' }}</span>
+				</div>
+				<div class="score-item">
+					<span class="score-label">L3 Demo <span class="score-weight">(30%)</span></span>
+					<div class="score-bar-wrap">
+						<div class="score-bar" [style.width]="(entry().demo_score || 0) + '%'" style="background:#8b5cf6"></div>
+					</div>
+					<span class="score-val">{{ entry().demo_score || '—' }}</span>
+				</div>
+				<div class="score-item">
+					<span class="score-label">L4 Interview <span class="score-weight">(40%)</span></span>
+					<div class="score-bar-wrap">
+						<div class="score-bar" [style.width]="(entry().team_interview_score || 0) + '%'" style="background:#ec4899"></div>
+					</div>
+					<span class="score-val">{{ entry().team_interview_score || '—' }}</span>
+				</div>
+			</div>
+		</mat-card-content>
+	</mat-card>
+}
