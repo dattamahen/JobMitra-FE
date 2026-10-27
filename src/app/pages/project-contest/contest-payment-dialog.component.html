@@ -1,0 +1,66 @@
+<h2 mat-dialog-title>Complete Payment</h2>
+<mat-dialog-content>
+	<div class="pricing-summary">
+		<div class="row"><span>Team Size</span><strong>{{ data.teamSize }} member{{ data.teamSize > 1 ? 's' : '' }}</strong></div>
+		<div class="row"><span>Plan</span><strong>{{ data.teamSize <= 1 ? 'Solo' : 'Team' }}</strong></div>
+		<mat-divider></mat-divider>
+		<div class="row total"><span>Amount</span><strong class="amount">₹{{ data.amount }}</strong></div>
+	</div>
+
+	<div class="benefits">
+		@for (b of TEXT.benefitsList; track b) {
+			<div class="benefit"><mat-icon>check_circle</mat-icon><span>{{ b }}</span></div>
+		}
+	</div>
+
+	<div class="terms-section">
+		<div class="terms-header">
+			<mat-checkbox [(ngModel)]="termsAccepted">I agree to the Terms & Conditions</mat-checkbox>
+			<button mat-button class="read-more-btn" (click)="showTerms.set(!showTerms())">
+				{{ showTerms() ? 'Hide' : 'Read More' }}
+			</button>
+		</div>
+		@if (showTerms()) {
+			<div class="terms-content">
+				<h4>{{ TERMS_TITLE }}</h4>
+				@for (clause of TERMS; track clause.title) {
+					<p><strong>{{ clause.title }}</strong><br>{{ clause.body }}</p>
+				}
+			</div>
+		}
+	</div>
+
+	@if (paymentOpened()) {
+		<div class="payment-status-section">
+			<p class="status-hint">
+				<mat-icon>info</mat-icon>
+				After completing payment on Razorpay, click the button below to confirm your entry.
+			</p>
+			@if (checkError()) {
+				<p class="error-msg">{{ checkError() }}</p>
+			}
+		</div>
+	}
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+	<button mat-button (click)="close()">Close</button>
+
+	@if (termsAccepted && data.paymentLink && !paymentOpened()) {
+		<button mat-raised-button color="primary" type="button" (click)="openRazorpay()">
+			<mat-icon>open_in_new</mat-icon>
+			Pay ₹{{ data.amount }} via Razorpay
+		</button>
+	}
+
+	@if (paymentOpened()) {
+		<button mat-raised-button color="primary" type="button" [disabled]="checking()" (click)="checkPaymentStatus()">
+			@if (checking()) {
+				<mat-spinner diameter="18"></mat-spinner>
+			} @else {
+				<mat-icon>verified</mat-icon>
+			}
+			I've Paid — Confirm Entry
+		</button>
+	}
+</mat-dialog-actions>

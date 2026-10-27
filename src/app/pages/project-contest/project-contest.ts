@@ -165,9 +165,11 @@ export class ProjectContestPage implements OnInit {
 	async onRefineIdea() {
 		const name = this.ideaForm.get('raw_project_name');
 		const desc = this.ideaForm.get('raw_description');
+		const category = this.ideaForm.get('category');
 		name?.markAsTouched();
 		desc?.markAsTouched();
-		if (name?.invalid || desc?.invalid) return;
+		category?.markAsTouched();
+		if (name?.invalid || desc?.invalid || category?.invalid) return;
 		this.refining.set(true);
 		try {
 			const val = this.ideaForm.value;
@@ -221,11 +223,15 @@ export class ProjectContestPage implements OnInit {
 		this.ideaResult.set(null);
 	}
 
-	private openPaymentDialog(entryId: string, amount: number) {
+	private async openPaymentDialog(entryId: string, amount: number) {
+		let paymentLink = '';
+		try {
+			paymentLink = await this.contestService.createPaymentLink(entryId, amount);
+		} catch { }
 		const ref = this.dialog.open(ContestPaymentDialogComponent, {
 			width: '500px',
 			disableClose: true,
-			data: { entryId, amount, paymentLink: '', teamSize: this.teamSize },
+			data: { entryId, amount, paymentLink, teamSize: this.teamSize },
 		});
 		ref.afterClosed().subscribe((confirmed: boolean) => {
 			if (confirmed) {

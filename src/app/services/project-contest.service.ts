@@ -183,7 +183,17 @@ export class ProjectContestService {
 		return firstValueFrom(this.api.get('/project-contest/leaderboard'));
 	}
 
-	async getPricing(): Promise<{ solo: number; team: number }> {
-		return firstValueFrom(this.api.get('/project-contest/pricing'));
+	async getPricing(): Promise<{ solo: number; team: number; payment_link: string }> {
+		const res: any = await firstValueFrom(this.api.get('/project-contest/pricing'));
+		return res;
+	}
+
+	async createPaymentLink(entryId: string, amount: number): Promise<string> {
+		const res: any = await firstValueFrom(this.api.post('/payments/create-contest-link', {
+			user_id: this.getUserId(),
+			entry_id: entryId,
+			amount,
+		}));
+		return res?.payment_url ?? '';
 	}
 }

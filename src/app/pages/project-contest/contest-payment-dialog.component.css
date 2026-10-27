@@ -1,0 +1,17 @@
+.pricing-summary { background: #f8f9fa; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; }
+.row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.875rem; }
+.row.total { padding-top: 10px; }
+.amount { color: #4831af; font-size: 1rem; }
+.benefits { margin-bottom: 16px; }
+.benefit { display: flex; align-items: center; gap: 8px; font-size: 0.875rem; margin-bottom: 4px; }
+.benefit mat-icon { font-size: 16px; width: 16px; height: 16px; color: #16a34a; }
+.terms-section { margin-bottom: 16px; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; }
+.terms-header { display: flex; align-items: center; justify-content: space-between; }
+.read-more-btn { font-size: 0.8rem; color: #4831af; }
+.terms-content { max-height: 250px; overflow-y: auto; margin-top: 12px; padding: 12px; background: #f9fafb; border-radius: 6px; font-size: 0.8rem; line-height: 1.6; }
+.terms-content h4 { font-size: 0.875rem; margin: 0 0 8px; }
+.terms-content p { margin: 0 0 8px; }
+.payment-status-section { margin-top: 12px; }
+.status-hint { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #4831af; background: #f0eeff; border-radius: 6px; padding: 8px 12px; }
+.status-hint mat-icon { font-size: 16px; width: 16px; height: 16px; }
+.error-msg { font-size: 0.8rem; color: #dc2626; margin-top: 6px; }
