@@ -13,6 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { DynamicFormComponent } from '../../shared/components/dynamic-form/dynamic-form.component';
 import { ProfileShareComponent } from '../../shared/components/profile-share/profile-share.component';
+import { SkeletonFormComponent } from '../../shared/components/skeletons/skeleton-form/skeleton-form.component';
 import { PROFILE_BASIC_INFO_CONFIG, PROFILE_PROFESSIONAL_CONFIG, PROFILE_SKILLS_CONFIG, PROFILE_EXPERIENCE_CONFIG, PROFILE_EDUCATION_CONFIG, PROFILE_PROJECTS_CONFIG, PROFILE_CERTIFICATIONS_CONFIG, PROFILE_JOB_PREFERENCES_CONFIG } from '../../shared/components/dynamic-form/form-configs';
 import { QUALIFICATION_DISPLAY_MAP, SALARY_RANGE_MAP } from './profile.constants';
 import { PROFILE_TEXT } from '../../data/profile-data';
@@ -39,6 +40,7 @@ import { ApiService } from '../../services/api.service';
 		MatTooltipModule,
 		DynamicFormComponent,
 		ProfileShareComponent,
+		SkeletonFormComponent,
 
 	],
 	templateUrl: './profile.html',
@@ -72,8 +74,8 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	private apiService = inject(ApiService);
 	private cvUploadService = inject(CvUploadService);
 
-	// Entry screen: 'entry' | 'upload' | 'form'
-	profileMode = signal<'entry' | 'upload' | 'form'>('entry');
+	// Entry screen: null = loading, 'entry' | 'upload' | 'form'
+	profileMode = signal<'entry' | 'upload' | 'form' | null>(null);
 
 	// CV upload flow state
 	cvUploadStep = signal<'idle' | 'processing' | 'preview' | 'saving'>('idle');
@@ -679,7 +681,7 @@ export class ProfilePage implements OnInit, AfterViewInit {
 				next: (user: any) => {
 					this.isLoading.set(false);
 					this.currentUser.set(user as any);
-					if (this.profileMode() === 'entry') {
+					if (this.profileMode() === null || this.profileMode() === 'entry') {
 						this.profileMode.set(this.hasExistingProfile(user) ? 'form' : 'entry');
 					}
 					this.updateFormValues();
@@ -916,7 +918,9 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	}
 
 	backToEntry(): void {
-		this.profileMode.set('entry');
+		// Only go back to entry if user has no existing profile
+		const user = this.currentUser() as any;
+		this.profileMode.set(this.hasExistingProfile(user) ? 'form' : 'entry');
 	}
 
 	// ── CV upload drag-and-drop ──────────────────────────────────────────────

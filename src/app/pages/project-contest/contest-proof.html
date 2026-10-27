@@ -1,0 +1,103 @@
+<mat-card class="form-card">
+	<mat-card-content>
+		<div class="view-header">
+			<button mat-icon-button (click)="back.emit()" aria-label="Back">
+				<mat-icon>arrow_back</mat-icon>
+			</button>
+			<div>
+				<h2 class="section-title">Level 3 — Submit Your Work</h2>
+				<p class="section-hint">
+					@if (isNonTechnical()) {
+						AI evaluates your presentation video, supporting documents, and overall completeness.
+					} @else {
+						AI evaluates your demo video, GitHub activity, README quality, and demo completeness.
+					}
+				</p>
+			</div>
+		</div>
+
+		<form [formGroup]="form" (ngSubmit)="submit()">
+
+			@if (isNonTechnical()) {
+				<div class="proof-checklist">
+					<div class="proof-check-item">
+						<mat-icon style="color:#ef4444">smart_display</mat-icon>
+						<div>
+							<strong>Presentation Video</strong>
+							<p>Record a 3–5 minute walkthrough of your project/plan on YouTube.</p>
+						</div>
+					</div>
+					<div class="proof-check-item">
+						<mat-icon style="color:#3b82f6">description</mat-icon>
+						<div>
+							<strong>Supporting Document</strong>
+							<p>Share a Google Drive, Notion, or Canva link with your report/plan/deck.</p>
+						</div>
+					</div>
+				</div>
+
+				<mat-form-field appearance="fill" class="full-width">
+					<mat-label>YouTube Presentation Video URL</mat-label>
+					<input matInput formControlName="youtube_url" placeholder="https://youtube.com/watch?v=...">
+					<mat-icon matPrefix>smart_display</mat-icon>
+				</mat-form-field>
+
+				<mat-form-field appearance="fill" class="full-width">
+					<mat-label>Document / Report URL (Google Drive, Notion, Canva...)</mat-label>
+					<input matInput formControlName="document_url" placeholder="https://drive.google.com/...">
+					<mat-icon matPrefix>description</mat-icon>
+				</mat-form-field>
+
+				<mat-form-field appearance="fill" class="full-width">
+					<mat-label>Research Paper / PDF URL (optional)</mat-label>
+					<input matInput formControlName="report_url" placeholder="https://...">
+					<mat-icon matPrefix>article</mat-icon>
+				</mat-form-field>
+
+			} @else {
+				<div class="proof-checklist">
+					<div class="proof-check-item">
+						<mat-icon style="color:#ef4444">smart_display</mat-icon>
+						<div>
+							<strong>YouTube Demo Video</strong>
+							<p>Record a 3–5 minute walkthrough of your working project.</p>
+						</div>
+					</div>
+					<div class="proof-check-item">
+						<mat-icon style="color:#1f2937">code</mat-icon>
+						<div>
+							<strong>GitHub Repository</strong>
+							<p>Ensure your repo has recent commits, a README, and working code.</p>
+						</div>
+					</div>
+				</div>
+
+				<mat-form-field appearance="fill" class="full-width">
+					<mat-label>YouTube Demo URL</mat-label>
+					<input matInput formControlName="youtube_url" placeholder="https://youtube.com/watch?v=...">
+					<mat-icon matPrefix>smart_display</mat-icon>
+				</mat-form-field>
+
+				<mat-form-field appearance="fill" class="full-width">
+					<mat-label>GitHub Repository URL</mat-label>
+					<input matInput formControlName="github_url" placeholder="https://github.com/username/repo">
+					<mat-icon matPrefix>code</mat-icon>
+				</mat-form-field>
+
+				<mat-form-field appearance="fill" class="full-width">
+					<mat-label>Live Demo URL (optional)</mat-label>
+					<input matInput formControlName="demo_url" placeholder="https://your-demo.vercel.app">
+					<mat-icon matPrefix>open_in_new</mat-icon>
+				</mat-form-field>
+			}
+
+			<div class="form-actions">
+				<button mat-stroked-button type="button" (click)="back.emit()">Cancel</button>
+				<button mat-raised-button color="primary" type="submit" [disabled]="submitting()">
+					@if (submitting()) { <mat-spinner diameter="18"></mat-spinner> }
+					Submit Demo
+				</button>
+			</div>
+		</form>
+	</mat-card-content>
+</mat-card>

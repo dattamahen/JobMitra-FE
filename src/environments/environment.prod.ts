@@ -11,4 +11,7 @@ export const environment = {
 
 	// Feature flags
 	enableLogging: false,
+
+	// Contest pricing (production)
+	contestFees: { solo: 149, team: 599 },
 };

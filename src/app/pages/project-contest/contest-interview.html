@@ -1,0 +1,121 @@
+<mat-card class="form-card interview-view">
+	<mat-card-content>
+		<div class="view-header">
+			<button mat-icon-button (click)="back.emit()" aria-label="Back">
+				<mat-icon>arrow_back</mat-icon>
+			</button>
+			<div>
+				<h2 class="section-title">Level 4 — AI Interrogation</h2>
+				<p class="section-hint">3 rounds × 8 questions. Each round tests a different dimension.</p>
+			</div>
+		</div>
+
+		<!-- Round overview landing -->
+		@if (!interviewStarted() && !interviewComplete()) {
+			<div class="interview-rounds-overview">
+				<div class="interview-round-card">
+					<div class="round-number" style="background:#6366f1">1</div>
+					<div class="round-detail">
+						<span class="round-name">Conceptual Depth</span>
+						<span class="round-desc">Do you truly understand the foundations behind your project?</span>
+					</div>
+					<span class="round-qs">8 Qs</span>
+				</div>
+				<div class="interview-round-card">
+					<div class="round-number" style="background:#ec4899">2</div>
+					<div class="round-detail">
+						<span class="round-name">Execution & Decisions</span>
+						<span class="round-desc">Why did you make specific choices? What broke and how did you fix it?</span>
+					</div>
+					<span class="round-qs">8 Qs</span>
+				</div>
+				<div class="interview-round-card">
+					<div class="round-number" style="background:#f59e0b">3</div>
+					<div class="round-detail">
+						<span class="round-name">Stress & Edge Cases</span>
+						<span class="round-desc">Failure modes, scale, security, and pivot questions.</span>
+					</div>
+					<span class="round-qs">8 Qs</span>
+				</div>
+			</div>
+			<div class="interview-start-row">
+				<p class="interview-start-note"><mat-icon>info</mat-icon>Each team member is interviewed independently. Your answers are evaluated in real-time by AI.</p>
+				<button mat-raised-button color="primary" [disabled]="startingInterview()" (click)="startRound()">
+					@if (startingInterview()) { <mat-spinner diameter="18"></mat-spinner> } @else { <mat-icon>play_arrow</mat-icon> }
+					Start Round 1
+				</button>
+			</div>
+		}
+
+		<!-- Between rounds -->
+		@if (interviewStarted() && !currentQuestion() && !interviewComplete() && !startingInterview()) {
+			<div class="round-complete-screen">
+				<mat-icon class="round-complete-icon">check_circle</mat-icon>
+				<h3>Round {{ currentRoundNumber() }} Complete!</h3>
+				<p>Great work. Take a breath before the next round.</p>
+				@if (currentRoundNumber() < 3) {
+					<button mat-raised-button color="primary" (click)="startRound()">
+						<mat-icon>play_arrow</mat-icon>Start Round {{ currentRoundNumber() + 1 }}
+					</button>
+				}
+			</div>
+		}
+
+		<!-- Loading -->
+		@if (startingInterview()) {
+			<div class="interview-loading">
+				<mat-spinner diameter="40"></mat-spinner>
+				<p>Preparing Round {{ currentRoundNumber() }} questions...</p>
+			</div>
+		}
+
+		<!-- Complete -->
+		@if (interviewComplete()) {
+			<div class="interview-complete">
+				<mat-icon class="complete-icon">check_circle</mat-icon>
+				<h3>Interview Complete!</h3>
+				<p>Your responses have been evaluated. Results will be shared via email once all team members complete their interviews.</p>
+				<button mat-raised-button color="primary" (click)="back.emit()">Back to Tracker</button>
+			</div>
+		}
+
+		<!-- Active question -->
+		@if (currentQuestion()) {
+			<div class="interview-progress">
+				<div class="round-badge">
+					<mat-icon>layers</mat-icon>
+					Round {{ currentRoundNumber() }} — {{ currentRoundName() }}
+				</div>
+				<span class="question-counter">Question {{ currentQuestionIndex() + 1 }} of 8</span>
+			</div>
+
+			<div class="interview-question-card">
+				<p class="interview-question-text">{{ currentQuestion()!.question }}</p>
+				<p class="interview-question-intent">Focus: {{ currentQuestion()!.expected_depth }}</p>
+			</div>
+
+			@if (lastEvaluation()) {
+				<div class="eval-feedback">
+					<div class="eval-score">
+						<mat-icon>analytics</mat-icon>
+						Score: <strong>{{ lastEvaluation()!.score }}/100</strong>
+					</div>
+					<p class="eval-strong"><mat-icon>thumb_up</mat-icon>{{ lastEvaluation()!.what_was_strong }}</p>
+					<p class="eval-missing"><mat-icon>info</mat-icon>{{ lastEvaluation()!.what_was_missing }}</p>
+				</div>
+			}
+
+			<mat-form-field appearance="fill" class="full-width">
+				<mat-label>Your Answer</mat-label>
+				<textarea matInput rows="6" [(ngModel)]="interviewAnswer" name="interviewAnswer" placeholder="Type your answer here..."></textarea>
+			</mat-form-field>
+
+			<div class="form-actions">
+				<button mat-raised-button color="primary" [disabled]="submittingAnswer() || !interviewAnswer.trim()" (click)="submitAnswer()">
+					@if (submittingAnswer()) { <mat-spinner diameter="18"></mat-spinner> } @else { <mat-icon>send</mat-icon> }
+					Submit Answer
+				</button>
+			</div>
+		}
+	</mat-card-content>
+</mat-card>

@@ -10,6 +10,7 @@ import { PAGE_LOADING_CONFIGS } from '../data/page-loading-config';
 
 import { AuthService } from '../services/auth.service';
 import { FeatureUsageService } from '../services/feature-usage.service';
+import { InactivityService } from '../services/inactivity.service';
 
 @Component({
 	selector: 'app-dashboard',
@@ -49,6 +50,7 @@ export class Dashboard implements OnInit {
 	};
 
 	private readonly destroyRef = inject(DestroyRef);
+	private readonly inactivityService = inject(InactivityService);
 
 	constructor(
 		private router: Router,
@@ -58,6 +60,8 @@ export class Dashboard implements OnInit {
 	) {}
 
 	ngOnInit() {
+		this.inactivityService.start();
+		this.destroyRef.onDestroy(() => this.inactivityService.stop());
 		this.userType = this.authService.getUserType();
 
 		this.route.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {

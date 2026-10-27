@@ -1,137 +1,87 @@
 <div class="page-container">
-	<!-- Prize Banner -->
-	<div class="prize-banner">
-		<div class="prize-banner-content">
-			<mat-icon class="trophy-icon">emoji_events</mat-icon>
-			<div class="prize-text">
-				<span class="prize-label">Win Prizes Up To</span>
-				<span class="prize-amount">₹25,000</span>
+
+	<!-- Loading -->
+	@if (pageMode() === null) {
+		<app-skeleton-form [repeat]="2" [rows]="3" [columns]="2" [showTitle]="true" [showButton]="true" />
+	}
+
+	<!-- ═══════════════════════════════════════════════════════════════
+	     MODE A — No Entry: Hero + Journey + Registration Form
+	════════════════════════════════════════════════════════════════ -->
+	@if (pageMode() === 'no-entry') {
+
+		<!-- Hero Banner -->
+		<div class="hero-banner">
+			<div class="hero-badge">
+				<mat-icon>emoji_events</mat-icon>
+				<span>{{ TEXT.heroBadge }}</span>
 			</div>
-			<mat-icon class="trophy-icon">emoji_events</mat-icon>
+			<h1 class="hero-title">{{ TEXT.heroTitle }}</h1>
+			<p class="hero-subtitle">{{ TEXT.heroSubtitle }}</p>
+			<div class="hero-stats">
+				<div class="hero-stat">
+					<span class="hero-stat-value">5</span>
+					<span class="hero-stat-label">AI-Evaluated Levels</span>
+				</div>
+				<div class="hero-stat-divider"></div>
+				<div class="hero-stat">
+					<span class="hero-stat-value">4 months</span>
+					<span class="hero-stat-label">Full Journey</span>
+				</div>
+				<div class="hero-stat-divider"></div>
+				<div class="hero-stat">
+					<span class="hero-stat-value">{{ TEXT.prizeAmount }}</span>
+					<span class="hero-stat-label">{{ TEXT.prizeLabel }}</span>
+				</div>
+			</div>
 		</div>
-	</div>
 
-	<!-- Top Cards Row -->
-	@if (loading()) {
-		<app-skeleton-stat-grid
-			[count]="2"
-			[columns]="{ default: 2, tablet: 2, mobile: 1 }"
-			[showTrend]="false"
-			[cardHeight]="'100px'">
-		</app-skeleton-stat-grid>
-		<app-skeleton-form
-			[repeat]="1"
-			[rows]="4"
-			[columns]="2"
-			[showTitle]="true"
-			[showTextarea]="true"
-			[showButton]="true">
-		</app-skeleton-form>
-	} @else {
-	<!-- Top Cards Row -->
-	<div class="top-cards">
-		<!-- Leaderboard Card -->
-		<mat-card class="info-card leaderboard-card">
-			<mat-card-content>
-				<div class="info-card-header">
-					<mat-icon>leaderboard</mat-icon>
-					<span>Your Standing</span>
-				</div>
-				@if (myEntries().length > 0) {
-					<div class="info-card-value">{{ myEntries().length }}</div>
-					<div class="info-card-label">Project{{ myEntries().length > 1 ? 's' : '' }} / {{ totalProjects() }} Total</div>
-				} @else {
-					<div class="info-card-value">N/A</div>
-					<div class="info-card-label">Not enrolled yet</div>
-				}
-			</mat-card-content>
-		</mat-card>
-
-		<!-- Info / Notification Card -->
-		<mat-card class="info-card notification-card">
-			<mat-card-content>
-				<div class="info-card-header">
-					<mat-icon>info</mat-icon>
-					<span>Next Steps</span>
-				</div>
-				@if (myEntries().length === 0) {
-					<div class="info-card-message">Register your project below to participate in the contest.</div>
-				} @else if (hasPendingPayment()) {
-					<div class="info-card-message warning">Complete payment for your pending submission to confirm entry.</div>
-				} @else {
-					<div class="info-card-message success">Your project is under review. Results will be announced soon!</div>
-				}
-			</mat-card-content>
-		</mat-card>
-	</div>
-
-	<!-- My Projects (shown when user has entries) -->
-	@if (myEntries().length > 0) {
-		<mat-card class="form-card">
-			<mat-card-content>
-				<h2 class="section-title">{{ TEXT.myEntriesTitle }}</h2>
-				@for (entry of myEntries(); track entry.entry_id) {
-					<div class="entry-item">
-						<div class="entry-header">
-							<h3>{{ entry.project_title }}</h3>
-							<span class="status" [class]="entry.payment_status">{{ entry.payment_status }}</span>
+		<!-- 5-Level Journey Explainer -->
+		<div class="journey-section">
+			<div class="journey-levels">
+				@for (level of levels; track level.number) {
+					<div class="journey-level">
+						<div class="level-connector-left" [class.hidden]="level.number === 1"></div>
+						<div class="level-icon-wrap" [style.background]="level.color + '18'" [style.border-color]="level.color + '40'">
+							<mat-icon [style.color]="level.color">{{ level.icon }}</mat-icon>
+							<span class="level-number" [style.background]="level.color">{{ level.number }}</span>
 						</div>
-						<p class="entry-meta">
-							{{ entry.project_type === 'technical' ? 'Technical' : 'Non-Technical' }} •
-							{{ entry.category }} •
-							{{ entry.team_size }} member{{ entry.team_size > 1 ? 's' : '' }}
-						</p>
+						<div class="level-connector-right" [class.hidden]="level.number === 5"></div>
+						<div class="level-info">
+							<span class="level-title">{{ level.title }}</span>
+							<span class="level-subtitle">{{ level.subtitle }}</span>
+							<span class="level-duration">
+								<mat-icon>schedule</mat-icon>{{ level.duration }}
+							</span>
+						</div>
 					</div>
 				}
-			</mat-card-content>
-		</mat-card>
-	}
+			</div>
+		</div>
 
-	<!-- Step: Done (after successful submission) -->
-	@if (currentStep() === 'done') {
-		<mat-card class="form-card success-card">
-			<mat-card-content>
-				<mat-icon class="success-icon">celebration</mat-icon>
-				<h2>Project Submitted Successfully!</h2>
-
-				<div class="success-info">
-					<div class="success-item">
-						<mat-icon>visibility</mat-icon>
-						<p>Your project is now <strong>showcased to recruiters</strong>. Recruiters can reach you for great job opportunities!</p>
+		<!-- Registration Form -->
+		@if (ideaResult() === null) {
+			<mat-card class="form-card">
+				<mat-card-content>
+					<div class="form-card-header">
+						<mat-icon class="form-card-icon">rocket_launch</mat-icon>
+						<div>
+							<h2 class="section-title">{{ TEXT.registerTitle }}</h2>
+						</div>
 					</div>
-					<div class="success-item">
-						<mat-icon>card_giftcard</mat-icon>
-						<p>You also get <strong>+5 CV Downloads</strong> and <strong>+3 Mock Interviews</strong> added to your account.</p>
-					</div>
-				</div>
 
-				<button mat-raised-button color="primary" (click)="backToForm()">Submit Another Project</button>
-			</mat-card-content>
-		</mat-card>
-	}
+					<form [formGroup]="ideaForm" (ngSubmit)="onSubmitIdea()">
 
-	}
-
-	<!-- Registration Form (Collapsible) -->
-	@if (currentStep() === 'form') {
-		<mat-card class="form-card">
-			<mat-card-content>
-				<div class="section-header-toggle" (click)="toggleFormCollapse()">
-					<h2 class="section-title">{{ myEntries().length > 0 ? 'Register Another Project' : 'Register Your Project' }}</h2>
-					<mat-icon>{{ formCollapsed() ? 'expand_more' : 'expand_less' }}</mat-icon>
-				</div>
-
-				@if (!formCollapsed()) {
-					<form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
-						<!-- Team Members Card -->
+						<!-- Team Members -->
 						<div class="form-section">
 							<h3 class="subsection-title">Team Members</h3>
-							<p class="section-hint">You are the team lead (Member 1). Add up to 3 additional members below.</p>
+							<p class="section-hint">You are the team lead. Add up to 3 additional members.</p>
 
-							<!-- Logged-in user as Member 1 (read-only) -->
 							<div class="member-card member-lead">
 								<div class="member-header">
-									<span>Member 1 (You - Team Lead)</span>
+									<span class="member-label">
+										<mat-icon>person</mat-icon>Member 1 — You (Team Lead)
+									</span>
 								</div>
 								<div class="form-row form-row-3">
 									<mat-form-field appearance="fill">
@@ -152,8 +102,10 @@
 							@for (member of teamMembers.controls; track $index; let i = $index) {
 								<div class="member-card" [formGroup]="$any(member)">
 									<div class="member-header">
-										<span>Member {{ i + 2 }}</span>
-										<button mat-icon-button color="warn" type="button" (click)="removeMember(i)">
+										<span class="member-label">
+											<mat-icon>person_add</mat-icon>Member {{ i + 2 }}
+										</span>
+										<button mat-icon-button type="button" class="remove-btn" (click)="removeMember(i)" aria-label="Remove member">
 											<mat-icon>close</mat-icon>
 										</button>
 									</div>
@@ -179,9 +131,11 @@
 							}
 
 							@if (teamMembers.length < 3) {
-								<button mat-stroked-button type="button" (click)="addMember()" class="add-member-btn">
-									<mat-icon>person_add</mat-icon> {{ TEXT.addMemberBtn }}
-								</button>
+								<div style="display:flex; justify-content:flex-end;">
+									<button mat-stroked-button type="button" class="add-member-btn" (click)="addMember()">
+										<mat-icon>person_add</mat-icon>{{ TEXT.addMemberBtn }}
+									</button>
+								</div>
 							}
 						</div>
 
@@ -191,30 +145,6 @@
 						<div class="form-section">
 							<h3 class="subsection-title">Project Details</h3>
 
-							<mat-form-field appearance="fill" class="full-width">
-								<mat-label>{{ TEXT.projectTitleLabel }}</mat-label>
-								<input matInput formControlName="project_title">
-							</mat-form-field>
-
-							<div class="ai-generate-row">
-								@if (generatingDesc()) {
-									<button mat-stroked-button color="primary" type="button" disabled>
-										<mat-icon class="spin">sync</mat-icon>
-										Generating...
-									</button>
-								} @else {
-									<button mat-stroked-button color="primary" type="button" (click)="generateDescription()">
-										<mat-icon>auto_awesome</mat-icon>
-										Generate Description with AI
-									</button>
-								}
-							</div>
-
-							<mat-form-field appearance="fill" class="full-width">
-								<mat-label>{{ TEXT.projectDescLabel }}</mat-label>
-								<textarea matInput formControlName="project_description" rows="5"></textarea>
-							</mat-form-field>
-
 							<div class="form-row">
 								<mat-form-field appearance="fill">
 									<mat-label>{{ TEXT.projectTypeLabel }}</mat-label>
@@ -223,7 +153,6 @@
 										<mat-option value="non_technical">Non-Technical</mat-option>
 									</mat-select>
 								</mat-form-field>
-
 								<mat-form-field appearance="fill">
 									<mat-label>{{ TEXT.categoryLabel }}</mat-label>
 									<mat-select formControlName="category">
@@ -235,24 +164,18 @@
 							</div>
 
 							<mat-form-field appearance="fill" class="full-width">
-								<mat-label>{{ TEXT.techStackLabel }}</mat-label>
-								<input matInput formControlName="tech_stack" placeholder="Angular, Python, MongoDB...">
+								<mat-label>{{ TEXT.projectTitleLabel }}</mat-label>
+								<input matInput formControlName="raw_project_name">
 							</mat-form-field>
 
-							<div class="form-row">
-								<mat-form-field appearance="fill">
-									<mat-label>{{ TEXT.projectUrlLabel }}</mat-label>
-									<input matInput formControlName="project_url">
-								</mat-form-field>
-								<mat-form-field appearance="fill">
-									<mat-label>{{ TEXT.demoUrlLabel }}</mat-label>
-									<input matInput formControlName="demo_url">
-								</mat-form-field>
-							</div>
+							<mat-form-field appearance="fill" class="full-width">
+								<mat-label>{{ TEXT.projectDescLabel }}</mat-label>
+								<textarea matInput formControlName="raw_description" rows="4" placeholder="Describe your project in 2–3 lines. Our AI will refine it."></textarea>
+							</mat-form-field>
 
 							<mat-form-field appearance="fill" class="full-width">
-								<mat-label>{{ TEXT.githubUrlLabel }}</mat-label>
-								<input matInput formControlName="github_url">
+								<mat-label>{{ TEXT.techStackLabel }}</mat-label>
+								<input matInput formControlName="tech_stack" placeholder="Angular, Python, MongoDB...">
 							</mat-form-field>
 
 							<div class="form-row">
@@ -267,19 +190,164 @@
 							</div>
 						</div>
 
-						<!-- Submit -->
-						<div class="actions">
-							<button mat-raised-button color="primary" type="submit" [disabled]="submitting()">
-								@if (submitting()) {
-									<mat-spinner diameter="20"></mat-spinner>
+						<div class="form-actions">
+							<button mat-stroked-button type="button" [disabled]="refining()" (click)="onRefineIdea()" class="refine-btn">
+								@if (refining()) {
+									<mat-spinner diameter="18"></mat-spinner>
 								} @else {
-									{{ TEXT.submitBtn }}
+									<mat-icon>auto_awesome</mat-icon>
 								}
+								Get AI Refinement
+							</button>
+							<button mat-raised-button color="primary" type="submit" [disabled]="submitting()" class="submit-btn">
+								@if (submitting()) {
+									<mat-spinner diameter="18"></mat-spinner>
+								} @else {
+									<mat-icon>send</mat-icon>
+								}
+								Submit
 							</button>
 						</div>
 					</form>
-				}
-			</mat-card-content>
-		</mat-card>
+				</mat-card-content>
+			</mat-card>
+		}
+
+		<!-- AI Refinement Result -->
+		@if (ideaResult() !== null) {
+			<mat-card class="form-card refinement-card">
+				<mat-card-content>
+					<div class="refinement-header">
+						<div class="refinement-badge">
+							<mat-icon>auto_awesome</mat-icon>
+							<span>AI Refinement Complete</span>
+						</div>
+						@if (ideaResult()!.idea_quality_score >= 60) {
+							<span class="score-chip score-pass">
+								Quality Score: {{ ideaResult()!.idea_quality_score }}/100 ✓
+							</span>
+						} @else {
+							<span class="score-chip score-fail">
+								Quality Score: {{ ideaResult()!.idea_quality_score }}/100 — Below threshold
+							</span>
+						}
+					</div>
+
+					@if (ideaResult()!.idea_quality_score >= 60) {
+						<div class="refinement-grid">
+							<div class="refinement-item">
+								<span class="refinement-label">Refined Title</span>
+								<span class="refinement-value">{{ ideaResult()!.refined_title }}</span>
+							</div>
+							<div class="refinement-item">
+								<span class="refinement-label">Domain</span>
+								<span class="refinement-value">{{ ideaResult()!.inferred_domain }}</span>
+							</div>
+							<div class="refinement-item full-span">
+								<span class="refinement-label">Refined Description</span>
+								<span class="refinement-value">{{ ideaResult()!.refined_description }}</span>
+							</div>
+							<div class="refinement-item">
+								<span class="refinement-label">Problem Statement</span>
+								<span class="refinement-value">{{ ideaResult()!.inferred_problem_statement }}</span>
+							</div>
+							<div class="refinement-item">
+								<span class="refinement-label">Target Users</span>
+								<span class="refinement-value">{{ ideaResult()!.inferred_target_users }}</span>
+							</div>
+						</div>
+
+						<div class="refinement-confirm-row">
+							<p class="confirm-question">Is this what you meant? Confirm to proceed to payment.</p>
+							<div class="refinement-actions">
+								<button mat-stroked-button type="button" (click)="onEditIdea()">
+									<mat-icon>edit</mat-icon>Edit Idea
+								</button>
+								<button mat-raised-button color="primary" type="button" [disabled]="submitting()" (click)="onConfirmIdea()">
+									@if (submitting()) {
+										<mat-spinner diameter="18"></mat-spinner>
+									} @else {
+										<mat-icon>check_circle</mat-icon>
+									}
+									Yes, Confirm & Pay ₹{{ ideaResult()!.amount }}
+								</button>
+							</div>
+						</div>
+					} @else {
+						<p class="low-score-msg">Your idea scored below the minimum threshold of 60. Please refine your description and try again.</p>
+						<button mat-stroked-button type="button" (click)="onEditIdea()">
+							<mat-icon>edit</mat-icon>Refine My Idea
+						</button>
+					}
+				</mat-card-content>
+			</mat-card>
+		}
+
 	}
+
+	<!-- DEV: status cycler -->
+	@if (pageMode() === 'has-entry') {
+		<div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:8px;">
+			<button mat-stroked-button type="button" style="font-size:0.75rem;color:#6b7280;border-color:#d1d5db;" (click)="devCycleStatus()">
+				<mat-icon style="font-size:16px;width:16px;height:16px;">skip_next</mat-icon>
+				[DEV] Next Status: {{ activeEntry()?.status }}
+			</button>
+		</div>
+	}
+
+	<!-- ═══════════════════════════════════════════════════════════════
+	     MODE B — Has Entry: Level Tracker + Action Views
+	════════════════════════════════════════════════════════════════ -->
+	@if (pageMode() === 'has-entry' && activeEntry()) {
+
+		<!-- Winner / Finalist / Eliminated Banners -->
+		@if (isWinner()) {
+			<div class="outcome-banner winner-banner">
+				<mat-icon>emoji_events</mat-icon>
+				<div>
+					<strong>Congratulations! You won the contest!</strong>
+					<span>Your team has been awarded ₹25,000. Check your email for prize details.</span>
+				</div>
+			</div>
+		}
+		@if (isFinalist()) {
+			<div class="outcome-banner finalist-banner">
+				<mat-icon>military_tech</mat-icon>
+				<div>
+					<strong>You are a Finalist!</strong>
+					<span>Final rankings are being calculated. Results will be announced soon.</span>
+				</div>
+			</div>
+		}
+		@if (isEliminated()) {
+			<div class="outcome-banner eliminated-banner">
+				<mat-icon>info</mat-icon>
+				<div>
+					<strong>Your journey has ended at this level.</strong>
+					<span>Check your email for detailed AI feedback. Keep building!</span>
+				</div>
+			</div>
+		}
+
+		<!-- Pipeline — always visible -->
+		<app-contest-pipeline [entry]="activeEntry()!" />
+
+		<!-- Tracker: only when no sub-view is open -->
+		@if (entryView() === 'tracker') {
+			<app-contest-tracker [entry]="activeEntry()!" (ctaClicked)="openView($event)" />
+		}
+
+		<!-- Sub-views: mutually exclusive -->
+		@if (entryView() === 'blueprint') {
+			<app-contest-blueprint [entry]="activeEntry()!" (back)="backToTracker()" (submitted)="onChildSubmitted()" />
+		}
+		@if (entryView() === 'proof') {
+			<app-contest-proof [entry]="activeEntry()!" (back)="backToTracker()" (submitted)="onChildSubmitted()" />
+		}
+		@if (entryView() === 'interview') {
+			<app-contest-interview [entry]="activeEntry()!" (back)="backToTracker()" (submitted)="onChildSubmitted()" />
+		}
+
+	}
+
 </div>
