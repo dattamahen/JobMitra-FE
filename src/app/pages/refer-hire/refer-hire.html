@@ -272,8 +272,9 @@
 
   <!-- FAB — Post a Job -->
   @if (view() === 'list') {
-    <button mat-fab class="post-job-fab" color="primary" (click)="openPostView()" aria-label="Post a job">
+    <button mat-extended-fab class="post-job-fab" color="primary" (click)="openPostView()" aria-label="Post a job">
       <mat-icon>add</mat-icon>
+      Post Job
     </button>
   }
 
