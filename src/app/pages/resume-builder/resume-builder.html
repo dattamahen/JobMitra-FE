@@ -10,7 +10,7 @@
 		</app-skeleton-form>
 	} @else {
 		<div class="resume-builder-content full-width">
-			<div class="builder-left">
+			<div class="builder-left" [class.hidden]="builderMode() === 'entry'">
 				<div class="builder-sidebar">
 					<div class="section-list">
 						<h4>
