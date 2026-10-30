@@ -1470,6 +1470,38 @@ export class ResumeBuilderPage implements OnInit {
 		this.showJdModal.set(false);
 	}
 
+	applyTailoredToForm(): void {
+		const tailored = this.tailoredJdData();
+		if (!tailored) return;
+		// Patch summary
+		this.summaryValues = { summary: tailored.summary };
+		this.summaryForm.patchValue({ summary: tailored.summary });
+		this.resumeService.updateCurrentResumeSection('summary', tailored.summary);
+		// Patch skills — rebuild skillsValues in the same key format the dynamic form expects
+		const newSkillsValues: any = {};
+		tailored.skills.forEach((skill, index) => {
+			const itemId = `item_${index}`;
+			newSkillsValues[`technical_skills_${itemId}_name`] = skill;
+			newSkillsValues[`technical_skills_${itemId}_version`] = '';
+			newSkillsValues[`technical_skills_${itemId}_experience`] = '';
+		});
+		this.skillsValues = newSkillsValues;
+		// Also patch the reactive form controls
+		this.technicalSkillCount.set(Math.max(1, tailored.skills.length));
+		tailored.skills.forEach((skill, i) => {
+			if (!this.skillsForm.get(`tech_name_${i}`)) {
+				this.skillsForm.addControl(`tech_name_${i}`, this.fb.control(''));
+				this.skillsForm.addControl(`tech_version_${i}`, this.fb.control(''));
+				this.skillsForm.addControl(`tech_last_used_${i}`, this.fb.control(''));
+			}
+			this.skillsForm.patchValue({ [`tech_name_${i}`]: skill });
+		});
+		this.resumeService.updateCurrentResumeSection('skills', {
+			technical: tailored.skills.map(s => ({ name: s, version: '', last_used: '' })),
+			soft: this.skillsForm.get('soft')?.value || []
+		});
+	}
+
 	onJdOverlayClick(event: MouseEvent): void {
 		if ((event.target as HTMLElement).classList.contains('jd-modal-overlay')) {
 			this.closeJdModal();
