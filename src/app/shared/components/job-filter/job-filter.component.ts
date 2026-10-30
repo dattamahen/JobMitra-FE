@@ -129,7 +129,7 @@ export interface JobFilterOptions {
 
 		.search-field {
 			flex: 2;
-			min-width: 300px;
+			min-width: 200px;
 		}
 
 		.filter-row mat-form-field {
@@ -156,12 +156,19 @@ export interface JobFilterOptions {
 		}
 
 		@media (max-width: 768px) {
+			.search-filters {
+				max-width: 100%;
+				box-sizing: border-box;
+			}
+
 			.filter-row {
 				flex-direction: column;
 			}
 			
+			.search-field,
 			.filter-row mat-form-field {
 				width: 100%;
+				min-width: unset;
 			}
 			
 			.search-button-container {

@@ -35,9 +35,11 @@
 @media (max-width: 768px) {
 	.page-container {
 		padding: 16px;
+		overflow-x: hidden;
 	}
 
 	.job-listings {
 		gap: 12px;
+		overflow-x: hidden;
 	}
 }
