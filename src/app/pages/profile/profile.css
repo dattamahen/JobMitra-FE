@@ -830,7 +830,7 @@
 .cv-fab {
 	position: fixed;
 	bottom: 28px;
-	left: 28px;
+	right: 28px;
 	z-index: 1000;
 	display: inline-flex;
 	align-items: center;
@@ -868,7 +868,7 @@
 @media (max-width: 575px) {
 	.cv-fab {
 		bottom: 20px;
-		left: 16px;
+		right: 16px;
 		height: 44px;
 		padding: 0 16px 0 12px;
 		font-size: 13px;
