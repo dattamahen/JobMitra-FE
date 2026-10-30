@@ -258,6 +258,12 @@ mat-chip { font-size: 12px !important; }
   right: 28px;
   z-index: 100;
   box-shadow: 0 4px 16px rgba(72, 49, 175, 0.35) !important;
+  color: #fff !important;
+}
+
+.post-job-fab mat-icon,
+.post-job-fab .mdc-button__label {
+  color: #fff !important;
 }
 
 @media (max-width: 600px) {
