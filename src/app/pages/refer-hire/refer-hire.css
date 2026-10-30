@@ -251,6 +251,22 @@ mat-chip { font-size: 12px !important; }
 .done-card p { color: #6b7280; margin: 0 0 8px; font-size: 14px; }
 .done-card button { margin-top: 28px; }
 
+/* ── FAB ────────────────────────────────────────────────────────────────── */
+.post-job-fab {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 100;
+  box-shadow: 0 4px 16px rgba(72, 49, 175, 0.35) !important;
+}
+
+@media (max-width: 600px) {
+  .post-job-fab {
+    bottom: 20px;
+    right: 20px;
+  }
+}
+
 /* ── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 600px) {
   .page-container { padding: 16px; }

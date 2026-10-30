@@ -3,7 +3,6 @@
   <!-- ═══════════════════════════════════════════════════════ LIST VIEW -->
   @if (view() === 'list') {
     <div class="page-header list-header">
-      <button mat-raised-button color="primary" (click)="openPostView()">Post a Job</button>
       <button mat-icon-button (click)="loadJobs()" matTooltip="Refresh" aria-label="Refresh jobs">
         <mat-icon>refresh</mat-icon>
       </button>
@@ -269,6 +268,13 @@
         </mat-card-content>
       </mat-card>
     }
+  }
+
+  <!-- FAB — Post a Job -->
+  @if (view() === 'list') {
+    <button mat-fab class="post-job-fab" color="primary" (click)="openPostView()" aria-label="Post a job">
+      <mat-icon>add</mat-icon>
+    </button>
   }
 
 </div>
