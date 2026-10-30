@@ -70,6 +70,7 @@ export class ResumeBuilderPage implements OnInit {
 	readonly atsScoreColor = computed(() => this.resumeService.atsScoreColor());
 
 	// Local signals
+	builderMode = signal<'entry' | 'form'>('entry');
 	showPreview = signal(false);
 	isOptimizing = signal(false);
 	isDownloading = signal(false);

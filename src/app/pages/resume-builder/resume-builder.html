@@ -42,7 +42,27 @@
 			</div>
 			
 			<div class="builder-main">
+				@if (builderMode() === 'entry') {
+					<div class="builder-entry-screen">
+						<h2 class="builder-entry-title">What would you like to do?</h2>
+						<div class="builder-entry-tiles">
+							<button class="builder-entry-tile" (click)="openJdModal()" aria-label="CV as per Job Description">
+								<mat-icon>auto_awesome</mat-icon>
+								<span class="tile-title">CV as per JD</span>
+								<span class="tile-desc">Tailor your CV to match a specific job description using AI</span>
+							</button>
+							<button class="builder-entry-tile" (click)="builderMode.set('form')" aria-label="Manual Changes">
+								<mat-icon>edit_note</mat-icon>
+								<span class="tile-title">Manual Changes</span>
+								<span class="tile-desc">Edit your resume sections manually with full control</span>
+							</button>
+						</div>
+					</div>
+				} @else {
 				<div class="form-header-actions">
+					<button mat-icon-button (click)="builderMode.set('entry')" matTooltip="Back">
+						<mat-icon>arrow_back</mat-icon>
+					</button>
 					<button mat-icon-button (click)="toggleFormExpansion()" [matTooltip]="isFormExpanded() ? TEXT.buttons.collapseForm : TEXT.buttons.expandForm">
 						<mat-icon>{{ isFormExpanded() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
 					</button>
@@ -146,7 +166,7 @@
 						{{ isDownloading() ? 'Generating...' : 'Download CV' }}
 					</button>
 				</div>
-
+				} <!-- end builderMode form -->
 			</div>
 		</div>
 	}

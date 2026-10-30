@@ -148,6 +148,80 @@
 	animation-play-state: paused;
 }
 
+/* ── Builder Entry Screen ─────────────────────────────────── */
+.builder-entry-screen {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	flex: 1;
+	padding: 40px 32px;
+	gap: 28px;
+}
+
+.builder-entry-title {
+	font-size: 1.15rem;
+	font-weight: 700;
+	color: #1a1a2e;
+	margin: 0;
+	text-align: center;
+}
+
+.builder-entry-tiles {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 20px;
+	width: 100%;
+	max-width: 520px;
+}
+
+.builder-entry-tile {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	padding: 36px 20px;
+	border-radius: 16px;
+	border: 2px solid #e0e0e0;
+	background: #fff;
+	cursor: pointer;
+	transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+	text-align: center;
+	min-height: 160px;
+}
+
+.builder-entry-tile:hover {
+	border-color: #4831af;
+	box-shadow: 0 4px 20px rgba(72,49,175,0.15);
+	transform: translateY(-2px);
+}
+
+.builder-entry-tile mat-icon {
+	font-size: 40px;
+	width: 40px;
+	height: 40px;
+	color: #4831af;
+}
+
+.builder-entry-tile .tile-title {
+	font-size: 1rem;
+	font-weight: 600;
+	color: #1a1a2e;
+}
+
+.builder-entry-tile .tile-desc {
+	font-size: 0.78rem;
+	color: #888;
+	line-height: 1.4;
+}
+
+@media (max-width: 575px) {
+	.builder-entry-tiles {
+		grid-template-columns: 1fr;
+	}
+}
+
 /* ── Main Form Area ───────────────────────────────────────── */
 .builder-main {
 	flex: 1;
@@ -161,6 +235,9 @@
 }
 
 .form-header-actions {
+	display: flex;
+	align-items: center;
+	gap: 4px;
 	position: absolute;
 	top: 14px;
 	right: 14px;
