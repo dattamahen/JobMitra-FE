@@ -412,6 +412,32 @@
 	padding: 8px 14px;
 }
 
+.jd-success-banner {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	padding: 14px 16px;
+	background: #f0fdf4;
+	border: 1.5px solid #bbf7d0;
+	border-radius: 10px;
+}
+
+.jd-success-banner mat-icon {
+	color: #16a34a;
+	font-size: 20px;
+	width: 20px;
+	height: 20px;
+	flex-shrink: 0;
+	margin-top: 1px;
+}
+
+.jd-success-banner p {
+	margin: 0;
+	font-size: 0.85rem;
+	color: #374151;
+	line-height: 1.5;
+}
+
 .jd-match-badge strong {
 	color: #16a34a;
 }

@@ -248,11 +248,16 @@
 					<div class="jd-modal-header">
 						<h3 id="jd-modal-title">
 							<mat-icon>check_circle</mat-icon>
-							Pick a Template
+							Processed Successfully!
 						</h3>
 						<button mat-icon-button (click)="closeJdModal()" aria-label="Close">
 							<mat-icon>close</mat-icon>
 						</button>
+					</div>
+
+					<div class="jd-success-banner">
+						<mat-icon>auto_awesome</mat-icon>
+						<p>Your CV has been tailored to the job description. You can review the changes and download, or go back to edit manually.</p>
 					</div>
 
 					@if (tailoredJdData(); as td) {
@@ -270,6 +275,10 @@
 
 					<div class="jd-modal-actions">
 						<button mat-button (click)="jdModalStep.set(1)">← Back</button>
+						<button mat-stroked-button color="primary" (click)="closeJdModal(); builderMode.set('form')">
+							<mat-icon>edit_note</mat-icon>
+							Review &amp; Download
+						</button>
 					</div>
 				}
 
