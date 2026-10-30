@@ -86,6 +86,8 @@ export class ProfilePage implements OnInit, AfterViewInit {
 
 	isGeneratingSummary = signal(false);
 	isGeneratingJobDesc = signal<string | null>(null);
+	isSuggestingSkills = signal(false);
+	skillSuggestions = signal<string[]>([]);
 	
 	currentUser = signal<UserProfile | null>(null);
 	readonly skills = computed(() => this.resolveSkills(this.currentUser() as any)
@@ -333,6 +335,40 @@ export class ProfilePage implements OnInit, AfterViewInit {
 
 	onSkillsToggleEdit(): void {
 		this.isSkillsEditing.update(v => !v);
+		if (!this.isSkillsEditing()) {
+			this.skillSuggestions.set([]);
+		}
+	}
+
+	fetchSkillSuggestions(): void {
+		const currentSkills = this.skills();
+		this.isSuggestingSkills.set(true);
+		this.skillSuggestions.set([]);
+		this.userService.suggestSkills(currentSkills)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (suggestions) => {
+					this.isSuggestingSkills.set(false);
+					this.skillSuggestions.set(suggestions);
+					this.cdr.markForCheck();
+				},
+				error: () => this.isSuggestingSkills.set(false)
+			});
+	}
+
+	addSuggestedSkill(skill: string): void {
+		const skillsFormRef = this.skillsForm();
+		if (!skillsFormRef) return;
+		const existingItems = skillsFormRef.getArrayItems('technical_skills');
+		const newIndex = existingItems.length;
+		skillsFormRef.addArrayItem('technical_skills');
+		skillsFormRef.patchValue({
+			[`technical_skills_item_${newIndex}_name`]: skill,
+			[`technical_skills_item_${newIndex}_experience`]: 'Beginner (0-6 months)'
+		});
+		this.skillSuggestions.update(list => list.filter(s => s !== skill));
+		this.isSkillsEditing.set(true);
+		this.cdr.markForCheck();
 	}
 
 	onExperienceSubmit(formData: any): void {

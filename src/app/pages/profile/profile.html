@@ -167,6 +167,32 @@
 							(toggleEdit)="onSkillsToggleEdit()"
 							[submitButtonText]="TEXT.formButtons.updateSkills">
 						</app-dynamic-form>
+
+						<!-- AI Skill Suggestions -->
+						<div class="skill-suggest-row">
+							@if (isSuggestingSkills()) {
+								<button mat-stroked-button color="accent" disabled>
+									<mat-icon class="spin">sync</mat-icon> Suggesting skills…
+								</button>
+							} @else {
+								<button mat-stroked-button color="accent" (click)="fetchSkillSuggestions()" [disabled]="skills().length === 0">
+									<mat-icon>auto_awesome</mat-icon> Suggest skills with AI
+								</button>
+							}
+						</div>
+
+						@if (skillSuggestions().length > 0) {
+							<div class="skill-suggestions-panel">
+								<p class="suggest-label"><mat-icon>lightbulb</mat-icon> Tap to add relevant skills</p>
+								<div class="suggest-chips">
+									@for (skill of skillSuggestions(); track skill) {
+										<button class="suggest-chip" (click)="addSuggestedSkill(skill)" [attr.aria-label]="'Add ' + skill">
+											<mat-icon>add</mat-icon> {{ skill }}
+										</button>
+									}
+								</div>
+							</div>
+						}
 					</mat-card-content>
 				</mat-card>
 

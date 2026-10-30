@@ -225,6 +225,14 @@ export class UserService {
 		return Math.round((completedFields / fields.length) * 100);
 	}
 
+	suggestSkills(currentSkills: string[]): Observable<string[]> {
+		/** Call LLM to get next relevant skill suggestions based on current skills. */
+		return this.apiService.post<{ suggestions: string[] }>('/profile/suggest-skills', { current_skills: currentSkills }).pipe(
+			map(res => res.suggestions ?? []),
+			catchError(() => of([]))
+		);
+	}
+
 	updateCurrentUser(updateData: UpdateUserRequest): Observable<{ message: string }> {
 		const userId = this.getCurrentUserId();
 		if (!userId) throw new Error('No current user found');
