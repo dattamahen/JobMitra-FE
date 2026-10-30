@@ -488,4 +488,12 @@
 		</div>
 	</div>
 	} <!-- end profileMode === 'form' -->
+
+	<!-- Sticky Upload CV FAB — visible on form mode only -->
+	@if (profileMode() === 'form') {
+		<button class="cv-fab" (click)="selectCvUpload()" aria-label="Upload CV to update profile">
+			<mat-icon>upload_file</mat-icon>
+			<span>Upload CV</span>
+		</button>
+	}
 </div>

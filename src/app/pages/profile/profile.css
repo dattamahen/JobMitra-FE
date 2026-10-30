@@ -825,3 +825,52 @@
 		padding: 5px 11px;
 	}
 }
+
+/* ── Upload CV sticky FAB ────────────────────────────────── */
+.cv-fab {
+	position: fixed;
+	bottom: 28px;
+	left: 28px;
+	z-index: 1000;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 0 20px 0 16px;
+	height: 48px;
+	border-radius: 24px;
+	border: none;
+	background: #4831af;
+	color: #fff;
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+	box-shadow: 0 4px 16px rgba(72,49,175,0.35);
+	transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+	white-space: nowrap;
+}
+
+.cv-fab mat-icon {
+	font-size: 20px;
+	width: 20px;
+	height: 20px;
+}
+
+.cv-fab:hover {
+	background: #3a2590;
+	box-shadow: 0 6px 20px rgba(72,49,175,0.45);
+	transform: translateY(-2px);
+}
+
+.cv-fab:active {
+	transform: translateY(0);
+}
+
+@media (max-width: 575px) {
+	.cv-fab {
+		bottom: 20px;
+		left: 16px;
+		height: 44px;
+		padding: 0 16px 0 12px;
+		font-size: 13px;
+	}
+}
