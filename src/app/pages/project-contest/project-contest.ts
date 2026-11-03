@@ -88,6 +88,13 @@ export class ProjectContestPage implements OnInit {
 	ideaResult = signal<{ entry_id: string; refined_title: string; refined_description: string; inferred_domain: string; inferred_problem_statement: string; inferred_target_users: string; idea_quality_score: number; amount: number } | null>(null);
 	categories = signal<ContestCategory[]>(TECHNICAL_CATEGORIES);
 
+	// OTP state per member index
+	otpSending = signal<boolean[]>([]);
+	otpSent = signal<boolean[]>([]);
+	otpVerifying = signal<boolean[]>([]);
+	otpVerified = signal<boolean[]>([]);
+	otpError = signal<string[]>([]);
+
 	currentUserFirstName = '';
 	currentUserLastName = '';
 	currentUserEmail = '';
@@ -132,16 +139,66 @@ export class ProjectContestPage implements OnInit {
 
 	addMember() {
 		if (this.teamMembers.length >= 3) return;
+		const lastIdx = this.teamMembers.length - 1;
+		if (lastIdx >= 0 && !this.otpVerified()[lastIdx]) return;
 		this.teamMembers.push(this.fb.group({
 			full_name: ['', [Validators.required, Validators.minLength(2)]],
 			email: ['', [Validators.required, Validators.email]],
 			role_in_project: [''],
 			college: [''],
+			otp: [''],
 		}));
+		const i = this.teamMembers.length - 1;
+		this.otpSending.update(a => { const n = [...a]; n[i] = false; return n; });
+		this.otpSent.update(a => { const n = [...a]; n[i] = false; return n; });
+		this.otpVerifying.update(a => { const n = [...a]; n[i] = false; return n; });
+		this.otpVerified.update(a => { const n = [...a]; n[i] = false; return n; });
+		this.otpError.update(a => { const n = [...a]; n[i] = ''; return n; });
 	}
 
 	removeMember(index: number) {
 		this.teamMembers.removeAt(index);
+		this.otpSending.update(a => a.filter((_, i) => i !== index));
+		this.otpSent.update(a => a.filter((_, i) => i !== index));
+		this.otpVerifying.update(a => a.filter((_, i) => i !== index));
+		this.otpVerified.update(a => a.filter((_, i) => i !== index));
+		this.otpError.update(a => a.filter((_, i) => i !== index));
+	}
+
+	async sendOtp(index: number) {
+		const email = this.teamMembers.at(index).get('email')?.value;
+		if (!email) return;
+		this.otpSending.update(a => { const n = [...a]; n[index] = true; return n; });
+		this.otpError.update(a => { const n = [...a]; n[index] = ''; return n; });
+		try {
+			await this.contestService.sendMemberOtp(email);
+			this.otpSent.update(a => { const n = [...a]; n[index] = true; return n; });
+		} catch {
+			this.otpError.update(a => { const n = [...a]; n[index] = 'Failed to send OTP. Check the email and try again.'; return n; });
+		} finally {
+			this.otpSending.update(a => { const n = [...a]; n[index] = false; return n; });
+		}
+	}
+
+	async verifyOtp(index: number) {
+		const email = this.teamMembers.at(index).get('email')?.value;
+		const otp = this.teamMembers.at(index).get('otp')?.value;
+		if (!email || !otp) return;
+		this.otpVerifying.update(a => { const n = [...a]; n[index] = true; return n; });
+		this.otpError.update(a => { const n = [...a]; n[index] = ''; return n; });
+		try {
+			await this.contestService.verifyMemberOtp(email, otp);
+			this.otpVerified.update(a => { const n = [...a]; n[index] = true; return n; });
+		} catch {
+			this.otpError.update(a => { const n = [...a]; n[index] = 'Invalid or expired OTP. Please try again.'; return n; });
+		} finally {
+			this.otpVerifying.update(a => { const n = [...a]; n[index] = false; return n; });
+		}
+	}
+
+	allMembersVerified(): boolean {
+		if (this.teamMembers.length === 0) return true;
+		return this.teamMembers.controls.every((_, i) => this.otpVerified()[i] === true);
 	}
 
 	private async loadMyEntries() {
@@ -166,6 +223,7 @@ export class ProjectContestPage implements OnInit {
 			this.ideaForm.markAllAsTouched();
 			return;
 		}
+		if (!this.allMembersVerified()) return;
 		if (this.ideaResult()) {
 			await this.onConfirmIdea();
 			return;

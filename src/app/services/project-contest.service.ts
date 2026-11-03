@@ -188,6 +188,17 @@ export class ProjectContestService {
 		return res;
 	}
 
+	async sendMemberOtp(email: string): Promise<void> {
+		await firstValueFrom(this.api.post(`/project-contest/team-member/send-otp?email=${encodeURIComponent(email)}`, {}));
+	}
+
+	async verifyMemberOtp(email: string, otp: string): Promise<void> {
+		const res: any = await firstValueFrom(
+			this.api.post(`/project-contest/team-member/verify-otp?email=${encodeURIComponent(email)}&otp=${encodeURIComponent(otp)}`, {})
+		);
+		if (!res?.verified) throw new Error('Verification failed');
+	}
+
 	async createPaymentLink(entryId: string, amount: number): Promise<string> {
 		const res: any = await firstValueFrom(this.api.post('/payments/create-contest-link', {
 			user_id: this.getUserId(),

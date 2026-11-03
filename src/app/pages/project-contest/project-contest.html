@@ -104,35 +104,84 @@
 									<div class="member-header">
 										<span class="member-label">
 											<mat-icon>person_add</mat-icon>Member {{ i + 2 }}
+											@if (otpVerified()[i]) {
+												<span class="otp-verified-badge">✅ Verified</span>
+											}
 										</span>
 										<button mat-icon-button type="button" class="remove-btn" (click)="removeMember(i)" aria-label="Remove member">
 											<mat-icon>close</mat-icon>
 										</button>
 									</div>
-									<div class="form-row form-row-4">
-										<mat-form-field appearance="fill">
-											<mat-label>{{ TEXT.memberNameLabel }}</mat-label>
-											<input matInput formControlName="full_name">
-										</mat-form-field>
-										<mat-form-field appearance="fill">
+
+									<!-- Step 1: Email + Send OTP (locked after verified) -->
+									<div class="otp-email-row">
+										<mat-form-field appearance="fill" class="otp-email-field">
 											<mat-label>{{ TEXT.memberEmailLabel }}</mat-label>
-											<input matInput formControlName="email" placeholder="name@gmail.com">
+											<input matInput formControlName="email" placeholder="name@gmail.com" [readonly]="otpSent()[i] || otpVerified()[i]">
 										</mat-form-field>
-										<mat-form-field appearance="fill">
-											<mat-label>{{ TEXT.memberRoleLabel }}</mat-label>
-											<input matInput formControlName="role_in_project">
-										</mat-form-field>
-										<mat-form-field appearance="fill">
-											<mat-label>{{ TEXT.memberCollegeLabel }}</mat-label>
-											<input matInput formControlName="college">
-										</mat-form-field>
+										@if (!otpVerified()[i]) {
+											<button mat-stroked-button type="button" class="otp-send-btn"
+												[disabled]="otpSending()[i] || !$any(member).get('email')?.valid"
+												(click)="sendOtp(i)">
+												@if (otpSending()[i]) {
+													<mat-spinner diameter="16"></mat-spinner>
+												} @else {
+													<mat-icon>send</mat-icon>
+												}
+												{{ otpSent()[i] ? 'Resend OTP' : 'Send OTP' }}
+											</button>
+										}
 									</div>
+
+									<!-- Step 2: OTP input (shown after OTP sent, hidden after verified) -->
+									@if (otpSent()[i] && !otpVerified()[i]) {
+										<div class="otp-verify-row">
+											<mat-form-field appearance="fill" class="otp-input-field">
+												<mat-label>Enter 6-digit OTP</mat-label>
+												<input matInput formControlName="otp" placeholder="123456" maxlength="6">
+											</mat-form-field>
+											<button mat-flat-button color="primary" type="button" class="otp-verify-btn"
+												[disabled]="otpVerifying()[i] || !$any(member).get('otp')?.value"
+												(click)="verifyOtp(i)">
+												@if (otpVerifying()[i]) {
+													<mat-spinner diameter="16"></mat-spinner>
+												} @else {
+													<mat-icon>verified</mat-icon>
+												}
+												Verify
+											</button>
+										</div>
+									}
+
+									@if (otpError()[i]) {
+										<p class="otp-error">{{ otpError()[i] }}</p>
+									}
+
+									<!-- Other fields: shown only after verified -->
+									@if (otpVerified()[i]) {
+										<div class="form-row form-row-3">
+											<mat-form-field appearance="fill">
+												<mat-label>{{ TEXT.memberNameLabel }}</mat-label>
+												<input matInput formControlName="full_name">
+											</mat-form-field>
+											<mat-form-field appearance="fill">
+												<mat-label>{{ TEXT.memberRoleLabel }}</mat-label>
+												<input matInput formControlName="role_in_project">
+											</mat-form-field>
+											<mat-form-field appearance="fill">
+												<mat-label>{{ TEXT.memberCollegeLabel }}</mat-label>
+												<input matInput formControlName="college">
+											</mat-form-field>
+										</div>
+									}
 								</div>
 							}
 
 							@if (teamMembers.length < 3) {
 								<div style="display:flex; justify-content:flex-end;">
-									<button mat-stroked-button type="button" class="add-member-btn" (click)="addMember()">
+									<button mat-stroked-button type="button" class="add-member-btn"
+										[disabled]="teamMembers.length > 0 && !otpVerified()[teamMembers.length - 1]"
+										(click)="addMember()">
 										<mat-icon>person_add</mat-icon>{{ TEXT.addMemberBtn }}
 									</button>
 								</div>
@@ -200,7 +249,10 @@
 						</div>
 
 						<div class="form-actions">
-							<button mat-raised-button color="primary" type="submit" [disabled]="submitting()" class="submit-btn">
+							@if (teamMembers.length > 0 && !allMembersVerified()) {
+								<p class="unverified-hint"><mat-icon>info</mat-icon>Verify all team members before submitting.</p>
+							}
+							<button mat-raised-button color="primary" type="submit" [disabled]="submitting() || !allMembersVerified()" class="submit-btn">
 								@if (submitting()) {
 									<mat-spinner diameter="18"></mat-spinner>
 								} @else {

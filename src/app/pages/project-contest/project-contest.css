@@ -481,7 +481,93 @@
 	margin-bottom: 16px;
 }
 
-/* ── Mat form field overrides ────────────────────────────────────── */
+/* ── OTP Verification ─────────────────────────────────────────────── */
+.otp-email-row {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	margin-bottom: 4px;
+}
+
+.otp-email-field { flex: 1; }
+
+.otp-send-btn {
+	flex-shrink: 0;
+	height: 56px;
+	border-color: var(--color-button-primary) !important;
+	color: var(--color-button-primary) !important;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.8rem;
+}
+
+.otp-verify-row {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	margin-bottom: 4px;
+}
+
+.otp-input-field { width: 160px; flex-shrink: 0; }
+
+.otp-verify-btn {
+	flex-shrink: 0;
+	height: 56px;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.8rem;
+}
+
+.otp-verified-badge {
+	background: #d1fae5;
+	color: #065f46;
+	font-size: 0.7rem;
+	font-weight: 700;
+	padding: 2px 8px;
+	border-radius: 10px;
+	margin-left: 6px;
+}
+
+.otp-error {
+	font-size: 0.78rem;
+	color: #dc2626;
+	margin: 0 0 8px;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.unverified-hint {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.8rem;
+	color: #92400e;
+	background: #fef3c7;
+	border-radius: 6px;
+	padding: 6px 12px;
+	margin-right: auto;
+	margin-bottom: 0;
+}
+
+.unverified-hint mat-icon {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	color: #d97706;
+}
+
+@media (max-width: 768px) {
+	.otp-email-row,
+	.otp-verify-row { flex-direction: column; }
+	.otp-send-btn,
+	.otp-verify-btn { width: 100%; height: 44px; }
+	.otp-input-field { width: 100%; }
+}
+
+/* -- Mat form field overrides ----------------------------------------- */
 :host ::ng-deep .mat-mdc-form-field { font-size: 0.875rem; }
 :host ::ng-deep .mat-mdc-floating-label { font-size: 0.875rem !important; }
 :host ::ng-deep .mdc-floating-label { font-size: 0.875rem !important; }
