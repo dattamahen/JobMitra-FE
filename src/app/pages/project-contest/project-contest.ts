@@ -85,7 +85,6 @@ export class ProjectContestPage implements OnInit {
 
 	// Form state
 	submitting = signal(false);
-	refining = signal(false);
 	ideaResult = signal<{ entry_id: string; refined_title: string; refined_description: string; inferred_domain: string; inferred_problem_statement: string; inferred_target_users: string; idea_quality_score: number; amount: number } | null>(null);
 	categories = signal<ContestCategory[]>(TECHNICAL_CATEGORIES);
 
@@ -162,15 +161,16 @@ export class ProjectContestPage implements OnInit {
 		}
 	}
 
-	async onRefineIdea() {
-		const name = this.ideaForm.get('raw_project_name');
-		const desc = this.ideaForm.get('raw_description');
-		const category = this.ideaForm.get('category');
-		name?.markAsTouched();
-		desc?.markAsTouched();
-		category?.markAsTouched();
-		if (name?.invalid || desc?.invalid || category?.invalid) return;
-		this.refining.set(true);
+	async onSubmitIdea() {
+		if (this.ideaForm.invalid) {
+			this.ideaForm.markAllAsTouched();
+			return;
+		}
+		if (this.ideaResult()) {
+			await this.onConfirmIdea();
+			return;
+		}
+		this.submitting.set(true);
 		try {
 			const val = this.ideaForm.value;
 			const result = await this.contestService.submitIdea({
@@ -189,20 +189,8 @@ export class ProjectContestPage implements OnInit {
 		} catch {
 			// error handled by interceptor
 		} finally {
-			this.refining.set(false);
+			this.submitting.set(false);
 		}
-	}
-
-	async onSubmitIdea() {
-		if (this.ideaForm.invalid) {
-			this.ideaForm.markAllAsTouched();
-			return;
-		}
-		if (!this.ideaResult()) {
-			await this.onRefineIdea();
-			return;
-		}
-		await this.onConfirmIdea();
 	}
 
 	async onConfirmIdea() {
