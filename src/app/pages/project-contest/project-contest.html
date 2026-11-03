@@ -113,13 +113,25 @@
 										</button>
 									</div>
 
-									<!-- Step 1: Email + Send OTP (locked after verified) -->
-									<div class="otp-email-row">
-										<mat-form-field appearance="fill" class="otp-email-field">
-											<mat-label>{{ TEXT.memberEmailLabel }}</mat-label>
-											<input matInput formControlName="email" placeholder="name@gmail.com" [readonly]="otpSent()[i] || otpVerified()[i]">
+									<!-- Always visible: First Name + Last Name + Email -->
+									<div class="form-row form-row-3">
+										<mat-form-field appearance="fill">
+											<mat-label>First Name</mat-label>
+											<input matInput formControlName="first_name" [readonly]="otpSent()[i] || otpVerified()[i]">
 										</mat-form-field>
-										@if (!otpVerified()[i]) {
+										<mat-form-field appearance="fill">
+											<mat-label>Last Name (optional)</mat-label>
+											<input matInput formControlName="last_name" [readonly]="otpSent()[i] || otpVerified()[i]">
+										</mat-form-field>
+										<mat-form-field appearance="fill">
+											<mat-label>{{ TEXT.memberEmailLabel }}</mat-label>
+											<input matInput formControlName="email" placeholder="name@example.com" [readonly]="otpSent()[i] || otpVerified()[i]">
+										</mat-form-field>
+									</div>
+
+									<!-- Send OTP button (hidden once verified) -->
+									@if (!otpVerified()[i]) {
+										<div class="otp-email-row">
 											<button mat-stroked-button type="button" class="otp-send-btn"
 												[disabled]="otpSending()[i] || !$any(member).get('email')?.valid"
 												(click)="sendOtp(i)">
@@ -130,10 +142,10 @@
 												}
 												{{ otpSent()[i] ? 'Resend OTP' : 'Send OTP' }}
 											</button>
-										}
-									</div>
+										</div>
+									}
 
-									<!-- Step 2: OTP input (shown after OTP sent, hidden after verified) -->
+									<!-- OTP input row (shown after send, hidden after verified) -->
 									@if (otpSent()[i] && !otpVerified()[i]) {
 										<div class="otp-verify-row">
 											<mat-form-field appearance="fill" class="otp-input-field">
@@ -155,30 +167,6 @@
 
 									@if (otpError()[i]) {
 										<p class="otp-error">{{ otpError()[i] }}</p>
-									}
-
-									<!-- Other fields: shown only after verified -->
-									@if (otpVerified()[i]) {
-										<div class="form-row form-row-2">
-											<mat-form-field appearance="fill">
-												<mat-label>First Name</mat-label>
-												<input matInput formControlName="first_name">
-											</mat-form-field>
-											<mat-form-field appearance="fill">
-												<mat-label>Last Name <span style="font-size:0.75rem;opacity:0.6">(optional)</span></mat-label>
-												<input matInput formControlName="last_name">
-											</mat-form-field>
-										</div>
-										<div class="form-row form-row-2">
-											<mat-form-field appearance="fill">
-												<mat-label>{{ TEXT.memberRoleLabel }}</mat-label>
-												<input matInput formControlName="role_in_project">
-											</mat-form-field>
-											<mat-form-field appearance="fill">
-												<mat-label>{{ TEXT.memberCollegeLabel }}</mat-label>
-												<input matInput formControlName="college">
-											</mat-form-field>
-										</div>
 									}
 								</div>
 							}
