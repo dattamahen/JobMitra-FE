@@ -28,7 +28,6 @@
 	right: 0;
 	z-index: 10;
 	background: var(--brand);
-	backdrop-filter: blur(8px);
 	border-bottom: 1px solid var(--brand-dark);
 }
 
@@ -106,19 +105,12 @@
 	inset: 0;
 	background: linear-gradient(105deg, transparent 40%, rgba(72,49,175,0.12) 50%, transparent 60%);
 	background-size: 200% 100%;
-	animation: ai-shimmer 2.4s linear infinite;
+	animation: ai-shimmer 2.4s linear infinite paused;
 	pointer-events: none;
 }
 
-.nav-cta:hover {
-	background: #f5f3ff;
-	border-color: #3520a0;
-	color: #3520a0;
-	transform: translateY(-1px);
-}
-
 .nav-cta:hover::after {
-	animation-play-state: paused;
+	animation-play-state: running;
 }
 
 /* ── HERO ── */
@@ -214,25 +206,25 @@
 	transition: background 0.15s, transform 0.15s;
 }
 
-.btn-primary::after {
-	content: '';
-	position: absolute;
-	inset: 0;
-	background: linear-gradient(105deg, transparent 40%, rgba(72,49,175,0.12) 50%, transparent 60%);
-	background-size: 200% 100%;
-	animation: ai-shimmer 2.4s linear infinite;
-	pointer-events: none;
-}
-
-.btn-primary:hover {
+.nav-cta:hover {
 	background: #f5f3ff;
 	border-color: #3520a0;
 	color: #3520a0;
 	transform: translateY(-1px);
 }
 
+.btn-primary::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(105deg, transparent 40%, rgba(72,49,175,0.12) 50%, transparent 60%);
+	background-size: 200% 100%;
+	animation: ai-shimmer 2.4s linear infinite paused;
+	pointer-events: none;
+}
+
 .btn-primary:hover::after {
-	animation-play-state: paused;
+	animation-play-state: running;
 }
 
 .hero-google-signin {
@@ -1250,7 +1242,7 @@
 	height: 2px;
 	background: linear-gradient(90deg, var(--brand-border), var(--brand), var(--brand-border));
 	z-index: 0;
-	transform: scaleX(0);
+	transform: scaleX(1);
 	transform-origin: left;
 	transition: transform 0.8s ease 0.2s;
 }
@@ -1267,8 +1259,8 @@
 	position: relative;
 	z-index: 1;
 	padding: 0 8px;
-	opacity: 0;
-	transform: translateY(24px);
+	opacity: 1;
+	transform: translateY(0);
 	transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
@@ -1356,8 +1348,8 @@
 	padding: 10px;
 	text-align: center;
 	border: 1px solid var(--brand-border);
-	opacity: 0;
-	transform: translateY(16px);
+	opacity: 1;
+	transform: translateY(0);
 	transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
@@ -1690,19 +1682,12 @@
 	inset: 0;
 	background: linear-gradient(105deg, transparent 40%, rgba(72,49,175,0.12) 50%, transparent 60%);
 	background-size: 200% 100%;
-	animation: ai-shimmer 2.4s linear infinite;
+	animation: ai-shimmer 2.4s linear infinite paused;
 	pointer-events: none;
 }
 
-.btn-white:hover {
-	background: #f5f3ff;
-	border-color: #3520a0;
-	color: #3520a0;
-	transform: translateY(-1px);
-}
-
 .btn-white:hover::after {
-	animation-play-state: paused;
+	animation-play-state: running;
 }
 
 .btn-ghost {
@@ -1932,3 +1917,4 @@
 		font-size: 32px;
 	}
 }
+

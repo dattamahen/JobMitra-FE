@@ -107,6 +107,7 @@
 	</div>
 
 	<!-- Trust Logos -->
+	@defer (on idle) {
 	<div class="logos-section">
 		<div class="logos-inner">
 			<p class="logos-label">Trusted by teams at</p>
@@ -122,8 +123,10 @@
 			</div>
 		</div>
 	</div>
+	} <!-- end @defer logos -->
 
 	<!-- Products -->
+	@defer (on idle) {
 	<div class="section" id="products">
 		<div class="section-label">Our features</div>
 		<h2 class="section-title">Eight tools. One platform. Zero compromise.</h2>
@@ -144,6 +147,8 @@
 		</div>
 	</div>
 
+	} <!-- end @defer products -->
+
 	<!-- Stats -->
 	<div class="stats-section" id="features">
 		<div class="stats-header">
@@ -161,7 +166,9 @@
 		</div>
 	</div>
 
+
 	<!-- How it works — 5 Steps -->
+	@defer (on idle) {
 	<div class="section" id="resume-builder">
 		<div class="section-label">How it works</div>
 		<h2 class="section-title">From sign-up to offer letter — in five steps</h2>
@@ -188,7 +195,10 @@
 		</div>
 	</div>
 
+	} <!-- end @defer steps -->
+
 	<!-- Testimonials -->
+	@defer (on idle) {
 	<div class="testimonials-section">
 		<div class="testimonials-inner">
 			<div class="section-label">Testimonials</div>
@@ -220,7 +230,10 @@
 		</div>
 	</div>
 
+	} <!-- end @defer testimonials -->
+
 	<!-- Pricing -->
+	@defer (on idle) {
 	<div class="section" id="pricing">
 		<div class="section-label">Pricing</div>
 		<h2 class="section-title">Simple, honest pricing</h2>
@@ -245,7 +258,10 @@
 		</div>
 	</div>
 
+	} <!-- end @defer pricing -->
+
 	<!-- CTA -->
+	@defer (on idle) {
 	<div class="cta-section">
 		<h2>Your next role is closer than you think</h2>
 		<p>Join 2,900+ professionals using JobMouka to build careers they are proud of.</p>
@@ -255,7 +271,10 @@
 		</div>
 	</div>
 
+	} <!-- end @defer cta -->
+
 	<!-- Footer -->
+	@defer (on idle) {
 	<footer class="site-footer">
 		<div class="footer-top">
 			<div class="footer-brand">
@@ -299,6 +318,7 @@
 			</div>
 		</div>
 	</footer>
+	} <!-- end @defer footer -->
 
 	<!-- Google Sign-in Loading Overlay -->
 	@if (googleSignInLoading()) {
@@ -419,3 +439,4 @@
 		</div>
 	</aside>
 </div>
+

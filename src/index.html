@@ -60,6 +60,12 @@
 	</script>
 
 	<link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+	<!-- Tabler icons — non-blocking load -->
+	<link rel="preload" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+	<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css"></noscript>
+
+	<!-- Google Sign-In SDK — deferred, non-blocking -->
 	<script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>

@@ -126,8 +126,14 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 			});
 		}
 
-		this.initializeGoogleSignIn().then(() => this.renderHeroGoogleButton());
-		this.loadDynamicPricing();
+		// Defer Google init and pricing until after first paint
+		if (isPlatformBrowser(this.platformId)) {
+			requestIdleCallback(() => {
+				this.initializeGoogleSignIn().then(() => this.renderHeroGoogleButton());
+				this.initPricingObserver();
+			});
+		}
+
 		this.startProfileCarousel();
 		this.startTestimonialCarousel();
 	}
@@ -296,7 +302,7 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 		this.isPanelOpen.set(true);
 
 		if (mode === 'login') {
-			this.renderGoogleButton();
+			this.ensureGoogleInit().then(() => this.renderGoogleButton());
 		}
 	}
 
@@ -316,6 +322,25 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 		if (el) {
 			el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 		}
+	}
+
+	private googleInitialized = false;
+
+	private async ensureGoogleInit(): Promise<void> {
+		if (this.googleInitialized) return;
+		this.googleInitialized = true;
+		await this.initializeGoogleSignIn();
+	}
+
+	private initPricingObserver(): void {
+		const grid = document.querySelector('.pricing-grid');
+		if (!grid) return;
+		const observer = new IntersectionObserver(([entry]) => {
+			if (!entry.isIntersecting) return;
+			observer.disconnect();
+			this.loadDynamicPricing();
+		}, { rootMargin: '200px' });
+		observer.observe(grid);
 	}
 
 	private async initializeGoogleSignIn(): Promise<void> {
@@ -375,7 +400,7 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 		this.resetAllForms();
 
 		if (!this.isSignupMode()) {
-			this.renderGoogleButton();
+			this.ensureGoogleInit().then(() => this.renderGoogleButton());
 		}
 	}
 
