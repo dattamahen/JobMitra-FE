@@ -12,6 +12,9 @@ export interface TeamMember {
 
 export interface ContestEntry {
 	entry_id: string;
+	lead_user_id: string;
+	lead_name: string;
+	lead_email: string;
 	raw_project_name: string;
 	raw_description: string;
 	refined_title: string;
@@ -131,6 +134,11 @@ export class ProjectContestService {
 
 	async getMyEntries(): Promise<{ entries: ContestEntry[]; count: number }> {
 		const res: any = await firstValueFrom(this.api.get(`/project-contest/my-entries`));
+		return res?.data ?? res;
+	}
+
+	async getMemberEntries(): Promise<{ entries: ContestEntry[]; count: number }> {
+		const res: any = await firstValueFrom(this.api.get(`/project-contest/member-entries`));
 		return res?.data ?? res;
 	}
 

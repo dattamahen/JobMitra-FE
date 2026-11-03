@@ -260,7 +260,48 @@
 			</mat-card>
 		}
 
-		<!-- AI Refinement Result -->
+		<!-- Member Entries: contests this user is tagged in as a member -->
+		@if (memberEntries().length > 0) {
+			<mat-card class="form-card member-entries-card">
+				<mat-card-content>
+					<div class="form-card-header">
+						<mat-icon class="form-card-icon">group</mat-icon>
+						<div>
+							<h2 class="section-title">Contests You're Part Of</h2>
+							<p class="section-hint">Projects where you've been added as a team member.</p>
+						</div>
+					</div>
+					@for (entry of memberEntries(); track entry.entry_id) {
+						<div class="member-entry-row">
+							<div class="member-entry-main">
+								<span class="member-entry-title">{{ entry.refined_title || entry.raw_project_name }}</span>
+								<span class="member-entry-meta">{{ entry.category | titlecase }} · Team of {{ entry.team_size }} · Lead: {{ entry.lead_name }}</span>
+							</div>
+							<div class="member-entry-scores">
+								@if (entry.idea_quality_score) {
+									<span class="score-tag">L1 <strong>{{ entry.idea_quality_score }}</strong></span>
+								}
+								@if (entry.blueprint_score) {
+									<span class="score-tag">L2 <strong>{{ entry.blueprint_score }}</strong></span>
+								}
+								@if (entry.demo_score) {
+									<span class="score-tag">L3 <strong>{{ entry.demo_score }}</strong></span>
+								}
+								@if (entry.team_interview_score) {
+									<span class="score-tag">L4 <strong>{{ entry.team_interview_score }}</strong></span>
+								}
+								@if (entry.composite_score) {
+									<span class="score-tag score-tag-composite">⭐ <strong>{{ entry.composite_score }}</strong></span>
+								}
+							</div>
+							<span class="member-entry-status status-{{ entry.status }}">{{ entry.status | titlecase }}</span>
+						</div>
+					}
+				</mat-card-content>
+			</mat-card>
+		}
+
+
 		@if (ideaResult() !== null) {
 			<mat-card class="form-card refinement-card">
 				<mat-card-content>

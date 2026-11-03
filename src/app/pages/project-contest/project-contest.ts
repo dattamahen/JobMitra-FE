@@ -3,6 +3,7 @@ import {
 	input, computed, linkedSignal,
 } from '@angular/core';
 import { FormBuilder, FormArray, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
+import { TitleCasePipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -43,7 +44,7 @@ type EntryView = 'tracker' | 'blueprint' | 'proof' | 'interview';
 	selector: 'app-project-contest',
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	imports: [
-		ReactiveFormsModule, FormsModule,
+		ReactiveFormsModule, FormsModule, TitleCasePipe,
 		MatCardModule, MatButtonModule, MatIconModule,
 		MatFormFieldModule, MatInputModule, MatSelectModule,
 		MatProgressSpinnerModule, MatDividerModule, MatDialogModule,
@@ -94,6 +95,8 @@ export class ProjectContestPage implements OnInit {
 	otpVerifying = signal<boolean[]>([]);
 	otpVerified = signal<boolean[]>([]);
 	otpError = signal<string[]>([]);
+
+	memberEntries = signal<ContestEntry[]>([]);
 
 	currentUserFirstName = '';
 	currentUserLastName = '';
@@ -204,8 +207,11 @@ export class ProjectContestPage implements OnInit {
 
 	private async loadMyEntries() {
 		try {
-			const res = await this.contestService.getMyEntries();
-			const active = (res.entries ?? []).find(
+			const [leadRes, memberRes] = await Promise.all([
+				this.contestService.getMyEntries(),
+				this.contestService.getMemberEntries(),
+			]);
+			const active = (leadRes.entries ?? []).find(
 				(e: ContestEntry) => e.payment_status === 'confirmed'
 			);
 			if (active) {
@@ -214,6 +220,7 @@ export class ProjectContestPage implements OnInit {
 			} else {
 				this.pageMode.set('no-entry');
 			}
+			this.memberEntries.set(memberRes.entries ?? []);
 		} catch {
 			this.pageMode.set('no-entry');
 		}

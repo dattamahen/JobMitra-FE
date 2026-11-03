@@ -481,6 +481,82 @@
 	margin-bottom: 16px;
 }
 
+/* ── Member Entries ──────────────────────────────────────────────── */
+.member-entries-card {
+	margin-bottom: 24px;
+}
+
+.member-entry-row {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding: 12px 0;
+	border-bottom: 1px solid #f3f4f6;
+	flex-wrap: wrap;
+}
+
+.member-entry-row:last-child { border-bottom: none; }
+
+.member-entry-main {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	flex: 1;
+	min-width: 0;
+}
+
+.member-entry-title {
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: #1f2937;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.member-entry-meta {
+	font-size: 0.75rem;
+	color: var(--color-secondary);
+}
+
+.member-entry-scores {
+	display: flex;
+	gap: 6px;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.score-tag {
+	background: #f3f4f6;
+	color: #374151;
+	font-size: 0.7rem;
+	padding: 3px 8px;
+	border-radius: 10px;
+}
+
+.score-tag strong { color: #1f2937; }
+
+.score-tag-composite {
+	background: #fef3c7;
+	color: #92400e;
+}
+
+.member-entry-status {
+	font-size: 0.72rem;
+	font-weight: 600;
+	padding: 3px 10px;
+	border-radius: 12px;
+	background: #f3f4f6;
+	color: #374151;
+	white-space: nowrap;
+}
+
+.member-entry-status.status-spark_confirmed,
+.member-entry-status.status-blueprint_open { background: #dbeafe; color: #1e40af; }
+.member-entry-status.status-finalist { background: #ede9fe; color: #5b21b6; }
+.member-entry-status.status-winner { background: #fde68a; color: #78350f; }
+.member-entry-status.status-eliminated { background: #fee2e2; color: #991b1b; }
+
 /* ── OTP Verification ─────────────────────────────────────────────── */
 .otp-email-row {
 	display: flex;
