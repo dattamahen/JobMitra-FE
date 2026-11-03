@@ -21,7 +21,7 @@ export const PROJECT_CONTEST_TEXT = {
 	memberRoleLabel: 'Role in Project',
 	memberCollegeLabel: 'College',
 	projectTitleLabel: 'Project Name',
-	projectDescLabel: 'Brief Description (2–3 lines)',
+	projectDescLabel: 'Brief Description',
 	projectTypeLabel: 'Project Type',
 	categoryLabel: 'Category',
 	techStackLabel: 'Tech Stack (comma separated)',
