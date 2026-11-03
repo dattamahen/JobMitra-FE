@@ -159,11 +159,17 @@
 
 									<!-- Other fields: shown only after verified -->
 									@if (otpVerified()[i]) {
-										<div class="form-row form-row-3">
+										<div class="form-row form-row-2">
 											<mat-form-field appearance="fill">
-												<mat-label>{{ TEXT.memberNameLabel }}</mat-label>
-												<input matInput formControlName="full_name">
+												<mat-label>First Name</mat-label>
+												<input matInput formControlName="first_name">
 											</mat-form-field>
+											<mat-form-field appearance="fill">
+												<mat-label>Last Name <span style="font-size:0.75rem;opacity:0.6">(optional)</span></mat-label>
+												<input matInput formControlName="last_name">
+											</mat-form-field>
+										</div>
+										<div class="form-row form-row-2">
 											<mat-form-field appearance="fill">
 												<mat-label>{{ TEXT.memberRoleLabel }}</mat-label>
 												<input matInput formControlName="role_in_project">

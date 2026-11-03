@@ -142,7 +142,8 @@ export class ProjectContestPage implements OnInit {
 		const lastIdx = this.teamMembers.length - 1;
 		if (lastIdx >= 0 && !this.otpVerified()[lastIdx]) return;
 		this.teamMembers.push(this.fb.group({
-			full_name: ['', [Validators.required, Validators.minLength(2)]],
+			first_name: ['', [Validators.required, Validators.minLength(2)]],
+			last_name: [''],
 			email: ['', [Validators.required, Validators.email]],
 			role_in_project: [''],
 			college: [''],
