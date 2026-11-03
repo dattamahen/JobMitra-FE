@@ -484,7 +484,7 @@
 /* ── OTP Verification ─────────────────────────────────────────────── */
 .otp-email-row {
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
 	gap: 10px;
 	margin-bottom: 4px;
 }
@@ -493,7 +493,6 @@
 
 .otp-send-btn {
 	flex-shrink: 0;
-	height: 56px;
 	border-color: var(--color-button-primary) !important;
 	color: var(--color-button-primary) !important;
 	display: flex;
@@ -513,7 +512,6 @@
 
 .otp-verify-btn {
 	flex-shrink: 0;
-	height: 56px;
 	display: flex;
 	align-items: center;
 	gap: 6px;
