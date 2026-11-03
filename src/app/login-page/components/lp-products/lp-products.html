@@ -1,0 +1,19 @@
+<div class="section" id="products">
+	<div class="section-label">Our features</div>
+	<h2 class="section-title">Eight tools. One platform. Zero compromise.</h2>
+	<p class="section-sub">Every feature is purpose-built to close the gap between where you are and where you want to be.</p>
+	<div class="products-grid">
+		@for (product of products(); track product.title) {
+			<div class="product-card" [class]="'product-card ' + product.cardClass">
+				<span class="product-tag" [class]="'product-tag ' + product.tagClass">{{product.tag}}</span>
+				<div class="product-icon" [class]="'product-icon ' + product.iconClass"><i [class]="product.icon" aria-hidden="true"></i></div>
+				<h3 class="product-title">{{product.title}}</h3>
+				<p class="product-desc">{{product.description}}</p>
+				@for (feature of product.features; track feature) {
+					<div class="feature-item"><i class="ti ti-check" aria-hidden="true"></i> {{feature}}</div>
+				}
+				<a class="product-link" (click)="openPanel.emit()" style="cursor:pointer">{{product.linkText}} <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+			</div>
+		}
+	</div>
+</div>

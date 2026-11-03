@@ -1,0 +1,23 @@
+<div class="section" id="pricing">
+	<div class="section-label">Pricing</div>
+	<h2 class="section-title">Simple, honest pricing</h2>
+	<p class="section-sub">Start free. Upgrade when you're ready. No hidden fees, ever.</p>
+	<div class="pricing-grid">
+		@for (plan of pricing(); track plan.tier) {
+			<div class="price-card" [class.popular]="plan.popular">
+				@if (plan.popular) {
+					<div class="popular-badge">Most popular</div>
+				}
+				<div class="price-tier">{{plan.tier}}</div>
+				<div class="price-amount"><sup>₹</sup>{{plan.price}}</div>
+				<div class="price-period">{{plan.period}}</div>
+				@for (f of plan.features; track f.text) {
+					<div class="pf-item" [class.muted]="!f.included">
+						<i [class]="f.included ? 'ti ti-check' : 'ti ti-x'" aria-hidden="true"></i> {{f.text}}
+					</div>
+				}
+				<button class="btn-price" [class]="'btn-price ' + plan.btnClass" (click)="openPanel.emit()">{{plan.btnText}}</button>
+			</div>
+		}
+	</div>
+</div>

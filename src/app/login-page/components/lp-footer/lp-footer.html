@@ -1,0 +1,43 @@
+<footer class="site-footer">
+	<div class="footer-top">
+		<div class="footer-brand">
+			<div class="logo-group">
+				<div class="logo-mark logo-mark-footer">JM</div>
+				<span class="logo-name logo-name-footer">Job<span class="brand-text-footer">Mouka</span></span>
+			</div>
+			<p class="footer-desc">Smart tools for job seekers and hiring teams. Your next career move starts here.</p>
+			<div class="social-row">
+				<button class="social-btn" aria-label="Twitter"><i class="ti ti-brand-twitter" aria-hidden="true"></i></button>
+				<button class="social-btn" aria-label="LinkedIn"><i class="ti ti-brand-linkedin" aria-hidden="true"></i></button>
+				<button class="social-btn" aria-label="Instagram"><i class="ti ti-brand-instagram" aria-hidden="true"></i></button>
+				<button class="social-btn" aria-label="GitHub"><i class="ti ti-brand-github" aria-hidden="true"></i></button>
+			</div>
+		</div>
+		<div class="footer-col">
+			<h5>Products</h5>
+			@for (link of footerLinks().products; track link.label) {
+				<a (click)="footerLinkClick.emit(link.action)" style="cursor:pointer">{{link.label}}</a>
+			}
+		</div>
+		<div class="footer-col">
+			<h5>Company</h5>
+			@for (link of footerLinks().company; track link.label) {
+				<a (click)="footerLinkClick.emit(link.action)" style="cursor:pointer">{{link.label}}</a>
+			}
+		</div>
+		<div class="footer-col">
+			<h5>Support</h5>
+			@for (link of footerLinks().support; track link.label) {
+				<a (click)="footerLinkClick.emit(link.action)" style="cursor:pointer">{{link.label}}</a>
+			}
+		</div>
+	</div>
+	<div class="footer-bottom">
+		<span>© 2026 SanChaM Technology Solutions Pvt. Ltd. All rights reserved.</span>
+		<div class="footer-legal">
+			<a>Privacy</a>
+			<a>Terms</a>
+			<a>Cookies</a>
+		</div>
+	</div>
+</footer>

@@ -1,0 +1,30 @@
+<div class="testimonials-section">
+	<div class="testimonials-inner">
+		<div class="section-label">Testimonials</div>
+		<h2 class="section-title">Loved by thousands of professionals</h2>
+		<div class="test-carousel">
+			<div class="test-card test-card-active">
+				<div class="stars">
+					<i class="ti ti-star-filled" aria-hidden="true"></i>
+					<i class="ti ti-star-filled" aria-hidden="true"></i>
+					<i class="ti ti-star-filled" aria-hidden="true"></i>
+					<i class="ti ti-star-filled" aria-hidden="true"></i>
+					<i class="ti ti-star-filled" aria-hidden="true"></i>
+				</div>
+				<p class="test-text">"{{activeTestimonial().text}}"</p>
+				<div class="test-author">
+					<div class="test-avatar" [style.background]="activeTestimonial().color">{{activeTestimonial().initials}}</div>
+					<div>
+						<div class="test-name">{{activeTestimonial().name}}</div>
+						<div class="test-role">{{activeTestimonial().role}}</div>
+					</div>
+				</div>
+			</div>
+			<div class="test-dots" aria-hidden="true">
+				@for (t of testimonials; track t.name; let i = $index) {
+					<span class="test-dot" [class.active]="i === activeIndex()"></span>
+				}
+			</div>
+		</div>
+	</div>
+</div>
