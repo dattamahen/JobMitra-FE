@@ -170,7 +170,16 @@
 
 							<mat-form-field appearance="fill" class="full-width">
 								<mat-label>{{ TEXT.projectDescLabel }}</mat-label>
-								<textarea matInput formControlName="raw_description" rows="4" placeholder="Describe your project in 2–3 lines. Our AI will refine it."></textarea>
+								<textarea matInput formControlName="raw_description" rows="6"
+									placeholder="Describe your project in detail — the problem it solves, your approach, target users, and what makes it unique. Minimum 750 characters."
+									[maxlength]="1000"></textarea>
+								<mat-hint align="end">{{ ideaForm.get('raw_description')?.value?.length || 0 }} / 1000 (min 750)</mat-hint>
+								@if (ideaForm.get('raw_description')?.touched && ideaForm.get('raw_description')?.hasError('minlength')) {
+									<mat-error>Minimum 750 characters required ({{ ideaForm.get('raw_description')?.value?.length || 0 }} entered)</mat-error>
+								}
+								@if (ideaForm.get('raw_description')?.touched && ideaForm.get('raw_description')?.hasError('maxlength')) {
+									<mat-error>Maximum 1000 characters allowed</mat-error>
+								}
 							</mat-form-field>
 
 							<mat-form-field appearance="fill" class="full-width">

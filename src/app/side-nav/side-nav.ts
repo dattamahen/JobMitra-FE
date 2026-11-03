@@ -57,6 +57,13 @@ export class SideNav implements OnInit {
 			}
 		});
 
+		// Token exists but user not loaded (page refresh) — fetch user now
+		if (this.authService.isAuthenticated() && !this.authService.getCurrentUserValue()) {
+			this.authService.refreshCurrentUser()
+				.pipe(takeUntilDestroyed(this.destroyRef))
+				.subscribe();
+		}
+
 		this.router.events.pipe(
 			filter(e => e instanceof NavigationEnd),
 			takeUntilDestroyed(this.destroyRef)

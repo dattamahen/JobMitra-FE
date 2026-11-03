@@ -107,7 +107,7 @@ export class ProjectContestPage implements OnInit {
 	private initForms() {
 		this.ideaForm = this.fb.group({
 			raw_project_name: ['', [Validators.required, Validators.minLength(3)]],
-			raw_description: ['', [Validators.required, Validators.minLength(20)]],
+			raw_description: ['', [Validators.required, Validators.minLength(750), Validators.maxLength(1000)]],
 			project_type: ['technical', Validators.required],
 			category: ['', Validators.required],
 			tech_stack: [''],
