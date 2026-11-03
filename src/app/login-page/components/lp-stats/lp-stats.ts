@@ -1,6 +1,6 @@
 import { Component, input, PLATFORM_ID, inject, signal, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { StatItem, STATS } from '../../../data/login-page-data';
+import { StatItem, STATS, LOGIN_PAGE_TEXT } from '../../../data/login-page-data';
 
 @Component({
 	selector: 'lp-stats',
@@ -9,6 +9,7 @@ import { StatItem, STATS } from '../../../data/login-page-data';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LpStats implements OnInit, OnDestroy {
+	readonly TEXT = LOGIN_PAGE_TEXT;
 	readonly stats = signal<StatItem[]>(STATS.map(s => ({ ...s })));
 
 	private platformId = inject(PLATFORM_ID);

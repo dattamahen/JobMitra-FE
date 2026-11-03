@@ -4,18 +4,17 @@
 	<!-- Nav -->
 	<nav class="login-nav">
 		<div class="logo-group">
-			<div class="logo-mark">JM</div>
-			<span class="logo-name">Job<span class="brand-text">Mouka</span></span>
+			<div class="logo-mark">{{TEXT.nav.logoMark}}</div>
+			<span class="logo-name">{{TEXT.nav.logoName}}<span class="brand-text">{{TEXT.nav.logoBrand}}</span></span>
 		</div>
 		<div class="nav-links">
-			<a (click)="scrollTo('features')" tabindex="0">Features</a>
-			<a (click)="scrollTo('products')" tabindex="0">Job Portal</a>
-			<a (click)="scrollTo('resume-builder')" tabindex="0">Resume Builder</a>
-			<a (click)="scrollTo('pricing')" tabindex="0">Pricing</a>
+			@for (link of TEXT.nav.links; track link.label) {
+				<a (click)="scrollTo(link.scrollId)" tabindex="0">{{link.label}}</a>
+			}
 		</div>
 		<div class="nav-actions">
-			<a class="nav-login" (click)="openPanel()" (keydown.enter)="openPanel()" tabindex="0">Log in</a>
-			<button class="nav-cta" (click)="openPanel()"><i class="ti ti-sparkles"></i> Get started free</button>
+			<a class="nav-login" (click)="openPanel()" (keydown.enter)="openPanel()" tabindex="0">{{TEXT.nav.loginLabel}}</a>
+			<button class="nav-cta" (click)="openPanel()"><i class="ti ti-sparkles"></i> {{TEXT.nav.ctaLabel}}</button>
 		</div>
 	</nav>
 
@@ -24,22 +23,21 @@
 		<div class="hero-grid">
 			<div class="hero-text">
 				<div class="hero-badge">
-					<i class="ti ti-sparkles" aria-hidden="true"></i> AI-Powered Career Intelligence Platform
+					<i class="ti ti-sparkles" aria-hidden="true"></i> {{TEXT.hero.badge}}
 				</div>
-				<h1 class="hero-title">Your career deserves <span class="brand-highlight">smarter tools</span></h1>
-				<p class="hero-description">From an ATS-optimised CV to AI mock interviews — JobMouka gives every professional the unfair advantage they need to land the right role, faster.</p>
+				<h1 class="hero-title">{{TEXT.hero.title}} <span class="brand-highlight">{{TEXT.hero.titleHighlight}}</span></h1>
+				<p class="hero-description">{{TEXT.hero.description}}</p>
 				<div class="hero-actions">
-					<button class="btn-primary" (click)="openPanel()"><i class="ti ti-sparkles" aria-hidden="true"></i> Start for free</button>
+					<button class="btn-primary" (click)="openPanel()"><i class="ti ti-sparkles" aria-hidden="true"></i> {{TEXT.hero.ctaLabel}}</button>
 					<div id="hero-google-signin" class="hero-google-signin"></div>
 				</div>
 				<div class="hero-social-proof">
 					<div class="avatar-stack">
-						<div class="avatar" style="background:#6366f1">AK</div>
-						<div class="avatar" style="background:#4831af">MR</div>
-						<div class="avatar" style="background:#0891b2">SP</div>
-						<div class="avatar" style="background:#059669">YT</div>
+						@for (av of TEXT.hero.avatars; track av.initials) {
+							<div class="avatar" [style.background]="av.color">{{av.initials}}</div>
+						}
 					</div>
-					<span class="social-proof-text"><strong>2,900+ professionals</strong> already using JobMouka</span>
+					<span class="social-proof-text"><strong>{{TEXT.hero.socialProofCount}}</strong> {{TEXT.hero.socialProofText}}</span>
 				</div>
 			</div>
 
@@ -62,9 +60,9 @@
 							<span>{{activeProfile().atsScore}}</span>
 						</div>
 					</div>
-					<div class="vc-ats-label"><i class="ti ti-circle-check" aria-hidden="true"></i> ATS Score — Excellent</div>
+					<div class="vc-ats-label"><i class="ti ti-circle-check" aria-hidden="true"></i> {{TEXT.hero.atsLabel}}</div>
 					<div class="vc-match-row">
-						<span class="vc-match-label">Job match</span>
+						<span class="vc-match-label">{{TEXT.hero.matchLabel}}</span>
 						<div class="vc-match-bar">
 							<div class="vc-match-fill" [style.width.%]="activeProfile().matchPct"></div>
 						</div>
@@ -76,22 +74,19 @@
 						}
 					</div>
 					<div class="vc-pills">
-						<span class="vc-pill pill-purple"><i class="ti ti-file-certificate" aria-hidden="true"></i> ATS CV</span>
-						<span class="vc-pill pill-green"><i class="ti ti-wand" aria-hidden="true"></i> CV Tailor</span>
-						<span class="vc-pill pill-blue"><i class="ti ti-microphone" aria-hidden="true"></i> Mock Interview</span>
-						<span class="vc-pill pill-orange"><i class="ti ti-chart-dots" aria-hidden="true"></i> Match Analysis</span>
-						<span class="vc-pill pill-teal"><i class="ti ti-trending-up" aria-hidden="true"></i> Skill Gap</span>
-						<span class="vc-pill pill-purple"><i class="ti ti-building-community" aria-hidden="true"></i> Job Market</span>
+						@for (pill of TEXT.hero.pills; track pill.label) {
+							<span class="vc-pill" [class]="pill.class"><i [class]="pill.icon" aria-hidden="true"></i> {{pill.label}}</span>
+						}
 					</div>
 				</div>
 				<div class="floating-card fc-top-right">
 					<div class="fc-icon"><i class="ti ti-checks" aria-hidden="true"></i></div>
-					<div class="fc-label">Interview ready</div>
-					<div class="fc-value">{{activeProfile().sessions}} sessions</div>
+					<div class="fc-label">{{TEXT.hero.interviewReadyLabel}}</div>
+					<div class="fc-value">{{activeProfile().sessions}} {{TEXT.hero.interviewReadySuffix}}</div>
 				</div>
 				<div class="floating-card fc-bottom-left">
 					<div class="fc-icon fc-icon-green"><i class="ti ti-trophy" aria-hidden="true"></i></div>
-					<div class="fc-label">Offer received</div>
+					<div class="fc-label">{{TEXT.hero.offerLabel}}</div>
 					<div class="fc-value">{{activeProfile().offer}}</div>
 				</div>
 			</div>
@@ -143,7 +138,7 @@
 		<div class="gsignin-loading-overlay" aria-live="polite" aria-label="Signing in with Google">
 			<div class="gsignin-loading-box">
 				<div class="gsignin-spinner"></div>
-				<p>Signing you in...</p>
+				<p>{{TEXT.panel.signingIn}}</p>
 			</div>
 		</div>
 	}
@@ -167,9 +162,9 @@
 			</div>
 			<div class="panel-hero-content">
 				<div class="panel-logo-wrap">
-					<div class="logo-mark logo-mark-solid">JM</div>
+					<div class="logo-mark logo-mark-solid">{{TEXT.panel.logoMark}}</div>
 				</div>
-				<h1 class="panel-brand">Job<span class="panel-brand-accent">Mouka</span></h1>
+				<h1 class="panel-brand">{{TEXT.panel.brandName}}<span class="panel-brand-accent">{{TEXT.panel.brandAccent}}</span></h1>
 				<p class="panel-tagline">
 					{{ isSignupMode() ? TEXT.subtitles.signup :
 					   isForgotPasswordMode() ? TEXT.subtitles.forgotPassword :

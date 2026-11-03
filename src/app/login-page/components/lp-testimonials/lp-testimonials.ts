@@ -1,6 +1,6 @@
 import { Component, PLATFORM_ID, inject, signal, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { TestimonialItem, TESTIMONIALS } from '../../../data/login-page-data';
+import { TestimonialItem, TESTIMONIALS, LOGIN_PAGE_TEXT } from '../../../data/login-page-data';
 
 @Component({
 	selector: 'lp-testimonials',
@@ -9,6 +9,7 @@ import { TestimonialItem, TESTIMONIALS } from '../../../data/login-page-data';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LpTestimonials implements OnInit, OnDestroy {
+	readonly TEXT = LOGIN_PAGE_TEXT;
 	readonly testimonials = TESTIMONIALS;
 	readonly activeTestimonial = signal<TestimonialItem>(TESTIMONIALS[0]);
 	readonly activeIndex = signal(0);

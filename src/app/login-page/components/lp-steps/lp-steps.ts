@@ -1,6 +1,7 @@
 import { Component, input, PLATFORM_ID, inject, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { StepItem } from '../../login-page.types';
+import { LOGIN_PAGE_TEXT } from '../../../data/login-page-data';
 
 @Component({
 	selector: 'lp-steps',
@@ -9,6 +10,7 @@ import { StepItem } from '../../login-page.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LpSteps implements OnInit, OnDestroy {
+	readonly TEXT = LOGIN_PAGE_TEXT;
 	steps = input.required<StepItem[]>();
 
 	private platformId = inject(PLATFORM_ID);

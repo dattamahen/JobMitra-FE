@@ -1,12 +1,12 @@
 <div class="section" id="pricing">
-	<div class="section-label">Pricing</div>
-	<h2 class="section-title">Simple, honest pricing</h2>
-	<p class="section-sub">Start free. Upgrade when you're ready. No hidden fees, ever.</p>
+	<div class="section-label">{{TEXT.pricing.sectionLabel}}</div>
+	<h2 class="section-title">{{TEXT.pricing.title}}</h2>
+	<p class="section-sub">{{TEXT.pricing.sub}}</p>
 	<div class="pricing-grid">
 		@for (plan of pricing(); track plan.tier) {
 			<div class="price-card" [class.popular]="plan.popular">
 				@if (plan.popular) {
-					<div class="popular-badge">Most popular</div>
+					<div class="popular-badge">{{TEXT.pricing.popularBadge}}</div>
 				}
 				<div class="price-tier">{{plan.tier}}</div>
 				<div class="price-amount"><sup>₹</sup>{{plan.price}}</div>

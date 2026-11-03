@@ -2,7 +2,7 @@ import { Component, output, PLATFORM_ID, inject, signal, OnInit, OnDestroy, Chan
 import { isPlatformBrowser } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
 import { ApiService } from '../../../services/api.service';
-import { PricingCard, PRICING } from '../../../data/login-page-data';
+import { PricingCard, PRICING, LOGIN_PAGE_TEXT } from '../../../data/login-page-data';
 
 @Component({
 	selector: 'lp-pricing',
@@ -11,6 +11,7 @@ import { PricingCard, PRICING } from '../../../data/login-page-data';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LpPricing implements OnInit, OnDestroy {
+	readonly TEXT = LOGIN_PAGE_TEXT;
 	openPanel = output<void>();
 
 	readonly pricing = signal<PricingCard[]>(PRICING);

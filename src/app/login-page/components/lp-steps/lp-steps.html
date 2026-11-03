@@ -1,7 +1,7 @@
 <div class="section" id="resume-builder">
-	<div class="section-label">How it works</div>
-	<h2 class="section-title">From sign-up to offer letter — in five steps</h2>
-	<p class="section-sub">A clear, guided path that removes every obstacle between you and your next role.</p>
+	<div class="section-label">{{TEXT.steps.sectionLabel}}</div>
+	<h2 class="section-title">{{TEXT.steps.title}}</h2>
+	<p class="section-sub">{{TEXT.steps.sub}}</p>
 	<div class="steps-row">
 		@for (step of steps(); track step.title; let i = $index) {
 			<div class="step-col">
@@ -17,7 +17,7 @@
 	<div class="steps-badges">
 		@for (step of steps(); track step.title; let i = $index) {
 			<div class="step-badge-card" [class.active]="step.active">
-				<div class="step-badge-label">Step {{i + 1}}</div>
+				<div class="step-badge-label">{{TEXT.steps.stepPrefix}} {{i + 1}}</div>
 				<div class="step-badge-text">{{step.badge}}</div>
 			</div>
 		}
