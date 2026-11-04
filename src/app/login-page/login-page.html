@@ -4,18 +4,17 @@
 	<!-- Nav -->
 	<nav class="login-nav">
 		<div class="logo-group">
-			<div class="logo-mark">JM</div>
-			<span class="logo-name">Job<span class="brand-text">Mouka</span></span>
+			<div class="logo-mark">{{TEXT.nav.logoMark}}</div>
+			<span class="logo-name">{{TEXT.nav.logoName}}<span class="brand-text">{{TEXT.nav.logoBrand}}</span></span>
 		</div>
 		<div class="nav-links">
-			<a (click)="scrollTo('features')" tabindex="0">Features</a>
-			<a (click)="scrollTo('products')" tabindex="0">Job Portal</a>
-			<a (click)="scrollTo('resume-builder')" tabindex="0">Resume Builder</a>
-			<a (click)="scrollTo('pricing')" tabindex="0">Pricing</a>
+			@for (link of TEXT.nav.links; track link.label) {
+				<a (click)="scrollTo(link.scrollId)" tabindex="0">{{link.label}}</a>
+			}
 		</div>
 		<div class="nav-actions">
-			<a class="nav-login" (click)="openPanel()" (keydown.enter)="openPanel()" tabindex="0">Log in</a>
-			<button class="nav-cta" (click)="openPanel()"><i class="ti ti-sparkles"></i> Get started free</button>
+			<a class="nav-login" (click)="openPanel()" (keydown.enter)="openPanel()" tabindex="0">{{TEXT.nav.loginLabel}}</a>
+			<button class="nav-cta" (click)="openPanel()"><i class="ti ti-sparkles"></i> {{TEXT.nav.ctaLabel}}</button>
 		</div>
 	</nav>
 
@@ -24,30 +23,27 @@
 		<div class="hero-grid">
 			<div class="hero-text">
 				<div class="hero-badge">
-					<i class="ti ti-sparkles" aria-hidden="true"></i> AI-Powered Career Intelligence Platform
+					<i class="ti ti-sparkles" aria-hidden="true"></i> {{TEXT.hero.badge}}
 				</div>
-				<h1 class="hero-title">Your career deserves <span class="brand-highlight">smarter tools</span></h1>
-				<p class="hero-description">From an ATS-optimised CV to AI mock interviews — JobMouka gives every professional the unfair advantage they need to land the right role, faster.</p>
+				<h1 class="hero-title">{{TEXT.hero.title}} <span class="brand-highlight">{{TEXT.hero.titleHighlight}}</span></h1>
+				<p class="hero-description">{{TEXT.hero.description}}</p>
 				<div class="hero-actions">
-					<button class="btn-primary" (click)="openPanel()"><i class="ti ti-sparkles" aria-hidden="true"></i> Start for free</button>
+					<button class="btn-primary" (click)="openPanel()"><i class="ti ti-sparkles" aria-hidden="true"></i> {{TEXT.hero.ctaLabel}}</button>
 					<div id="hero-google-signin" class="hero-google-signin"></div>
 				</div>
 				<div class="hero-social-proof">
 					<div class="avatar-stack">
-						<div class="avatar" style="background:#6366f1">AK</div>
-						<div class="avatar" style="background:#4831af">MR</div>
-						<div class="avatar" style="background:#0891b2">SP</div>
-						<div class="avatar" style="background:#059669">YT</div>
+						@for (av of TEXT.hero.avatars; track av.initials) {
+							<div class="avatar" [style.background]="av.color">{{av.initials}}</div>
+						}
 					</div>
-					<span class="social-proof-text"><strong>2,900+ professionals</strong> already using JobMouka</span>
+					<span class="social-proof-text"><strong>{{TEXT.hero.socialProofCount}}</strong> {{TEXT.hero.socialProofText}}</span>
 				</div>
 			</div>
 
 			<!-- Hero Visual -->
 			<div class="hero-visual">
-				<!-- Main dashboard card -->
 				<div class="visual-card visual-card-main">
-					<!-- Card header — carousel -->
 					<div class="vc-header">
 						<div class="vc-avatar" [style.background]="activeProfile().color">{{activeProfile().initials}}</div>
 						<div class="vc-header-text">
@@ -64,42 +60,33 @@
 							<span>{{activeProfile().atsScore}}</span>
 						</div>
 					</div>
-					<!-- ATS label -->
-					<div class="vc-ats-label"><i class="ti ti-circle-check" aria-hidden="true"></i> ATS Score — Excellent</div>
-					<!-- Match bar -->
+					<div class="vc-ats-label"><i class="ti ti-circle-check" aria-hidden="true"></i> {{TEXT.hero.atsLabel}}</div>
 					<div class="vc-match-row">
-						<span class="vc-match-label">Job match</span>
+						<span class="vc-match-label">{{TEXT.hero.matchLabel}}</span>
 						<div class="vc-match-bar">
 							<div class="vc-match-fill" [style.width.%]="activeProfile().matchPct"></div>
 						</div>
 						<span class="vc-match-pct">{{activeProfile().matchPct}}%</span>
 					</div>
-					<!-- Carousel dots -->
 					<div class="vc-dots" aria-hidden="true">
 						@for (p of heroProfiles; track p.name) {
 							<span class="vc-dot" [class.active]="p.name === activeProfile().name"></span>
 						}
 					</div>
-					<!-- Feature pills -->
 					<div class="vc-pills">
-						<span class="vc-pill pill-purple"><i class="ti ti-file-certificate" aria-hidden="true"></i> ATS CV</span>
-						<span class="vc-pill pill-green"><i class="ti ti-wand" aria-hidden="true"></i> CV Tailor</span>
-						<span class="vc-pill pill-blue"><i class="ti ti-microphone" aria-hidden="true"></i> Mock Interview</span>
-						<span class="vc-pill pill-orange"><i class="ti ti-chart-dots" aria-hidden="true"></i> Match Analysis</span>
-						<span class="vc-pill pill-teal"><i class="ti ti-trending-up" aria-hidden="true"></i> Skill Gap</span>
-						<span class="vc-pill pill-purple"><i class="ti ti-building-community" aria-hidden="true"></i> Job Market</span>
+						@for (pill of TEXT.hero.pills; track pill.label) {
+							<span class="vc-pill" [class]="pill.class"><i [class]="pill.icon" aria-hidden="true"></i> {{pill.label}}</span>
+						}
 					</div>
 				</div>
-				<!-- Floating: interview ready -->
 				<div class="floating-card fc-top-right">
 					<div class="fc-icon"><i class="ti ti-checks" aria-hidden="true"></i></div>
-					<div class="fc-label">Interview ready</div>
-					<div class="fc-value">{{activeProfile().sessions}} sessions</div>
+					<div class="fc-label">{{TEXT.hero.interviewReadyLabel}}</div>
+					<div class="fc-value">{{activeProfile().sessions}} {{TEXT.hero.interviewReadySuffix}}</div>
 				</div>
-				<!-- Floating: offer received -->
 				<div class="floating-card fc-bottom-left">
 					<div class="fc-icon fc-icon-green"><i class="ti ti-trophy" aria-hidden="true"></i></div>
-					<div class="fc-label">Offer received</div>
+					<div class="fc-label">{{TEXT.hero.offerLabel}}</div>
 					<div class="fc-value">{{activeProfile().offer}}</div>
 				</div>
 			</div>
@@ -107,205 +94,51 @@
 	</div>
 
 	<!-- Trust Logos -->
-	<div class="logos-section">
-		<div class="logos-inner">
-			<p class="logos-label">Trusted by teams at</p>
-			<div class="logos-marquee">
-				<div class="logos-track">
-					@for (logo of trustLogos; track logo.name) {
-						<div class="logo-pill"><i [class]="logo.icon" aria-hidden="true"></i>{{logo.name}}</div>
-					}
-					@for (logo of trustLogos; track logo.name + '-dup') {
-						<div class="logo-pill"><i [class]="logo.icon" aria-hidden="true"></i>{{logo.name}}</div>
-					}
-				</div>
-			</div>
-		</div>
-	</div>
+	@defer (on viewport) {
+		<lp-trust-logos [logos]="trustLogos" />
+	} @placeholder { <div></div> }
 
 	<!-- Products -->
-	<div class="section" id="products">
-		<div class="section-label">Our features</div>
-		<h2 class="section-title">Eight tools. One platform. Zero compromise.</h2>
-		<p class="section-sub">Every feature is purpose-built to close the gap between where you are and where you want to be.</p>
-		<div class="products-grid">
-			@for (product of products; track product.title) {
-				<div class="product-card" [class]="'product-card ' + product.cardClass">
-					<span class="product-tag" [class]="'product-tag ' + product.tagClass">{{product.tag}}</span>
-					<div class="product-icon" [class]="'product-icon ' + product.iconClass"><i [class]="product.icon" aria-hidden="true"></i></div>
-					<h3 class="product-title">{{product.title}}</h3>
-					<p class="product-desc">{{product.description}}</p>
-					@for (feature of product.features; track feature) {
-						<div class="feature-item"><i class="ti ti-check" aria-hidden="true"></i> {{feature}}</div>
-					}
-					<a class="product-link">{{product.linkText}} <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
-				</div>
-			}
-		</div>
-	</div>
+	@defer (on viewport) {
+		<lp-products [products]="products" (openPanel)="openPanel()" />
+	} @placeholder { <div></div> }
 
 	<!-- Stats -->
-	<div class="stats-section" id="features">
-		<div class="stats-header">
-			<p class="stats-label">By the numbers</p>
-			<h2 class="stats-title">Results that speak for themselves</h2>
-		</div>
-		<div class="stats-grid">
-			@for (stat of stats(); track stat.label) {
-				<div class="stat-item">
-					<div class="stat-number">{{stat.number}}<span>{{stat.suffix}}</span></div>
-					<div class="stat-label">{{stat.label}}</div>
-					<div class="stat-sub">{{stat.sub}}</div>
-				</div>
-			}
-		</div>
-	</div>
+	@defer (on viewport) {
+		<lp-stats />
+	} @placeholder { <div></div> }
 
-	<!-- How it works — 5 Steps -->
-	<div class="section" id="resume-builder">
-		<div class="section-label">How it works</div>
-		<h2 class="section-title">From sign-up to offer letter — in five steps</h2>
-		<p class="section-sub">A clear, guided path that removes every obstacle between you and your next role.</p>
-		<div class="steps-row">
-			@for (step of steps; track step.title; let i = $index) {
-				<div class="step-col">
-					<div class="step-bubble" [class.active]="step.active">
-						<i [class]="step.icon" aria-hidden="true"></i>
-						<span class="step-num-badge">{{i + 1}}</span>
-					</div>
-					<h4>{{step.title}}</h4>
-					<p>{{step.description}}</p>
-				</div>
-			}
-		</div>
-		<div class="steps-badges">
-			@for (step of steps; track step.title; let i = $index) {
-				<div class="step-badge-card" [class.active]="step.active">
-					<div class="step-badge-label">Step {{i + 1}}</div>
-					<div class="step-badge-text">{{step.badge}}</div>
-				</div>
-			}
-		</div>
-	</div>
+	<!-- Steps -->
+	@defer (on viewport) {
+		<lp-steps [steps]="steps" />
+	} @placeholder { <div></div> }
 
 	<!-- Testimonials -->
-	<div class="testimonials-section">
-		<div class="testimonials-inner">
-			<div class="section-label">Testimonials</div>
-			<h2 class="section-title">Loved by thousands of professionals</h2>
-			<div class="test-carousel">
-				<div class="test-card test-card-active">
-					<div class="stars">
-						<i class="ti ti-star-filled" aria-hidden="true"></i>
-						<i class="ti ti-star-filled" aria-hidden="true"></i>
-						<i class="ti ti-star-filled" aria-hidden="true"></i>
-						<i class="ti ti-star-filled" aria-hidden="true"></i>
-						<i class="ti ti-star-filled" aria-hidden="true"></i>
-					</div>
-					<p class="test-text">"{{activeTestimonial().text}}"</p>
-					<div class="test-author">
-						<div class="test-avatar" [style.background]="activeTestimonial().color">{{activeTestimonial().initials}}</div>
-						<div>
-							<div class="test-name">{{activeTestimonial().name}}</div>
-							<div class="test-role">{{activeTestimonial().role}}</div>
-						</div>
-					</div>
-				</div>
-				<div class="test-dots" aria-hidden="true">
-					@for (t of testimonials; track t.name; let i = $index) {
-						<span class="test-dot" [class.active]="i === activeTestimonialIndex()"></span>
-					}
-				</div>
-			</div>
-		</div>
-	</div>
+	@defer (on viewport) {
+		<lp-testimonials />
+	} @placeholder { <div></div> }
 
 	<!-- Pricing -->
-	<div class="section" id="pricing">
-		<div class="section-label">Pricing</div>
-		<h2 class="section-title">Simple, honest pricing</h2>
-		<p class="section-sub">Start free. Upgrade when you're ready. No hidden fees, ever.</p>
-		<div class="pricing-grid">
-			@for (plan of pricing(); track plan.tier) {
-				<div class="price-card" [class.popular]="plan.popular">
-					@if (plan.popular) {
-						<div class="popular-badge">Most popular</div>
-					}
-					<div class="price-tier">{{plan.tier}}</div>
-					<div class="price-amount"><sup>₹</sup>{{plan.price}}</div>
-					<div class="price-period">{{plan.period}}</div>
-					@for (f of plan.features; track f.text) {
-						<div class="pf-item" [class.muted]="!f.included">
-							<i [class]="f.included ? 'ti ti-check' : 'ti ti-x'" aria-hidden="true"></i> {{f.text}}
-						</div>
-					}
-					<button class="btn-price" [class]="'btn-price ' + plan.btnClass" (click)="openPanel()">{{plan.btnText}}</button>
-				</div>
-			}
-		</div>
-	</div>
+	@defer (on viewport) {
+		<lp-pricing (openPanel)="openPanel()" />
+	} @placeholder { <div></div> }
 
 	<!-- CTA -->
-	<div class="cta-section">
-		<h2>Your next role is closer than you think</h2>
-		<p>Join 2,900+ professionals using JobMouka to build careers they are proud of.</p>
-		<div class="cta-actions">
-			<button class="btn-white" (click)="openPanel()"><i class="ti ti-sparkles"></i> Get started — it's free</button>
-			<button class="btn-ghost" (click)="openSalesEmail()">Talk to sales</button>
-		</div>
-	</div>
+	@defer (on viewport) {
+		<lp-cta (openPanel)="openPanel()" (openSalesEmail)="openSalesEmail()" />
+	} @placeholder { <div></div> }
 
 	<!-- Footer -->
-	<footer class="site-footer">
-		<div class="footer-top">
-			<div class="footer-brand">
-				<div class="logo-group">
-					<div class="logo-mark logo-mark-footer">JM</div>
-					<span class="logo-name logo-name-footer">Job<span class="brand-text-footer">Mouka</span></span>
-				</div>
-				<p class="footer-desc">Smart tools for job seekers and hiring teams. Your next career move starts here.</p>
-				<div class="social-row">
-					<button class="social-btn" aria-label="Twitter"><i class="ti ti-brand-twitter" aria-hidden="true"></i></button>
-					<button class="social-btn" aria-label="LinkedIn"><i class="ti ti-brand-linkedin" aria-hidden="true"></i></button>
-					<button class="social-btn" aria-label="Instagram"><i class="ti ti-brand-instagram" aria-hidden="true"></i></button>
-					<button class="social-btn" aria-label="GitHub"><i class="ti ti-brand-github" aria-hidden="true"></i></button>
-				</div>
-			</div>
-			<div class="footer-col">
-				<h5>Products</h5>
-				@for (link of footerLinks.products; track link.label) {
-					<a (click)="onFooterLink(link.action)" style="cursor:pointer">{{link.label}}</a>
-				}
-			</div>
-			<div class="footer-col">
-				<h5>Company</h5>
-				@for (link of footerLinks.company; track link.label) {
-					<a (click)="onFooterLink(link.action)" style="cursor:pointer">{{link.label}}</a>
-				}
-			</div>
-			<div class="footer-col">
-				<h5>Support</h5>
-				@for (link of footerLinks.support; track link.label) {
-					<a (click)="onFooterLink(link.action)" style="cursor:pointer">{{link.label}}</a>
-				}
-			</div>
-		</div>
-		<div class="footer-bottom">
-			<span>© 2026 SanChaM Technology Solutions Pvt. Ltd. All rights reserved.</span>
-			<div class="footer-legal">
-				<a>Privacy</a>
-				<a>Terms</a>
-				<a>Cookies</a>
-			</div>
-		</div>
-	</footer>
+	@defer (on viewport) {
+		<lp-footer [footerLinks]="footerLinks" (footerLinkClick)="onFooterLink($event)" />
+	} @placeholder { <div></div> }
 
 	<!-- Google Sign-in Loading Overlay -->
 	@if (googleSignInLoading()) {
 		<div class="gsignin-loading-overlay" aria-live="polite" aria-label="Signing in with Google">
 			<div class="gsignin-loading-box">
 				<div class="gsignin-spinner"></div>
-				<p>Signing you in...</p>
+				<p>{{TEXT.panel.signingIn}}</p>
 			</div>
 		</div>
 	}
@@ -321,7 +154,6 @@
 			<i class="ti ti-x"></i>
 		</button>
 
-		<!-- Panel Hero -->
 		<div class="panel-hero">
 			<div class="panel-hero-shapes">
 				<div class="phs phs-1"></div>
@@ -330,9 +162,9 @@
 			</div>
 			<div class="panel-hero-content">
 				<div class="panel-logo-wrap">
-					<div class="logo-mark logo-mark-solid">JM</div>
+					<div class="logo-mark logo-mark-solid">{{TEXT.panel.logoMark}}</div>
 				</div>
-				<h1 class="panel-brand">Job<span class="panel-brand-accent">Mouka</span></h1>
+				<h1 class="panel-brand">{{TEXT.panel.brandName}}<span class="panel-brand-accent">{{TEXT.panel.brandAccent}}</span></h1>
 				<p class="panel-tagline">
 					{{ isSignupMode() ? TEXT.subtitles.signup :
 					   isForgotPasswordMode() ? TEXT.subtitles.forgotPassword :
@@ -367,37 +199,25 @@
 
 			@if (!isSignupMode() && !isForgotPasswordMode() && !isResetPasswordMode()) {
 				<div class="auth-form">
-					<app-dynamic-form
-						[config]="loginFormConfig"
-						(formSubmit)="onLogin($event)">
-					</app-dynamic-form>
+					<app-dynamic-form [config]="loginFormConfig" (formSubmit)="onLogin($event)"></app-dynamic-form>
 				</div>
 			}
 
 			@if (isSignupMode()) {
 				<div class="auth-form">
-					<app-dynamic-form
-						[config]="signupFormConfig"
-						(formSubmit)="onSignup($event)">
-					</app-dynamic-form>
+					<app-dynamic-form [config]="signupFormConfig" (formSubmit)="onSignup($event)"></app-dynamic-form>
 				</div>
 			}
 
 			@if (isForgotPasswordMode()) {
 				<div class="auth-form">
-					<app-dynamic-form
-						[config]="forgotPasswordFormConfig"
-						(formSubmit)="onForgotPassword($event)">
-					</app-dynamic-form>
+					<app-dynamic-form [config]="forgotPasswordFormConfig" (formSubmit)="onForgotPassword($event)"></app-dynamic-form>
 				</div>
 			}
 
 			@if (isResetPasswordMode()) {
 				<div class="auth-form">
-					<app-dynamic-form
-						[config]="resetPasswordFormConfig"
-						(formSubmit)="onResetPassword($event)">
-					</app-dynamic-form>
+					<app-dynamic-form [config]="resetPasswordFormConfig" (formSubmit)="onResetPassword($event)"></app-dynamic-form>
 				</div>
 			}
 

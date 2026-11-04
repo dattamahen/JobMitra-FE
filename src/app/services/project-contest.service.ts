@@ -12,6 +12,9 @@ export interface TeamMember {
 
 export interface ContestEntry {
 	entry_id: string;
+	lead_user_id: string;
+	lead_name: string;
+	lead_email: string;
 	raw_project_name: string;
 	raw_description: string;
 	refined_title: string;
@@ -134,6 +137,11 @@ export class ProjectContestService {
 		return res?.data ?? res;
 	}
 
+	async getMemberEntries(): Promise<{ entries: ContestEntry[]; count: number }> {
+		const res: any = await firstValueFrom(this.api.get(`/project-contest/member-entries`));
+		return res?.data ?? res;
+	}
+
 	async getEntry(entryId: string): Promise<ContestEntry> {
 		const res: any = await firstValueFrom(this.api.get(`/project-contest/entry/${entryId}`));
 		return res?.data ?? res;
@@ -186,6 +194,17 @@ export class ProjectContestService {
 	async getPricing(): Promise<{ solo: number; team: number; payment_link: string }> {
 		const res: any = await firstValueFrom(this.api.get('/project-contest/pricing'));
 		return res;
+	}
+
+	async sendMemberOtp(email: string): Promise<void> {
+		await firstValueFrom(this.api.post(`/project-contest/team-member/send-otp?email=${encodeURIComponent(email)}`, {}));
+	}
+
+	async verifyMemberOtp(email: string, otp: string): Promise<void> {
+		const res: any = await firstValueFrom(
+			this.api.post(`/project-contest/team-member/verify-otp?email=${encodeURIComponent(email)}&otp=${encodeURIComponent(otp)}`, {})
+		);
+		if (!res?.verified) throw new Error('Verification failed');
 	}
 
 	async createPaymentLink(entryId: string, amount: number): Promise<string> {

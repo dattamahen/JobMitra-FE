@@ -1,0 +1,25 @@
+<div class="section" id="resume-builder">
+	<div class="section-label">{{TEXT.steps.sectionLabel}}</div>
+	<h2 class="section-title">{{TEXT.steps.title}}</h2>
+	<p class="section-sub">{{TEXT.steps.sub}}</p>
+	<div class="steps-row">
+		@for (step of steps(); track step.title; let i = $index) {
+			<div class="step-col">
+				<div class="step-bubble" [class.active]="step.active">
+					<i [class]="step.icon" aria-hidden="true"></i>
+					<span class="step-num-badge">{{i + 1}}</span>
+				</div>
+				<h4>{{step.title}}</h4>
+				<p>{{step.description}}</p>
+			</div>
+		}
+	</div>
+	<div class="steps-badges">
+		@for (step of steps(); track step.title; let i = $index) {
+			<div class="step-badge-card" [class.active]="step.active">
+				<div class="step-badge-label">{{TEXT.steps.stepPrefix}} {{i + 1}}</div>
+				<div class="step-badge-text">{{step.badge}}</div>
+			</div>
+		}
+	</div>
+</div>

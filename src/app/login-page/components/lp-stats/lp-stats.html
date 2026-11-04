@@ -1,0 +1,15 @@
+<div class="stats-section" id="features">
+	<div class="stats-header">
+		<p class="stats-label">{{TEXT.stats.sectionLabel}}</p>
+		<h2 class="stats-title">{{TEXT.stats.title}}</h2>
+	</div>
+	<div class="stats-grid">
+		@for (stat of stats(); track stat.label) {
+			<div class="stat-item">
+				<div class="stat-number">{{stat.number}}<span>{{stat.suffix}}</span></div>
+				<div class="stat-label">{{stat.label}}</div>
+				<div class="stat-sub">{{stat.sub}}</div>
+			</div>
+		}
+	</div>
+</div>

@@ -9,35 +9,40 @@ import { FormConfig } from '../shared/interfaces/form.interfaces';
 import { LOGIN_FORM_CONFIG, SIGNUP_FORM_CONFIG, FORGOT_PASSWORD_FORM_CONFIG, RESET_PASSWORD_FORM_CONFIG } from '../shared/components/dynamic-form/form-configs';
 import {
 	LOGIN_PAGE_TEXT, TRUST_LOGOS,
-	PRODUCT_CARDS, STATS, STEPS, TESTIMONIALS, PRICING, FOOTER_LINKS, FooterLink, PricingCard, StatItem, HERO_PROFILES, HeroProfile
+	PRODUCT_CARDS, STEPS, PRICING, FOOTER_LINKS, HeroProfile, HERO_PROFILES
 } from '../data/login-page-data';
 import { LOGIN_PAGE_CONSTANTS } from './login-page.constants';
 
 import { AuthService, LoginResponse, RegisterRequest } from '../services/auth.service';
 import { GoogleAuthService } from '../services/google-auth.service';
-import { ApiService } from '../services/api.service';
 import { SeoService } from '../services/seo.service';
-import { firstValueFrom } from 'rxjs';
+
+import { LpTrustLogos } from './components/lp-trust-logos/lp-trust-logos';
+import { LpProducts } from './components/lp-products/lp-products';
+import { LpStats } from './components/lp-stats/lp-stats';
+import { LpSteps } from './components/lp-steps/lp-steps';
+import { LpTestimonials } from './components/lp-testimonials/lp-testimonials';
+import { LpPricing } from './components/lp-pricing/lp-pricing';
+import { LpCta } from './components/lp-cta/lp-cta';
+import { LpFooter } from './components/lp-footer/lp-footer';
 
 @Component({
 	selector: 'app-login-page',
-	imports: [MatIconModule, DynamicFormComponent],
+	imports: [
+		MatIconModule, DynamicFormComponent,
+		LpTrustLogos, LpProducts, LpStats, LpSteps,
+		LpTestimonials, LpPricing, LpCta, LpFooter,
+	],
 	templateUrl: './login-page.html',
 	styleUrl: './login-page.css',
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
+export class LoginPage implements OnInit, OnDestroy {
 	readonly TEXT = LOGIN_PAGE_TEXT;
 	readonly CONSTANTS = LOGIN_PAGE_CONSTANTS;
 	readonly trustLogos = TRUST_LOGOS;
 	readonly products = PRODUCT_CARDS;
-	readonly stats = signal<StatItem[]>(STATS.map(s => ({ ...s })));
 	readonly steps = STEPS;
-	readonly testimonials = TESTIMONIALS;
-	readonly activeTestimonial = signal(TESTIMONIALS[0]);
-	readonly activeTestimonialIndex = signal(0);
-	private testimonialInterval?: ReturnType<typeof setInterval>;
-	pricing = signal<PricingCard[]>(PRICING);
 	readonly footerLinks = FOOTER_LINKS;
 
 	readonly heroProfiles = HERO_PROFILES;
@@ -60,12 +65,7 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 
 	@ViewChildren(DynamicFormComponent) private formComponents!: QueryList<DynamicFormComponent>;
 
-	private statsObserver?: IntersectionObserver;
-	private stepsObserver?: IntersectionObserver;
-	private pricingObserver?: IntersectionObserver;
-
 	private platformId = inject(PLATFORM_ID);
-	private api = inject(ApiService);
 	private destroyRef = inject(DestroyRef);
 	private seoService = inject(SeoService);
 
@@ -94,12 +94,10 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 				}
 			}
 		});
+
 		const isAuth = this.authService.isAuthenticated();
 		const userType = this.authService.getUserType();
-
-		if (isAuth && userType) {
-			this.redirectBasedOnUserType(userType);
-		}
+		if (isAuth && userType) this.redirectBasedOnUserType(userType);
 
 		this.route.queryParams
 			.pipe(takeUntilDestroyed(this.destroyRef))
@@ -112,38 +110,25 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 			});
 
 		if (isPlatformBrowser(this.platformId)) {
-			const errorHandler = (e: Event) => {
-				this.errorMessage = (e as CustomEvent<string>).detail;
-			};
-			const loadingHandler = (e: Event) => {
-				this.googleSignInLoading.set((e as CustomEvent<boolean>).detail);
-			};
+			const errorHandler = (e: Event) => { this.errorMessage = (e as CustomEvent<string>).detail; };
+			const loadingHandler = (e: Event) => { this.googleSignInLoading.set((e as CustomEvent<boolean>).detail); };
 			window.addEventListener('google-signin-error', errorHandler);
 			window.addEventListener('google-signin-loading', loadingHandler);
 			this.destroyRef.onDestroy(() => {
 				window.removeEventListener('google-signin-error', errorHandler);
 				window.removeEventListener('google-signin-loading', loadingHandler);
 			});
+
+			requestIdleCallback(() => {
+				this.initializeGoogleSignIn().then(() => this.renderHeroGoogleButton());
+			});
 		}
 
-		this.initializeGoogleSignIn().then(() => this.renderHeroGoogleButton());
-		this.loadDynamicPricing();
 		this.startProfileCarousel();
-		this.startTestimonialCarousel();
-	}
-
-	ngAfterViewInit(): void {
-		this.initStatsAnimation();
-		this.initStepsAnimation();
-		this.initPricingAnimation();
 	}
 
 	ngOnDestroy(): void {
-		this.statsObserver?.disconnect();
-		this.stepsObserver?.disconnect();
-		this.pricingObserver?.disconnect();
 		if (this.profileInterval) clearInterval(this.profileInterval);
-		if (this.testimonialInterval) clearInterval(this.testimonialInterval);
 	}
 
 	private startProfileCarousel(): void {
@@ -153,122 +138,6 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 			i = (i + 1) % HERO_PROFILES.length;
 			this.activeProfile.set(HERO_PROFILES[i]);
 		}, 2500);
-	}
-
-	private startTestimonialCarousel(): void {
-		if (!isPlatformBrowser(this.platformId)) return;
-		let i = 0;
-		this.testimonialInterval = setInterval(() => {
-			i = (i + 1) % TESTIMONIALS.length;
-			this.activeTestimonialIndex.set(i);
-			this.activeTestimonial.set(TESTIMONIALS[i]);
-		}, 4000);
-	}
-
-	private initStatsAnimation(): void {
-		if (!isPlatformBrowser(this.platformId)) return;
-		const section = document.querySelector('.stats-section');
-		if (!section) return;
-		const run = () => STATS.forEach((stat, i) => this.animateStat(i, stat.target));
-		this.statsObserver = new IntersectionObserver(([entry]) => {
-			if (!entry.isIntersecting) return;
-			this.statsObserver!.disconnect();
-			run();
-		}, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
-		this.statsObserver.observe(section);
-		setTimeout(run, 2000);
-	}
-
-	private initPricingAnimation(): void {
-		if (!isPlatformBrowser(this.platformId)) return;
-		const grid = document.querySelector('.pricing-grid');
-		if (!grid) return;
-		let shown = false;
-		grid.querySelectorAll('.price-card').forEach((el, i) => {
-			(el as HTMLElement).style.transitionDelay = `${i * 0.15}s`;
-		});
-		const show = () => {
-			if (shown) return;
-			shown = true;
-			grid.querySelectorAll('.price-card').forEach(el => el.classList.add('card-visible'));
-		};
-		this.pricingObserver = new IntersectionObserver(([entry]) => {
-			if (!entry.isIntersecting) return;
-			this.pricingObserver!.disconnect();
-			show();
-		}, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
-		this.pricingObserver.observe(grid);
-		setTimeout(show, 2000);
-	}
-
-	private initStepsAnimation(): void {
-		if (!isPlatformBrowser(this.platformId)) return;
-		const section = document.querySelector('.steps-row');
-		const badgesEl = document.querySelector('.steps-badges');
-		if (!section) return;
-		let shown = false;
-		section.querySelectorAll('.step-col').forEach((el, i) => {
-			(el as HTMLElement).style.transitionDelay = `${i * 0.12}s`;
-		});
-		document.querySelectorAll('.step-badge-card').forEach((el, i) => {
-			(el as HTMLElement).style.transitionDelay = `${0.4 + i * 0.1}s`;
-		});
-		const showBadges = () => {
-			badgesEl?.classList.add('badges-visible');
-			document.querySelectorAll('.step-badge-card').forEach(el => el.classList.add('badge-visible'));
-		};
-		const showSteps = () => {
-			if (shown) return;
-			shown = true;
-			section.classList.add('steps-visible');
-			section.querySelectorAll('.step-col').forEach(el => el.classList.add('step-visible'));
-			showBadges();
-		};
-		this.stepsObserver = new IntersectionObserver(([entry]) => {
-			if (!entry.isIntersecting) return;
-			this.stepsObserver!.disconnect();
-			showSteps();
-		}, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
-		this.stepsObserver.observe(section);
-		setTimeout(showSteps, 2000);
-	}
-
-	private animateStat(index: number, target: number): void {
-		const duration = 1500;
-		const start = performance.now();
-		const step = (now: number) => {
-			const progress = Math.min((now - start) / duration, 1);
-			const eased = 1 - Math.pow(1 - progress, 3);
-			const current = Math.round(eased * target);
-			this.stats.update(list =>
-				list.map((s, i) => i === index ? { ...s, number: String(current) } : s)
-			);
-			if (progress < 1) requestAnimationFrame(step);
-		};
-		requestAnimationFrame(step);
-	}
-
-	private async loadDynamicPricing(): Promise<void> {
-		try {
-			const plan = await firstValueFrom(
-				this.api.get<any>('/subscription-plan')
-			);
-			const updated = PRICING.map(card => {
-				if (card.tier === 'Credits Pack') {
-					return {
-						...card,
-						price: String(plan.amount),
-						btnText: `Buy credits \u2014 \u20b9${plan.amount}`,
-					};
-				}
-				return card;
-			});
-			this.pricing.set(updated);
-			// Re-apply card-visible after DOM re-render
-			setTimeout(() => {
-				document.querySelectorAll('.price-card').forEach(el => el.classList.add('card-visible'));
-			}, 50);
-		} catch { /* keep static fallback */ }
 	}
 
 	openSalesEmail(): void {
@@ -294,9 +163,8 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 		this.isForgotPasswordMode.set(false);
 		this.isResetPasswordMode.set(false);
 		this.isPanelOpen.set(true);
-
 		if (mode === 'login') {
-			this.renderGoogleButton();
+			this.ensureGoogleInit().then(() => this.renderGoogleButton());
 		}
 	}
 
@@ -312,26 +180,27 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	scrollTo(sectionId: string): void {
-		const el = document.getElementById(sectionId);
-		if (el) {
-			el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-		}
+		document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+	}
+
+	private googleInitialized = false;
+
+	private async ensureGoogleInit(): Promise<void> {
+		if (this.googleInitialized) return;
+		this.googleInitialized = true;
+		await this.initializeGoogleSignIn();
 	}
 
 	private async initializeGoogleSignIn(): Promise<void> {
 		if (!isPlatformBrowser(this.platformId)) return;
-		try {
-			await this.googleAuthService.initializeGoogleSignIn();
-		} catch { /* silent fail */ }
+		try { await this.googleAuthService.initializeGoogleSignIn(); } catch { /* silent */ }
 	}
 
 	private renderGoogleButton(): void {
 		if (!isPlatformBrowser(this.platformId)) return;
 		setTimeout(() => {
 			const container = document.getElementById('google-signin-button');
-			if (container) {
-				this.googleAuthService.renderSignInButton('google-signin-button');
-			}
+			if (container) this.googleAuthService.renderSignInButton('google-signin-button');
 		}, 150);
 	}
 
@@ -341,9 +210,7 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 			const container = document.getElementById('hero-google-signin');
 			const primaryBtn = document.querySelector('.hero-actions .btn-primary') as HTMLElement | null;
 			const width = primaryBtn ? Math.max(primaryBtn.offsetWidth, 200) : 200;
-			if (container) {
-				this.googleAuthService.renderSignInButton('hero-google-signin', width);
-			}
+			if (container) this.googleAuthService.renderSignInButton('hero-google-signin', width);
 		}, 600);
 	}
 
@@ -373,9 +240,8 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 		this.isForgotPasswordMode.set(false);
 		this.isResetPasswordMode.set(false);
 		this.resetAllForms();
-
 		if (!this.isSignupMode()) {
-			this.renderGoogleButton();
+			this.ensureGoogleInit().then(() => this.renderGoogleButton());
 		}
 	}
 
@@ -440,12 +306,9 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 			this.errorMessage = 'Passwords do not match';
 			return;
 		}
-
 		this.signupFormConfig.loading = true;
 		this.errorMessage = '';
-
 		const { confirmPassword, ...registerData } = formData;
-
 		this.authService.register(registerData as RegisterRequest).then(
 			() => {
 				this.signupFormConfig.loading = false;

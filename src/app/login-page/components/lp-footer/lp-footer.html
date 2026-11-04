@@ -1,0 +1,42 @@
+<footer class="site-footer">
+	<div class="footer-top">
+		<div class="footer-brand">
+			<div class="logo-group">
+				<div class="logo-mark logo-mark-footer">{{TEXT.footer.logoMark}}</div>
+				<span class="logo-name logo-name-footer">{{TEXT.footer.logoName}}<span class="brand-text-footer">{{TEXT.footer.logoBrand}}</span></span>
+			</div>
+			<p class="footer-desc">{{TEXT.footer.desc}}</p>
+			<div class="social-row">
+				@for (s of TEXT.footer.socials; track s.label) {
+					<button class="social-btn" [attr.aria-label]="s.label"><i [class]="s.icon" aria-hidden="true"></i></button>
+				}
+			</div>
+		</div>
+		<div class="footer-col">
+			<h5>{{TEXT.footer.colHeaders.products}}</h5>
+			@for (link of footerLinks().products; track link.label) {
+				<a (click)="footerLinkClick.emit(link.action)" style="cursor:pointer">{{link.label}}</a>
+			}
+		</div>
+		<div class="footer-col">
+			<h5>{{TEXT.footer.colHeaders.company}}</h5>
+			@for (link of footerLinks().company; track link.label) {
+				<a (click)="footerLinkClick.emit(link.action)" style="cursor:pointer">{{link.label}}</a>
+			}
+		</div>
+		<div class="footer-col">
+			<h5>{{TEXT.footer.colHeaders.support}}</h5>
+			@for (link of footerLinks().support; track link.label) {
+				<a (click)="footerLinkClick.emit(link.action)" style="cursor:pointer">{{link.label}}</a>
+			}
+		</div>
+	</div>
+	<div class="footer-bottom">
+		<span>{{TEXT.footer.copyright}}</span>
+		<div class="footer-legal">
+			@for (l of TEXT.footer.legal; track l.label) {
+				<a>{{l.label}}</a>
+			}
+		</div>
+	</div>
+</footer>

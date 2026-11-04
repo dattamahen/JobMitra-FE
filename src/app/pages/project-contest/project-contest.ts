@@ -1,8 +1,10 @@
 import {
 	Component, OnInit, signal, inject, ChangeDetectionStrategy,
-	input, computed, linkedSignal,
+	input, computed, linkedSignal, DestroyRef,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormArray, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
+import { TitleCasePipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -43,7 +45,7 @@ type EntryView = 'tracker' | 'blueprint' | 'proof' | 'interview';
 	selector: 'app-project-contest',
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	imports: [
-		ReactiveFormsModule, FormsModule,
+		ReactiveFormsModule, FormsModule, TitleCasePipe,
 		MatCardModule, MatButtonModule, MatIconModule,
 		MatFormFieldModule, MatInputModule, MatSelectModule,
 		MatProgressSpinnerModule, MatDividerModule, MatDialogModule,
@@ -73,6 +75,7 @@ export class ProjectContestPage implements OnInit {
 	private authService = inject(AuthService);
 	private creditsService = inject(CreditsService);
 	private dialog = inject(MatDialog);
+	private destroyRef = inject(DestroyRef);
 
 	// Page state
 	pageMode = signal<PageMode>(null);
@@ -85,9 +88,18 @@ export class ProjectContestPage implements OnInit {
 
 	// Form state
 	submitting = signal(false);
-	refining = signal(false);
+	aiLoadingMessage = signal('');
 	ideaResult = signal<{ entry_id: string; refined_title: string; refined_description: string; inferred_domain: string; inferred_problem_statement: string; inferred_target_users: string; idea_quality_score: number; amount: number } | null>(null);
 	categories = signal<ContestCategory[]>(TECHNICAL_CATEGORIES);
+
+	// OTP state per member index
+	otpSending = signal<boolean[]>([]);
+	otpSent = signal<boolean[]>([]);
+	otpVerifying = signal<boolean[]>([]);
+	otpVerified = signal<boolean[]>([]);
+	otpError = signal<string[]>([]);
+
+	memberEntries = signal<ContestEntry[]>([]);
 
 	currentUserFirstName = '';
 	currentUserLastName = '';
@@ -96,18 +108,34 @@ export class ProjectContestPage implements OnInit {
 	ideaForm!: FormGroup;
 
 	ngOnInit() {
-		const user = this.authService.getCurrentUserValue();
-		this.currentUserFirstName = user?.first_name || '';
-		this.currentUserLastName = user?.last_name || '';
-		this.currentUserEmail = user?.email || '';
 		this.initForms();
-		this.loadMyEntries();
+		const user = this.authService.getCurrentUserValue();
+		if (user) {
+			this.setLeadFields(user.first_name, user.last_name, user.email);
+			this.loadMyEntries();
+		} else {
+			this.authService.refreshCurrentUser()
+				.pipe(takeUntilDestroyed(this.destroyRef))
+				.subscribe({
+					next: u => {
+						this.setLeadFields(u.first_name, u.last_name, u.email);
+						this.loadMyEntries();
+					},
+					error: () => this.loadMyEntries(),
+				});
+		}
+	}
+
+	private setLeadFields(firstName: string, lastName: string, email: string) {
+		this.currentUserFirstName = firstName || '';
+		this.currentUserLastName = lastName || '';
+		this.currentUserEmail = email || '';
 	}
 
 	private initForms() {
 		this.ideaForm = this.fb.group({
 			raw_project_name: ['', [Validators.required, Validators.minLength(3)]],
-			raw_description: ['', [Validators.required, Validators.minLength(20)]],
+			raw_description: ['', [Validators.required, Validators.minLength(750), Validators.maxLength(1000)]],
 			project_type: ['technical', Validators.required],
 			category: ['', Validators.required],
 			tech_stack: [''],
@@ -133,22 +161,76 @@ export class ProjectContestPage implements OnInit {
 
 	addMember() {
 		if (this.teamMembers.length >= 3) return;
+		const lastIdx = this.teamMembers.length - 1;
+		if (lastIdx >= 0 && !this.otpVerified()[lastIdx]) return;
 		this.teamMembers.push(this.fb.group({
-			full_name: ['', [Validators.required, Validators.minLength(2)]],
+			first_name: ['', [Validators.required, Validators.minLength(2)]],
+			last_name: [''],
 			email: ['', [Validators.required, Validators.email]],
 			role_in_project: [''],
 			college: [''],
+			otp: [''],
 		}));
+		const i = this.teamMembers.length - 1;
+		this.otpSending.update(a => { const n = [...a]; n[i] = false; return n; });
+		this.otpSent.update(a => { const n = [...a]; n[i] = false; return n; });
+		this.otpVerifying.update(a => { const n = [...a]; n[i] = false; return n; });
+		this.otpVerified.update(a => { const n = [...a]; n[i] = false; return n; });
+		this.otpError.update(a => { const n = [...a]; n[i] = ''; return n; });
 	}
 
 	removeMember(index: number) {
 		this.teamMembers.removeAt(index);
+		this.otpSending.update(a => a.filter((_, i) => i !== index));
+		this.otpSent.update(a => a.filter((_, i) => i !== index));
+		this.otpVerifying.update(a => a.filter((_, i) => i !== index));
+		this.otpVerified.update(a => a.filter((_, i) => i !== index));
+		this.otpError.update(a => a.filter((_, i) => i !== index));
+	}
+
+	async sendOtp(index: number) {
+		const email = this.teamMembers.at(index).get('email')?.value;
+		if (!email) return;
+		this.otpSending.update(a => { const n = [...a]; n[index] = true; return n; });
+		this.otpError.update(a => { const n = [...a]; n[index] = ''; return n; });
+		try {
+			await this.contestService.sendMemberOtp(email);
+			this.otpSent.update(a => { const n = [...a]; n[index] = true; return n; });
+		} catch {
+			this.otpError.update(a => { const n = [...a]; n[index] = 'Failed to send OTP. Check the email and try again.'; return n; });
+		} finally {
+			this.otpSending.update(a => { const n = [...a]; n[index] = false; return n; });
+		}
+	}
+
+	async verifyOtp(index: number) {
+		const email = this.teamMembers.at(index).get('email')?.value;
+		const otp = this.teamMembers.at(index).get('otp')?.value;
+		if (!email || !otp) return;
+		this.otpVerifying.update(a => { const n = [...a]; n[index] = true; return n; });
+		this.otpError.update(a => { const n = [...a]; n[index] = ''; return n; });
+		try {
+			await this.contestService.verifyMemberOtp(email, otp);
+			this.otpVerified.update(a => { const n = [...a]; n[index] = true; return n; });
+		} catch {
+			this.otpError.update(a => { const n = [...a]; n[index] = 'Invalid or expired OTP. Please try again.'; return n; });
+		} finally {
+			this.otpVerifying.update(a => { const n = [...a]; n[index] = false; return n; });
+		}
+	}
+
+	allMembersVerified(): boolean {
+		if (this.teamMembers.length === 0) return true;
+		return this.teamMembers.controls.every((_, i) => this.otpVerified()[i] === true);
 	}
 
 	private async loadMyEntries() {
 		try {
-			const res = await this.contestService.getMyEntries();
-			const active = (res.entries ?? []).find(
+			const [leadRes, memberRes] = await Promise.all([
+				this.contestService.getMyEntries(),
+				this.contestService.getMemberEntries(),
+			]);
+			const active = (leadRes.entries ?? []).find(
 				(e: ContestEntry) => e.payment_status === 'confirmed'
 			);
 			if (active) {
@@ -157,20 +239,36 @@ export class ProjectContestPage implements OnInit {
 			} else {
 				this.pageMode.set('no-entry');
 			}
+			this.memberEntries.set(memberRes.entries ?? []);
 		} catch {
 			this.pageMode.set('no-entry');
 		}
 	}
 
-	async onRefineIdea() {
-		const name = this.ideaForm.get('raw_project_name');
-		const desc = this.ideaForm.get('raw_description');
-		const category = this.ideaForm.get('category');
-		name?.markAsTouched();
-		desc?.markAsTouched();
-		category?.markAsTouched();
-		if (name?.invalid || desc?.invalid || category?.invalid) return;
-		this.refining.set(true);
+	async onSubmitIdea() {
+		if (this.ideaForm.invalid) {
+			this.ideaForm.markAllAsTouched();
+			return;
+		}
+		if (!this.allMembersVerified()) return;
+		if (this.ideaResult()) {
+			await this.onConfirmIdea();
+			return;
+		}
+		this.submitting.set(true);
+		const messages = [
+			'Sending your idea to AI…',
+			'AI is reading your project…',
+			'Evaluating idea quality…',
+			'Refining your concept…',
+			'Almost done…',
+		];
+		let msgIdx = 0;
+		this.aiLoadingMessage.set(messages[0]);
+		const interval = setInterval(() => {
+			msgIdx = (msgIdx + 1) % messages.length;
+			this.aiLoadingMessage.set(messages[msgIdx]);
+		}, 2200);
 		try {
 			const val = this.ideaForm.value;
 			const result = await this.contestService.submitIdea({
@@ -189,20 +287,10 @@ export class ProjectContestPage implements OnInit {
 		} catch {
 			// error handled by interceptor
 		} finally {
-			this.refining.set(false);
+			clearInterval(interval);
+			this.aiLoadingMessage.set('');
+			this.submitting.set(false);
 		}
-	}
-
-	async onSubmitIdea() {
-		if (this.ideaForm.invalid) {
-			this.ideaForm.markAllAsTouched();
-			return;
-		}
-		if (!this.ideaResult()) {
-			await this.onRefineIdea();
-			return;
-		}
-		await this.onConfirmIdea();
 	}
 
 	async onConfirmIdea() {

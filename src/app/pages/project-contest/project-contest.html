@@ -104,35 +104,78 @@
 									<div class="member-header">
 										<span class="member-label">
 											<mat-icon>person_add</mat-icon>Member {{ i + 2 }}
+											@if (otpVerified()[i]) {
+												<span class="otp-verified-badge">✅ Verified</span>
+											}
 										</span>
 										<button mat-icon-button type="button" class="remove-btn" (click)="removeMember(i)" aria-label="Remove member">
 											<mat-icon>close</mat-icon>
 										</button>
 									</div>
-									<div class="form-row form-row-4">
+
+									<!-- Always visible: First Name + Last Name + Email -->
+									<div class="form-row form-row-3">
 										<mat-form-field appearance="fill">
-											<mat-label>{{ TEXT.memberNameLabel }}</mat-label>
-											<input matInput formControlName="full_name">
+											<mat-label>First Name</mat-label>
+											<input matInput formControlName="first_name" [readonly]="otpSent()[i] || otpVerified()[i]">
+										</mat-form-field>
+										<mat-form-field appearance="fill">
+											<mat-label>Last Name (optional)</mat-label>
+											<input matInput formControlName="last_name" [readonly]="otpSent()[i] || otpVerified()[i]">
 										</mat-form-field>
 										<mat-form-field appearance="fill">
 											<mat-label>{{ TEXT.memberEmailLabel }}</mat-label>
-											<input matInput formControlName="email" placeholder="name@gmail.com">
-										</mat-form-field>
-										<mat-form-field appearance="fill">
-											<mat-label>{{ TEXT.memberRoleLabel }}</mat-label>
-											<input matInput formControlName="role_in_project">
-										</mat-form-field>
-										<mat-form-field appearance="fill">
-											<mat-label>{{ TEXT.memberCollegeLabel }}</mat-label>
-											<input matInput formControlName="college">
+											<input matInput formControlName="email" placeholder="name@example.com" [readonly]="otpSent()[i] || otpVerified()[i]">
 										</mat-form-field>
 									</div>
+
+									<!-- Send OTP button (hidden once verified) -->
+									@if (!otpVerified()[i]) {
+										<div class="otp-email-row">
+											<button mat-stroked-button type="button" class="otp-send-btn"
+												[disabled]="otpSending()[i] || !$any(member).get('email')?.valid"
+												(click)="sendOtp(i)">
+												@if (otpSending()[i]) {
+													<mat-spinner diameter="16"></mat-spinner>
+												} @else {
+													<mat-icon>send</mat-icon>
+												}
+												{{ otpSent()[i] ? 'Resend OTP' : 'Send OTP' }}
+											</button>
+										</div>
+									}
+
+									<!-- OTP input row (shown after send, hidden after verified) -->
+									@if (otpSent()[i] && !otpVerified()[i]) {
+										<div class="otp-verify-row">
+											<mat-form-field appearance="fill" class="otp-input-field">
+												<mat-label>Enter 6-digit OTP</mat-label>
+												<input matInput formControlName="otp" placeholder="123456" maxlength="6">
+											</mat-form-field>
+											<button mat-flat-button color="primary" type="button" class="otp-verify-btn"
+												[disabled]="otpVerifying()[i] || !$any(member).get('otp')?.value"
+												(click)="verifyOtp(i)">
+												@if (otpVerifying()[i]) {
+													<mat-spinner diameter="16"></mat-spinner>
+												} @else {
+													<mat-icon>verified</mat-icon>
+												}
+												Verify
+											</button>
+										</div>
+									}
+
+									@if (otpError()[i]) {
+										<p class="otp-error">{{ otpError()[i] }}</p>
+									}
 								</div>
 							}
 
 							@if (teamMembers.length < 3) {
 								<div style="display:flex; justify-content:flex-end;">
-									<button mat-stroked-button type="button" class="add-member-btn" (click)="addMember()">
+									<button mat-stroked-button type="button" class="add-member-btn"
+										[disabled]="teamMembers.length > 0 && !otpVerified()[teamMembers.length - 1]"
+										(click)="addMember()">
 										<mat-icon>person_add</mat-icon>{{ TEXT.addMemberBtn }}
 									</button>
 								</div>
@@ -170,7 +213,16 @@
 
 							<mat-form-field appearance="fill" class="full-width">
 								<mat-label>{{ TEXT.projectDescLabel }}</mat-label>
-								<textarea matInput formControlName="raw_description" rows="4" placeholder="Describe your project in 2–3 lines. Our AI will refine it."></textarea>
+								<textarea matInput formControlName="raw_description" rows="6"
+									placeholder="Describe your project in detail — the problem it solves, your approach, target users, and what makes it unique. Minimum 750 characters."
+									[maxlength]="1000"></textarea>
+								<mat-hint align="end">{{ ideaForm.get('raw_description')?.value?.length || 0 }} / 1000 (min 750)</mat-hint>
+								@if (ideaForm.get('raw_description')?.touched && ideaForm.get('raw_description')?.hasError('minlength')) {
+									<mat-error>Minimum 750 characters required ({{ ideaForm.get('raw_description')?.value?.length || 0 }} entered)</mat-error>
+								}
+								@if (ideaForm.get('raw_description')?.touched && ideaForm.get('raw_description')?.hasError('maxlength')) {
+									<mat-error>Maximum 1000 characters allowed</mat-error>
+								}
 							</mat-form-field>
 
 							<mat-form-field appearance="fill" class="full-width">
@@ -191,29 +243,69 @@
 						</div>
 
 						<div class="form-actions">
-							<button mat-stroked-button type="button" [disabled]="refining()" (click)="onRefineIdea()" class="refine-btn">
-								@if (refining()) {
-									<mat-spinner diameter="18"></mat-spinner>
-								} @else {
-									<mat-icon>auto_awesome</mat-icon>
-								}
-								Get AI Refinement
-							</button>
-							<button mat-raised-button color="primary" type="submit" [disabled]="submitting()" class="submit-btn">
-								@if (submitting()) {
-									<mat-spinner diameter="18"></mat-spinner>
-								} @else {
-									<mat-icon>send</mat-icon>
-								}
-								Submit
-							</button>
+							@if (teamMembers.length > 0 && !allMembersVerified()) {
+								<p class="unverified-hint"><mat-icon>info</mat-icon>Verify all team members before submitting.</p>
+							}
+							@if (submitting()) {
+								<div class="ai-loading-overlay">
+									<mat-spinner diameter="28"></mat-spinner>
+									@for (_ of [aiLoadingMessage()]; track aiLoadingMessage()) {
+										<span class="ai-loading-text">{{ aiLoadingMessage() }}</span>
+									}
+								</div>
+							} @else {
+								<button mat-raised-button color="primary" type="submit" [disabled]="!allMembersVerified()" class="submit-btn">
+									<mat-icon>send</mat-icon>Submit
+								</button>
+							}
 						</div>
 					</form>
 				</mat-card-content>
 			</mat-card>
 		}
 
-		<!-- AI Refinement Result -->
+		<!-- Member Entries: contests this user is tagged in as a member -->
+		@if (memberEntries().length > 0) {
+			<mat-card class="form-card member-entries-card">
+				<mat-card-content>
+					<div class="form-card-header">
+						<mat-icon class="form-card-icon">group</mat-icon>
+						<div>
+							<h2 class="section-title">Contests You're Part Of</h2>
+							<p class="section-hint">Projects where you've been added as a team member.</p>
+						</div>
+					</div>
+					@for (entry of memberEntries(); track entry.entry_id) {
+						<div class="member-entry-row">
+							<div class="member-entry-main">
+								<span class="member-entry-title">{{ entry.refined_title || entry.raw_project_name }}</span>
+								<span class="member-entry-meta">{{ entry.category | titlecase }} · Team of {{ entry.team_size }} · Lead: {{ entry.lead_name }}</span>
+							</div>
+							<div class="member-entry-scores">
+								@if (entry.idea_quality_score) {
+									<span class="score-tag">L1 <strong>{{ entry.idea_quality_score }}</strong></span>
+								}
+								@if (entry.blueprint_score) {
+									<span class="score-tag">L2 <strong>{{ entry.blueprint_score }}</strong></span>
+								}
+								@if (entry.demo_score) {
+									<span class="score-tag">L3 <strong>{{ entry.demo_score }}</strong></span>
+								}
+								@if (entry.team_interview_score) {
+									<span class="score-tag">L4 <strong>{{ entry.team_interview_score }}</strong></span>
+								}
+								@if (entry.composite_score) {
+									<span class="score-tag score-tag-composite">⭐ <strong>{{ entry.composite_score }}</strong></span>
+								}
+							</div>
+							<span class="member-entry-status status-{{ entry.status }}">{{ entry.status | titlecase }}</span>
+						</div>
+					}
+				</mat-card-content>
+			</mat-card>
+		}
+
+
 		@if (ideaResult() !== null) {
 			<mat-card class="form-card refinement-card">
 				<mat-card-content>
