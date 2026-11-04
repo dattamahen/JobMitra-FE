@@ -1,7 +1,8 @@
 import {
 	Component, OnInit, signal, inject, ChangeDetectionStrategy,
-	input, computed, linkedSignal,
+	input, computed, linkedSignal, DestroyRef,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormArray, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { TitleCasePipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -74,6 +75,7 @@ export class ProjectContestPage implements OnInit {
 	private authService = inject(AuthService);
 	private creditsService = inject(CreditsService);
 	private dialog = inject(MatDialog);
+	private destroyRef = inject(DestroyRef);
 
 	// Page state
 	pageMode = signal<PageMode>(null);
@@ -86,6 +88,7 @@ export class ProjectContestPage implements OnInit {
 
 	// Form state
 	submitting = signal(false);
+	aiLoadingMessage = signal('');
 	ideaResult = signal<{ entry_id: string; refined_title: string; refined_description: string; inferred_domain: string; inferred_problem_statement: string; inferred_target_users: string; idea_quality_score: number; amount: number } | null>(null);
 	categories = signal<ContestCategory[]>(TECHNICAL_CATEGORIES);
 
@@ -105,12 +108,28 @@ export class ProjectContestPage implements OnInit {
 	ideaForm!: FormGroup;
 
 	ngOnInit() {
-		const user = this.authService.getCurrentUserValue();
-		this.currentUserFirstName = user?.first_name || '';
-		this.currentUserLastName = user?.last_name || '';
-		this.currentUserEmail = user?.email || '';
 		this.initForms();
-		this.loadMyEntries();
+		const user = this.authService.getCurrentUserValue();
+		if (user) {
+			this.setLeadFields(user.first_name, user.last_name, user.email);
+			this.loadMyEntries();
+		} else {
+			this.authService.refreshCurrentUser()
+				.pipe(takeUntilDestroyed(this.destroyRef))
+				.subscribe({
+					next: u => {
+						this.setLeadFields(u.first_name, u.last_name, u.email);
+						this.loadMyEntries();
+					},
+					error: () => this.loadMyEntries(),
+				});
+		}
+	}
+
+	private setLeadFields(firstName: string, lastName: string, email: string) {
+		this.currentUserFirstName = firstName || '';
+		this.currentUserLastName = lastName || '';
+		this.currentUserEmail = email || '';
 	}
 
 	private initForms() {
@@ -237,6 +256,19 @@ export class ProjectContestPage implements OnInit {
 			return;
 		}
 		this.submitting.set(true);
+		const messages = [
+			'Sending your idea to AI…',
+			'AI is reading your project…',
+			'Evaluating idea quality…',
+			'Refining your concept…',
+			'Almost done…',
+		];
+		let msgIdx = 0;
+		this.aiLoadingMessage.set(messages[0]);
+		const interval = setInterval(() => {
+			msgIdx = (msgIdx + 1) % messages.length;
+			this.aiLoadingMessage.set(messages[msgIdx]);
+		}, 2200);
 		try {
 			const val = this.ideaForm.value;
 			const result = await this.contestService.submitIdea({
@@ -255,6 +287,8 @@ export class ProjectContestPage implements OnInit {
 		} catch {
 			// error handled by interceptor
 		} finally {
+			clearInterval(interval);
+			this.aiLoadingMessage.set('');
 			this.submitting.set(false);
 		}
 	}

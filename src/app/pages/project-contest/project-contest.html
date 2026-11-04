@@ -246,14 +246,18 @@
 							@if (teamMembers.length > 0 && !allMembersVerified()) {
 								<p class="unverified-hint"><mat-icon>info</mat-icon>Verify all team members before submitting.</p>
 							}
-							<button mat-raised-button color="primary" type="submit" [disabled]="submitting() || !allMembersVerified()" class="submit-btn">
-								@if (submitting()) {
-									<mat-spinner diameter="18"></mat-spinner>
-								} @else {
-									<mat-icon>send</mat-icon>
-								}
-								Submit
-							</button>
+							@if (submitting()) {
+								<div class="ai-loading-overlay">
+									<mat-spinner diameter="28"></mat-spinner>
+									@for (_ of [aiLoadingMessage()]; track aiLoadingMessage()) {
+										<span class="ai-loading-text">{{ aiLoadingMessage() }}</span>
+									}
+								</div>
+							} @else {
+								<button mat-raised-button color="primary" type="submit" [disabled]="!allMembersVerified()" class="submit-btn">
+									<mat-icon>send</mat-icon>Submit
+								</button>
+							}
 						</div>
 					</form>
 				</mat-card-content>

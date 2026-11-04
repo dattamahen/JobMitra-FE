@@ -1349,3 +1349,27 @@
 	height: 20px;
 	flex-shrink: 0;
 }
+
+/* ── AI Loading Overlay ──────────────────────────────────────────── */
+.ai-loading-overlay {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+	border: 1px solid #c4b5fd;
+	border-radius: 10px;
+	padding: 12px 20px;
+	min-width: 240px;
+}
+
+.ai-loading-text {
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: #5b21b6;
+	animation: ai-fade-cycle 0.4s ease-in-out;
+}
+
+@keyframes ai-fade-cycle {
+	from { opacity: 0; transform: translateY(4px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
