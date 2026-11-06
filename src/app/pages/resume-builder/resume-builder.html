@@ -224,16 +224,17 @@
 						[value]="jdText()"
 						(input)="onJdTextInput($event)"
 						rows="8"
+						[disabled]="isTailoringByJd()"
 						aria-label="Paste job description">
 					</textarea>
 
 					<div class="jd-divider"><span>or</span></div>
 
-					<label class="jd-file-label" for="jd-file-input">
+					<label class="jd-file-label" [class.disabled]="isTailoringByJd()" for="jd-file-input">
 						<mat-icon>upload_file</mat-icon>
 						{{ jdFileName() || 'Upload JD file (.txt / .pdf)' }}
 					</label>
-					<input id="jd-file-input" type="file" accept=".txt,.pdf" (change)="onJdFileSelected($event)" class="jd-file-input" aria-label="Upload job description file">
+					<input id="jd-file-input" type="file" accept=".txt,.pdf" (change)="onJdFileSelected($event)" class="jd-file-input" [disabled]="isTailoringByJd()" aria-label="Upload job description file">
 
 					<div class="jd-modal-actions">
 						<button mat-button (click)="closeJdModal()">Cancel</button>
