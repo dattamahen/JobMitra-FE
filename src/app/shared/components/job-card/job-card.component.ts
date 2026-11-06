@@ -53,7 +53,7 @@ export class JobCardComponent {
       lines.push(``, `📌 *Key Responsibilities:*`);
       j.responsibilities.slice(0, 3).forEach(r => lines.push(`• ${r}`));
     }
-    lines.push(``, `👉 Apply now on JobMouka:`, `🌐 https://www.jobmouka.com`, `📱 https://play.google.com/store/apps/details?id=com.jobmouka.app`);
+    lines.push(``, `👉 Apply now on JobMouka:`, `🌐 https://www.jobmouka.com`, ``, `📢 Join our WhatsApp Channels for more jobs:`, `👔 Experienced: https://whatsapp.com/channel/0029VbESGTO8F2pHL4NOmt3S`, `🎓 Freshers: https://whatsapp.com/channel/0029VbDZLJS3wtb7Zhe2G90h`);
     return lines.join('\n');
   }
 

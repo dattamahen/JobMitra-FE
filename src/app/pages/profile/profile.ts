@@ -359,15 +359,15 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	addSuggestedSkill(skill: string): void {
 		const skillsFormRef = this.skillsForm();
 		if (!skillsFormRef) return;
-		const existingItems = skillsFormRef.getArrayItems('technical_skills');
-		const newIndex = existingItems.length;
+		this.isSkillsEditing.set(true);
 		skillsFormRef.addArrayItem('technical_skills');
+		const items = skillsFormRef.getArrayItems('technical_skills');
+		const newItemId = items[items.length - 1];
 		skillsFormRef.patchValue({
-			[`technical_skills_item_${newIndex}_name`]: skill,
-			[`technical_skills_item_${newIndex}_experience`]: 'Beginner (0-6 months)'
+			[`technical_skills_${newItemId}_name`]: skill,
+			[`technical_skills_${newItemId}_experience`]: 'Beginner (0-6 months)'
 		});
 		this.skillSuggestions.update(list => list.filter(s => s !== skill));
-		this.isSkillsEditing.set(true);
 		this.cdr.markForCheck();
 	}
 
