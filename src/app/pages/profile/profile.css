@@ -875,3 +875,18 @@
 		font-size: 13px;
 	}
 }
+
+.suggest-chip-version {
+	font-size: 0.68rem;
+	font-weight: 600;
+	background: #ede9fe;
+	color: #5b21b6;
+	padding: 1px 6px;
+	border-radius: 8px;
+	margin-left: 2px;
+}
+
+.suggest-chip:hover .suggest-chip-version {
+	background: rgba(255,255,255,0.25);
+	color: #fff;
+}

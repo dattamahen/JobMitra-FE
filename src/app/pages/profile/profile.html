@@ -185,9 +185,9 @@
 							<div class="skill-suggestions-panel">
 								<p class="suggest-label"><mat-icon>lightbulb</mat-icon> Tap to add relevant skills</p>
 								<div class="suggest-chips">
-									@for (skill of skillSuggestions(); track skill) {
-										<button class="suggest-chip" (click)="addSuggestedSkill(skill)" [attr.aria-label]="'Add ' + skill">
-											<mat-icon>add</mat-icon> {{ skill }}
+									@for (skill of skillSuggestions(); track skill.name) {
+										<button class="suggest-chip" (click)="addSuggestedSkill(skill)" [attr.aria-label]="'Add ' + skill.name">
+											<mat-icon>add</mat-icon> {{ skill.name }}@if (skill.version) { <span class="suggest-chip-version">v{{ skill.version }}</span> }
 										</button>
 									}
 								</div>

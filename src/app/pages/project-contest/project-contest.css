@@ -1464,3 +1464,16 @@
 	.entry-switcher { flex-direction: column; gap: 8px; }
 	.entry-tab { min-width: 0; width: 100%; max-width: 100%; }
 }
+
+/* ── New Entry FAB ───────────────────────────────────────────────── */
+.new-entry-fab {
+	position: fixed;
+	bottom: 28px;
+	right: 28px;
+	z-index: 100;
+	box-shadow: 0 4px 16px rgba(99,60,254,0.35);
+}
+
+@media (max-width: 768px) {
+	.new-entry-fab { bottom: 20px; right: 16px; }
+}

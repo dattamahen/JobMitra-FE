@@ -87,7 +87,7 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	isGeneratingSummary = signal(false);
 	isGeneratingJobDesc = signal<string | null>(null);
 	isSuggestingSkills = signal(false);
-	skillSuggestions = signal<string[]>([]);
+	skillSuggestions = signal<{ name: string; version: string }[]>([]);
 	showAllSkills = signal(false);
 	
 	currentUser = signal<UserProfile | null>(null);
@@ -378,7 +378,7 @@ export class ProfilePage implements OnInit, AfterViewInit {
 			});
 	}
 
-	addSuggestedSkill(skill: string): void {
+	addSuggestedSkill(skill: { name: string; version: string }): void {
 		const skillsFormRef = this.skillsForm();
 		if (!skillsFormRef) return;
 		this.isSkillsEditing.set(true);
@@ -386,10 +386,11 @@ export class ProfilePage implements OnInit, AfterViewInit {
 		const items = skillsFormRef.getArrayItems('technical_skills');
 		const newItemId = items[items.length - 1];
 		skillsFormRef.patchValue({
-			[`technical_skills_${newItemId}_name`]: skill,
+			[`technical_skills_${newItemId}_name`]: skill.name,
+			[`technical_skills_${newItemId}_version`]: skill.version || '',
 			[`technical_skills_${newItemId}_experience`]: 'Beginner (0-6 months)'
 		});
-		this.skillSuggestions.update(list => list.filter(s => s !== skill));
+		this.skillSuggestions.update(list => list.filter(s => s.name !== skill.name));
 		this.cdr.markForCheck();
 	}
 

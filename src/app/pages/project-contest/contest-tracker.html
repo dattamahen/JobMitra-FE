@@ -8,36 +8,74 @@
 				@case (1) {
 					<div class="level-panel-waiting">
 						<mat-icon style="color:#f59e0b">check_circle</mat-icon>
-						<span>Your idea has been submitted and confirmed. Waiting for Blueprint to open.</span>
+						<div>
+							<span>Your idea has been submitted and confirmed. Blueprint opens in 30 days.</span>
+							@if (daysUntilUnlock() !== null) {
+								<span class="unlock-countdown">
+									<mat-icon>lock_clock</mat-icon>
+									{{ daysUntilUnlock() === 0 ? 'Unlocking today!' : daysUntilUnlock() + ' days until Level 2 unlocks' }}
+								</span>
+							}
+						</div>
 					</div>
 				}
 				@case (2) {
-					<div class="level-panel-cta">
-						<div class="level-panel-desc">
-							<mat-icon style="color:#3b82f6">architecture</mat-icon>
+					@if (entry().status === 'blueprint_evaluated') {
+						<div class="level-panel-waiting">
+							<mat-icon style="color:#3b82f6">check_circle</mat-icon>
 							<div>
-								<strong>Blueprint Questionnaire</strong>
-								<p>Answer 12 in-depth questions. AI evaluates across 4 dimensions.</p>
+								<span>Blueprint evaluated. Score: <strong>{{ entry().blueprint_score }}/100</strong>. Demo opens in 30 days.</span>
+								@if (daysUntilUnlock() !== null) {
+									<span class="unlock-countdown">
+										<mat-icon>lock_clock</mat-icon>
+										{{ daysUntilUnlock() === 0 ? 'Unlocking today!' : daysUntilUnlock() + ' days until Level 3 unlocks' }}
+									</span>
+								}
 							</div>
 						</div>
-						<button mat-raised-button color="primary" (click)="ctaClicked.emit('blueprint')">
-							<mat-icon>arrow_forward</mat-icon>Answer Blueprint Questions
-						</button>
-					</div>
+					} @else {
+						<div class="level-panel-cta">
+							<div class="level-panel-desc">
+								<mat-icon style="color:#3b82f6">architecture</mat-icon>
+								<div>
+									<strong>Blueprint Questionnaire</strong>
+									<p>Answer 12 in-depth questions. AI evaluates across 4 dimensions.</p>
+								</div>
+							</div>
+							<button mat-raised-button color="primary" (click)="ctaClicked.emit('blueprint')">
+								<mat-icon>arrow_forward</mat-icon>Answer Blueprint Questions
+							</button>
+						</div>
+					}
 				}
 				@case (3) {
-					<div class="level-panel-cta">
-						<div class="level-panel-desc">
-							<mat-icon style="color:#8b5cf6">play_circle</mat-icon>
+					@if (entry().status === 'proof_evaluated') {
+						<div class="level-panel-waiting">
+							<mat-icon style="color:#8b5cf6">check_circle</mat-icon>
 							<div>
-								<strong>Submit Your Demo</strong>
-								<p>Upload your YouTube demo, GitHub repo, and live demo link for AI evaluation.</p>
+								<span>Demo evaluated. Score: <strong>{{ entry().demo_score }}/100</strong>. Interview opens in 30 days.</span>
+								@if (daysUntilUnlock() !== null) {
+									<span class="unlock-countdown">
+										<mat-icon>lock_clock</mat-icon>
+										{{ daysUntilUnlock() === 0 ? 'Unlocking today!' : daysUntilUnlock() + ' days until Level 4 unlocks' }}
+									</span>
+								}
 							</div>
 						</div>
-						<button mat-raised-button color="primary" (click)="ctaClicked.emit('proof')">
-							<mat-icon>arrow_forward</mat-icon>Submit Demo Links
-						</button>
-					</div>
+					} @else {
+						<div class="level-panel-cta">
+							<div class="level-panel-desc">
+								<mat-icon style="color:#8b5cf6">play_circle</mat-icon>
+								<div>
+									<strong>Submit Your Demo</strong>
+									<p>Upload your YouTube demo, GitHub repo, and live demo link for AI evaluation.</p>
+								</div>
+							</div>
+							<button mat-raised-button color="primary" (click)="ctaClicked.emit('proof')">
+								<mat-icon>arrow_forward</mat-icon>Submit Demo Links
+							</button>
+						</div>
+					}
 				}
 				@case (4) {
 					<div class="level-panel-cta">

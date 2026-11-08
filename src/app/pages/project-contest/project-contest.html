@@ -387,7 +387,6 @@
 		<!-- Entry Switcher — shown when user has more than one entry -->
 		@if (hasMultipleEntries()) {
 			<div class="entry-switcher">
-				<span class="entry-switcher-label"><mat-icon>folder_copy</mat-icon>Your Entries</span>
 				<div class="entry-switcher-tabs">
 					@for (entry of allLeadEntries(); track entry.entry_id) {
 						<button
@@ -437,13 +436,12 @@
 		<!-- Pipeline — always visible -->
 		<app-contest-pipeline [entry]="activeEntry()!" />
 
-		<!-- Submit New Idea CTA — shown when entry is in terminal state -->
-		@if (isTerminal() && !showNewEntryForm()) {
-			<div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
-				<button mat-raised-button color="primary" type="button" (click)="startNewEntry()">
-					<mat-icon>add_circle</mat-icon>Submit New Idea
-				</button>
-			</div>
+		<!-- Submit New Idea FAB -->
+		@if (!showNewEntryForm()) {
+			<button class="new-entry-fab" mat-fab extended color="primary" type="button" (click)="startNewEntry()" aria-label="Submit new idea">
+				<mat-icon>add</mat-icon>
+				New Project
+			</button>
 		}
 
 		<!-- Tracker: only when no sub-view is open -->
