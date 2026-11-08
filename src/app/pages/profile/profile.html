@@ -384,15 +384,19 @@
 				<mat-card-content>
 					@if (skills().length > 0) {
 						<div class="skills-list">
-							@for (skill of skills().slice(0, 6); track skill) {
+							@for (skill of (showAllSkills() ? skills() : skills().slice(0, 6)); track skill) {
 								<div class="skill-item">
 									<span class="skill-name">{{skill}}</span>
 								</div>
 							}
 							@if (skills().length > 6) {
-								<button mat-button class="show-more-btn">
-									{{TEXT.emptyStates.showAllPrefix}} {{skills().length}} {{TEXT.emptyStates.showAllSuffix}}
-									<mat-icon>arrow_forward</mat-icon>
+								<button mat-button class="show-more-btn" (click)="showAllSkills.set(!showAllSkills())">
+									@if (showAllSkills()) {
+										Show less <mat-icon>expand_less</mat-icon>
+									} @else {
+										{{TEXT.emptyStates.showAllPrefix}} {{skills().length}} {{TEXT.emptyStates.showAllSuffix}}
+										<mat-icon>arrow_forward</mat-icon>
+									}
 								</button>
 							}
 						</div>

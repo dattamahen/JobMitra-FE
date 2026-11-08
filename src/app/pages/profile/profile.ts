@@ -88,6 +88,7 @@ export class ProfilePage implements OnInit, AfterViewInit {
 	isGeneratingJobDesc = signal<string | null>(null);
 	isSuggestingSkills = signal(false);
 	skillSuggestions = signal<string[]>([]);
+	showAllSkills = signal(false);
 	
 	currentUser = signal<UserProfile | null>(null);
 	readonly skills = computed(() => this.resolveSkills(this.currentUser() as any)
@@ -254,6 +255,21 @@ export class ProfilePage implements OnInit, AfterViewInit {
 		const formValue = experienceFormRef.formValue;
 		const position = formValue[`experiences_${itemId}_position`] || '';
 		const company = formValue[`experiences_${itemId}_company`] || '';
+		const startDate = formValue[`experiences_${itemId}_start_date`] || '';
+		const endDate = formValue[`experiences_${itemId}_end_date`] || '';
+		const isCurrent = !endDate;
+
+		// Build full experience list for career context
+		const allExp: any[] = user?.work_experience || [];
+
+		// Find the next role (the one that comes after this role chronologically)
+		const thisIndex = allExp.findIndex(
+			(e: any) => e.position === position && e.company === company
+		);
+		const nextExp = thisIndex > 0 ? allExp[thisIndex - 1] : null;
+
+		// Infer industry from company name + role
+		const industry = user?.industry || '';
 
 		const payload = {
 			type: 'job_description' as const,
@@ -261,7 +277,13 @@ export class ProfilePage implements OnInit, AfterViewInit {
 			company,
 			skills: user?.skills || [],
 			experience_years: user?.overall_experience_years || 0,
-			is_current: !formValue[`experiences_${itemId}_end_date`]
+			is_current: isCurrent,
+			start_date: startDate,
+			end_date: endDate,
+			industry,
+			next_role: nextExp?.position || '',
+			next_company: nextExp?.company || '',
+			all_experience: allExp,
 		};
 
 		this.apiService.post<{ content: string }>('/profile/generate-ai-content', payload)

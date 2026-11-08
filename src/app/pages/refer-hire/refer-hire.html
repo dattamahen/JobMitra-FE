@@ -2,12 +2,6 @@
 
   <!-- ═══════════════════════════════════════════════════════ LIST VIEW -->
   @if (view() === 'list') {
-    <div class="page-header list-header">
-      <button mat-icon-button (click)="loadJobs()" matTooltip="Refresh" aria-label="Refresh jobs">
-        <mat-icon>refresh</mat-icon>
-      </button>
-    </div>
-
     @if (listLoading()) {
       <app-skeleton-job-card-list
         [count]="4"

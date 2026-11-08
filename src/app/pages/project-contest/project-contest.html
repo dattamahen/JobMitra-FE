@@ -377,20 +377,33 @@
 
 	}
 
-	<!-- DEV: status cycler -->
-	@if (pageMode() === 'has-entry') {
-		<div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:8px;">
-			<button mat-stroked-button type="button" style="font-size:0.75rem;color:#6b7280;border-color:#d1d5db;" (click)="devCycleStatus()">
-				<mat-icon style="font-size:16px;width:16px;height:16px;">skip_next</mat-icon>
-				[DEV] Next Status: {{ activeEntry()?.status }}
-			</button>
-		</div>
-	}
+
 
 	<!-- ═══════════════════════════════════════════════════════════════
 	     MODE B — Has Entry: Level Tracker + Action Views
 	════════════════════════════════════════════════════════════════ -->
 	@if (pageMode() === 'has-entry' && activeEntry()) {
+
+		<!-- Entry Switcher — shown when user has more than one entry -->
+		@if (hasMultipleEntries()) {
+			<div class="entry-switcher">
+				<span class="entry-switcher-label"><mat-icon>folder_copy</mat-icon>Your Entries</span>
+				<div class="entry-switcher-tabs">
+					@for (entry of allLeadEntries(); track entry.entry_id) {
+						<button
+							class="entry-tab"
+							[class.active]="activeEntry()?.entry_id === entry.entry_id"
+							[class.status-winner]="entry.status === 'winner'"
+							[class.status-eliminated]="entry.status === 'eliminated'"
+							(click)="switchEntry(entry)"
+							[attr.aria-label]="'Switch to ' + (entry.refined_title || entry.raw_project_name)">
+							<span class="entry-tab-title">{{ entry.refined_title || entry.raw_project_name }}</span>
+							<span class="entry-tab-meta">{{ entry.category | titlecase }} · {{ entry.status | titlecase }}</span>
+						</button>
+					}
+				</div>
+			</div>
+		}
 
 		<!-- Winner / Finalist / Eliminated Banners -->
 		@if (isWinner()) {
@@ -424,6 +437,15 @@
 		<!-- Pipeline — always visible -->
 		<app-contest-pipeline [entry]="activeEntry()!" />
 
+		<!-- Submit New Idea CTA — shown when entry is in terminal state -->
+		@if (isTerminal() && !showNewEntryForm()) {
+			<div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
+				<button mat-raised-button color="primary" type="button" (click)="startNewEntry()">
+					<mat-icon>add_circle</mat-icon>Submit New Idea
+				</button>
+			</div>
+		}
+
 		<!-- Tracker: only when no sub-view is open -->
 		@if (entryView() === 'tracker') {
 			<app-contest-tracker [entry]="activeEntry()!" (ctaClicked)="openView($event)" />
@@ -438,6 +460,133 @@
 		}
 		@if (entryView() === 'interview') {
 			<app-contest-interview [entry]="activeEntry()!" (back)="backToTracker()" (submitted)="onChildSubmitted()" />
+		}
+
+		<!-- New Idea Form — shown after terminal state -->
+		@if (showNewEntryForm()) {
+			<mat-card class="form-card" style="margin-top:16px;">
+				<mat-card-content>
+					<div class="form-card-header">
+						<mat-icon class="form-card-icon">rocket_launch</mat-icon>
+						<div>
+							<h2 class="section-title">Submit a New Idea</h2>
+							<p class="section-hint">Start a fresh contest entry with a new project.</p>
+						</div>
+						<button mat-icon-button type="button" (click)="showNewEntryForm.set(false)" aria-label="Close">
+							<mat-icon>close</mat-icon>
+						</button>
+					</div>
+
+					<form [formGroup]="ideaForm" (ngSubmit)="onSubmitIdea()">
+
+						<div class="form-section">
+							<h3 class="subsection-title">Team Members</h3>
+							<p class="section-hint">You are the team lead. Add up to 3 additional members.</p>
+
+							<div class="member-card member-lead">
+								<div class="member-header">
+									<span class="member-label"><mat-icon>person</mat-icon>Member 1 — You (Team Lead)</span>
+								</div>
+								<div class="form-row form-row-3">
+									<mat-form-field appearance="fill"><mat-label>First Name</mat-label><input matInput [value]="currentUserFirstName" readonly></mat-form-field>
+									<mat-form-field appearance="fill"><mat-label>Last Name</mat-label><input matInput [value]="currentUserLastName" readonly></mat-form-field>
+									<mat-form-field appearance="fill"><mat-label>Email</mat-label><input matInput [value]="currentUserEmail" readonly></mat-form-field>
+								</div>
+							</div>
+
+							@for (member of teamMembers.controls; track $index; let i = $index) {
+								<div class="member-card" [formGroup]="$any(member)">
+									<div class="member-header">
+										<span class="member-label"><mat-icon>person_add</mat-icon>Member {{ i + 2 }}@if (otpVerified()[i]) { <span class="otp-verified-badge">✅ Verified</span> }</span>
+										<button mat-icon-button type="button" class="remove-btn" (click)="removeMember(i)" aria-label="Remove member"><mat-icon>close</mat-icon></button>
+									</div>
+									<div class="form-row form-row-3">
+										<mat-form-field appearance="fill"><mat-label>First Name</mat-label><input matInput formControlName="first_name" [readonly]="otpSent()[i] || otpVerified()[i]"></mat-form-field>
+										<mat-form-field appearance="fill"><mat-label>Last Name (optional)</mat-label><input matInput formControlName="last_name" [readonly]="otpSent()[i] || otpVerified()[i]"></mat-form-field>
+										<mat-form-field appearance="fill"><mat-label>{{ TEXT.memberEmailLabel }}</mat-label><input matInput formControlName="email" placeholder="name@example.com" [readonly]="otpSent()[i] || otpVerified()[i]"></mat-form-field>
+									</div>
+									@if (!otpVerified()[i]) {
+										<div class="otp-email-row">
+											<button mat-stroked-button type="button" class="otp-send-btn" [disabled]="otpSending()[i] || !$any(member).get('email')?.valid" (click)="sendOtp(i)">
+												@if (otpSending()[i]) { <mat-spinner diameter="16"></mat-spinner> } @else { <mat-icon>send</mat-icon> }
+												{{ otpSent()[i] ? 'Resend OTP' : 'Send OTP' }}
+											</button>
+										</div>
+									}
+									@if (otpSent()[i] && !otpVerified()[i]) {
+										<div class="otp-verify-row">
+											<mat-form-field appearance="fill" class="otp-input-field"><mat-label>Enter 6-digit OTP</mat-label><input matInput formControlName="otp" placeholder="123456" maxlength="6"></mat-form-field>
+											<button mat-flat-button color="primary" type="button" class="otp-verify-btn" [disabled]="otpVerifying()[i] || !$any(member).get('otp')?.value" (click)="verifyOtp(i)">
+												@if (otpVerifying()[i]) { <mat-spinner diameter="16"></mat-spinner> } @else { <mat-icon>verified</mat-icon> }Verify
+											</button>
+										</div>
+									}
+									@if (otpError()[i]) { <p class="otp-error">{{ otpError()[i] }}</p> }
+								</div>
+							}
+							@if (teamMembers.length < 3) {
+								<div style="display:flex;justify-content:flex-end;">
+									<button mat-stroked-button type="button" class="add-member-btn" [disabled]="teamMembers.length > 0 && !otpVerified()[teamMembers.length - 1]" (click)="addMember()">
+										<mat-icon>person_add</mat-icon>{{ TEXT.addMemberBtn }}
+									</button>
+								</div>
+							}
+						</div>
+
+						<mat-divider></mat-divider>
+
+						<div class="form-section">
+							<h3 class="subsection-title">Project Details</h3>
+							<div class="form-row">
+								<mat-form-field appearance="fill"><mat-label>{{ TEXT.projectTypeLabel }}</mat-label><mat-select formControlName="project_type"><mat-option value="technical">Technical</mat-option><mat-option value="non_technical">Non-Technical</mat-option></mat-select></mat-form-field>
+								<mat-form-field appearance="fill"><mat-label>{{ TEXT.categoryLabel }}</mat-label><mat-select formControlName="category">@for (cat of categories(); track cat.value) { <mat-option [value]="cat.value">{{ cat.label }}</mat-option> }</mat-select></mat-form-field>
+							</div>
+							<mat-form-field appearance="fill" class="full-width"><mat-label>{{ TEXT.projectTitleLabel }}</mat-label><input matInput formControlName="raw_project_name"></mat-form-field>
+							<mat-form-field appearance="fill" class="full-width"><mat-label>{{ TEXT.projectDescLabel }}</mat-label><textarea matInput formControlName="raw_description" rows="6" placeholder="Describe your project in detail. Minimum 750 characters." [maxlength]="1000"></textarea><mat-hint align="end">{{ ideaForm.get('raw_description')?.value?.length || 0 }} / 1000 (min 750)</mat-hint></mat-form-field>
+							<mat-form-field appearance="fill" class="full-width"><mat-label>{{ TEXT.techStackLabel }}</mat-label><input matInput formControlName="tech_stack" placeholder="Angular, Python, MongoDB..."></mat-form-field>
+							<div class="form-row">
+								<mat-form-field appearance="fill"><mat-label>{{ TEXT.collegeLabel }}</mat-label><input matInput formControlName="college_name"></mat-form-field>
+								<mat-form-field appearance="fill"><mat-label>{{ TEXT.gradYearLabel }}</mat-label><input matInput type="number" formControlName="graduation_year" placeholder="2025"></mat-form-field>
+							</div>
+						</div>
+
+						<div class="form-actions">
+							@if (teamMembers.length > 0 && !allMembersVerified()) {
+								<p class="unverified-hint"><mat-icon>info</mat-icon>Verify all team members before submitting.</p>
+							}
+							@if (submitting()) {
+								<div class="ai-loading-overlay"><mat-spinner diameter="28"></mat-spinner>@for (_ of [aiLoadingMessage()]; track aiLoadingMessage()) { <span class="ai-loading-text">{{ aiLoadingMessage() }}</span> }</div>
+							} @else {
+								<button mat-raised-button color="primary" type="submit" [disabled]="!allMembersVerified()" class="submit-btn"><mat-icon>send</mat-icon>Submit</button>
+							}
+						</div>
+					</form>
+
+					<!-- AI Refinement Result -->
+					@if (ideaResult() !== null) {
+						<div class="refinement-header" style="margin-top:16px;">
+							<div class="refinement-badge"><mat-icon>auto_awesome</mat-icon><span>AI Refinement Complete</span></div>
+							@if (ideaResult()!.idea_quality_score >= 60) { <span class="score-chip score-pass">Quality Score: {{ ideaResult()!.idea_quality_score }}/100 ✓</span> }
+							@else { <span class="score-chip score-fail">Quality Score: {{ ideaResult()!.idea_quality_score }}/100 — Below threshold</span> }
+						</div>
+						@if (ideaResult()!.idea_quality_score >= 60) {
+							<div class="refinement-confirm-row">
+								<p class="confirm-question">Is this what you meant? Confirm to proceed to payment.</p>
+								<div class="refinement-actions">
+									<button mat-stroked-button type="button" (click)="onEditIdea()"><mat-icon>edit</mat-icon>Edit Idea</button>
+									<button mat-raised-button color="primary" type="button" [disabled]="submitting()" (click)="onConfirmIdea()">
+										@if (submitting()) { <mat-spinner diameter="18"></mat-spinner> } @else { <mat-icon>check_circle</mat-icon> }
+										Yes, Confirm & Pay ₹{{ ideaResult()!.amount }}
+									</button>
+								</div>
+							</div>
+						} @else {
+							<p class="low-score-msg">Your idea scored below the minimum threshold of 60. Please refine your description and try again.</p>
+							<button mat-stroked-button type="button" (click)="onEditIdea()"><mat-icon>edit</mat-icon>Refine My Idea</button>
+						}
+					}
+				</mat-card-content>
+			</mat-card>
 		}
 
 	}

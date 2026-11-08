@@ -1373,3 +1373,94 @@
 	from { opacity: 0; transform: translateY(4px); }
 	to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ── Entry Switcher ──────────────────────────────────────────────── */
+.entry-switcher {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	margin-bottom: 20px;
+	flex-wrap: wrap;
+}
+
+.entry-switcher-label {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: var(--color-secondary);
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	white-space: nowrap;
+	padding-top: 10px;
+}
+
+.entry-switcher-label mat-icon {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+}
+
+.entry-switcher-tabs {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+	flex: 1;
+}
+
+.entry-tab {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 2px;
+	padding: 8px 14px;
+	border-radius: 10px;
+	border: 2px solid #e5e7eb;
+	background: #fff;
+	cursor: pointer;
+	transition: border-color 0.15s, background 0.15s;
+	min-width: 160px;
+	max-width: 240px;
+	text-align: left;
+}
+
+.entry-tab:hover {
+	border-color: #a78bfa;
+	background: #faf5ff;
+}
+
+.entry-tab.active {
+	border-color: var(--color-button-primary);
+	background: #f5f3ff;
+}
+
+.entry-tab.status-winner {
+	border-color: #f59e0b;
+	background: #fffbeb;
+}
+
+.entry-tab.status-eliminated {
+	border-color: #fca5a5;
+	background: #fff5f5;
+}
+
+.entry-tab-title {
+	font-size: 0.8rem;
+	font-weight: 600;
+	color: #1f2937;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 200px;
+}
+
+.entry-tab-meta {
+	font-size: 0.68rem;
+	color: var(--color-secondary);
+}
+
+@media (max-width: 768px) {
+	.entry-switcher { flex-direction: column; gap: 8px; }
+	.entry-tab { min-width: 0; width: 100%; max-width: 100%; }
+}
