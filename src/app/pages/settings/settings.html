@@ -1,8 +1,7 @@
 <div class="page-container">
 	<div class="content">
 		<div class="settings-sections">
-			<div class="setting-group">
-				<h2>{{TEXT.general.title}}</h2>
+			<app-ui-section-card [config]="{ title: TEXT.general.title, icon: 'settings' }">
 				<div class="setting-item">
 					<label>{{TEXT.general.theme}}</label>
 					<select>
@@ -18,9 +17,9 @@
 						<option>{{TEXT.general.languageOptions.french}}</option>
 					</select>
 				</div>
-			</div>
-			<div class="setting-group">
-				<h2>{{TEXT.notifications.title}}</h2>
+			</app-ui-section-card>
+
+			<app-ui-section-card [config]="{ title: TEXT.notifications.title, icon: 'notifications' }">
 				<div class="setting-item">
 					<label>
 						<input type="checkbox" checked> {{TEXT.notifications.email}}
@@ -31,7 +30,7 @@
 						<input type="checkbox"> {{TEXT.notifications.push}}
 					</label>
 				</div>
-			</div>
+			</app-ui-section-card>
 		</div>
 	</div>
 </div>

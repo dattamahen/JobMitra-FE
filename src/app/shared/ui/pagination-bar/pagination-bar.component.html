@@ -1,0 +1,7 @@
+<button mat-icon-button [disabled]="isFirst()" (click)="prev()" aria-label="Previous page">
+  <mat-icon>chevron_left</mat-icon>
+</button>
+<span class="pagination-label">{{ label() }}</span>
+<button mat-icon-button [disabled]="isLast()" (click)="next()" aria-label="Next page">
+  <mat-icon>chevron_right</mat-icon>
+</button>

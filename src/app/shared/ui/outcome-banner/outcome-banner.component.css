@@ -1,0 +1,22 @@
+@import '../ui-tokens.css';
+
+:host { display: block; }
+
+.outcome-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  padding: var(--ui-banner-padding);
+  border-radius: var(--ui-banner-radius);
+  border-left: 4px solid;
+}
+
+.outcome-banner--success { background: var(--ui-color-success-bg); color: var(--ui-color-success-text); border-color: var(--ui-color-success-border); }
+.outcome-banner--warn    { background: var(--ui-color-warn-bg);    color: var(--ui-color-warn-text);    border-color: var(--ui-color-warn-border); }
+.outcome-banner--error   { background: var(--ui-color-error-bg);   color: var(--ui-color-error-text);   border-color: var(--ui-color-error-border); }
+.outcome-banner--info    { background: var(--ui-color-info-bg);    color: var(--ui-color-info-text);    border-color: var(--ui-color-info-border); }
+
+.outcome-banner__icon { flex-shrink: 0; }
+.outcome-banner__body { display: flex; flex-direction: column; gap: 0.25rem; }
+.outcome-banner__title { font-weight: 700; }
+.outcome-banner__message { margin: 0; font-size: var(--font-size-sm); opacity: 0.9; }

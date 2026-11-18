@@ -1,12 +1,11 @@
 import { Component, DestroyRef, inject, ChangeDetectionStrategy, computed, signal, input, Inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { from } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
+import { UiPaginationBarComponent } from '../../shared/ui';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -33,18 +32,17 @@ import { SubscriptionDialogComponent } from '../../shared/components/subscriptio
 @Component({
 	selector: 'app-job-search-page',
 	imports: [
-		CommonModule,
 		MatCardModule,
 		MatButtonModule,
 		MatIconModule,
-		MatChipsModule,
 		MatTooltipModule,
 		MatSnackBarModule,
 		MatDialogModule,
 		SkeletonJobCardListComponent,
 		EmptyStateComponent,
 		JobFilterComponent,
-		JobCardComponent
+		JobCardComponent,
+		UiPaginationBarComponent,
 	],
 	templateUrl: './job-search.html',
 	styleUrl: './job-search.css',

@@ -4,6 +4,8 @@ import { SkeletonStatGridComponent } from '../../shared/components/skeletons';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { UiSectionCardComponent } from '../../shared/ui';
+import type { SectionCardConfig } from '../../shared/ui/ui.types';
 
 import { FeatureGuardDirective } from '../../shared/directives/feature-guard.directive';
 import { InterviewHistoryComponent } from '../../shared/components/interview-history/interview-history.component';
@@ -21,7 +23,7 @@ import { MOCK_INTERVIEWS_TEXT } from '../../data/mock-interviews-page-data';
 @Component({
 	selector: 'app-mock-interviews-page',
 	imports: [MatButtonModule, MatCardModule, MatIconModule, FeatureGuardDirective, InterviewHistoryComponent, MotivationBannerComponent,
-		SkeletonStatGridComponent],
+		SkeletonStatGridComponent, UiSectionCardComponent],
 	templateUrl: './mock-interviews.html',
 	styleUrl: './mock-interviews.css',
 	changeDetection: ChangeDetectionStrategy.OnPush
@@ -67,10 +69,14 @@ export class MockInterviewsPage {
 			});
 	}
 
+	getInterviewCardConfig(interview: any): SectionCardConfig {
+		return { title: interview.title, icon: interview.icon };
+	}
+
 	async onStartInterview(type: string = 'technical'): Promise<void> {
 		const credits = await this.creditsService.loadCredits();
 		if (credits.mock_interviews_remaining <= 0) {
-			await this.creditsService.gate('mock_interview'); // opens subscription dialog
+			await this.creditsService.gate('mock_interview');
 			return;
 		}
 		this.startInterviewWithPrompt(type);

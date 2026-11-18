@@ -1,0 +1,117 @@
+<div class="cv-upload-screen">
+	<div class="cv-upload-header">
+		<button mat-icon-button (click)="cancelled.emit()"
+			[disabled]="step() === 'processing' || step() === 'saving'" aria-label="Back">
+			<mat-icon>arrow_back</mat-icon>
+		</button>
+		<h2>Upload Your CV</h2>
+	</div>
+
+	@if (step() === 'idle' || step() === 'processing') {
+		<div class="upload-drop-zone"
+			[class.drag-over]="dragOver()"
+			[class.disabled]="step() === 'processing'"
+			(dragover)="step() !== 'processing' && onDragOver($event)"
+			(dragleave)="onDragLeave()"
+			(drop)="step() !== 'processing' && onDrop($event)"
+			(click)="step() !== 'processing' && cvFileInput.click()"
+			role="button" tabindex="0"
+			(keydown.enter)="step() !== 'processing' && cvFileInput.click()"
+			aria-label="Upload CV file">
+			<mat-icon>cloud_upload</mat-icon>
+			<p>Drag &amp; drop your CV here, or click to browse</p>
+			<span class="file-hint">PDF or DOCX · Max 10 MB · No password-protected files</span>
+			<input #cvFileInput type="file"
+				accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+				style="display:none" (change)="onFileSelected($event)" aria-hidden="true">
+		</div>
+
+		@if (step() === 'processing') {
+			<div class="upload-status processing">
+				<mat-icon class="spin">sync</mat-icon>
+				<span>Analysing your CV with AI — this may take a few seconds…</span>
+			</div>
+		}
+
+		@if (error()) {
+			<div class="upload-status error">
+				<mat-icon>error_outline</mat-icon>
+				<span>{{ error() }}</span>
+			</div>
+		}
+	}
+
+	@if (step() === 'preview' || step() === 'saving') {
+		@if (warnings().length > 0) {
+			<div class="warnings-list">
+				@for (w of warnings(); track w) {
+					<div class="warning-item">
+						<mat-icon>warning_amber</mat-icon>
+						<span>{{ w }}</span>
+					</div>
+				}
+			</div>
+		}
+
+		<div class="preview-section">
+			<h3>Extracted Details — Review before saving</h3>
+			<div class="preview-fields">
+				@for (field of getPreviewScalars(); track field.label) {
+					<div class="preview-field">
+						<label>{{ field.label }}</label>
+						<span>{{ field.value }}</span>
+					</div>
+				}
+			</div>
+
+			@if (getPreviewSkills().length > 0) {
+				<div class="preview-array">
+					<label>Skills</label>
+					<div class="preview-chips">
+						@for (s of getPreviewSkills(); track s) {
+							<span class="preview-chip">{{ s }}</span>
+						}
+					</div>
+				</div>
+			}
+
+			@if (getArrayCount('work_experience') > 0) {
+				<div class="preview-field">
+					<label>Work Experience</label>
+					<span>{{ getArrayCount('work_experience') }} entries found</span>
+				</div>
+			}
+			@if (getArrayCount('education') > 0) {
+				<div class="preview-field">
+					<label>Education</label>
+					<span>{{ getArrayCount('education') }} entries found</span>
+				</div>
+			}
+			@if (getArrayCount('projects') > 0) {
+				<div class="preview-field">
+					<label>Projects</label>
+					<span>{{ getArrayCount('projects') }} entries found</span>
+				</div>
+			}
+			@if (getArrayCount('certifications') > 0) {
+				<div class="preview-field">
+					<label>Certifications</label>
+					<span>{{ getArrayCount('certifications') }} entries found</span>
+				</div>
+			}
+		</div>
+
+		<div class="cv-upload-actions">
+			<button mat-stroked-button (click)="retryUpload()" [disabled]="step() === 'saving'">
+				Upload Different File
+			</button>
+			<button mat-flat-button color="primary" (click)="confirmSave()" [disabled]="step() === 'saving'">
+				@if (step() === 'saving') {
+					<mat-icon class="spin">sync</mat-icon> Saving…
+				} @else {
+					<mat-icon>check</mat-icon> Save to Profile
+				}
+			</button>
+		</div>
+	}
+</div>

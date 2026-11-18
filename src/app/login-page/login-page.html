@@ -205,7 +205,38 @@
 
 			@if (isSignupMode()) {
 				<div class="auth-form">
-					<app-dynamic-form [config]="signupFormConfig" (formSubmit)="onSignup($event)"></app-dynamic-form>
+					<app-dynamic-form [config]="signupFormConfig" (formSubmit)="onSignup($event)" (formChange)="onSignupFormChange($event)"></app-dynamic-form>
+
+					@if (otpStep() === 'sending') {
+						<p class="otp-status otp-status--sending">Sending OTP to {{signupEmail}}…</p>
+					}
+					@if (otpStep() === 'sent') {
+						@if (otpError()) {
+							<p class="otp-status otp-status--error">✗ {{otpError()}}</p>
+						} @else {
+							<p class="otp-status otp-status--sent">✉ OTP sent to <strong>{{signupEmail}}</strong> — check your inbox</p>
+						}
+						<div class="otp-input-row">
+							<input class="otp-input-field" type="text" inputmode="numeric" maxlength="6"
+								placeholder="Enter 6-digit OTP" [(ngModel)]="otpValue"
+								[class.otp-input-field--error]="otpError()"
+								aria-label="Email OTP">
+							<button class="otp-verify-btn" type="button" (click)="verifyOtp()"
+								[disabled]="otpValue.length !== 6 || otpLoading">
+								{{ otpLoading ? 'Verifying…' : 'Verify' }}
+							</button>
+						</div>
+						<a class="resend-link" (click)="sendOtp()" tabindex="0" (keydown.enter)="sendOtp()">Resend OTP</a>
+					}
+					@if (otpStep() === 'verified') {
+						<p class="otp-status otp-status--verified">✓ Email verified</p>
+					}
+
+					<button class="signup-submit-btn" type="button" (click)="submitSignupForm()"
+						[disabled]="otpStep() !== 'verified' || signupFormConfig.loading">
+						@if (signupFormConfig.loading) { <span class="btn-spinner"></span> Saving… }
+						@else { Create Account }
+					</button>
 				</div>
 			}
 

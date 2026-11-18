@@ -225,9 +225,9 @@ export class UserService {
 		return Math.round((completedFields / fields.length) * 100);
 	}
 
-	suggestSkills(currentSkills: string[]): Observable<string[]> {
+	suggestSkills(currentSkills: string[]): Observable<{ name: string; version: string }[]> {
 		/** Call LLM to get next relevant skill suggestions based on current skills. */
-		return this.apiService.post<{ suggestions: string[] }>('/profile/suggest-skills', { current_skills: currentSkills }).pipe(
+		return this.apiService.post<{ suggestions: { name: string; version: string }[] }>('/profile/suggest-skills', { current_skills: currentSkills }).pipe(
 			map(res => res.suggestions ?? []),
 			catchError(() => of([]))
 		);

@@ -1,0 +1,58 @@
+@if (matVariant() === 'raised') {
+  <button mat-raised-button
+    [color]="config().color ?? 'primary'"
+    [type]="config().type ?? 'button'"
+    [disabled]="isDisabled()"
+    [class.btn-ai]="isAi()"
+    class="async-btn"
+    (click)="!isDisabled() && clicked.emit()">
+    @if (isLoading()) {
+      <mat-spinner diameter="16" class="async-btn__spinner" />
+    } @else if (config().icon) {
+      <mat-icon>{{ config().icon }}</mat-icon>
+    }
+    {{ displayLabel() }}
+  </button>
+} @else if (matVariant() === 'stroked') {
+  <button mat-stroked-button
+    [color]="config().color ?? 'primary'"
+    [type]="config().type ?? 'button'"
+    [disabled]="isDisabled()"
+    class="async-btn"
+    (click)="!isDisabled() && clicked.emit()">
+    @if (isLoading()) {
+      <mat-spinner diameter="16" class="async-btn__spinner" />
+    } @else if (config().icon) {
+      <mat-icon>{{ config().icon }}</mat-icon>
+    }
+    {{ displayLabel() }}
+  </button>
+} @else if (matVariant() === 'flat') {
+  <button mat-flat-button
+    [color]="config().color ?? 'primary'"
+    [type]="config().type ?? 'button'"
+    [disabled]="isDisabled()"
+    class="async-btn"
+    (click)="!isDisabled() && clicked.emit()">
+    @if (isLoading()) {
+      <mat-spinner diameter="16" class="async-btn__spinner" />
+    } @else if (config().icon) {
+      <mat-icon>{{ config().icon }}</mat-icon>
+    }
+    {{ displayLabel() }}
+  </button>
+} @else if (matVariant() === 'icon') {
+  <button mat-icon-button
+    [color]="config().color ?? 'primary'"
+    [type]="config().type ?? 'button'"
+    [disabled]="isDisabled()"
+    [attr.aria-label]="config().label"
+    class="async-btn"
+    (click)="!isDisabled() && clicked.emit()">
+    @if (isLoading()) {
+      <mat-spinner diameter="16" class="async-btn__spinner" />
+    } @else if (config().icon) {
+      <mat-icon>{{ config().icon }}</mat-icon>
+    }
+  </button>
+}

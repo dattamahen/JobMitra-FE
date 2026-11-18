@@ -1,0 +1,21 @@
+@import '../ui-tokens.css';
+
+:host { display: inline-flex; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge--pill        { border-radius: 999px; }
+.badge--sm { font-size: var(--ui-chip-sm-font); height: var(--ui-chip-sm-height); padding: var(--ui-chip-sm-padding); }
+.badge--md { font-size: var(--ui-chip-md-font); height: var(--ui-chip-md-height); padding: var(--ui-chip-md-padding); }
+
+.badge--success { background: var(--ui-color-success-bg); color: var(--ui-color-success-text); }
+.badge--warn    { background: var(--ui-color-warn-bg);    color: var(--ui-color-warn-text); }
+.badge--error   { background: var(--ui-color-error-bg);   color: var(--ui-color-error-text); }
+.badge--info    { background: var(--ui-color-info-bg);    color: var(--ui-color-info-text); }
+.badge--neutral { background: var(--ui-color-neutral-bg); color: var(--ui-color-neutral-text); }
+.badge--primary { background: var(--ui-color-primary-bg); color: var(--ui-color-primary-text); }

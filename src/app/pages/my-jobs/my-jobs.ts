@@ -3,10 +3,11 @@ import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { UiStatusBadgeComponent, UiChipListComponent, UiMetaRowComponent, UiPaginationBarComponent } from '../../shared/ui';
+import type { StatusBadgeConfig, ChipListConfig, MetaItem } from '../../shared/ui/ui.types';
 
 import { SkeletonJobCardListComponent } from '../../shared/components/skeletons';
 import { JobFilterComponent, JobFilterConfig, JobFilterOptions } from '../../shared/components/job-filter/job-filter.component';
@@ -76,12 +77,15 @@ export interface FilterOptions {
 		MatCardModule,
 		MatButtonModule,
 		MatIconModule,
-		MatChipsModule,
 		MatProgressSpinnerModule,
 		MatTooltipModule,
 		MatSnackBarModule,
 		JobFilterComponent,
-		SkeletonJobCardListComponent
+		SkeletonJobCardListComponent,
+		UiStatusBadgeComponent,
+		UiChipListComponent,
+		UiMetaRowComponent,
+		UiPaginationBarComponent
 	],
 	templateUrl: './my-jobs.html',
 	styleUrls: ['./my-jobs.css'],
@@ -427,6 +431,30 @@ export class MyJobsPage {
 				this.snackBar.open(error.message || 'Failed to delete job', this.TEXT.snackbar.close, { duration: 5000 });
 			}
 		}
+	}
+
+	onPageChange(page: number): void {
+		this.currentPage.set(page);
+		this.loadMyJobs();
+	}
+
+	getJobMetaItems(job: HRJobListing): MetaItem[] {
+		return [
+			{ icon: 'location_on', text: this.formatLocation(job) },
+			{ icon: 'work', text: this.getEmploymentTypeDisplay(job.employment_type) },
+			{ icon: 'trending_up', text: this.getExperienceLevelDisplay(job.experience_level) },
+			{ icon: 'payments', text: this.formatSalary(job), hidden: !job.salary },
+			{ icon: 'schedule', text: this.getDaysAgo(job.posted_date) + 'd ago' },
+		];
+	}
+
+	getJobSkillsConfig(job: HRJobListing): ChipListConfig {
+		return { items: job.skills_required, variant: 'skill', size: 'sm', maxVisible: 5 };
+	}
+
+	getStatusBadgeConfig(job: HRJobListing): StatusBadgeConfig {
+		const label = job.is_active ? this.TEXT.labels.active : this.TEXT.labels.inactive;
+		return { value: label, colorMap: { [this.TEXT.labels.active]: 'success', [this.TEXT.labels.inactive]: 'neutral' }, pill: true };
 	}
 
 	duplicateJob(job: HRJobListing) {

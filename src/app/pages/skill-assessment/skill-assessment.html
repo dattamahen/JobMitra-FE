@@ -12,44 +12,26 @@
 			<div class="skill-categories">
 				<div class="category-card">
 					<h2><mat-icon>computer</mat-icon> {{TEXT.categories.technicalSkills}}</h2>
-					<div class="skills-list">
-						@for (skill of getTechnicalSkills(); track skill.id) {
-							<div class="skill-item">
-								<span class="skill-name">{{ skill.name }}</span>
-								<div class="skill-level">
-									<div class="progress-bar">
-										<div class="progress" [style.width.%]="skill.currentLevel" [style.background]="getProgressColor(skill.currentLevel)"></div>
-									</div>
-								</div>
-								<div class="skill-actions">
-									<button class="interview-btn" (click)="startMockInterview(skill)">
-										<mat-icon>mic</mat-icon> {{TEXT.buttons.practiceInterview}}
-									</button>
-								</div>
-							</div>
-						}
-					</div>
+					@for (skill of getTechnicalSkills(); track skill.id) {
+						<app-ui-progress-item [config]="{
+							label: skill.name,
+							value: skill.currentLevel,
+							showPercentage: true,
+							actions: [{ id: skill.id, label: TEXT.buttons.practiceInterview, icon: 'mic' }]
+						}" (actionClick)="onSkillAction($event)" />
+					}
 				</div>
-				
+
 				<div class="category-card">
 					<h2><mat-icon>psychology</mat-icon> {{TEXT.categories.softSkills}}</h2>
-					<div class="skills-list">
-						@for (skill of getSoftSkills(); track skill.id) {
-							<div class="skill-item">
-								<span class="skill-name">{{ skill.name }}</span>
-								<div class="skill-level">
-									<div class="progress-bar">
-										<div class="progress" [style.width.%]="skill.currentLevel" [style.background]="getProgressColor(skill.currentLevel)"></div>
-									</div>
-								</div>
-								<div class="skill-actions">
-									<button class="interview-btn" (click)="startMockInterview(skill)">
-										<mat-icon>mic</mat-icon> {{TEXT.buttons.practiceInterview}}
-									</button>
-								</div>
-							</div>
-						}
-					</div>
+					@for (skill of getSoftSkills(); track skill.id) {
+						<app-ui-progress-item [config]="{
+							label: skill.name,
+							value: skill.currentLevel,
+							showPercentage: true,
+							actions: [{ id: skill.id, label: TEXT.buttons.practiceInterview, icon: 'mic' }]
+						}" (actionClick)="onSkillAction($event)" />
+					}
 				</div>
 			</div>
 		} @else {

@@ -1,0 +1,8 @@
+<dl class="preference-list">
+  @for (item of visibleItems(); track item.label) {
+    <div class="preference-row">
+      <dt class="preference-row__label">{{ item.label }}</dt>
+      <dd class="preference-row__value">{{ item.value }}</dd>
+    </div>
+  }
+</dl>

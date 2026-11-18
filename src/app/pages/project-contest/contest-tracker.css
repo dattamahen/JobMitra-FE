@@ -131,3 +131,22 @@
 	.level-panel-cta { flex-direction: column; align-items: flex-start; }
 	.score-item { grid-template-columns: 1fr; gap: 4px; }
 }
+
+.unlock-countdown {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	margin-top: 6px;
+	background: #fef3c7;
+	color: #92400e;
+	font-size: 0.78rem;
+	font-weight: 600;
+	padding: 4px 10px;
+	border-radius: 20px;
+}
+
+.unlock-countdown mat-icon {
+	font-size: 14px;
+	width: 14px;
+	height: 14px;
+}

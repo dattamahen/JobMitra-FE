@@ -36,6 +36,18 @@
 	--height-table-row: 2.25rem;
 	--height-header: 4rem;
 
+	/* Shadows */
+	--shadow-sm: 0 1px 4px rgba(0,0,0,0.06);
+	--shadow-md: 0 4px 12px rgba(0,0,0,0.12);
+	--shadow-lg: 0 8px 24px rgba(0,0,0,0.16);
+
+	/* Font Sizes (extended) */
+	--font-size-xs:  0.75rem;
+	--font-size-sm:  0.875rem;
+	--font-size-md:  1rem;
+	--font-size-lg:  1.125rem;
+	--font-size-xl:  1.5rem;
+
 	/* Border Radius */
 	--border-radius-button: 0.5rem;
 	--border-radius-card: 0.75rem;

@@ -77,7 +77,8 @@ export const SIGNUP_FORM_CONFIG: FormConfig = {
 			]
 		}
 	],
-	submitLabel: 'Create Account'
+	submitLabel: 'Create Account',
+	showActions: false
 };
 
 export const FORGOT_PASSWORD_FORM_CONFIG: FormConfig = {

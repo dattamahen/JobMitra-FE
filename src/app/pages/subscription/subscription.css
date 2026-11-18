@@ -1,8 +1,14 @@
+.page-container {
+	padding: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
 .credits-grid {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	gap: 16px;
-	margin-bottom: 24px;
 }
 
 .credit-card {
@@ -63,7 +69,6 @@
 }
 
 .buy-card {
-	margin-bottom: 16px;
 }
 
 .buy-section {

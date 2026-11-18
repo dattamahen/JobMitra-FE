@@ -16,6 +16,17 @@ export class ContestTrackerComponent {
 	entry = input.required<ContestEntry>();
 	ctaClicked = output<string>();
 
-
 	activeLevel = computed(() => STATUS_LEVEL_MAP[this.entry().status] ?? 1);
+
+	daysUntilUnlock = computed(() => {
+		const e = this.entry();
+		const dateStr =
+			e.status === 'spark_confirmed' ? e.blueprint_opens_at :
+			e.status === 'blueprint_evaluated' ? e.proof_opens_at :
+			e.status === 'proof_evaluated' ? e.interview_opens_at :
+			null;
+		if (!dateStr) return null;
+		const diff = Math.ceil((new Date(dateStr).getTime() - Date.now()) / 86_400_000);
+		return diff > 0 ? diff : 0;
+	});
 }

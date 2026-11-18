@@ -1,0 +1,34 @@
+<div class="stat-grid" [style]="gridStyle()">
+  @for (stat of config().stats; track stat.id) {
+    <div class="stat-card"
+      [class.stat-card--primary]="(stat.color ?? 'primary') === 'primary'"
+      [class.stat-card--success]="stat.color === 'success'"
+      [class.stat-card--warn]="stat.color === 'warn'"
+      [class.stat-card--info]="stat.color === 'info'"
+      [class.stat-card--accent]="stat.color === 'accent'"
+      [class.stat-card--neutral]="stat.color === 'neutral'"
+      [class.stat-card--clickable]="stat.clickable"
+      [style]="cardStyle()"
+      [attr.role]="stat.clickable ? 'button' : null"
+      [attr.tabindex]="stat.clickable ? 0 : null"
+      (click)="stat.clickable && statClick.emit(stat.id)"
+      (keydown.enter)="stat.clickable && statClick.emit(stat.id)">
+      <div class="stat-card__icon-wrap">
+        <mat-icon class="stat-card__icon">{{ stat.icon }}</mat-icon>
+      </div>
+      <div class="stat-card__body">
+        <span class="stat-card__value">{{ stat.value }}</span>
+        <span class="stat-card__label">{{ stat.label }}</span>
+        @if (showTrend() && stat.trend) {
+          <span class="stat-card__trend"
+            [class.stat-card__trend--up]="stat.trend.direction === 'up'"
+            [class.stat-card__trend--down]="stat.trend.direction === 'down'"
+            [class.stat-card__trend--neutral]="stat.trend.direction === 'neutral'">
+            <mat-icon>{{ trendIcon(stat.trend.direction) }}</mat-icon>
+            {{ stat.trend.percentage }}%
+          </span>
+        }
+      </div>
+    </div>
+  }
+</div>

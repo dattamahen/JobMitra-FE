@@ -2,12 +2,6 @@
 
   <!-- ═══════════════════════════════════════════════════════ LIST VIEW -->
   @if (view() === 'list') {
-    <div class="page-header list-header">
-      <button mat-icon-button (click)="loadJobs()" matTooltip="Refresh" aria-label="Refresh jobs">
-        <mat-icon>refresh</mat-icon>
-      </button>
-    </div>
-
     @if (listLoading()) {
       <app-skeleton-job-card-list
         [count]="4"
@@ -34,31 +28,14 @@
                   <div class="job-title-row">
                     <h3 class="job-title">{{ job.title }}</h3>
                     @if (job.is_active) {
-                      <mat-chip class="chip-active">Active</mat-chip>
+                      <app-ui-status-badge [config]="{ value: 'Active', colorMap: { 'Active': 'success' }, pill: true }" />
                     } @else {
-                      <mat-chip class="chip-expired">Expired</mat-chip>
+                      <app-ui-status-badge [config]="{ value: 'Expired', colorMap: { 'Expired': 'neutral' }, pill: true }" />
                     }
                   </div>
                   <span class="company-name">{{ job.company }}</span>
-                  <div class="meta-row">
-                    <span class="meta-item"><mat-icon>location_on</mat-icon>{{ locationStr(job) }}</span>
-                    <span class="meta-item"><mat-icon>work</mat-icon>{{ job.employment_type }}</span>
-                    <span class="meta-item"><mat-icon>trending_up</mat-icon>{{ job.experience_level }}</span>
-                    <span class="meta-item"><mat-icon>schedule</mat-icon>{{ formatDate(job.posted_date) }}</span>
-                    @if (job.is_active) {
-                      <span class="meta-item expires" [class.urgent]="daysLeft(job.expires_at) <= 3">
-                        <mat-icon>timer</mat-icon>{{ daysLeft(job.expires_at) }} days left
-                      </span>
-                    }
-                  </div>
-                  <div class="skills-row">
-                    @for (skill of job.skills_required.slice(0, 5); track skill) {
-                      <mat-chip class="skill-chip">{{ skill }}</mat-chip>
-                    }
-                    @if (job.skills_required.length > 5) {
-                      <mat-chip class="skill-chip">+{{ job.skills_required.length - 5 }}</mat-chip>
-                    }
-                  </div>
+                  <app-ui-meta-row [items]="getJobMetaItems(job)" />
+                  <app-ui-chip-list [config]="getSkillsChipConfig(job.skills_required)" />
                 </div>
                 <div class="job-actions">
                   <mat-chip class="apps-chip" [class.has-apps]="job.applications_count > 0">
@@ -100,7 +77,7 @@
                               <span class="applicant-email">{{ app.user_email }}</span>
                             </div>
                             <div class="applicant-meta">
-                              <mat-chip class="status-chip">{{ app.status }}</mat-chip>
+                              <app-ui-status-badge [config]="{ value: app.status, pill: true }" />
                               <span class="applied-date">{{ formatDate(app.applied_date) }}</span>
                             </div>
                           </div>
@@ -148,14 +125,9 @@
 
   <!-- ═══════════════════════════════════════════════════════ POST VIEW -->
   @if (view() === 'post') {
-    <div class="page-header">
-      <button mat-icon-button (click)="backToList()" aria-label="Back to list">
+    <button mat-icon-button (click)="backToList()" aria-label="Back to list">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <div>
-        <h2>Post an Internal Job</h2>
-      </div>
-    </div>
 
     <!-- Step: Verify Email -->
     @if (postStep() === 'verify-email') {

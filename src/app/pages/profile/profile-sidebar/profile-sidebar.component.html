@@ -1,0 +1,70 @@
+<div class="profile-summary-section">
+	<mat-card class="linkedin-profile-card">
+		<div class="profile-cover">
+			<div class="cover-actions">
+				<app-profile-share [profileData]="profileSnapshot()" />
+			</div>
+			<div class="profile-avatar-section">
+				<div class="avatar-wrapper"
+					[style.background-image]="avatarImage() ? 'url(' + avatarImage() + ')' : null"
+					[style.background-size]="avatarImage() ? 'cover' : null"
+					[style.background-position]="avatarImage() ? 'center' : null"
+					(click)="avatarInput.click()" role="button" tabindex="0"
+					(keydown.enter)="avatarInput.click()" aria-label="Change avatar">
+					@if (!avatarImage()) {
+						<mat-icon class="profile-avatar">account_circle</mat-icon>
+					}
+					<input #avatarInput type="file" accept="image/*" style="display:none"
+						(change)="onAvatarFileSelected($event)" aria-hidden="true">
+				</div>
+			</div>
+		</div>
+		<mat-card-content class="profile-content">
+			<div class="profile-header">
+				<h1 class="profile-name">{{ fullName() || TEXT.placeholders.yourName }}</h1>
+				<p class="profile-headline">{{ currentRole() || TEXT.placeholders.addHeadline }}</p>
+				<div class="profile-location">
+					{{ location() || TEXT.placeholders.addLocation }} •
+					<span class="contact-info">{{ TEXT.labels.contactInfo }}</span>
+				</div>
+			</div>
+			<div class="profile-stats">
+				<div class="stat-item">
+					<span class="stat-number">{{ experience() || '0' }}</span>
+					<span class="stat-label">{{ TEXT.labels.yearsExperience }}</span>
+				</div>
+				<div class="stat-divider"></div>
+				<div class="stat-item">
+					<span class="stat-number">{{ completionPercentage() }}</span>
+					<span class="stat-label">{{ TEXT.labels.percentComplete }}</span>
+				</div>
+			</div>
+		</mat-card-content>
+	</mat-card>
+
+	<app-ui-section-card [config]="aboutSectionConfig()">
+		@if (professionalSummary()) {
+			<p class="about-text">{{ professionalSummary() }}</p>
+		} @else {
+			<p class="empty-text">{{ TEXT.emptyStates.addSummary }}</p>
+		}
+	</app-ui-section-card>
+
+	<app-ui-section-card [config]="skillsSectionConfig()">
+		<app-ui-chip-list [config]="skillsChipConfig()" />
+	</app-ui-section-card>
+
+	<app-ui-section-card [config]="preferencesSectionConfig()">
+		<app-ui-preference-list [items]="preferencesListItems()" />
+	</app-ui-section-card>
+
+	@if (highestQualification()) {
+		<app-ui-section-card [config]="educationSectionConfig()">
+			<app-ui-contact-list [items]="educationContactItems()" />
+		</app-ui-section-card>
+	}
+
+	<app-ui-section-card [config]="contactSectionConfig()">
+		<app-ui-contact-list [items]="contactListItems()" />
+	</app-ui-section-card>
+</div>

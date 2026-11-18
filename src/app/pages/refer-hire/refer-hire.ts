@@ -19,6 +19,8 @@ import { SkeletonJobCardListComponent } from '../../shared/components/skeletons'
 import { InternalJobService, InternalJob, ParsedJobPreview } from '../../services/internal-job.service';
 import { MotivationBannerComponent } from '../../shared/components/motivation-banner/motivation-banner.component';
 import { getRandomPosterMotivationGroup, type MotivationGroup } from '../../data/motivation-lines.data';
+import { UiStatusBadgeComponent, UiChipListComponent, UiMetaRowComponent } from '../../shared/ui';
+import type { MetaItem, ChipListConfig } from '../../shared/ui/ui.types';
 
 type View = 'list' | 'post';
 type PostMode = 'manual' | 'image' | 'csv';
@@ -32,7 +34,8 @@ type PostStep = 'verify-email' | 'input' | 'preview' | 'done';
     MatChipsModule, MatProgressSpinnerModule, MatSnackBarModule, MatTooltipModule,
     MatFormFieldModule, MatInputModule, MatSelectModule, MatTableModule,
     MatDialogModule, MotivationBannerComponent, ConfirmDialogComponent,
-    SkeletonJobCardListComponent
+    SkeletonJobCardListComponent,
+    UiStatusBadgeComponent, UiChipListComponent, UiMetaRowComponent
   ],
   templateUrl: './refer-hire.html',
   styleUrl: './refer-hire.css'
@@ -187,6 +190,20 @@ export class ReferHirePage implements OnInit {
 
   formatDate(d: string): string {
     return new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
+  getJobMetaItems(job: InternalJob): MetaItem[] {
+    return [
+      { icon: 'location_on', text: this.locationStr(job) },
+      { icon: 'work', text: job.employment_type || '' },
+      { icon: 'trending_up', text: job.experience_level || '' },
+      { icon: 'schedule', text: this.formatDate(job.posted_date) },
+      { icon: 'timer', text: this.daysLeft(job.expires_at) + ' days left', hidden: !job.is_active },
+    ];
+  }
+
+  getSkillsChipConfig(skills: string[]): ChipListConfig {
+    return { items: skills, variant: 'skill', size: 'sm', maxVisible: 5 };
   }
 
   // ── Post flow actions ──────────────────────────────────────

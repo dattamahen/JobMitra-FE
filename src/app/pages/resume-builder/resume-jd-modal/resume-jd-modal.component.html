@@ -1,0 +1,66 @@
+<div class="jd-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="jd-modal-title"
+	(click)="onOverlayClick($event)">
+	<div class="jd-modal">
+
+		@if (step() === 1) {
+			<div class="jd-modal-header">
+				<h3 id="jd-modal-title"><mat-icon>auto_awesome</mat-icon> CV as per Job Description</h3>
+				<button mat-icon-button (click)="closed.emit()" aria-label="Close"><mat-icon>close</mat-icon></button>
+			</div>
+			<p class="jd-modal-hint">Paste the JD or upload a file — we'll tailor your CV to match it.</p>
+			<textarea class="jd-textarea" placeholder="Paste job description here..."
+				[value]="jdText()" (input)="onTextInput($event)"
+				rows="8" [disabled]="isTailoring()" aria-label="Paste job description">
+			</textarea>
+			<div class="jd-divider"><span>or</span></div>
+			<label class="jd-file-label" [class.disabled]="isTailoring()" for="jd-file-input">
+				<mat-icon>upload_file</mat-icon>
+				{{ jdFileName() || 'Upload JD file (.txt / .pdf)' }}
+			</label>
+			<input id="jd-file-input" type="file" accept=".txt,.pdf" (change)="onFileSelected($event)"
+				class="jd-file-input" [disabled]="isTailoring()" aria-label="Upload job description file">
+			<div class="jd-modal-actions">
+				<button mat-button (click)="closed.emit()">Cancel</button>
+				<button mat-raised-button color="primary" (click)="generate()"
+					[disabled]="isTailoring() || (!jdText() && !jdFileName())">
+					<mat-icon>{{ isTailoring() ? 'hourglass_empty' : 'auto_awesome' }}</mat-icon>
+					{{ isTailoring() ? 'Processing...' : 'Process' }}
+				</button>
+			</div>
+		}
+
+		@if (step() === 2) {
+			<div class="jd-modal-header">
+				<h3 id="jd-modal-title"><mat-icon>check_circle</mat-icon> Processed Successfully!</h3>
+				<button mat-icon-button (click)="closed.emit()" aria-label="Close"><mat-icon>close</mat-icon></button>
+			</div>
+			<div class="jd-success-banner">
+				<mat-icon>auto_awesome</mat-icon>
+				<p>Your CV has been tailored to the job description. Download directly or review and edit first.</p>
+			</div>
+			@if (tailoredData(); as td) {
+				<p class="jd-match-badge">Estimated match: <strong>{{ td.matchPct }}%</strong></p>
+			}
+			<div class="jd-modal-actions">
+				<button mat-button (click)="step.set(1)">← Back</button>
+				<button mat-stroked-button color="primary" (click)="showTemplatePicker.set(true)" [disabled]="isDownloading()">
+					<mat-icon>download</mat-icon> Download
+				</button>
+				<button mat-stroked-button color="primary" (click)="applyAndEdit()">
+					<mat-icon>edit_note</mat-icon> Review &amp; Edit
+				</button>
+			</div>
+		}
+
+	</div>
+</div>
+
+@if (showTemplatePicker()) {
+	<app-resume-template-picker
+		title="Download Tailored CV"
+		hint="Choose a template for your JD-tailored CV."
+		[isLoading]="isDownloading()"
+		(selected)="onTemplateSelected($event)"
+		(dismissed)="showTemplatePicker.set(false)">
+	</app-resume-template-picker>
+}

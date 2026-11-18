@@ -1,0 +1,16 @@
+@import '../ui-tokens.css';
+
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) 0;
+}
+
+.pagination-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-secondary);
+  min-width: 8rem;
+  text-align: center;
+}

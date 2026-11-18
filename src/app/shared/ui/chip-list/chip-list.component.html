@@ -1,0 +1,13 @@
+<div class="chip-list">
+  @for (item of visibleChips(); track item) {
+    <span [class]="chipClass()">
+      {{ item }}
+      @if (config().removable) {
+        <button class="chip__remove" (click)="removed.emit(item)" [attr.aria-label]="'Remove ' + item">×</button>
+      }
+    </span>
+  }
+  @if (overflowCount() > 0) {
+    <span class="chip chip--overflow">+{{ overflowCount() }} more</span>
+  }
+</div>

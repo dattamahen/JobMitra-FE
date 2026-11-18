@@ -3,12 +3,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { firstValueFrom, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { SkeletonListRowsComponent } from '../../shared/components/skeletons';
+import { UiStatusBadgeComponent, UiChipListComponent } from '../../shared/ui';
+import type { StatusColorVariant } from '../../shared/ui/ui.types';
 import type { ApplicationData } from '../../types/application.types';
 import { APPLICATION_STATUS_CLASSES, APPLICATION_STATUS_LABELS, APPLICATION_PROGRESS_MAP } from './applications.constants';
 import { APPLICATIONS_TEXT } from '../../data/applications-data';
@@ -20,11 +21,12 @@ import { InternalJobService } from '../../services/internal-job.service';
 	selector: 'app-applications-page',
 	imports: [
 		MatCardModule,
-		MatChipsModule,
 		MatIconModule,
 		MatButtonModule,
 		MatSnackBarModule,
-		SkeletonListRowsComponent
+		SkeletonListRowsComponent,
+		UiStatusBadgeComponent,
+		UiChipListComponent,
 	],
 	templateUrl: './applications.html',
 	styleUrls: ['./applications.css'],
@@ -42,6 +44,18 @@ export class ApplicationsPage {
 	private internalJobService = inject(InternalJobService);
 
 	readonly TEXT = APPLICATIONS_TEXT;
+
+	readonly statusColorMap: Record<string, StatusColorVariant> = {
+		applied: 'info',
+		under_review: 'warn',
+		interview_scheduled: 'primary',
+		interviewed: 'primary',
+		offer_received: 'success',
+		rejected: 'error',
+		withdrawn: 'neutral',
+	};
+
+	readonly statusDisplayMap: Record<string, string> = APPLICATION_STATUS_LABELS;
 
 	constructor() {
 		this.loadApplications();

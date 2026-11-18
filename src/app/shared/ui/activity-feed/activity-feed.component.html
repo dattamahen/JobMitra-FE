@@ -1,0 +1,51 @@
+<div class="activity-feed">
+  <div class="activity-feed__header">
+    @if (config().titleIcon) {
+      <mat-icon class="activity-feed__title-icon">{{ config().titleIcon }}</mat-icon>
+    }
+    <h3 class="activity-feed__title">{{ config().title }}</h3>
+  </div>
+
+  @if (isEmpty()) {
+    <div class="activity-feed__empty">
+      @if (config().emptyIcon) {
+        <mat-icon class="activity-feed__empty-icon">{{ config().emptyIcon }}</mat-icon>
+      }
+      @if (config().emptyTitle) {
+        <p class="activity-feed__empty-title">{{ config().emptyTitle }}</p>
+      }
+      @if (config().emptyMessage) {
+        <p class="activity-feed__empty-msg">{{ config().emptyMessage }}</p>
+      }
+    </div>
+  } @else {
+      <ul class="activity-feed__list" role="list">
+        @for (item of displayItems(); track item.id) {
+          <li class="activity-item">
+            <span class="activity-item__icon-wrap"
+              [class.activity-item__icon-wrap--primary]="badgeColor(item.type) === 'primary'"
+              [class.activity-item__icon-wrap--success]="badgeColor(item.type) === 'success'"
+              [class.activity-item__icon-wrap--warn]="badgeColor(item.type) === 'warn'"
+              [class.activity-item__icon-wrap--info]="badgeColor(item.type) === 'info'"
+              [class.activity-item__icon-wrap--neutral]="badgeColor(item.type) === 'neutral'">
+              <mat-icon class="activity-item__icon">{{ item.icon }}</mat-icon>
+            </span>
+            <div class="activity-item__body">
+              <span class="activity-item__title">{{ item.title }}</span>
+              <span class="activity-item__time">{{ formatTimeAgo(item.timestamp) }}</span>
+            </div>
+            @if (item.type) {
+              <span class="activity-item__badge"
+                [class.activity-item__badge--primary]="badgeColor(item.type) === 'primary'"
+                [class.activity-item__badge--success]="badgeColor(item.type) === 'success'"
+                [class.activity-item__badge--warn]="badgeColor(item.type) === 'warn'"
+                [class.activity-item__badge--info]="badgeColor(item.type) === 'info'"
+                [class.activity-item__badge--neutral]="badgeColor(item.type) === 'neutral'">
+                {{ item.type | titlecase }}
+              </span>
+            }
+          </li>
+        }
+      </ul>
+  }
+</div>

@@ -1,0 +1,17 @@
+:host { display: block; }
+
+.progress-item { display: flex; flex-direction: column; }
+
+.progress-item__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.progress-item:last-child .progress-item__top { border-bottom: none; }
+
+.progress-item__label { font-size: 0.875rem; font-weight: 500; color: #65697b; }
+.progress-item__right { display: flex; align-items: center; gap: 8px; }

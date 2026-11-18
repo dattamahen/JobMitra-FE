@@ -1,0 +1,33 @@
+@import '../ui-tokens.css';
+
+:host {
+  display: block;
+  --meta-row-gap: 8px;
+}
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: var(--meta-row-gap);
+}
+
+.meta-row--wrap { flex-wrap: wrap; }
+
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #65697b;
+  font-size: 0.875rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+a.meta-item:hover { color: var(--color-primary); text-decoration: underline; }
+
+.meta-item__icon {
+  font-size: 1rem;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}

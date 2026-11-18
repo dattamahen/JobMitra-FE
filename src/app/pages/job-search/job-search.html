@@ -57,15 +57,9 @@
 
 		<!-- Pagination -->
 		@if (totalPages() > 1) {
-			<div class="pagination">
-				<button mat-icon-button [disabled]="currentPage() === 1" (click)="goToPage(currentPage() - 1)">
-					<mat-icon>chevron_left</mat-icon>
-				</button>
-				<span class="page-info">Page {{currentPage()}} of {{totalPages()}} ({{filteredJobListings().length}} jobs)</span>
-				<button mat-icon-button [disabled]="currentPage() === totalPages()" (click)="goToPage(currentPage() + 1)">
-					<mat-icon>chevron_right</mat-icon>
-				</button>
-			</div>
+			<app-ui-pagination-bar
+				[config]="{ currentPage: currentPage(), totalPages: totalPages(), totalItems: filteredJobListings().length, itemLabel: 'jobs' }"
+				(pageChange)="goToPage($event)" />
 		}
 		}
 	</div>

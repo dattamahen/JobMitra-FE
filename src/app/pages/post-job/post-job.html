@@ -24,71 +24,8 @@
 
 			<form [formGroup]="jobForm" (ngSubmit)="onSubmit()">
 
-				<!-- Custom Stepper Header -->
-				<div class="stepper-header" role="tablist" aria-label="Job posting steps">
-
-					<div class="step-item" [class.active]="stepper.selectedIndex === 0" [class.completed]="stepper.selectedIndex > 0">
-						<button class="step-btn" type="button" role="tab" [attr.aria-selected]="stepper.selectedIndex === 0">
-							<span class="step-circle">@if (stepper.selectedIndex > 0) { <mat-icon>check</mat-icon> } @else { 1 }</span>
-							<span class="step-label">{{TEXT.steps.basicInfo}}</span>
-						</button>
-					</div>
-
-					<div class="step-connector" [class.done]="stepper.selectedIndex > 0"></div>
-
-					<div class="step-item" [class.active]="stepper.selectedIndex === 1" [class.completed]="stepper.selectedIndex > 1">
-						<button class="step-btn" type="button" role="tab" [attr.aria-selected]="stepper.selectedIndex === 1">
-							<span class="step-circle">@if (stepper.selectedIndex > 1) { <mat-icon>check</mat-icon> } @else { 2 }</span>
-							<span class="step-label">{{TEXT.steps.locationWorkType}}</span>
-						</button>
-					</div>
-
-					<div class="step-connector" [class.done]="stepper.selectedIndex > 1"></div>
-
-					<div class="step-item" [class.active]="stepper.selectedIndex === 2" [class.completed]="stepper.selectedIndex > 2">
-						<button class="step-btn" type="button" role="tab" [attr.aria-selected]="stepper.selectedIndex === 2">
-							<span class="step-circle">@if (stepper.selectedIndex > 2) { <mat-icon>check</mat-icon> } @else { 3 }</span>
-							<span class="step-label">{{TEXT.steps.jobDescription}}</span>
-						</button>
-					</div>
-
-					<div class="step-connector" [class.done]="stepper.selectedIndex > 2"></div>
-
-					<div class="step-item" [class.active]="stepper.selectedIndex === 3" [class.completed]="stepper.selectedIndex > 3">
-						<button class="step-btn" type="button" role="tab" [attr.aria-selected]="stepper.selectedIndex === 3">
-							<span class="step-circle">@if (stepper.selectedIndex > 3) { <mat-icon>check</mat-icon> } @else { 4 }</span>
-							<span class="step-label">{{TEXT.steps.skills}}</span>
-						</button>
-					</div>
-
-					<div class="step-connector" [class.done]="stepper.selectedIndex > 3"></div>
-
-					<div class="step-item" [class.active]="stepper.selectedIndex === 4" [class.completed]="stepper.selectedIndex > 4">
-						<button class="step-btn" type="button" role="tab" [attr.aria-selected]="stepper.selectedIndex === 4">
-							<span class="step-circle">@if (stepper.selectedIndex > 4) { <mat-icon>check</mat-icon> } @else { 5 }</span>
-							<span class="step-label">{{TEXT.steps.compensation}}</span>
-						</button>
-					</div>
-
-					<div class="step-connector" [class.done]="stepper.selectedIndex > 4"></div>
-
-					<div class="step-item" [class.active]="stepper.selectedIndex === 5" [class.completed]="stepper.selectedIndex > 5">
-						<button class="step-btn" type="button" role="tab" [attr.aria-selected]="stepper.selectedIndex === 5">
-							<span class="step-circle">@if (stepper.selectedIndex > 5) { <mat-icon>check</mat-icon> } @else { 6 }</span>
-							<span class="step-label">{{TEXT.steps.companyInfo}}</span>
-						</button>
-					</div>
-
-					<div class="step-connector" [class.done]="stepper.selectedIndex > 5"></div>
-
-					<div class="step-item" [class.active]="stepper.selectedIndex === 6" [class.completed]="stepper.selectedIndex > 6">
-						<button class="step-btn" type="button" role="tab" [attr.aria-selected]="stepper.selectedIndex === 6">
-							<span class="step-circle">@if (stepper.selectedIndex > 6) { <mat-icon>check</mat-icon> } @else { 7 }</span>
-							<span class="step-label">{{TEXT.steps.contactPublish}}</span>
-						</button>
-					</div>
-
-				</div>
+				<!-- Stepper Header -->
+				<app-ui-stepper-header [config]="stepperConfigWithCurrent" />
 
 				<mat-stepper #stepper linear>
 

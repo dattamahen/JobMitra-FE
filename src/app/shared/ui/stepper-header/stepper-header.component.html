@@ -1,0 +1,18 @@
+<div class="stepper">
+  @for (step of stepsWithState(); track step.index) {
+    <div class="stepper__item" [class]="'stepper__item--' + step.state"
+      (click)="stepClick.emit(step.index)">
+      <div class="stepper__circle">
+        @if (step.state === 'done') {
+          <mat-icon class="stepper__check">check</mat-icon>
+        } @else {
+          <span class="stepper__number">{{ step.index + 1 }}</span>
+        }
+      </div>
+      <span class="stepper__label">{{ step.label }}</span>
+    </div>
+    @if (!$last) {
+      <div class="stepper__connector" [class.stepper__connector--done]="step.state === 'done'"></div>
+    }
+  }
+</div>

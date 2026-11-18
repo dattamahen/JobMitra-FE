@@ -15,6 +15,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { UiHeroBannerComponent, UiOutcomeBannerComponent } from '../../shared/ui';
+import type { HeroBannerConfig, OutcomeBannerConfig } from '../../shared/ui/ui.types';
 
 import { SkeletonFormComponent } from '../../shared/components/skeletons';
 import {
@@ -56,6 +58,8 @@ type EntryView = 'tracker' | 'blueprint' | 'proof' | 'interview';
 		ContestProofComponent,
 		ContestInterviewComponent,
 		ContestPipelineComponent,
+		UiHeroBannerComponent,
+		UiOutcomeBannerComponent,
 	],
 	templateUrl: './project-contest.html',
 	styleUrl: './project-contest.css',
@@ -67,6 +71,36 @@ export class ProjectContestPage implements OnInit {
 	readonly technicalCategories = TECHNICAL_CATEGORIES;
 	readonly nonTechnicalCategories = NON_TECHNICAL_CATEGORIES;
 
+
+	readonly heroBannerConfig: HeroBannerConfig = {
+		badge: { icon: 'emoji_events', text: this.TEXT.heroBadge },
+		title: this.TEXT.heroTitle,
+		subtitle: this.TEXT.heroSubtitle,
+		stats: [
+			{ value: '5', label: 'AI-Evaluated Levels' },
+			{ value: '4 months', label: 'Full Journey' },
+			{ value: this.TEXT.prizeAmount, label: this.TEXT.prizeLabel },
+		],
+		variant: 'page',
+	};
+
+	readonly winnerBannerConfig: OutcomeBannerConfig = {
+		variant: 'success', icon: 'emoji_events',
+		title: 'Congratulations! You won the contest!',
+		message: 'Your team has been awarded ₹25,000. Check your email for prize details.',
+	};
+
+	readonly finalistBannerConfig: OutcomeBannerConfig = {
+		variant: 'info', icon: 'military_tech',
+		title: 'You are a Finalist!',
+		message: 'Final rankings are being calculated. Results will be announced soon.',
+	};
+
+	readonly eliminatedBannerConfig: OutcomeBannerConfig = {
+		variant: 'warn', icon: 'info',
+		title: 'Your journey has ended at this level.',
+		message: 'Check your email for detailed AI feedback. Keep building!',
+	};
 
 	navigateToPage = input<(event: { page: string }) => void>();
 
@@ -80,11 +114,15 @@ export class ProjectContestPage implements OnInit {
 	// Page state
 	pageMode = signal<PageMode>(null);
 	activeEntry = signal<ContestEntry | null>(null);
+	allLeadEntries = signal<ContestEntry[]>([]);
+	showNewEntryForm = signal(false);
 	// entryView auto-resets to 'tracker' whenever activeEntry changes
 	entryView = linkedSignal<ContestEntry | null, EntryView>({
 		source: this.activeEntry,
 		computation: () => 'tracker',
 	});
+
+	hasMultipleEntries = computed(() => this.allLeadEntries().length > 1);
 
 	// Form state
 	submitting = signal(false);
@@ -230,11 +268,15 @@ export class ProjectContestPage implements OnInit {
 				this.contestService.getMyEntries(),
 				this.contestService.getMemberEntries(),
 			]);
-			const active = (leadRes.entries ?? []).find(
+			const confirmed = (leadRes.entries ?? []).filter(
 				(e: ContestEntry) => e.payment_status === 'confirmed'
 			);
-			if (active) {
-				this.activeEntry.set(active);
+			this.allLeadEntries.set(confirmed);
+			if (confirmed.length > 0) {
+				// Keep current selection if still valid, otherwise default to first
+				const currentId = this.activeEntry()?.entry_id;
+				const keep = currentId ? confirmed.find((e: ContestEntry) => e.entry_id === currentId) : null;
+				this.activeEntry.set(keep ?? confirmed[0]);
 				this.pageMode.set('has-entry');
 			} else {
 				this.pageMode.set('no-entry');
@@ -243,6 +285,11 @@ export class ProjectContestPage implements OnInit {
 		} catch {
 			this.pageMode.set('no-entry');
 		}
+	}
+
+	switchEntry(entry: ContestEntry) {
+		this.activeEntry.set(entry);
+		this.showNewEntryForm.set(false);
 	}
 
 	async onSubmitIdea() {
@@ -358,6 +405,23 @@ export class ProjectContestPage implements OnInit {
 
 	isFinalist(): boolean {
 		return this.activeEntry()?.status === 'finalist';
+	}
+
+	isTerminal(): boolean {
+		const s = this.activeEntry()?.status;
+		return s === 'eliminated' || s === 'winner' || s === 'finalist' || s === 'interview_complete';
+	}
+
+	startNewEntry() {
+		this.showNewEntryForm.set(true);
+		this.ideaResult.set(null);
+		this.ideaForm.reset({ project_type: 'technical' });
+		this.teamMembers.clear();
+		this.otpSending.set([]);
+		this.otpSent.set([]);
+		this.otpVerifying.set([]);
+		this.otpVerified.set([]);
+		this.otpError.set([]);
 	}
 
 	// ── DEV ONLY: status cycler ────────────────────────────────────────────────
