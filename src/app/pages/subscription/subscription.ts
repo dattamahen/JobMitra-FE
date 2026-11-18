@@ -1,10 +1,9 @@
 import { Component, OnInit, signal, inject, ChangeDetectionStrategy, input } from '@angular/core';
 import { SkeletonStatGridComponent } from '../../shared/components/skeletons';
-import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { UiStatGridComponent, UiSectionCardComponent } from '../../shared/ui';
 import { CreditsService, UserCredits, SubscriptionPlan } from '../../services/credits.service';
 import { SubscriptionDialogComponent } from '../../shared/components/subscription-dialog/subscription-dialog.component';
 import { SUBSCRIPTION_TEXT } from '../../data/subscription-data';
@@ -13,9 +12,11 @@ import { SUBSCRIPTION_TEXT } from '../../data/subscription-data';
 	selector: 'app-subscription-page',
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	imports: [
-		MatCardModule, MatButtonModule, MatIconModule,
-		MatDialogModule, MatProgressSpinnerModule,
-		SkeletonStatGridComponent
+		MatButtonModule, MatIconModule,
+		MatDialogModule,
+		SkeletonStatGridComponent,
+		UiStatGridComponent,
+		UiSectionCardComponent,
 	],
 	templateUrl: './subscription.html',
 	styleUrl: './subscription.css'

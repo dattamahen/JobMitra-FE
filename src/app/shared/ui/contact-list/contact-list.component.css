@@ -1,0 +1,11 @@
+:host { display: block; }
+
+.contact-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+
+.contact-item { display: flex; align-items: center; gap: 8px; padding-left: 4px; }
+
+.contact-item__icon { font-size: 1rem; width: 1rem; height: 1rem; color: #65697b; flex-shrink: 0; }
+
+.contact-item__text { font-size: 0.875rem; color: #65697b; word-break: break-all; }
+.contact-item__text--link { color: var(--color-primary); text-decoration: none; }
+.contact-item__text--link:hover { text-decoration: underline; }

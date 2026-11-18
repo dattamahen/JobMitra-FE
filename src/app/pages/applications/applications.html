@@ -36,6 +36,7 @@
 					}
 				</mat-card-subtitle>
 				<div class="header-actions">
+					<app-ui-status-badge [config]="{ value: application.status, colorMap: statusColorMap, displayMap: statusDisplayMap }" />
 					<button mat-raised-button color="primary" (click)="prepareForInterview(application.application_id)">
 						<mat-icon>mic</mat-icon>
 						{{TEXT.labels.prepareInterview}}
@@ -78,13 +79,7 @@
 
 				<!-- Tags -->
 				@if (application.tags && application.tags.length > 0) {
-				<div class="application-tags">
-					<mat-chip-set>
-						@for (tag of application.tags; track tag) {
-						<mat-chip class="tag-chip">{{tag}}</mat-chip>
-						}
-					</mat-chip-set>
-				</div>
+					<app-ui-chip-list [config]="{ items: application.tags, variant: 'tag', size: 'sm' }" />
 				}
 			</mat-card-content>
 		</mat-card>

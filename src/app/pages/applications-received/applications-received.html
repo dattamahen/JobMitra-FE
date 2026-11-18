@@ -88,26 +88,14 @@
 					<ng-container matColumnDef="ats_score">
 						<th mat-header-cell *matHeaderCellDef>{{TEXT.table.skillsScore}}</th>
 						<td mat-cell *matCellDef="let app">
-							@if (app.ats_score > 0) {
-								<mat-chip [class]="app.ats_score >= 70 ? 'high-match' : app.ats_score >= 50 ? 'medium-match' : 'low-match'">
-									{{app.ats_score}}%
-								</mat-chip>
-							} @else {
-								<mat-chip class="low-match">{{TEXT.table.na}}</mat-chip>
-							}
+							<app-ui-status-badge [config]="getScoreBadgeConfig(app.ats_score)" />
 						</td>
 					</ng-container>
 
 					<ng-container matColumnDef="match_percentage">
 						<th mat-header-cell *matHeaderCellDef>{{TEXT.table.jdMatchScore}}</th>
 						<td mat-cell *matCellDef="let app">
-							@if (app.match_percentage > 0) {
-								<mat-chip [class]="app.match_percentage >= 70 ? 'high-match' : app.match_percentage >= 50 ? 'medium-match' : 'low-match'">
-									{{app.match_percentage}}%
-								</mat-chip>
-							} @else {
-								<mat-chip class="low-match">{{TEXT.table.na}}</mat-chip>
-							}
+							<app-ui-status-badge [config]="getScoreBadgeConfig(app.match_percentage)" />
 						</td>
 					</ng-container>
 
@@ -151,11 +139,7 @@
 									@if (app.skills && app.skills.length > 0) {
 										<div class="detail-section">
 											<h4><mat-icon>code</mat-icon> {{TEXT.detail.skills}}</h4>
-											<div class="skills-list">
-												@for (skill of app.skills; track $index) {
-													<mat-chip>{{skill}}</mat-chip>
-												}
-											</div>
+											<app-ui-chip-list [config]="getSkillsChipConfig(app.skills)" />
 										</div>
 									}
 

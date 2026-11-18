@@ -15,6 +15,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { UiHeroBannerComponent, UiOutcomeBannerComponent } from '../../shared/ui';
+import type { HeroBannerConfig, OutcomeBannerConfig } from '../../shared/ui/ui.types';
 
 import { SkeletonFormComponent } from '../../shared/components/skeletons';
 import {
@@ -56,6 +58,8 @@ type EntryView = 'tracker' | 'blueprint' | 'proof' | 'interview';
 		ContestProofComponent,
 		ContestInterviewComponent,
 		ContestPipelineComponent,
+		UiHeroBannerComponent,
+		UiOutcomeBannerComponent,
 	],
 	templateUrl: './project-contest.html',
 	styleUrl: './project-contest.css',
@@ -67,6 +71,36 @@ export class ProjectContestPage implements OnInit {
 	readonly technicalCategories = TECHNICAL_CATEGORIES;
 	readonly nonTechnicalCategories = NON_TECHNICAL_CATEGORIES;
 
+
+	readonly heroBannerConfig: HeroBannerConfig = {
+		badge: { icon: 'emoji_events', text: this.TEXT.heroBadge },
+		title: this.TEXT.heroTitle,
+		subtitle: this.TEXT.heroSubtitle,
+		stats: [
+			{ value: '5', label: 'AI-Evaluated Levels' },
+			{ value: '4 months', label: 'Full Journey' },
+			{ value: this.TEXT.prizeAmount, label: this.TEXT.prizeLabel },
+		],
+		variant: 'page',
+	};
+
+	readonly winnerBannerConfig: OutcomeBannerConfig = {
+		variant: 'success', icon: 'emoji_events',
+		title: 'Congratulations! You won the contest!',
+		message: 'Your team has been awarded ₹25,000. Check your email for prize details.',
+	};
+
+	readonly finalistBannerConfig: OutcomeBannerConfig = {
+		variant: 'info', icon: 'military_tech',
+		title: 'You are a Finalist!',
+		message: 'Final rankings are being calculated. Results will be announced soon.',
+	};
+
+	readonly eliminatedBannerConfig: OutcomeBannerConfig = {
+		variant: 'warn', icon: 'info',
+		title: 'Your journey has ended at this level.',
+		message: 'Check your email for detailed AI feedback. Keep building!',
+	};
 
 	navigateToPage = input<(event: { page: string }) => void>();
 

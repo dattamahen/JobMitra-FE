@@ -15,6 +15,7 @@
 /* Import Design System */
 @import './styles/design-system.css';
 @import './styles/global-components.css';
+@import './app/shared/ui/ui-tokens.css';
 
 /* Global styles with better typography */
 * {

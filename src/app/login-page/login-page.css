@@ -407,7 +407,7 @@
 	transform: translateX(100%);
 	transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 	box-shadow: -8px 0 40px rgba(0, 0, 0, 0.15);
-	overflow-y: auto;
+	overflow: hidden;
 	display: flex;
 	flex-direction: column;
 }
@@ -441,7 +441,7 @@
 .panel-hero {
 	position: relative;
 	background: linear-gradient(145deg, #3a27a0 0%, #4831af 40%, #6a4fc8 70%, #764ba2 100%);
-	padding: 48px 32px 60px;
+	padding: 28px 32px 44px;
 	overflow: hidden;
 	flex-shrink: 0;
 }
@@ -458,24 +458,24 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 60px;
-	height: 60px;
+	width: 48px;
+	height: 48px;
 	background: rgba(255,255,255,0.18);
-	border-radius: 18px;
-	margin-bottom: 12px;
+	border-radius: 14px;
+	margin-bottom: 8px;
 	backdrop-filter: blur(8px);
 	border: 1px solid rgba(255,255,255,0.25);
 }
 
 .logo-mark-solid { background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.25); color: #fff; }
 
-.panel-brand { font-family: 'Poppins', sans-serif; font-size: 26px; font-weight: 800; color: #fff !important; letter-spacing: -0.5px; margin: 0 0 6px; }
+.panel-brand { font-family: 'Poppins', sans-serif; font-size: 22px; font-weight: 800; color: #fff !important; letter-spacing: -0.5px; margin: 0 0 4px; }
 .panel-brand-accent { color: #c4b8f5; }
 .panel-tagline { font-size: 13px; color: rgba(255,255,255,0.75); margin: 0; font-weight: 400; line-height: 1.5; }
 
 /* ── AUTH CONTAINER ── */
 .auth-container {
-	padding: 28px 28px 36px;
+	padding: 20px 28px 24px;
 	flex: 1;
 	display: flex;
 	flex-direction: column;
@@ -485,6 +485,7 @@
 	position: relative;
 	z-index: 2;
 	box-shadow: 0 -4px 24px rgba(72,49,175,0.08);
+	overflow-y: auto;
 }
 
 .google-signin-container { margin: 0 0 16px; display: flex; justify-content: center; }
@@ -493,15 +494,22 @@
 .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #e8eaf0; }
 .divider span { font-size: 12px; font-weight: 500; color: #94a3b8; white-space: nowrap; text-transform: lowercase; }
 
-.auth-form { margin-bottom: 16px; }
+.auth-form { margin-bottom: 12px; }
+
+.auth-form ::ng-deep .form-actions {
+	display: flex;
+	justify-content: flex-end;
+	clearfix: both;
+}
 
 .auth-form ::ng-deep .submit-btn.mat-mdc-raised-button {
-	width: 100% !important;
-	height: 52px !important;
-	border-radius: 14px !important;
+	width: auto !important;
+	min-width: 140px !important;
+	height: 44px !important;
+	border-radius: 10px !important;
 	background: linear-gradient(135deg, var(--brand) 0%, var(--brand-mid) 100%) !important;
 	box-shadow: 0 4px 16px rgba(72,49,175,0.35) !important;
-	font-size: 15px !important;
+	font-size: 14px !important;
 	font-weight: 700 !important;
 	letter-spacing: 0.2px !important;
 	transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s !important;
@@ -518,6 +526,136 @@
 .auth-toggle { text-align: center; padding-top: 16px; border-top: 1px solid #f1f5f9; margin-top: auto; }
 .auth-toggle p { margin: 0 0 8px 0; font-size: 13px; color: #64748b; }
 .auth-toggle p:last-child { margin-bottom: 0; }
+
+/* ── OTP STATUS ── */
+.otp-status {
+	margin: -4px 0 8px;
+	font-size: 12px;
+	font-weight: 500;
+	padding: 7px 12px;
+	border-radius: 8px;
+	line-height: 1.4;
+}
+
+.otp-status--sending {
+	color: #64748b;
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+}
+
+.otp-status--sent {
+	color: #0369a1;
+	background: #f0f9ff;
+	border: 1px solid #bae6fd;
+}
+
+.otp-status--verified {
+	color: #15803d;
+	background: #f0fdf4;
+	border: 1px solid #bbf7d0;
+}
+
+.otp-status--error {
+	color: #dc2626;
+	background: #fef2f2;
+	border: 1px solid #fecaca;
+}
+
+.otp-input-row {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	margin: 8px 0 6px;
+}
+
+.otp-input-field {
+	flex: 1;
+	height: 44px;
+	padding: 0 14px;
+	border: 1.5px solid #e2e8f0;
+	border-radius: 10px;
+	font-size: 15px;
+	letter-spacing: 4px;
+	text-align: center;
+	color: #1a202c;
+	outline: none;
+	transition: border-color 0.2s;
+	background: #fff;
+}
+
+.otp-input-field:focus { border-color: var(--brand); }
+.otp-input-field--error { border-color: #dc2626 !important; background: #fff5f5; }
+.otp-input-field--error:focus { border-color: #dc2626 !important; }
+
+.otp-verify-btn {
+	height: 44px;
+	padding: 0 18px;
+	background: var(--brand);
+	color: #fff;
+	border: none;
+	border-radius: 10px;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: background 0.2s;
+	flex-shrink: 0;
+}
+
+.otp-verify-btn:hover:not(:disabled) { background: var(--brand-dark); }
+.otp-verify-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.resend-link {
+	display: block;
+	text-align: right;
+	font-size: 12px;
+	color: var(--brand);
+	cursor: pointer;
+	margin-bottom: 12px;
+	font-weight: 500;
+}
+
+.resend-link:hover { text-decoration: underline; }
+
+.signup-submit-btn {
+	width: auto;
+	min-width: 140px;
+	height: 44px;
+	border-radius: 10px;
+	background: linear-gradient(135deg, var(--brand) 0%, var(--brand-mid) 100%);
+	color: #fff;
+	border: none;
+	font-size: 14px;
+	font-weight: 700;
+	letter-spacing: 0.2px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	box-shadow: 0 4px 16px rgba(72,49,175,0.35);
+	transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+	margin-top: 4px;
+	margin-left: auto;
+}
+
+.signup-submit-btn:hover:not(:disabled) {
+	opacity: 0.92;
+	transform: translateY(-1px);
+	box-shadow: 0 6px 20px rgba(72,49,175,0.4);
+}
+
+.signup-submit-btn:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+
+.btn-spinner {
+	width: 18px;
+	height: 18px;
+	border: 2px solid rgba(255,255,255,0.4);
+	border-top-color: #fff;
+	border-radius: 50%;
+	animation: spin 0.7s linear infinite;
+}
+
 
 .toggle-link { color: var(--brand); text-decoration: none; font-weight: 600; cursor: pointer; transition: color 0.2s; }
 .toggle-link:hover { color: var(--brand-dark); text-decoration: underline; }
@@ -552,8 +690,8 @@
 	.hero-title { font-size: 2rem; }
 	.hero-visual { display: none; }
 	.auth-panel { width: 100%; }
-	.auth-container { padding: 24px 20px 32px; }
-	.panel-hero { padding: 36px 20px 52px; }
+	.auth-container { padding: 16px 20px 24px; }
+	.panel-hero { padding: 22px 20px 40px; }
 }
 
 @media (max-width: 480px) {

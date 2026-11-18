@@ -1,0 +1,22 @@
+<input #fileInput type="file" [accept]="config().accept" class="upload-hidden-input"
+  (change)="onFileChange($event)" aria-hidden="true" tabindex="-1" />
+
+@if (isProcessing()) {
+  <div class="upload-zone__processing">
+    <mat-spinner diameter="32" />
+    <span>{{ config().processingMessage ?? 'Processing...' }}</span>
+  </div>
+} @else if (error()) {
+  <div class="upload-zone__error">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ error() }}</span>
+  </div>
+} @else {
+  <div class="upload-zone__idle">
+    <mat-icon class="upload-zone__icon">cloud_upload</mat-icon>
+    <span class="upload-zone__label">{{ config().label ?? 'Click or drag file here' }}</span>
+    @if (config().hint) {
+      <span class="upload-zone__hint">{{ config().hint }}</span>
+    }
+  </div>
+}

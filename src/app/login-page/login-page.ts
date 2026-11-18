@@ -1,7 +1,10 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, PLATFORM_ID, inject, signal, ChangeDetectionStrategy, DestroyRef, ViewChildren, QueryList } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, PLATFORM_ID, inject, signal, ChangeDetectionStrategy, DestroyRef, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subject } from 'rxjs';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 import { MatIconModule } from '@angular/material/icon';
 
 import { DynamicFormComponent } from '../shared/components/dynamic-form/dynamic-form.component';
@@ -29,7 +32,7 @@ import { LpFooter } from './components/lp-footer/lp-footer';
 @Component({
 	selector: 'app-login-page',
 	imports: [
-		MatIconModule, DynamicFormComponent,
+		MatIconModule, DynamicFormComponent, FormsModule,
 		LpTrustLogos, LpProducts, LpStats, LpSteps,
 		LpTestimonials, LpPricing, LpCta, LpFooter,
 	],
@@ -54,6 +57,12 @@ export class LoginPage implements OnInit, OnDestroy {
 	readonly isForgotPasswordMode = signal(false);
 	readonly isResetPasswordMode = signal(false);
 	readonly googleSignInLoading = signal(false);
+	readonly otpStep = signal<'idle' | 'sending' | 'sent' | 'verified'>('idle');
+	readonly otpError = signal('');
+	signupEmail = '';
+	otpValue = '';
+	otpLoading = false;
+	private emailInput$ = new Subject<string>();
 	errorMessage = '';
 	successMessage = '';
 	resetToken = '';
@@ -68,6 +77,7 @@ export class LoginPage implements OnInit, OnDestroy {
 	private platformId = inject(PLATFORM_ID);
 	private destroyRef = inject(DestroyRef);
 	private seoService = inject(SeoService);
+	private cdr = inject(ChangeDetectorRef);
 
 	constructor(
 		private router: Router,
@@ -125,6 +135,21 @@ export class LoginPage implements OnInit, OnDestroy {
 		}
 
 		this.startProfileCarousel();
+
+		// Debounced auto-OTP on valid email
+		const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+		this.emailInput$.pipe(
+			debounceTime(800),
+			distinctUntilChanged(),
+			filter(email => EMAIL_RE.test(email)),
+			takeUntilDestroyed(this.destroyRef)
+		).subscribe(email => {
+			if (email !== this.signupEmail || this.otpStep() === 'idle') {
+				this.signupEmail = email;
+				this.otpStep.set('idle');
+				this.sendOtp();
+			}
+		});
 	}
 
 	ngOnDestroy(): void {
@@ -239,10 +264,75 @@ export class LoginPage implements OnInit, OnDestroy {
 		this.isSignupMode.set(!this.isSignupMode());
 		this.isForgotPasswordMode.set(false);
 		this.isResetPasswordMode.set(false);
+		this.otpStep.set('idle');
+		this.signupEmail = '';
+		this.otpValue = '';
 		this.resetAllForms();
 		if (!this.isSignupMode()) {
 			this.ensureGoogleInit().then(() => this.renderGoogleButton());
 		}
+	}
+
+	onSignupFormChange(values: any): void {
+		const email: string = values.email || '';
+		if (email !== this.signupEmail) {
+			if (this.otpStep() === 'sent' || this.otpStep() === 'verified') {
+				this.otpStep.set('idle');
+				this.successMessage = '';
+			}
+		}
+		this.emailInput$.next(email);
+	}
+
+	sendOtp(): void {
+		if (!this.signupEmail) return;
+		this.otpStep.set('sending');
+		this.otpError.set('');
+		this.otpValue = '';
+		this.errorMessage = '';
+		this.successMessage = '';
+		this.authService.sendEmailOtp(this.signupEmail)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: () => {
+					this.otpStep.set('sent');
+					this.cdr.markForCheck();
+				},
+				error: (err) => {
+					this.otpStep.set('idle');
+					this.errorMessage = err.error?.detail || 'Failed to send OTP';
+					this.cdr.markForCheck();
+				}
+			});
+	}
+
+	verifyOtp(): void {
+		if (!this.otpValue || this.otpValue.length !== 6) return;
+		this.otpLoading = true;
+		this.otpError.set('');
+		this.authService.verifyEmailOtp(this.signupEmail, this.otpValue)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (res) => {
+					this.otpLoading = false;
+					if (res.verified) {
+						this.otpStep.set('verified');
+						this.cdr.markForCheck();
+						setTimeout(() => {
+							const form = this.formComponents?.find(f => f['config'] === this.signupFormConfig);
+							form?.patchValue({ email: this.signupEmail });
+						}, 100);
+					} else {
+						this.otpError.set('Invalid OTP. Please try again.');
+						this.cdr.markForCheck();
+					}
+				},
+				error: (err) => {
+					this.otpLoading = false;
+					this.otpError.set(err.error?.detail || 'Invalid OTP. Please try again.');
+					this.cdr.markForCheck();
+				}
+			});
 	}
 
 	toggleForgotPasswordMode(): void {
@@ -301,7 +391,16 @@ export class LoginPage implements OnInit, OnDestroy {
 			});
 	}
 
+	submitSignupForm(): void {
+		const signupForm = this.formComponents?.find(f => f['config'] === this.signupFormConfig);
+		if (signupForm) signupForm.onSubmit();
+	}
+
 	onSignup(formData: any): void {
+		if (this.otpStep() !== 'verified') {
+			this.errorMessage = 'Please verify your email with OTP before creating an account.';
+			return;
+		}
 		if (formData.password !== formData.confirmPassword) {
 			this.errorMessage = 'Passwords do not match';
 			return;

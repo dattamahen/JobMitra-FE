@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { SkeletonListRowsComponent } from '../../shared/components/skeletons';
 import { InterviewHistoryComponent } from '../../shared/components/interview-history/interview-history.component';
+import { UiProgressItemComponent } from '../../shared/ui';
 import { JobSearchDataService, LearningResource } from '../../data/job-search-data';
 import type { SkillAssessment } from '../../types/skill-assessment.types';
 import type { InterviewHistorySession } from '../../types/mock-interview.types';
@@ -18,7 +19,7 @@ import { SKILL_ASSESSMENT_TEXT } from '../../data/skill-assessment-data';
 
 @Component({
 	selector: 'app-skill-assessment-page',
-	imports: [MatIconModule, InterviewHistoryComponent, SkeletonListRowsComponent],
+	imports: [MatIconModule, InterviewHistoryComponent, SkeletonListRowsComponent, UiProgressItemComponent],
 	templateUrl: './skill-assessment.html',
 	styleUrls: ['./skill-assessment.css'],
 	changeDetection: ChangeDetectionStrategy.OnPush
@@ -141,6 +142,11 @@ export class SkillAssessmentPage implements OnInit {
 	getTechnicalSkills(): SkillAssessment[] { return this.technicalSkills(); }
 	getSoftSkills(): SkillAssessment[] { return this.softSkills(); }
 	getRecommendedSkills(): SkillAssessment[] { return this.recommendedSkills(); }
+
+	onSkillAction(skillId: string): void {
+		const skill = this.skillAssessments().find(s => s.id === skillId);
+		if (skill) this.startMockInterview(skill);
+	}
 
 	navigateToProfile(): void {
 		this.router.navigate(['/dashboard', 'profile']);

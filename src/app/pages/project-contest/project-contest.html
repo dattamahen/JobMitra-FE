@@ -11,30 +11,7 @@
 	@if (pageMode() === 'no-entry') {
 
 		<!-- Hero Banner -->
-		<div class="hero-banner">
-			<div class="hero-badge">
-				<mat-icon>emoji_events</mat-icon>
-				<span>{{ TEXT.heroBadge }}</span>
-			</div>
-			<h1 class="hero-title">{{ TEXT.heroTitle }}</h1>
-			<p class="hero-subtitle">{{ TEXT.heroSubtitle }}</p>
-			<div class="hero-stats">
-				<div class="hero-stat">
-					<span class="hero-stat-value">5</span>
-					<span class="hero-stat-label">AI-Evaluated Levels</span>
-				</div>
-				<div class="hero-stat-divider"></div>
-				<div class="hero-stat">
-					<span class="hero-stat-value">4 months</span>
-					<span class="hero-stat-label">Full Journey</span>
-				</div>
-				<div class="hero-stat-divider"></div>
-				<div class="hero-stat">
-					<span class="hero-stat-value">{{ TEXT.prizeAmount }}</span>
-					<span class="hero-stat-label">{{ TEXT.prizeLabel }}</span>
-				</div>
-			</div>
-		</div>
+		<app-ui-hero-banner [config]="heroBannerConfig" />
 
 		<!-- 5-Level Journey Explainer -->
 		<div class="journey-section">
@@ -404,33 +381,14 @@
 			</div>
 		}
 
-		<!-- Winner / Finalist / Eliminated Banners -->
 		@if (isWinner()) {
-			<div class="outcome-banner winner-banner">
-				<mat-icon>emoji_events</mat-icon>
-				<div>
-					<strong>Congratulations! You won the contest!</strong>
-					<span>Your team has been awarded ₹25,000. Check your email for prize details.</span>
-				</div>
-			</div>
+			<app-ui-outcome-banner [config]="winnerBannerConfig" />
 		}
 		@if (isFinalist()) {
-			<div class="outcome-banner finalist-banner">
-				<mat-icon>military_tech</mat-icon>
-				<div>
-					<strong>You are a Finalist!</strong>
-					<span>Final rankings are being calculated. Results will be announced soon.</span>
-				</div>
-			</div>
+			<app-ui-outcome-banner [config]="finalistBannerConfig" />
 		}
 		@if (isEliminated()) {
-			<div class="outcome-banner eliminated-banner">
-				<mat-icon>info</mat-icon>
-				<div>
-					<strong>Your journey has ended at this level.</strong>
-					<span>Check your email for detailed AI feedback. Keep building!</span>
-				</div>
-			</div>
+			<app-ui-outcome-banner [config]="eliminatedBannerConfig" />
 		}
 
 		<!-- Pipeline — always visible -->

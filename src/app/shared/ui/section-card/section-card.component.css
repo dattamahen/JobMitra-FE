@@ -1,0 +1,77 @@
+@import '../ui-tokens.css';
+
+:host {
+  display: block;
+  --section-card-border: var(--ui-card-default-border);
+  --section-card-padding: var(--spacing-lg);
+}
+
+.section-card {
+  background: var(--color-surface);
+  border-radius: var(--border-radius-card);
+  border: var(--section-card-border);
+  padding: var(--section-card-padding);
+}
+
+.section-card--default   { border: var(--ui-card-default-border); }
+.section-card--flat      { border: var(--ui-card-flat-border); box-shadow: none; }
+.section-card--highlight { border: var(--ui-card-highlight-border); }
+
+.section-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ui-card-header-gap);
+  margin-bottom: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.section-card__header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-width: 0;
+}
+
+.section-card__header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-shrink: 0;
+}
+
+.section-card__icon {
+  color: var(--color-primary);
+  font-size: 1.25rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+.section-card__title {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--color-on-surface);
+  margin: 0;
+}
+
+.section-card__badge {
+  font-size: var(--ui-chip-sm-font);
+  height: var(--ui-chip-sm-height);
+  padding: var(--ui-chip-sm-padding);
+  background: var(--ui-color-primary-bg);
+  color: var(--ui-color-primary-text);
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  font-weight: 600;
+}
+
+.section-card__body {
+  min-width: 0;
+}
+
+@media (max-width: 480px) {
+  .section-card__header { flex-direction: column; align-items: flex-start; }
+  .section-card__header-right { width: 100%; }
+}

@@ -1,0 +1,24 @@
+<div class="picker-overlay" role="dialog" aria-modal="true" aria-labelledby="picker-title"
+	(click)="onOverlayClick($event)">
+	<div class="picker-modal">
+		<div class="picker-header">
+			<h3 id="picker-title"><mat-icon>download</mat-icon> {{ title() }}</h3>
+			<button mat-icon-button (click)="dismissed.emit()" aria-label="Close">
+				<mat-icon>close</mat-icon>
+			</button>
+		</div>
+		<p class="picker-hint">{{ hint() }}</p>
+		<div class="template-grid">
+			@for (template of cvTemplates; track template.id) {
+				<button class="template-card" (click)="selected.emit(template.id)"
+					[disabled]="isLoading()" [attr.aria-label]="'Download with ' + template.name">
+					<mat-icon>{{ template.icon }}</mat-icon>
+					<span>{{ template.name }}</span>
+				</button>
+			}
+		</div>
+		<div class="picker-actions">
+			<button mat-button (click)="dismissed.emit()">Cancel</button>
+		</div>
+	</div>
+</div>

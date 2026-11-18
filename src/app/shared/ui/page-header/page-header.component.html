@@ -1,0 +1,58 @@
+<header class="page-header">
+  <div class="page-header__left">
+    @if (hasBack()) {
+      <button mat-icon-button class="back-btn" (click)="backClick.emit()" aria-label="Go back">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+    }
+    @if (hasIcon()) {
+      <mat-icon class="page-header__icon">{{ config().icon }}</mat-icon>
+    }
+    <div class="page-header__text">
+      <h1 class="page-header__title">{{ config().title }}</h1>
+      @if (hasSubtitle()) {
+        <p class="page-header__subtitle">{{ config().subtitle }}</p>
+      }
+    </div>
+  </div>
+
+  @if (hasActions()) {
+    <div class="page-header__actions">
+      @for (action of config().actions!; track action.id) {
+        @if (action.variant === 'raised') {
+          <button mat-raised-button
+            [color]="action.color ?? 'primary'"
+            [disabled]="action.disabled ?? false"
+            (click)="actionClick.emit(action.id)">
+            @if (action.icon) { <mat-icon>{{ action.icon }}</mat-icon> }
+            {{ action.label }}
+          </button>
+        } @else if (action.variant === 'stroked') {
+          <button mat-stroked-button
+            [color]="action.color ?? 'primary'"
+            [disabled]="action.disabled ?? false"
+            (click)="actionClick.emit(action.id)">
+            @if (action.icon) { <mat-icon>{{ action.icon }}</mat-icon> }
+            {{ action.label }}
+          </button>
+        } @else if (action.variant === 'flat') {
+          <button mat-flat-button
+            [color]="action.color ?? 'primary'"
+            [disabled]="action.disabled ?? false"
+            (click)="actionClick.emit(action.id)">
+            @if (action.icon) { <mat-icon>{{ action.icon }}</mat-icon> }
+            {{ action.label }}
+          </button>
+        } @else if (action.variant === 'icon') {
+          <button mat-icon-button
+            [color]="action.color ?? 'primary'"
+            [disabled]="action.disabled ?? false"
+            [attr.aria-label]="action.label"
+            (click)="actionClick.emit(action.id)">
+            @if (action.icon) { <mat-icon>{{ action.icon }}</mat-icon> }
+          </button>
+        }
+      }
+    </div>
+  }
+</header>

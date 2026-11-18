@@ -11,61 +11,55 @@
 			</app-skeleton-stat-grid>
 		} @else {
 		@for (interview of interviewTypes; track interview.id) {
-			<mat-card class="interview-card">
-				<mat-card-content>
-					<div class="card-header">
-						<mat-icon class="card-icon">{{ interview.icon }}</mat-icon>
-						<h2 class="card-title">{{ interview.title }}</h2>
+			<app-ui-section-card [config]="getInterviewCardConfig(interview)">
+				<p class="card-description">{{ interview.description }}</p>
+
+				@if (interview.badges) {
+					<div class="difficulty-badges">
+						@for (badge of interview.badges; track badge) {
+							<span class="badge" [class]="badge.toLowerCase()">{{ badge }}</span>
+						}
 					</div>
-					<p class="card-description">{{ interview.description }}</p>
-					
-					@if (interview.badges) {
-						<div class="difficulty-badges">
-							@for (badge of interview.badges; track badge) {
-								<span class="badge" [class]="badge.toLowerCase()">{{ badge }}</span>
-							}
-						</div>
-					}
-					
-					@if (interview.topics) {
-						<div class="topics">
-							@for (topic of interview.topics; track topic) {
-								<span class="topic">{{ topic }}</span>
-							}
-						</div>
-					}
-					
-					@if (interview.hasCompanySelect) {
-						<select class="company-select">
-							<option>{{TEXT.selectCompany}}</option>
-							@for (company of interview.companies; track company) {
-								<option [value]="company">{{ company }}</option>
-							}
-						</select>
-					}
-					
-					@if (interview.disabled) {
-						<button mat-raised-button color="accent" class="start-btn" disabled>
-							<mat-icon>schedule</mat-icon>
-							{{ interview.disabledMessage || TEXT.buttons.comingSoon }}
+				}
+
+				@if (interview.topics) {
+					<div class="topics">
+						@for (topic of interview.topics; track topic) {
+							<span class="topic">{{ topic }}</span>
+						}
+					</div>
+				}
+
+				@if (interview.hasCompanySelect) {
+					<select class="company-select">
+						<option>{{TEXT.selectCompany}}</option>
+						@for (company of interview.companies; track company) {
+							<option [value]="company">{{ company }}</option>
+						}
+					</select>
+				}
+
+				@if (interview.disabled) {
+					<button mat-raised-button color="accent" class="start-btn" disabled>
+						<mat-icon>schedule</mat-icon>
+						{{ interview.disabledMessage || TEXT.buttons.comingSoon }}
+					</button>
+				} @else {
+					<ng-container *appFeatureGuard="'mock_interview'; showWhenDisabled: true; let canUse = canUseFeature">
+						<button mat-raised-button [color]="canUse ? 'primary' : 'warn'" class="start-btn"
+								(click)="canUse ? onStartInterview(interview.id) : onUsePaidVersion()">
+							<mat-icon>{{ canUse ? 'play_arrow' : 'diamond' }}</mat-icon>
+							{{ canUse ? TEXT.buttons.startInterview : TEXT.buttons.usePaidVersion }}
 						</button>
-					} @else {
-						<ng-container *appFeatureGuard="'mock_interview'; showWhenDisabled: true; let canUse = canUseFeature">
-							<button mat-raised-button [color]="canUse ? 'primary' : 'warn'" class="start-btn" 
-											(click)="canUse ? onStartInterview(interview.id) : onUsePaidVersion()">
-								<mat-icon>{{ canUse ? 'play_arrow' : 'diamond' }}</mat-icon>
-								{{ canUse ? TEXT.buttons.startInterview : TEXT.buttons.usePaidVersion }}
-							</button>
-						</ng-container>
-					}
-				</mat-card-content>
-			</mat-card>
+					</ng-container>
+				}
+			</app-ui-section-card>
 		}
 		}
 	</div>
 	
-	<app-interview-history 
-		[sessions]="interviewHistory()" 
+	<app-interview-history
+		[sessions]="interviewHistory()"
 		[title]="TEXT.history.title"
 		[emptyMessage]="TEXT.history.emptyMessage" />
 </div>

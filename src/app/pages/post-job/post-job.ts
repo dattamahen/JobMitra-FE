@@ -20,6 +20,8 @@ import { POST_JOB_STEP1_CONFIG, POST_JOB_STEP2_CONFIG, POST_JOB_STEP3_CONFIG, PO
 import { JOB_TYPES, EMPLOYMENT_TYPES, EXPERIENCE_LEVELS, CURRENCIES, SALARY_PERIODS, COMPANY_SIZES, INDUSTRIES, COMMON_SKILLS, COMMON_BENEFITS } from '../../data/post-job-options';
 import { JOB_VALIDATION } from '../../constants/validation.constants';
 import { POST_JOB_TEXT } from '../../data/post-job-data';
+import { UiStepperHeaderComponent } from '../../shared/ui';
+import type { StepperHeaderConfig } from '../../shared/ui/ui.types';
 
 import { HrService } from '../../services/hr.service';
 
@@ -40,7 +42,8 @@ import { HrService } from '../../services/hr.service';
 		MatInputModule,
 		MatSelectModule,
 		MatAutocompleteModule,
-		DynamicFormComponent
+		DynamicFormComponent,
+		UiStepperHeaderComponent
 	],
 	templateUrl: './post-job.html',
 	styleUrl: './post-job.css',
@@ -53,6 +56,23 @@ export class PostJobPage {
 	navigateToPage = input<(event: { page: string }) => void>();
 	
 	stepper = viewChild.required<MatStepper>('stepper');
+
+	readonly stepperConfig: StepperHeaderConfig = {
+		steps: [
+			{ label: 'Basic Info' },
+			{ label: 'Location & Work Type' },
+			{ label: 'Job Description' },
+			{ label: 'Skills' },
+			{ label: 'Compensation' },
+			{ label: 'Company Info' },
+			{ label: 'Contact & Publish' },
+		],
+		currentIndex: 0,
+	};
+
+	get stepperConfigWithCurrent(): StepperHeaderConfig {
+		return { ...this.stepperConfig, currentIndex: this.stepper()?.selectedIndex ?? 0 };
+	}
 	
 	private formBuilder = inject(FormBuilder);
 	private router = inject(Router);

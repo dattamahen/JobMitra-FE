@@ -1,0 +1,13 @@
+<ul class="contact-list" role="list">
+  @for (item of visibleItems(); track item.text) {
+    <li class="contact-item">
+      <mat-icon class="contact-item__icon">{{ item.icon }}</mat-icon>
+      @if (item.href) {
+        <a class="contact-item__text contact-item__text--link"
+          [href]="item.href" target="_blank" rel="noopener noreferrer">{{ item.text }}</a>
+      } @else {
+        <span class="contact-item__text">{{ item.text }}</span>
+      }
+    </li>
+  }
+</ul>

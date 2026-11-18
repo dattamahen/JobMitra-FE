@@ -292,6 +292,22 @@ export class AuthService {
 		);
 	}
 
+	/**
+	 * Send OTP to email for signup verification
+	 */
+	sendEmailOtp(email: string): Observable<{ message: string }> {
+		return this.http.post<{ message: string }>(`${this.API_URL}/send-email-otp`, { email })
+			.pipe(catchError(this.handleError));
+	}
+
+	/**
+	 * Verify OTP entered by user during signup
+	 */
+	verifyEmailOtp(email: string, otp: string): Observable<{ verified: boolean }> {
+		return this.http.post<{ verified: boolean }>(`${this.API_URL}/verify-email-otp`, { email, otp })
+			.pipe(catchError(this.handleError));
+	}
+
 	async register(userData: RegisterRequest): Promise<User> {
 		try {
 			return await firstValueFrom(this.http.post<User>(`${this.API_URL}/register`, userData));

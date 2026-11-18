@@ -1,0 +1,43 @@
+<article class="section-card" [class]="borderClass()">
+  <div class="section-card__header">
+    <div class="section-card__header-left">
+      @if (hasIcon()) {
+        <mat-icon class="section-card__icon">{{ config().icon }}</mat-icon>
+      }
+      <h2 class="section-card__title">{{ config().title }}</h2>
+      @if (hasBadge()) {
+        <span class="section-card__badge">{{ config().badge }}</span>
+      }
+    </div>
+
+    <div class="section-card__header-right">
+      <!-- [slot="header"] content projected here -->
+      <ng-content select="[slot='header']" />
+
+      @if (hasTitleAction()) {
+        <button mat-stroked-button class="section-card__title-action"
+          (click)="titleActionClick.emit(config().titleAction!.id)">
+          @if (config().titleAction!.icon) {
+            <mat-icon>{{ config().titleAction!.icon }}</mat-icon>
+          }
+          {{ config().titleAction!.label }}
+        </button>
+      }
+
+      @if (isCollapsible()) {
+        <button mat-icon-button class="section-card__collapse-btn"
+          [attr.aria-expanded]="!collapsed()"
+          aria-label="Toggle section"
+          (click)="toggleCollapse()">
+          <mat-icon>{{ collapsed() ? 'expand_more' : 'expand_less' }}</mat-icon>
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (!collapsed()) {
+    <div class="section-card__body">
+      <ng-content />
+    </div>
+  }
+</article>
