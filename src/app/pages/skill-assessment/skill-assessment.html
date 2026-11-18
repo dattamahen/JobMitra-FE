@@ -12,26 +12,30 @@
 			<div class="skill-categories">
 				<div class="category-card">
 					<h2><mat-icon>computer</mat-icon> {{TEXT.categories.technicalSkills}}</h2>
-					@for (skill of getTechnicalSkills(); track skill.id) {
-						<app-ui-progress-item [config]="{
-							label: skill.name,
-							value: skill.currentLevel,
-							showPercentage: true,
-							actions: [{ id: skill.id, label: TEXT.buttons.practiceInterview, icon: 'mic' }]
-						}" (actionClick)="onSkillAction($event)" />
-					}
+					<div class="skills-scroll">
+						@for (skill of getTechnicalSkills(); track skill.id) {
+							<app-ui-progress-item [config]="{
+								label: skill.name,
+								value: skill.currentLevel,
+								showPercentage: true,
+								actions: [{ id: skill.id, label: TEXT.buttons.practiceInterview, icon: 'mic' }]
+							}" (actionClick)="onSkillAction($event)" />
+						}
+					</div>
 				</div>
 
 				<div class="category-card">
 					<h2><mat-icon>psychology</mat-icon> {{TEXT.categories.softSkills}}</h2>
-					@for (skill of getSoftSkills(); track skill.id) {
-						<app-ui-progress-item [config]="{
-							label: skill.name,
-							value: skill.currentLevel,
-							showPercentage: true,
-							actions: [{ id: skill.id, label: TEXT.buttons.practiceInterview, icon: 'mic' }]
-						}" (actionClick)="onSkillAction($event)" />
-					}
+					<div class="skills-scroll">
+						@for (skill of getSoftSkills(); track skill.id) {
+							<app-ui-progress-item [config]="{
+								label: skill.name,
+								value: skill.currentLevel,
+								showPercentage: true,
+								actions: [{ id: skill.id, label: TEXT.buttons.practiceInterview, icon: 'mic' }]
+							}" (actionClick)="onSkillAction($event)" />
+						}
+					</div>
 				</div>
 			</div>
 		} @else {

@@ -342,6 +342,11 @@
 	100% { transform: rotate(0deg) scale(1); }
 }
 
+/* Progress Item Action Button */
+.progress-item__action .mdc-button__label {
+	color: white;
+}
+
 /* Snackbar Styles */
 ::ng-deep .success-snackbar {
 	background-color: #4caf50;

@@ -7,6 +7,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { UiMetaRowComponent, UiChipListComponent, UiStatusBadgeComponent } from '../../../shared/ui';
 import type { MetaItem, ChipListConfig, StatusBadgeConfig } from '../../../shared/ui/ui.types';
 import type { JobListing } from '../../../types/job.types';
+import { buildJobShareText } from '../../../utils/share.util';
 
 @Component({
   selector: 'app-job-card',
@@ -68,18 +69,7 @@ export class JobCardComponent {
   }));
 
   private _shareText(): string {
-    const j = this.job();
-    const loc = [j.location?.city, j.location?.state].filter(Boolean).join(', ') || (j.location?.is_remote ? 'Remote' : '');
-    const lines: string[] = [`🚀 *${j.title}* at *${j.company}*`];
-    if (loc)                          lines.push(`📍 ${loc}${j.location?.is_remote ? ' (Remote)' : ''}`);
-    if (j.experience_level)           lines.push(`🎯 ${j.experience_level}${j.employment_type ? ' · ' + j.employment_type : ''}`);
-    if (j.skills_required?.length)    lines.push(`🛠 Skills: ${j.skills_required.slice(0, 5).join(', ')}${j.skills_required.length > 5 ? ' & more' : ''}`);
-    if (j.responsibilities?.length) {
-      lines.push(``, `📌 *Key Responsibilities:*`);
-      j.responsibilities.slice(0, 3).forEach(r => lines.push(`• ${r}`));
-    }
-    lines.push(``, `👉 Apply now on JobMouka:`, `🌐 https://www.jobmouka.com`, ``, `📢 Join our WhatsApp Channels for more jobs:`, `👔 Experienced: https://whatsapp.com/channel/0029VbESGTO8F2pHL4NOmt3S`, `🎓 Freshers: https://whatsapp.com/channel/0029VbDZLJS3wtb7Zhe2G90h`);
-    return lines.join('\n');
+    return buildJobShareText(this.job());
   }
 
   shareOnWhatsApp(): void {

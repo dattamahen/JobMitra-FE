@@ -21,6 +21,7 @@ import { MotivationBannerComponent } from '../../shared/components/motivation-ba
 import { getRandomPosterMotivationGroup, type MotivationGroup } from '../../data/motivation-lines.data';
 import { UiStatusBadgeComponent, UiChipListComponent, UiMetaRowComponent } from '../../shared/ui';
 import type { MetaItem, ChipListConfig } from '../../shared/ui/ui.types';
+import { buildJobShareText } from '../../utils/share.util';
 
 type View = 'list' | 'post';
 type PostMode = 'manual' | 'image' | 'csv';
@@ -325,24 +326,8 @@ export class ReferHirePage implements OnInit {
     await this.loadJobs();
   }
 
-  private _jobShareText(job: InternalJob): string {
-    const loc = [job.location?.city, job.location?.state].filter(Boolean).join(', ') || (job.location?.is_remote ? 'Remote' : '');
-    const lines: string[] = [
-      `🚀 *${job.title}* at *${job.company}*`,
-    ];
-    if (loc)                              lines.push(`📍 ${loc}${job.location?.is_remote ? ' (Remote)' : ''}`);
-    if (job.experience_level)             lines.push(`🎯 ${job.experience_level} · ${job.employment_type || ''}`.replace(/ · $/, ''));
-    if (job.skills_required?.length)      lines.push(`🛠 Skills: ${job.skills_required.slice(0, 5).join(', ')}${job.skills_required.length > 5 ? ' & more' : ''}`);
-    if (job.responsibilities?.length) {
-      lines.push(``, `📌 *Key Responsibilities:*`);
-      job.responsibilities.slice(0, 3).forEach(r => lines.push(`• ${r}`));
-    }
-    lines.push(``, `👉 Apply now on JobMouka:`, `🌐 https://www.jobmouka.com`, `📱 https://play.google.com/store/apps/details?id=com.jobmouka.app`);
-    return lines.join('\n');
-  }
-
   shareOnWhatsApp(job: InternalJob): void {
-    window.open(`https://wa.me/?text=${encodeURIComponent(this._jobShareText(job))}`, '_blank');
+    window.open(`https://wa.me/?text=${encodeURIComponent(buildJobShareText(job))}`, '_blank');
   }
 
   shareOnLinkedIn(job: InternalJob): void {
@@ -356,6 +341,6 @@ export class ReferHirePage implements OnInit {
   }
 
   shareOnTelegram(job: InternalJob): void {
-    window.open(`https://t.me/share/url?url=${encodeURIComponent('https://www.jobmouka.com')}&text=${encodeURIComponent(this._jobShareText(job))}`, '_blank');
+    window.open(`https://t.me/share/url?url=${encodeURIComponent('https://www.jobmouka.com')}&text=${encodeURIComponent(buildJobShareText(job))}`, '_blank');
   }
 }
