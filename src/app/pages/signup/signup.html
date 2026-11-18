@@ -1,140 +1,148 @@
 <div class="auth-container">
-	<!-- Hero Section -->
-	<div class="hero-section">
-		<div class="hero-background">
-			<div class="gradient-overlay"></div>
-			<div class="floating-shapes">
-				<div class="shape shape-1"></div>
-				<div class="shape shape-2"></div>
-				<div class="shape shape-3"></div>
-			</div>
-		</div>
-		
-		<div class="hero-content">
-			<div class="brand-section">
-				<div class="logo-container">
-					<div class="logo-icon">🚀</div>
-					<h1 class="brand-title">{{CONSTANTS.APP_NAME}}</h1>
-				</div>
-				<p class="brand-tagline">{{TEXT.hero.tagline}}</p>
-				<p class="brand-description">{{TEXT.hero.description}}</p>
-			</div>
-			
-			<div class="benefits-list">
-				@for (benefit of TEXT.benefits; track benefit.icon) {
-					<div class="benefit-item">
-						<div class="benefit-icon">{{benefit.icon}}</div>
-						<span>{{benefit.text}}</span>
-					</div>
-				}
-			</div>
-		</div>
-	</div>
+	<app-ui-hero-banner [config]="heroBannerConfig" />
 
-	<!-- Signup Form Section -->
 	<div class="auth-form-section">
 		<div class="form-container">
 			<div class="form-header">
 				<h2 class="form-title">{{TEXT.form.title}}</h2>
 				<p class="form-subtitle">{{CONSTANTS.GET_STARTED}}</p>
 			</div>
-			
+
 			<div class="auth-card">
 				<form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
-					<div class="name-fields">
-						<mat-form-field appearance="outline">
-							<mat-label>{{TEXT.form.firstName}}</mat-label>
-							<input matInput formControlName="first_name" required>
-							@if (signupForm.get('first_name')?.hasError('required')) {
-								<mat-error>{{TEXT.form.firstNameRequired}}</mat-error>
+
+					<!-- Step 1: Email + Send OTP -->
+					<div class="email-verify-row">
+						<mat-form-field appearance="outline" class="email-field">
+							<mat-label>{{TEXT.form.email}}</mat-label>
+							<input matInput type="email" formControlName="email" required>
+							@if (otpStep() === 'verified') {
+								<mat-icon matSuffix style="color:#16a34a">verified</mat-icon>
+							}
+							@if (signupForm.get('email')?.hasError('required') && signupForm.get('email')?.touched) {
+								<mat-error>{{TEXT.form.emailRequired}}</mat-error>
+							}
+							@if (signupForm.get('email')?.hasError('email') && signupForm.get('email')?.touched) {
+								<mat-error>{{TEXT.form.emailInvalid}}</mat-error>
 							}
 						</mat-form-field>
 
-						<mat-form-field appearance="outline">
-							<mat-label>{{TEXT.form.lastName}}</mat-label>
-							<input matInput formControlName="last_name" required>
-							@if (signupForm.get('last_name')?.hasError('required')) {
-								<mat-error>{{TEXT.form.lastNameRequired}}</mat-error>
-							}
-						</mat-form-field>
+						@if (otpStep() === 'idle' || otpStep() === 'sending') {
+							<button mat-flat-button color="primary" type="button" class="otp-btn"
+								[disabled]="signupForm.get('email')?.invalid || otpStep() === 'sending'"
+								(click)="sendOtp()">
+								@if (otpStep() === 'sending') {
+									<mat-spinner diameter="18"></mat-spinner>
+								} @else {
+									Send OTP
+								}
+							</button>
+						}
 					</div>
 
-					<mat-form-field appearance="outline">
-						<mat-label>{{TEXT.form.email}}</mat-label>
-						<input matInput type="email" formControlName="email" required>
-						@if (signupForm.get('email')?.hasError('required')) {
-							<mat-error>{{TEXT.form.emailRequired}}</mat-error>
-						}
-						@if (signupForm.get('email')?.hasError('email')) {
-							<mat-error>{{TEXT.form.emailInvalid}}</mat-error>
-						}
-					</mat-form-field>
-
-					<mat-form-field appearance="outline">
-						<mat-label>{{TEXT.form.password}}</mat-label>
-						<input matInput [type]="showPassword() ? 'text' : 'password'" formControlName="password" required>
-						<button mat-icon-button matSuffix type="button"
-							(click)="showPassword.set(!showPassword())"
-							[attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
-							<mat-icon>{{showPassword() ? 'visibility_off' : 'visibility'}}</mat-icon>
-						</button>
-						@if (signupForm.get('password')?.hasError('required')) {
-							<mat-error>{{TEXT.form.passwordRequired}}</mat-error>
-						}
-						@if (signupForm.get('password')?.hasError('minlength')) {
-							<mat-error>{{TEXT.form.passwordMinLength}}</mat-error>
-						}
-						@if (signupForm.get('password')?.hasError('missingUppercase')) {
-							<mat-error>{{TEXT.form.passwordMissingUppercase}}</mat-error>
-						}
-						@if (signupForm.get('password')?.hasError('missingLowercase')) {
-							<mat-error>{{TEXT.form.passwordMissingLowercase}}</mat-error>
-						}
-						@if (signupForm.get('password')?.hasError('missingNumber')) {
-							<mat-error>{{TEXT.form.passwordMissingNumber}}</mat-error>
-						}
-						@if (signupForm.get('password')?.hasError('missingSpecial')) {
-							<mat-error>{{TEXT.form.passwordMissingSpecial}}</mat-error>
-						}
-					</mat-form-field>
-
-					<mat-form-field appearance="outline">
-						<mat-label>{{TEXT.form.confirmPassword}}</mat-label>
-						<input matInput [type]="showConfirmPassword() ? 'text' : 'password'" formControlName="confirmPassword" required>
-						<button mat-icon-button matSuffix type="button"
-							(click)="showConfirmPassword.set(!showConfirmPassword())"
-							[attr.aria-label]="showConfirmPassword() ? 'Hide confirm password' : 'Show confirm password'">
-							<mat-icon>{{showConfirmPassword() ? 'visibility_off' : 'visibility'}}</mat-icon>
-						</button>
-						@if (signupForm.get('confirmPassword')?.hasError('required')) {
-							<mat-error>{{TEXT.form.confirmPasswordRequired}}</mat-error>
-						}
-						@if (signupForm.get('confirmPassword')?.hasError('passwordMismatch')) {
-							<mat-error>{{TEXT.form.passwordMismatch}}</mat-error>
-						}
-					</mat-form-field>
-
-					@if (passwordMatchStatus() !== 'idle') {
-						<div class="password-match-hint"
-							[class.match]="passwordMatchStatus() === 'match'"
-							[class.mismatch]="passwordMatchStatus() === 'mismatch'"
-							role="status"
-							aria-live="polite">
-							<mat-icon>{{passwordMatchStatus() === 'match' ? 'check_circle' : 'cancel'}}</mat-icon>
-							<span>{{passwordMatchStatus() === 'match' ? TEXT.form.passwordsMatch : TEXT.form.passwordMismatch}}</span>
+					<!-- Step 2: OTP input row -->
+					@if (otpStep() === 'sent') {
+						<div class="otp-verify-row" [formGroup]="otpForm">
+							<mat-form-field appearance="outline" class="otp-field">
+								<mat-label>Enter OTP</mat-label>
+								<input matInput formControlName="otp" maxlength="6" placeholder="6-digit code">
+							</mat-form-field>
+							<div class="otp-actions">
+								<button mat-flat-button color="primary" type="button"
+									[disabled]="otpForm.invalid || isLoading()"
+									(click)="verifyOtp()">
+									@if (isLoading()) { <mat-spinner diameter="18"></mat-spinner> } @else { Verify }
+								</button>
+								<button mat-button type="button" (click)="sendOtp()">Resend</button>
+							</div>
 						</div>
 					}
 
-					<mat-form-field appearance="outline">
-						<mat-label>{{TEXT.form.userType}}</mat-label>
-						<mat-select formControlName="user_type">
-							<mat-option value="candidate">{{TEXT.form.jobSeeker}}</mat-option>
-							<mat-option value="hire">{{TEXT.form.hrRecruiter}}</mat-option>
-						</mat-select>
-					</mat-form-field>
+					<!-- Step 3: Rest of form — unlocked after email verified -->
+					@if (otpStep() === 'verified') {
+						<div class="name-fields">
+							<mat-form-field appearance="outline">
+								<mat-label>{{TEXT.form.firstName}}</mat-label>
+								<input matInput formControlName="first_name" required>
+								@if (signupForm.get('first_name')?.hasError('required')) {
+									<mat-error>{{TEXT.form.firstNameRequired}}</mat-error>
+								}
+							</mat-form-field>
+
+							<mat-form-field appearance="outline">
+								<mat-label>{{TEXT.form.lastName}}</mat-label>
+								<input matInput formControlName="last_name" required>
+								@if (signupForm.get('last_name')?.hasError('required')) {
+									<mat-error>{{TEXT.form.lastNameRequired}}</mat-error>
+								}
+							</mat-form-field>
+						</div>
+
+						<mat-form-field appearance="outline">
+							<mat-label>{{TEXT.form.password}}</mat-label>
+							<input matInput [type]="showPassword() ? 'text' : 'password'" formControlName="password" required>
+							<button mat-icon-button matSuffix type="button"
+								(click)="showPassword.set(!showPassword())"
+								[attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
+								<mat-icon>{{showPassword() ? 'visibility_off' : 'visibility'}}</mat-icon>
+							</button>
+							@if (signupForm.get('password')?.hasError('required')) {
+								<mat-error>{{TEXT.form.passwordRequired}}</mat-error>
+							}
+							@if (signupForm.get('password')?.hasError('minlength')) {
+								<mat-error>{{TEXT.form.passwordMinLength}}</mat-error>
+							}
+							@if (signupForm.get('password')?.hasError('missingUppercase')) {
+								<mat-error>{{TEXT.form.passwordMissingUppercase}}</mat-error>
+							}
+							@if (signupForm.get('password')?.hasError('missingLowercase')) {
+								<mat-error>{{TEXT.form.passwordMissingLowercase}}</mat-error>
+							}
+							@if (signupForm.get('password')?.hasError('missingNumber')) {
+								<mat-error>{{TEXT.form.passwordMissingNumber}}</mat-error>
+							}
+							@if (signupForm.get('password')?.hasError('missingSpecial')) {
+								<mat-error>{{TEXT.form.passwordMissingSpecial}}</mat-error>
+							}
+						</mat-form-field>
+
+						<mat-form-field appearance="outline">
+							<mat-label>{{TEXT.form.confirmPassword}}</mat-label>
+							<input matInput [type]="showConfirmPassword() ? 'text' : 'password'" formControlName="confirmPassword" required>
+							<button mat-icon-button matSuffix type="button"
+								(click)="showConfirmPassword.set(!showConfirmPassword())"
+								[attr.aria-label]="showConfirmPassword() ? 'Hide confirm password' : 'Show confirm password'">
+								<mat-icon>{{showConfirmPassword() ? 'visibility_off' : 'visibility'}}</mat-icon>
+							</button>
+							@if (signupForm.get('confirmPassword')?.hasError('required')) {
+								<mat-error>{{TEXT.form.confirmPasswordRequired}}</mat-error>
+							}
+							@if (signupForm.get('confirmPassword')?.hasError('passwordMismatch')) {
+								<mat-error>{{TEXT.form.passwordMismatch}}</mat-error>
+							}
+						</mat-form-field>
+
+						@if (passwordMatchStatus() !== 'idle') {
+							<div class="password-match-hint"
+								[class.match]="passwordMatchStatus() === 'match'"
+								[class.mismatch]="passwordMatchStatus() === 'mismatch'"
+								role="status" aria-live="polite">
+								<mat-icon>{{passwordMatchStatus() === 'match' ? 'check_circle' : 'cancel'}}</mat-icon>
+								<span>{{passwordMatchStatus() === 'match' ? TEXT.form.passwordsMatch : TEXT.form.passwordMismatch}}</span>
+							</div>
+						}
+
+						<mat-form-field appearance="outline">
+							<mat-label>{{TEXT.form.userType}}</mat-label>
+							<mat-select formControlName="user_type">
+								<mat-option value="candidate">{{TEXT.form.jobSeeker}}</mat-option>
+								<mat-option value="hire">{{TEXT.form.hrRecruiter}}</mat-option>
+							</mat-select>
+						</mat-form-field>
+					}
 
 					<button mat-raised-button color="primary" type="submit"
-						[disabled]="signupForm.invalid || isLoading()" class="signup-button">
+						[disabled]="signupForm.invalid || isLoading() || otpStep() !== 'verified'" class="signup-button">
 						@if (isLoading()) {
 							<mat-spinner diameter="20"></mat-spinner>
 							Creating Account...
@@ -142,8 +150,9 @@
 							{{TEXT.form.createAccount}}
 						}
 					</button>
+
 				</form>
-				
+
 				<div class="auth-toggle">
 					<p class="toggle-text">{{TEXT.toggle.alreadyHaveAccount}} <a routerLink="/login" class="toggle-link">{{TEXT.toggle.signIn}}</a></p>
 				</div>

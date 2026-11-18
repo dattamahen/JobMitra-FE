@@ -1,23 +1,24 @@
-import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, input, output, computed, ChangeDetectionStrategy } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { UiMetaRowComponent, UiChipListComponent, UiStatusBadgeComponent } from '../../../shared/ui';
+import type { MetaItem, ChipListConfig, StatusBadgeConfig } from '../../../shared/ui/ui.types';
 import type { JobListing } from '../../../types/job.types';
 
 @Component({
   selector: 'app-job-card',
   imports: [
-    CommonModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatChipsModule,
     MatTooltipModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    UiMetaRowComponent,
+    UiChipListComponent,
+    UiStatusBadgeComponent,
   ],
   templateUrl: './job-card.component.html',
   styleUrl: './job-card.component.css',
@@ -41,6 +42,30 @@ export class JobCardComponent {
   tailorResumeClick = output<string>();
   mockInterviewClick = output<string>();
   applyClick = output<string>();
+
+  employmentTypeBadgeConfig = computed<StatusBadgeConfig>(() => ({
+    value: this.job().employment_type ?? '',
+  }));
+
+  metaItems = computed<MetaItem[]>(() => {
+    const j = this.job();
+    const items: MetaItem[] = [
+      { icon: 'location_on', text: this.formatLocation(j) },
+      { icon: 'payments',    text: this.formatSalary(j) },
+      { icon: 'schedule',    text: this.getFormattedPostedDate(j) },
+    ];
+    if (j.experience_level) {
+      items.splice(2, 0, { icon: 'work_history', text: j.experience_level + ' level' });
+    }
+    return items;
+  });
+
+  skillsChipConfig = computed<ChipListConfig>(() => ({
+    items: this.job().skills_required ?? [],
+    variant: 'skill',
+    size: 'sm',
+    maxVisible: 6,
+  }));
 
   private _shareText(): string {
     const j = this.job();

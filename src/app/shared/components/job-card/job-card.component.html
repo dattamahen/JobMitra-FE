@@ -16,7 +16,7 @@
         <!-- Title and Employment Type -->
         <div class="job-header">
           <h3 class="job-title">{{ job().title }}</h3>
-          <mat-chip class="employment-type-chip">{{ job().employment_type | titlecase }}</mat-chip>
+          <app-ui-status-badge [config]="employmentTypeBadgeConfig()" />
           @if (job().source === 'internal_jobs') {
             <span class="referral-badge"><mat-icon>verified</mat-icon> Internal Referral</span>
           }
@@ -26,37 +26,11 @@
         <p class="company-name">{{ job().company }}</p>
 
         <!-- Meta Information -->
-        <div class="job-meta">
-          <span class="meta-item">
-            <mat-icon>location_on</mat-icon>
-            {{ formatLocation(job()) }}
-          </span>
-          <span class="meta-item">
-            <mat-icon>payments</mat-icon>
-            {{ formatSalary(job()) }}
-          </span>
-          @if (job().experience_level) {
-            <span class="meta-item">
-              <mat-icon>work_history</mat-icon>
-              {{ job().experience_level | titlecase }} level
-            </span>
-          }
-          <span class="meta-item">
-            <mat-icon>schedule</mat-icon>
-            {{ getFormattedPostedDate(job()) }}
-          </span>
-        </div>
+        <app-ui-meta-row [items]="metaItems()" />
 
         <!-- Skills -->
         @if (job().skills_required && job().skills_required.length > 0) {
-          <div class="job-skills">
-            @for (skill of job().skills_required.slice(0, 6); track skill) {
-              <mat-chip class="skill-chip">{{ skill }}</mat-chip>
-            }
-            @if (job().skills_required.length > 6) {
-              <mat-chip class="skill-chip more-skills">+{{ job().skills_required.length - 6 }}</mat-chip>
-            }
-          </div>
+          <app-ui-chip-list [config]="skillsChipConfig()" />
         }
       </div>
     </div>

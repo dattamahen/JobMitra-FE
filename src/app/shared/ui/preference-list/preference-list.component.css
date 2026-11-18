@@ -1,0 +1,14 @@
+@import '../ui-tokens.css';
+
+:host { display: block; }
+
+.preference-list { margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--spacing-sm); }
+
+.preference-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-sm); align-items: baseline; }
+
+.preference-row__label { font-size: var(--font-size-sm); color: var(--color-secondary); margin: 0; }
+.preference-row__value { font-size: var(--font-size-sm); color: var(--color-on-surface); font-weight: 500; margin: 0; }
+
+@media (max-width: 480px) {
+  .preference-row { grid-template-columns: 1fr; gap: 0.125rem; }
+}

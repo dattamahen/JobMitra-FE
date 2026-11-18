@@ -9,8 +9,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { UiStatusBadgeComponent, UiChipListComponent } from '../../shared/ui';
+import type { StatusBadgeConfig, ChipListConfig } from '../../shared/ui/ui.types';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatMenuModule } from '@angular/material/menu';
 
@@ -56,7 +57,8 @@ export interface JobOption {
 		MatFormFieldModule,
 		MatButtonModule,
 		MatIconModule,
-		MatChipsModule,
+		UiStatusBadgeComponent,
+		UiChipListComponent,
 		MatSnackBarModule,
 		MatMenuModule,
 		MatTooltipModule,
@@ -199,6 +201,16 @@ export class ApplicationsReceivedPage implements OnInit {
 
 	getStatusColor(status: string): string {
 		return APPLICATION_RECEIVED_STATUS_COLORS[status] || 'primary';
+	}
+
+	getScoreBadgeConfig(score: number): StatusBadgeConfig {
+		const label = score > 0 ? score + '%' : 'N/A';
+		const color = score >= 70 ? 'success' : score >= 50 ? 'warn' : 'error';
+		return { value: label, colorMap: { [label]: color }, pill: true };
+	}
+
+	getSkillsChipConfig(skills: string[]): ChipListConfig {
+		return { items: skills, variant: 'skill', size: 'sm', maxVisible: 8 };
 	}
 
 	updateStatus(application: ApplicationReceived, newStatus: string) {

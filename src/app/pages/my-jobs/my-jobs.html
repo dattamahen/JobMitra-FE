@@ -39,38 +39,21 @@
 						<div class="job-card-header">
 							<div class="job-title-row">
 								<h3 class="job-title">{{job.title}}</h3>
-								<mat-chip [class]="job.is_active ? 'status-active' : 'status-inactive'" class="status-chip">
-									{{job.is_active ? TEXT.labels.active : TEXT.labels.inactive}}
-								</mat-chip>
+								<app-ui-status-badge [config]="getStatusBadgeConfig(job)" />
 							</div>
 							<span class="job-company">{{job.company}}</span>
 						</div>
 
-						<div class="job-meta-row">
-							<span class="meta-item"><mat-icon>location_on</mat-icon>{{formatLocation(job)}}</span>
-							<span class="meta-item"><mat-icon>work</mat-icon>{{getEmploymentTypeDisplay(job.employment_type)}}</span>
-							<span class="meta-item"><mat-icon>trending_up</mat-icon>{{getExperienceLevelDisplay(job.experience_level)}}</span>
-							@if (job.salary) {
-								<span class="meta-item"><mat-icon>payments</mat-icon>{{formatSalary(job)}}</span>
-							}
-							<span class="meta-item"><mat-icon>schedule</mat-icon>{{getDaysAgo(job.posted_date)}}d ago</span>
-						</div>
+						<app-ui-meta-row [items]="getJobMetaItems(job)" />
 
 						@if (job.skills_required.length > 0) {
-							<div class="job-skills-row">
-								@for (skill of job.skills_required.slice(0, 5); track skill) {
-									<mat-chip class="skill-chip-sm">{{skill}}</mat-chip>
-								}
-								@if (job.skills_required.length > 5) {
-									<mat-chip class="skill-chip-sm">+{{job.skills_required.length - 5}}</mat-chip>
-								}
-							</div>
+							<app-ui-chip-list [config]="getJobSkillsConfig(job)" />
 						}
 					</div>
 
 					<div class="job-card-actions">
-						<mat-chip class="action-chip applications-chip" 
-							(click)="viewApplications(job)" 
+						<mat-chip class="action-chip applications-chip"
+							(click)="viewApplications(job)"
 							[class.has-applications]="job.applications_count > 0"
 							[matTooltip]="TEXT.tooltips.viewApplications">
 							<mat-icon matChipIcon>people</mat-icon>
@@ -113,11 +96,7 @@
 						@if (job.skills_required.length > 5) {
 							<div class="expanded-section">
 								<h4>All Skills</h4>
-								<div class="job-skills-row">
-									@for (skill of job.skills_required; track skill) {
-										<mat-chip class="skill-chip-sm">{{skill}}</mat-chip>
-									}
-								</div>
+								<app-ui-chip-list [config]="{ items: job.skills_required, variant: 'skill', size: 'sm' }" />
 							</div>
 						}
 					</div>
@@ -128,19 +107,7 @@
 		}
 	</div>
 
-	@if (totalJobs() > itemsPerPage()) {
-	<div class="pagination-container">
-		<button mat-raised-button [disabled]="currentPage() === 1" (click)="previousPage()">
-			<mat-icon>chevron_left</mat-icon>
-			{{TEXT.pagination.previous}}
-		</button>
-		<span class="page-info">
-			{{TEXT.pagination.page}} {{currentPage()}} {{TEXT.pagination.of}} {{totalPages()}}
-		</span>
-		<button mat-raised-button [disabled]="currentPage() * itemsPerPage() >= totalJobs()" (click)="nextPage()">
-			{{TEXT.pagination.next}}
-			<mat-icon>chevron_right</mat-icon>
-		</button>
-	</div>
-	}
+	<app-ui-pagination-bar
+		[config]="{ currentPage: currentPage(), totalPages: totalPages() }"
+		(pageChange)="onPageChange($event)" />
 </div>

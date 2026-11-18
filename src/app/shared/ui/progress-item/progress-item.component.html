@@ -1,0 +1,16 @@
+<div class="progress-item">
+  <div class="progress-item__top">
+    <span class="progress-item__label">{{ config().label }}</span>
+    @if (hasActions()) {
+      <div class="progress-item__right">
+        @for (action of config().actions!; track action.id) {
+          <button mat-flat-button color="primary" class="progress-item__action"
+            (click)="actionClick.emit(action.id)">
+            @if (action.icon) { <mat-icon>{{ action.icon }}</mat-icon> }
+            {{ action.label }}
+          </button>
+        }
+      </div>
+    }
+  </div>
+</div>

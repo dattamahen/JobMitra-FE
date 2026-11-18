@@ -195,6 +195,37 @@
 	border: 1px solid #f1f5f9;
 }
 
+.email-verify-row {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+}
+
+.email-field { flex: 1; }
+
+.otp-btn {
+	height: 40px;
+	margin-top: 4px;
+	white-space: nowrap;
+	flex-shrink: 0;
+}
+
+.otp-verify-row {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	margin-bottom: 8px;
+}
+
+.otp-field { flex: 1; }
+
+.otp-actions {
+	display: flex;
+	gap: 6px;
+	align-items: center;
+	margin-top: 4px;
+}
+
 .name-fields {
 	display: flex;
 	gap: 16px;

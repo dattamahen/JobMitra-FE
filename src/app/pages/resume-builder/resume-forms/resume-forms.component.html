@@ -1,0 +1,66 @@
+<div class="forms-layout">
+	<div class="builder-left">
+		<div class="builder-sidebar">
+			<div class="section-list">
+				<h4><mat-icon>list</mat-icon> Resume Sections</h4>
+				@for (section of sections; track section.id) {
+					<div class="section-item"
+						[class.active]="activeSection() === section.id"
+						[class.completed]="isSectionComplete(section.id)"
+						(click)="activeSection.set(section.id)"
+						role="button" tabindex="0"
+						(keydown.enter)="activeSection.set(section.id)"
+						[attr.aria-label]="section.label">
+						<div class="section-info">
+							<mat-icon class="section-icon">{{ section.icon }}</mat-icon>
+							<span class="section-label">{{ section.label }}</span>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+		<div class="builder-jd-action">
+			<button mat-stroked-button class="jd-open-btn" (click)="openJdModal.emit()" aria-label="CV as per Job Description">
+				<mat-icon>auto_awesome</mat-icon>
+				CV as per JD
+			</button>
+		</div>
+	</div>
+
+	<div class="builder-main">
+		<div class="form-header-actions">
+			<button mat-icon-button (click)="back.emit()" matTooltip="Back" aria-label="Back">
+				<mat-icon>arrow_back</mat-icon>
+			</button>
+			<button mat-icon-button (click)="isFormExpanded.set(!isFormExpanded())"
+				[matTooltip]="isFormExpanded() ? 'Collapse' : 'Expand'" aria-label="Toggle form expansion">
+				<mat-icon>{{ isFormExpanded() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
+			</button>
+		</div>
+
+		@for (section of sectionForms(); track section.id) {
+			@if (activeSection() === section.id) {
+				<div class="resume-form">
+					<app-dynamic-form [config]="section.config" [initialValues]="section.values"
+						(formChange)="onFormChange(section.id, $event)">
+					</app-dynamic-form>
+				</div>
+			}
+		}
+
+		<div class="resume-actions">
+			<button mat-raised-button color="primary" (click)="openDownload()" [disabled]="isDownloading()">
+				<mat-icon>{{ isDownloading() ? 'hourglass_empty' : 'download' }}</mat-icon>
+				{{ isDownloading() ? 'Generating...' : 'Download CV' }}
+			</button>
+		</div>
+	</div>
+</div>
+
+@if (showTemplatePicker()) {
+	<app-resume-template-picker
+		[isLoading]="isDownloading()"
+		(selected)="onTemplateSelected($event)"
+		(dismissed)="showTemplatePicker.set(false)">
+	</app-resume-template-picker>
+}

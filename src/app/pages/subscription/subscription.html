@@ -12,44 +12,25 @@
 			[cardHeight]="'100px'">
 		</app-skeleton-stat-grid>
 	} @else if (credits()) {
-		<div class="credits-grid">
-			<mat-card class="credit-card cv-card">
-				<mat-card-content>
-					<mat-icon class="credit-icon cv">description</mat-icon>
-					<div class="credit-info">
-						<span class="credit-value">{{ credits()!.cv_downloads_remaining }}</span>
-						<span class="credit-label">{{TEXT.labels.cvDownloadsRemaining}}</span>
-					</div>
-				</mat-card-content>
-			</mat-card>
+		<app-ui-stat-grid [config]="{
+			stats: [
+				{ id: 'cv', label: TEXT.labels.cvDownloadsRemaining, value: credits()!.cv_downloads_remaining, icon: 'description', color: 'primary' },
+				{ id: 'interview', label: TEXT.labels.mockInterviewsRemaining, value: credits()!.mock_interviews_remaining, icon: 'record_voice_over', color: 'info' }
+			],
+			columns: { default: 2, tablet: 2, mobile: 1 }
+		}" />
 
-			<mat-card class="credit-card interview-card">
-				<mat-card-content>
-					<mat-icon class="credit-icon interview">record_voice_over</mat-icon>
-					<div class="credit-info">
-						<span class="credit-value">{{ credits()!.mock_interviews_remaining }}</span>
-						<span class="credit-label">{{TEXT.labels.mockInterviewsRemaining}}</span>
-					</div>
-				</mat-card-content>
-			</mat-card>
-		</div>
-
-		<mat-card class="buy-card">
-			<mat-card-content>
-				<div class="buy-section">
-					<div class="buy-info">
-						<h3>{{TEXT.labels.needMoreCredits}}</h3>
-						@if (plan()) {
-							<p>Get <strong>{{plan()!.cv_downloads}} CV Downloads</strong> + <strong>{{plan()!.mock_interviews}} Mock Interviews</strong> for just <strong>₹{{plan()!.amount}}</strong> (incl. GST)</p>
-						}
-					</div>
-					<button mat-raised-button color="primary" (click)="openBuyDialog()">
-						<mat-icon>shopping_cart</mat-icon>
-						{{TEXT.labels.buyCredits}}
-					</button>
-				</div>
-			</mat-card-content>
-		</mat-card>
+		<app-ui-section-card [config]="{ title: TEXT.labels.needMoreCredits, icon: 'shopping_cart' }">
+			<div class="buy-section">
+				@if (plan()) {
+					<p>Get <strong>{{plan()!.cv_downloads}} CV Downloads</strong> + <strong>{{plan()!.mock_interviews}} Mock Interviews</strong> for just <strong>₹{{plan()!.amount}}</strong> (incl. GST)</p>
+				}
+				<button mat-raised-button color="primary" (click)="openBuyDialog()">
+					<mat-icon>shopping_cart</mat-icon>
+					{{TEXT.labels.buyCredits}}
+				</button>
+			</div>
+		</app-ui-section-card>
 
 
 	}

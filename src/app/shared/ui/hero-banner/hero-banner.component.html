@@ -1,0 +1,39 @@
+<div class="hero-banner" [class]="variantClass()">
+  @if (hasBadge()) {
+    <div class="hero-banner__badge">
+      <mat-icon>{{ config().badge!.icon }}</mat-icon>
+      <span>{{ config().badge!.text }}</span>
+    </div>
+  }
+
+  <h1 class="hero-banner__title">{{ config().title }}</h1>
+
+  @if (config().subtitle) {
+    <p class="hero-banner__subtitle">{{ config().subtitle }}</p>
+  }
+  @if (config().description) {
+    <p class="hero-banner__desc">{{ config().description }}</p>
+  }
+
+  @if (hasStats()) {
+    <div class="hero-banner__stats">
+      @for (stat of config().stats!; track stat.label) {
+        <div class="hero-stat">
+          <span class="hero-stat__value">{{ stat.value }}</span>
+          <span class="hero-stat__label">{{ stat.label }}</span>
+        </div>
+      }
+    </div>
+  }
+
+  @if (hasBenefits()) {
+    <ul class="hero-banner__benefits">
+      @for (benefit of config().benefits!; track benefit.text) {
+        <li class="hero-benefit">
+          <mat-icon class="hero-benefit__icon">{{ benefit.icon }}</mat-icon>
+          <span>{{ benefit.text }}</span>
+        </li>
+      }
+    </ul>
+  }
+</div>

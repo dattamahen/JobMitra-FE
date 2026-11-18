@@ -14,72 +14,21 @@
 				[showSecondLine]="false"
 				[cardTitle]="TEXT.recentActivity">
 			</app-skeleton-list-rows>
-		} @else {
-			@if (dashboardData(); as data) {
-				<div class="stats-grid">
-					@for (stat of data.stats; track stat.id) {
-						<mat-card class="stat-card" [class]="'stat-card-' + stat.color" role="button" tabindex="0"
-							(click)="onStatClick(stat.id)" (keydown.enter)="onStatClick(stat.id)">
-							<mat-card-content>
-								<div class="stat-header">
-									<mat-icon class="stat-icon">{{ stat.icon }}</mat-icon>
-									@if (stat.trend) {
-										<div class="trend-indicator" [class]="'trend-' + stat.trend.direction">
-											<mat-icon class="trend-icon">{{ getTrendIcon(stat.trend.direction) }}</mat-icon>
-											<span class="trend-text">{{ stat.trend.percentage }}%</span>
-										</div>
-									}
-								</div>
-								<div class="stat-content">
-									<h2 class="stat-value">{{ stat.value }}</h2>
-									<p class="stat-label">{{ stat.label }}</p>
-								</div>
-							</mat-card-content>
-						</mat-card>
-					}
-				</div>
-
-				<mat-card class="recent-activity">
-					<mat-card-header>
-						<mat-card-title>
-							<mat-icon>timeline</mat-icon>
-							{{TEXT.recentActivity}}
-						</mat-card-title>
-					</mat-card-header>
-
-					<mat-card-content>
-						@if (data.recentActivities && data.recentActivities.length > 0) {
-							<div class="activity-list">
-								@for (activity of data.recentActivities; track activity.id) {
-									<div class="activity-item">
-										<div class="activity-icon-wrap" [class]="'icon-' + getActivityTypeColor(activity.type)">
-											<mat-icon>{{ activity.icon }}</mat-icon>
-										</div>
-										<div class="activity-body">
-											<span class="activity-title">{{ activity.title }}</span>
-											<span class="activity-time">{{ getActivityTimeAgo(activity.timestamp) }}</span>
-										</div>
-										<span class="activity-badge" [class]="'type-' + activity.type">{{ activity.type | titlecase }}</span>
-									</div>
-								}
-							</div>
-						} @else {
-							<div class="no-activity">
-								<mat-icon class="no-activity-icon">{{TEXT.noActivity.icon}}</mat-icon>
-								<p>{{TEXT.noActivity.title}}</p>
-								<small>{{TEXT.noActivity.message}}</small>
-							</div>
-						}
-					</mat-card-content>
-				</mat-card>
-
-				<div class="dashboard-footer">
-					<small class="last-updated">
-						<mat-icon>schedule</mat-icon>
-						{{TEXT.lastUpdated}} {{ data.lastUpdated | date:'medium' }}
-					</small>
-				</div>
+		} @else if (dashboardData()) {
+			@if (statGridConfig(); as sgc) {
+				<app-ui-stat-grid [config]="sgc" (statClick)="onStatClick($event)" />
 			}
+
+			@if (activityFeedConfig(); as afc) {
+				<app-ui-activity-feed [config]="afc" />
+			}
+
+			<div class="dashboard-footer">
+				<small class="last-updated">
+					<mat-icon>schedule</mat-icon>
+					{{ TEXT.lastUpdated }} {{ dashboardData()!.lastUpdated | date:'medium' }}
+				</small>
+			</div>
 		}
 	</div>
 </div>

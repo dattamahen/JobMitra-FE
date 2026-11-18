@@ -1,0 +1,54 @@
+<div class="array-editor">
+  <div class="array-editor__header">
+    <div class="array-editor__header-left">
+      <span class="array-editor__icon-wrap" [style]="iconStyle()">
+        <span class="material-icons">{{ config().icon }}</span>
+      </span>
+      <span class="array-editor__title">{{ config().title }}</span>
+    </div>
+    <span class="array-editor__count" [class.array-editor__count--met]="countMet()">
+      {{ itemCount() }}{{ config().minItems ? '/' + config().minItems + '+' : '' }}
+      {{ config().countSuffix ?? '' }}
+    </span>
+  </div>
+
+  <div class="array-editor__list">
+    @if (isExternalMode()) {
+      @for (ctrl of getControls(); track $index) {
+        <div class="array-editor__row">
+          <span class="array-editor__num">{{ $index + 1 }}</span>
+          <input class="array-editor__input" [formControl]="$any(ctrl)"
+            [placeholder]="config().placeholder" />
+          @if (canRemove()) {
+            <button type="button" class="array-editor__remove"
+              (click)="onRemove($index)" aria-label="Remove item">
+              <span class="material-icons">close</span>
+            </button>
+          }
+        </div>
+      }
+    } @else {
+      @for (item of internalItems(); track $index) {
+        <div class="array-editor__row">
+          <span class="array-editor__num">{{ $index + 1 }}</span>
+          <input class="array-editor__input" [value]="item"
+            [placeholder]="config().placeholder"
+            (input)="onInternalChange($index, $any($event.target).value)" />
+          @if (canRemove()) {
+            <button type="button" class="array-editor__remove"
+              (click)="onRemove($index)" aria-label="Remove item">
+              <span class="material-icons">close</span>
+            </button>
+          }
+        </div>
+      }
+    }
+  </div>
+
+  @if (canAdd()) {
+    <button type="button" class="array-editor__add" (click)="onAdd()">
+      <span class="material-icons">add</span>
+      {{ config().addLabel ?? 'Add item' }}
+    </button>
+  }
+</div>

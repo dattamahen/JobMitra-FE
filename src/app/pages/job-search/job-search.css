@@ -12,24 +12,7 @@
 	gap: 16px;
 }
 
-/* Pagination */
-.pagination {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	gap: 12px;
-	margin-top: 24px;
-	padding: 16px;
-	background: #fff;
-	border-radius: 8px;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.page-info {
-	font-size: 14px;
-	font-weight: 500;
-	color: #666;
-}
+/* Pagination — owned by UiPaginationBarComponent */
 
 /* Responsive */
 @media (max-width: 768px) {
