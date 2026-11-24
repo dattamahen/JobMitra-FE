@@ -73,7 +73,6 @@ export class ProjectContestPage implements OnInit {
 
 
 	readonly heroBannerConfig: HeroBannerConfig = {
-		badge: { icon: 'emoji_events', text: this.TEXT.heroBadge },
 		title: this.TEXT.heroTitle,
 		subtitle: this.TEXT.heroSubtitle,
 		stats: [
@@ -178,7 +177,7 @@ export class ProjectContestPage implements OnInit {
 			category: ['', Validators.required],
 			tech_stack: [''],
 			college_name: [''],
-			graduation_year: [null],
+			graduation_year: [null, [Validators.min(2025)]],
 			team_members: this.fb.array([]),
 		});
 
