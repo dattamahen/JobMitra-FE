@@ -214,7 +214,10 @@
 								</mat-form-field>
 								<mat-form-field appearance="fill">
 									<mat-label>{{ TEXT.gradYearLabel }}</mat-label>
-									<input matInput type="number" formControlName="graduation_year" placeholder="2025">
+									<input matInput type="number" formControlName="graduation_year" placeholder="2025" min="2025">
+									@if (ideaForm.get('graduation_year')?.touched && ideaForm.get('graduation_year')?.hasError('min')) {
+										<mat-error>Graduation year must be 2025 or later</mat-error>
+									}
 								</mat-form-field>
 							</div>
 						</div>

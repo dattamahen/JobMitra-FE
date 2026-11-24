@@ -46,7 +46,7 @@ export class DashboardPage implements OnInit {
 		'applications-sent': 'applications',
 		'interviews': 'mock-interviews',
 		'mock-interviews': 'mock-interviews',
-		'matching-jobs': 'job-search',
+		'matching-jobs': 'internal-job-market',
 		'profile-completion': 'profile'
 	};
 

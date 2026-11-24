@@ -1,4 +1,4 @@
-<div class="hero-banner" [class]="variantClass()">
+<div class="hero-banner" [class.hero-banner--page]="config().variant === 'page'" [class.hero-banner--auth]="config().variant === 'auth'">
   @if (hasBadge()) {
     <div class="hero-banner__badge">
       <mat-icon>{{ config().badge!.icon }}</mat-icon>

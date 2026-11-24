@@ -5,16 +5,17 @@
 .hero-banner {
   padding: var(--spacing-xl);
   border-radius: var(--border-radius-card);
+  margin-bottom: var(--spacing-xl);
 }
 
 .hero-banner--page {
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-button-primary) 100%);
-  color: #fff;
+  color: #fff !important;
 }
 
 .hero-banner--auth {
   background: linear-gradient(160deg, var(--color-primary) 0%, var(--color-button-primary) 100%);
-  color: #fff;
+  color: #fff !important;
   min-height: 100%;
   display: flex;
   flex-direction: column;
@@ -31,26 +32,30 @@
   font-size: var(--font-size-sm);
   font-weight: 600;
   margin-bottom: var(--spacing-md);
+  color: #fff !important;
 }
 .hero-banner__badge mat-icon { font-size: 1rem; width: 1rem; height: 1rem; }
 
 .hero-banner__title {
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
   font-weight: 800;
   margin: 0 0 var(--spacing-sm);
   line-height: 1.2;
+  color: #fff !important;
 }
 
 .hero-banner__subtitle {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-sm);
   opacity: 0.9;
   margin: 0 0 var(--spacing-sm);
+  color: #fff !important;
 }
 
 .hero-banner__desc {
   font-size: var(--font-size-sm);
   opacity: 0.8;
   margin: 0 0 var(--spacing-lg);
+  color: #fff !important;
 }
 
 .hero-banner__stats {
@@ -75,8 +80,8 @@
   background: rgba(255,255,255,0.3);
 }
 
-.hero-stat__value { font-size: var(--font-size-xl); font-weight: 800; }
-.hero-stat__label { font-size: var(--font-size-xs); opacity: 0.8; }
+.hero-stat__value { font-size: 0.95rem; font-weight: 800; color: #fff !important; }
+.hero-stat__label { font-size: 0.65rem; opacity: 0.8; color: #fff !important; }
 
 .hero-banner__benefits {
   list-style: none;
@@ -92,5 +97,6 @@
   align-items: center;
   gap: var(--spacing-sm);
   font-size: var(--font-size-sm);
+  color: #fff !important;
 }
 .hero-benefit__icon { font-size: 1.1rem; width: 1.1rem; height: 1.1rem; opacity: 0.9; }

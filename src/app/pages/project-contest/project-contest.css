@@ -243,15 +243,15 @@
 }
 
 .form-card-icon {
-	font-size: 28px;
-	width: 28px;
-	height: 28px;
+	font-size: 20px;
+	width: 20px;
+	height: 20px;
 	color: var(--color-button-primary);
 	margin-top: 2px;
 }
 
 .section-title {
-	font-size: var(--font-size-title);
+	font-size: 0.95rem;
 	font-weight: var(--font-weight-semibold);
 	color: #1f2937;
 	margin: 0 0 4px;
@@ -594,6 +594,10 @@
 	gap: 6px;
 	font-size: 0.8rem;
 }
+
+:host ::ng-deep .otp-verify-btn .mdc-button__label,
+:host ::ng-deep .otp-verify-btn .mat-mdc-button-touch-target ~ span,
+:host ::ng-deep .otp-verify-btn { color: #fff !important; }
 
 .otp-verified-badge {
 	background: #d1fae5;
