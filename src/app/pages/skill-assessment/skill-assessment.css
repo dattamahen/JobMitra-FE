@@ -24,6 +24,28 @@ h1, h2 {
 	border-radius: 12px;
 	box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 	border: 1px solid #e2e8f0;
+	display: flex;
+	flex-direction: column;
+}
+
+.category-card .skills-scroll {
+	max-height: calc(5 * 56px);
+	overflow-y: auto;
+	scrollbar-width: thin;
+	scrollbar-color: #cbd5e1 transparent;
+}
+
+.category-card .skills-scroll::-webkit-scrollbar {
+	width: 4px;
+}
+
+.category-card .skills-scroll::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.category-card .skills-scroll::-webkit-scrollbar-thumb {
+	background: #cbd5e1;
+	border-radius: 4px;
 }
 
 .category-card h2 {
