@@ -16,7 +16,7 @@ export const SUBSCRIPTION_DIALOG_TEXT = {
 			{ icon: 'description', text: '10 CV Downloads', detail: 'apply to more companies, faster' },
 		],
 		investResult: '💰 One better interview = Bigger salary jump',
-		ctaPrefix: 'Get Interview Ready —',
+		ctaPrefix: 'Get Credits —',
 		maybeLater: 'Maybe Later',
 	},
 	internalJobs: {

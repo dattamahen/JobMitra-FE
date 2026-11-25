@@ -1,5 +1,15 @@
 /* ── Layout ─────────────────────────────────────────────────────────────── */
-.page-container { padding: 24px; max-width: 1200px; margin: 0 auto; }
+.page-container {
+  padding: 16px;
+  padding-bottom: 80px;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  width: 100%;
+}
+@media (min-width: 601px) {
+  .page-container { padding: 24px; padding-bottom: 80px; }
+}
 
 .page-header {
   display: flex; align-items: center; gap: 16px;
@@ -17,7 +27,7 @@
 .empty-state p { color: #6b7280; margin: 0 0 28px; font-size: 14px; }
 
 /* ── Job List Cards ─────────────────────────────────────────────────────── */
-.jobs-list { display: flex; flex-direction: column; gap: 16px; }
+.jobs-list { display: flex; flex-direction: column; gap: 16px; padding-bottom: 72px; }
 
 .job-card {
   border-radius: 12px !important;
@@ -254,9 +264,9 @@ mat-chip { font-size: 12px !important; }
 /* ── FAB ────────────────────────────────────────────────────────────────── */
 .post-job-fab {
   position: fixed;
-  bottom: 28px;
-  right: 28px;
-  z-index: 1000;
+  bottom: 24px;
+  right: 20px;
+  z-index: 100;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -292,18 +302,7 @@ mat-chip { font-size: 12px !important; }
 }
 
 @media (max-width: 600px) {
-  .post-job-fab {
-    bottom: 20px;
-    right: 16px;
-    height: 44px;
-    padding: 0 16px 0 12px;
-    font-size: 13px;
-  }
-}
-
-/* ── Responsive ─────────────────────────────────────────────────────────── */
-@media (max-width: 600px) {
-  .page-container { padding: 16px; }
+  .post-job-fab { bottom: 16px; right: 16px; height: 44px; padding: 0 16px 0 12px; font-size: 13px; }
   .step-card mat-card-content { padding: 20px !important; }
   .form-row { grid-template-columns: 1fr; gap: 0; }
   .mode-selector { flex-direction: column; }
@@ -313,7 +312,8 @@ mat-chip { font-size: 12px !important; }
   .add-skill-btn { width: 100% !important; }
   .btn-row { flex-direction: column; }
   .btn-row button { width: 100%; }
-  .card-footer { flex-direction: column; align-items: stretch; }
-  .share-group { justify-content: stretch; }
-  .wa-btn, .li-btn, .tg-btn, .delete-btn { flex: 1; justify-content: center; }
+  .card-footer { gap: 6px; padding: 8px 12px 10px; }
+  .share-group { gap: 4px; }
+  .wa-btn, .li-btn, .tg-btn { padding: 6px 8px; font-size: 11px; }
+  .delete-btn { padding: 6px 10px; font-size: 11px; }
 }
