@@ -21,6 +21,7 @@
     } @else {
       <div class="jobs-list">
         @for (job of jobs(); track job.internal_job_id) {
+
           <mat-card class="job-card" [class.expired]="!job.is_active">
             <mat-card-content>
               <div class="job-layout">
@@ -120,6 +121,9 @@
           </mat-card>
         }
       </div>
+      <app-ui-pagination-bar
+        [config]="paginationConfig()"
+        (pageChange)="onPageChange($event)" />
     }
   }
 

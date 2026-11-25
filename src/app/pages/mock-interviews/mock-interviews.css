@@ -1,3 +1,10 @@
+.page-container {
+	padding: 24px;
+	box-sizing: border-box;
+	width: 100%;
+	overflow-x: hidden;
+}
+
 .interview-options {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
@@ -12,11 +19,11 @@
 	margin-bottom: 24px;
 }
 
-/* Card - matches dashboard stat-card style */
 .interview-card {
 	width: 100%;
 	min-width: 0;
 	box-sizing: border-box;
+	margin: 0;
 	cursor: pointer;
 	transition: all 0.3s ease;
 	border-left: 4px solid #1976d2;
@@ -54,20 +61,15 @@
 	margin: 0 0 12px 0;
 	line-height: 1.4;
 	color: #555;
+	word-break: break-word;
 }
 
 /* Badges & Topics */
 .difficulty-badges, .topics {
 	margin: 12px 0;
-	white-space: nowrap;
-	overflow-x: auto;
-	-ms-overflow-style: none;
-	scrollbar-width: none;
-}
-
-.difficulty-badges::-webkit-scrollbar,
-.topics::-webkit-scrollbar {
-	display: none;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
 }
 
 .badge, .topic {
@@ -76,28 +78,12 @@
 	border-radius: 12px;
 	font-size: 0.875rem;
 	font-weight: 500;
-	margin: 2px;
 }
 
-.badge.easy {
-	background: #d4edda;
-	color: #155724;
-}
-
-.badge.medium {
-	background: #fff3cd;
-	color: #856404;
-}
-
-.badge.hard {
-	background: #f8d7da;
-	color: #721c24;
-}
-
-.topic {
-	background: #e3f2fd;
-	color: #0d47a1;
-}
+.badge.easy   { background: #d4edda; color: #155724; }
+.badge.medium { background: #fff3cd; color: #856404; }
+.badge.hard   { background: #f8d7da; color: #721c24; }
+.topic        { background: #e3f2fd; color: #0d47a1; }
 
 /* Company Select */
 .company-select {
@@ -107,6 +93,7 @@
 	border: 1px solid #ddd;
 	border-radius: 4px;
 	font-size: 0.875rem;
+	box-sizing: border-box;
 }
 
 /* Button */
@@ -120,33 +107,25 @@
 	font-size: 0.875rem;
 }
 
-.page-container {
-	padding: 24px;
-	box-sizing: border-box;
-	width: 100%;
-	overflow-x: hidden;
-}
-
 @media (max-width: 768px) {
 	.page-container {
-		padding: 12px;
+		padding: 16px;
 	}
 	.interview-options {
 		grid-template-columns: 1fr;
-		gap: 12px;
-	}
-	.interview-card {
-		width: 100%;
-		max-width: 100%;
-	}
-	.interview-card mat-card-content {
-		padding: 16px !important;
+		gap: 16px;
+		margin-bottom: 16px;
 	}
 	.start-btn {
 		width: 100%;
 	}
-	.topics {
-		white-space: nowrap;
-		overflow-x: auto;
+}
+
+@media (max-width: 480px) {
+	.page-container {
+		padding: 12px;
+	}
+	.interview-options {
+		gap: 12px;
 	}
 }
