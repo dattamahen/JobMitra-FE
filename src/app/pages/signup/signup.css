@@ -229,10 +229,11 @@
 .name-fields {
 	display: flex;
 	gap: 16px;
+	flex-wrap: wrap;
 }
 
 .name-fields mat-form-field {
-	flex: 1;
+	flex: 1 1 180px;
 }
 
 mat-form-field {

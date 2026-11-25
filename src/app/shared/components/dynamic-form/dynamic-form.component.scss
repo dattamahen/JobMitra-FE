@@ -65,13 +65,13 @@
 }
 
 .half-width {
-	flex: 0 0 calc(50% - 8px);
-	max-width: calc(50% - 8px);
-	min-width: 0;
+	flex: 1 1 calc(50% - 8px);
+	min-width: 200px;
 }
 
 .full-width {
 	width: 100%;
+	flex: 0 0 100%;
 	min-width: 0;
 }
 
@@ -189,8 +189,8 @@ mat-spinner {
 	}
 	
 	.half-width {
-		flex: 0 0 calc(48% - 6px);
-		max-width: calc(48% - 6px);
+		flex: 1 1 calc(48% - 6px);
+		min-width: 180px;
 	}
 	
 	.full-width {
@@ -293,8 +293,10 @@ mat-spinner {
 	}
 
 	.half-width {
-		width: 100%;
-		flex: 0 0 100%;
+		width: 100% !important;
+		flex: 0 0 100% !important;
+		max-width: 100% !important;
+		min-width: 0 !important;
 	}
 
 	.quarter-width {
@@ -313,8 +315,9 @@ mat-spinner {
 		}
 
 		.half-width {
-			flex: 0 0 100%;
-			max-width: 100%;
+			flex: 0 0 100% !important;
+			max-width: 100% !important;
+			min-width: 0 !important;
 		}
 	}
 }
