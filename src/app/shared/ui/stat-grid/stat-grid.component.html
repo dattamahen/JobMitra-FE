@@ -1,5 +1,5 @@
 <div class="stat-grid" [style]="gridStyle()">
-  @for (stat of config().stats; track stat.id) {
+  @for (stat of config().stats; track stat.id; let i = $index) {
     <div class="stat-card"
       [class.stat-card--primary]="(stat.color ?? 'primary') === 'primary'"
       [class.stat-card--success]="stat.color === 'success'"
@@ -17,7 +17,7 @@
         <mat-icon class="stat-card__icon">{{ stat.icon }}</mat-icon>
       </div>
       <div class="stat-card__body">
-        <span class="stat-card__value">{{ stat.value }}</span>
+        <span class="stat-card__value">{{ animatedValues()[i] ?? stat.value }}</span>
         <span class="stat-card__label">{{ stat.label }}</span>
         @if (showTrend() && stat.trend) {
           <span class="stat-card__trend"

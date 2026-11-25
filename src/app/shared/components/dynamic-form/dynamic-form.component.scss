@@ -36,6 +36,9 @@
 	::ng-deep .mdc-text-field__input::placeholder,
 	::ng-deep .mat-mdc-input-element::placeholder {
 		font-size: 0.875rem !important;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 	
 	// Buttons
@@ -62,11 +65,14 @@
 }
 
 .half-width {
-	flex: 1;
+	flex: 0 0 calc(50% - 8px);
+	max-width: calc(50% - 8px);
+	min-width: 0;
 }
 
 .full-width {
 	width: 100%;
+	min-width: 0;
 }
 
 
@@ -91,10 +97,6 @@
 .cancel-btn {
 	min-width: 80px;
 	margin-left: 8px;
-}
-
-.half-width {
-	width: 48%;
 }
 
 .quarter-width {

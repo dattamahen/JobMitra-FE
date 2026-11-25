@@ -2,12 +2,14 @@
 	max-width: 520px;
 	width: 100%;
 	box-sizing: border-box;
+	min-width: 0;
 }
 
 .subscription-dialog mat-dialog-content {
 	overflow: hidden;
 	max-height: none;
 	padding-bottom: 0;
+	min-width: 0;
 }
 
 /* Invest card */
@@ -28,9 +30,10 @@
 
 .benefit-row {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	gap: 8px;
 	font-size: 13px;
+	min-width: 0;
 }
 
 .benefit-row mat-icon {
@@ -38,6 +41,14 @@
 	width: 18px;
 	height: 18px;
 	color: #6a46fe !important;
+	flex-shrink: 0;
+	margin-top: 1px;
+}
+
+.benefit-row span {
+	min-width: 0;
+	word-break: break-word;
+	overflow-wrap: anywhere;
 }
 
 .invest-result {
@@ -52,16 +63,24 @@
 	width: 100%;
 	font-weight: 600;
 	font-size: var(--font-size-body, 0.875rem);
+}
+
+:host ::ng-deep .invest-cta .mat-mdc-button-touch-target,
+:host ::ng-deep .invest-cta .mdc-button__ripple { display: none; }
+
+:host ::ng-deep .invest-cta .mdc-button__label {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	gap: 6px;
+	width: 100%;
+	color: #fff !important;
 }
 
-.invest-cta .mdc-button__label,
-.invest-cta span,
-.invest-cta mat-icon {
+:host ::ng-deep .invest-cta .mdc-button__label span,
+:host ::ng-deep .invest-cta .mdc-button__label mat-icon {
 	color: #fff !important;
+	flex-shrink: 0;
 }
 
 /* Payment section */

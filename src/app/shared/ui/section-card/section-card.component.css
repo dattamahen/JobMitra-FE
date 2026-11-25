@@ -2,6 +2,8 @@
 
 :host {
   display: block;
+  width: 100%;
+  box-sizing: border-box;
   --section-card-border: var(--ui-card-default-border);
   --section-card-padding: var(--spacing-lg);
 }
@@ -11,6 +13,8 @@
   border-radius: var(--border-radius-card);
   border: var(--section-card-border);
   padding: var(--section-card-padding);
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .section-card--default   { border: var(--ui-card-default-border); }
@@ -71,7 +75,12 @@
   min-width: 0;
 }
 
+@media (max-width: 768px) {
+  :host { --section-card-padding: var(--spacing-md); }
+}
+
 @media (max-width: 480px) {
+  :host { --section-card-padding: var(--spacing-sm) var(--spacing-md); }
   .section-card__header { flex-direction: column; align-items: flex-start; }
   .section-card__header-right { width: 100%; }
 }

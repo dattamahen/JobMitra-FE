@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, inject, signal, input, OnInit
+  ChangeDetectionStrategy, Component, inject, signal, input, OnInit, computed
 } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -19,8 +19,8 @@ import { SkeletonJobCardListComponent } from '../../shared/components/skeletons'
 import { InternalJobService, InternalJob, ParsedJobPreview } from '../../services/internal-job.service';
 import { MotivationBannerComponent } from '../../shared/components/motivation-banner/motivation-banner.component';
 import { getRandomPosterMotivationGroup, type MotivationGroup } from '../../data/motivation-lines.data';
-import { UiStatusBadgeComponent, UiChipListComponent, UiMetaRowComponent } from '../../shared/ui';
-import type { MetaItem, ChipListConfig } from '../../shared/ui/ui.types';
+import { UiStatusBadgeComponent, UiChipListComponent, UiMetaRowComponent, UiPaginationBarComponent } from '../../shared/ui';
+import type { MetaItem, ChipListConfig, PaginationBarConfig } from '../../shared/ui/ui.types';
 import { buildJobShareText } from '../../utils/share.util';
 
 type View = 'list' | 'post';
@@ -36,7 +36,7 @@ type PostStep = 'verify-email' | 'input' | 'preview' | 'done';
     MatFormFieldModule, MatInputModule, MatSelectModule, MatTableModule,
     MatDialogModule, MotivationBannerComponent, ConfirmDialogComponent,
     SkeletonJobCardListComponent,
-    UiStatusBadgeComponent, UiChipListComponent, UiMetaRowComponent
+    UiStatusBadgeComponent, UiChipListComponent, UiMetaRowComponent, UiPaginationBarComponent
   ],
   templateUrl: './refer-hire.html',
   styleUrl: './refer-hire.css'
@@ -56,6 +56,19 @@ export class ReferHirePage implements OnInit {
   jobs = signal<InternalJob[]>([]);
   listLoading = signal(false);
   expandedIds = signal<Set<string>>(new Set());
+
+  // ── Pagination ─────────────────────────────────────────────
+  currentPage = signal(1);
+  totalPages = signal(1);
+  totalCount = signal(0);
+  readonly perPage = 10;
+
+  paginationConfig = computed<PaginationBarConfig>(() => ({
+    currentPage: this.currentPage(),
+    totalPages: this.totalPages(),
+    totalItems: this.totalCount(),
+    itemLabel: 'jobs',
+  }));
 
   // ── Post flow ──────────────────────────────────────────────
   postStep = signal<PostStep>('verify-email');
@@ -120,17 +133,22 @@ export class ReferHirePage implements OnInit {
 
   // ── List actions ───────────────────────────────────────────
 
-  async loadJobs(): Promise<void> {
+  async loadJobs(page = 1): Promise<void> {
     this.listLoading.set(true);
     try {
-      const res = await this.svc.getMyPosts();
-      this.jobs.set(res.jobs.filter((j: InternalJob) => j.is_active));
+      const res = await this.svc.getMyPosts(page, this.perPage);
+      this.jobs.set(res.jobs);
+      this.currentPage.set(res.page);
+      this.totalPages.set(res.total_pages);
+      this.totalCount.set(res.total_count);
     } catch (e: any) {
       this.snack.open(e.error?.detail || 'Failed to load your job posts', 'Close', { duration: 5000 });
     } finally {
       this.listLoading.set(false);
     }
   }
+
+  onPageChange(page: number): void { this.loadJobs(page); }
 
   toggleExpand(id: string): void {
     const s = new Set(this.expandedIds());
@@ -323,7 +341,7 @@ export class ReferHirePage implements OnInit {
 
   async doneAndRefresh(): Promise<void> {
     this.view.set('list');
-    await this.loadJobs();
+    await this.loadJobs(1);
   }
 
   shareOnWhatsApp(job: InternalJob): void {
