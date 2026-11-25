@@ -97,14 +97,14 @@
 }
 
 .full-width {
-	flex: 1;
+	flex: 0 0 100%;
 	min-width: 100%;
 	width: 100%;
 }
 
 .half-width {
 	flex: 1;
-	min-width: calc(50% - 8px);
+	min-width: 200px;
 }
 
 .third-width {
